@@ -10,8 +10,7 @@ export const Card = styled.div`
 
   display: flex;
   flex-direction: column;
-  align-items: center;
-
+  
   box-shadow: ${({ theme }) => theme.boxShadows[0]};
 
   padding: ${({ theme }) => theme.spaces[4]}px;
