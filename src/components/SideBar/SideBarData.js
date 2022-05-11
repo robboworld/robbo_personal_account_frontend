@@ -26,5 +26,10 @@ export const SidebarData = [
         title: 'Информер',
         path: '/informer',
         icon: <FaIcons.FaInfo />
+    },
+    {
+        title: 'Выйти',
+        path: '/login',
+        icon: <FaIcons.FaSignOutAlt />
     }
 ]
