@@ -35,12 +35,7 @@ export const signInFailed = createAction(SING_IN_FAILED, (error) => {
     }
 })
 
-export const signUpSuccess = createAction(SING_UP_SUCCESS, (email, password) => {
-    return {
-        email,
-        password
-    }
-})
+export const signUpSuccess = createAction(SING_UP_SUCCESS)
 
 export const signUpFailed = createAction(SING_UP_FAILED, (error) => {
     return {

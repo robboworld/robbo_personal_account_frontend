@@ -13,12 +13,10 @@ function* signInSaga(action) {
     try {
         const email = action.payload.email;
         const password = action.payload.password;
-        const token = yield call(authAPI.signIn, email, password);
-        console.log(token)
-        yield put(signInSucces(token));
+        const response = yield call(authAPI.signIn, email, password);
+        yield put(signInSucces(response));
     } catch (e) {
-        alert(e)
-        yield put(signInFailed(e));
+        yield put(signInFailed(e.message));
     }
 }
 
@@ -26,12 +24,10 @@ function* signUpSaga(action) {
     try {
         const email = action.payload.email;
         const password = action.payload.password;
-        const token = yield call(authAPI.signUp, email, password);
-        console.log(token)
-        yield put(signUpSucces(token));
+        const response = yield call(authAPI.signUp, email, password);
+        yield put(signUpSuccess());
     } catch (e) {
-        alert(e)
-        yield put(signUpFailed(e));
+        yield put(signUpFailed(e.message));
     }
 }
 
