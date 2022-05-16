@@ -23,7 +23,7 @@ import {
 import { emailOnChange, passwordOnChange, signInRequest, signUpRequest } from "@/actions";
 import {
     getEmail, getPassword, getToken,
-    getSignInError, getSignUpError, getIsAuth,
+    getSignInError, getSignUpError,
     getSuccessInResponse, getSuccessUpResponse
 } from "@/reducers/login";
 
@@ -41,7 +41,7 @@ export default () => {
     const token = useSelector(state => getToken(state.login));
     const signInError = useSelector(state => getSignInError(state.login));
     const signUpError = useSelector(state => getSignUpError(state.login));
-    const isAuth = useSelector(state => getIsAuth(state.login));
+    const isAuth = localStorage.getItem('isAuth');
     const successInResponse = useSelector(state => getSuccessInResponse(state.login));
     const successUpResponse = useSelector(state => getSuccessUpResponse(state.login));
 

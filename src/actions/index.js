@@ -3,12 +3,15 @@ import { createAction } from "redux-actions"
 import {
     EMAIL_ONCHANGE,
     PASSWORD_ONCHANGE,
-    SING_IN_SUCCESS,
-    SING_IN_FAILED,
-    SING_UP_SUCCESS,
-    SING_UP_FAILED,
-    SING_IN,
-    SING_UP
+    SIGN_IN_SUCCESS,
+    SIGN_IN_FAILED,
+    SIGN_UP_SUCCESS,
+    SIGN_UP_FAILED,
+    SIGN_IN,
+    SIGN_UP,
+    SIGN_OUT,
+    SIGN_OUT_SUCCESS,
+    SIGN_OUT_FAILED
 } from "@/constants";
 
 export const emailOnChange = createAction(EMAIL_ONCHANGE, (email) => {
@@ -23,36 +26,40 @@ export const passwordOnChange = createAction(PASSWORD_ONCHANGE, (password) => {
     }
 })
 
-export const signInSucces = createAction(SING_IN_SUCCESS, (token) => {
+export const signInSucces = createAction(SIGN_IN_SUCCESS, (token) => {
     return {
         token
     }
 })
 
-export const signInFailed = createAction(SING_IN_FAILED, (error) => {
+export const signInFailed = createAction(SIGN_IN_FAILED, (error) => {
     return {
         error
     }
 })
 
-export const signUpSuccess = createAction(SING_UP_SUCCESS)
+export const signUpSuccess = createAction(SIGN_UP_SUCCESS)
 
-export const signUpFailed = createAction(SING_UP_FAILED, (error) => {
+export const signUpFailed = createAction(SIGN_UP_FAILED, (error) => {
     return {
         error
     }
 })
 
-export const signInRequest = createAction(SING_IN, (email, password) => {
+export const signInRequest = createAction(SIGN_IN, (email, password) => {
     return {
         email,
         password
     }
 });
 
-export const signUpRequest = createAction(SING_UP, (email, password) => {
+export const signUpRequest = createAction(SIGN_UP, (email, password) => {
     return {
         email,
         password
     }
 });
+
+export const signOutRequest = createAction(SIGN_OUT);
+export const signOutSuccess = createAction(SIGN_OUT_SUCCESS);
+export const signOutFailed = createAction(SIGN_OUT_FAILED);

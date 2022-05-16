@@ -1,8 +1,11 @@
 export const EMAIL_ONCHANGE = 'EMAIL_ONCHANGE';
 export const PASSWORD_ONCHANGE = 'PASSWORD_ONCHANGE';
-export const SING_IN_SUCCESS = 'SING_IN_SUCCESS';
-export const SING_IN_FAILED = 'SING_IN_FAILED';
-export const SING_UP_SUCCESS = 'SING_UP_SUCCESS';
-export const SING_UP_FAILED = 'SING_UP_FAILED';
-export const SING_IN = 'SING_IN';
-export const SING_UP = 'SING_UP';
+export const SIGN_IN_SUCCESS = 'SIGN_IN_SUCCESS';
+export const SIGN_IN_FAILED = 'SIGN_IN_FAILED';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILED = 'SIGN_UP_FAILED';
+export const SIGN_IN = 'SIGN_IN';
+export const SIGN_UP = 'SIGN_UP';
+export const SIGN_OUT = 'SIGN_OUT';
+export const SIGN_OUT_SUCCESS = 'SIGN_OUT_SUCCESS';
+export const SIGN_OUT_FAILED = 'SIGN_OUT_FAILED';

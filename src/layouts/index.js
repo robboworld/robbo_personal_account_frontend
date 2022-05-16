@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const PageLayout = styled.div`
-  width: 100%;
+  width: 70%;
   height: 100%;
 
   max-width: 1280px;

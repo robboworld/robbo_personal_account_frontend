@@ -10,7 +10,7 @@ import SideBar from '@/components/SideBar'
 import { getIsAuth } from '@/reducers/login';
 
 export default () => {
-  const isAuth = useSelector(state => getIsAuth(state.login));
+  const isAuth = localStorage.getItem('isAuth');
   if (!isAuth) {
     return <Redirect to={"/login"} />;
   }

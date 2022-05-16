@@ -6,19 +6,19 @@ import {
     signInSucces,
     signInFailed,
     signUpSuccess,
-    signUpFailed
+    signUpFailed,
+    signOutSuccess,
+    signOutFailed,
 } from "@/actions";
 
 const INITIAL_STATE = {
     id: '',
     email: '',
     password: '',
-    token: '',
     signInError: '',
     signUpError: '',
     successInResponse: false,
     successUpResponse: false,
-    isAuth: false,
 }
 
 export default handleActions({
@@ -29,16 +29,22 @@ export default handleActions({
         return { ...state, password: action.payload.password }
     },
     [signInSucces](state, action) {
-        return { ...state, token: action.payload.token.data, isAuth: true, successInResponse: true }
+        return { ...state, successInResponse: true }
     },
     [signInFailed](state, action) {
-        return { ...state, signInError: action.payload.error, isAuth: false, successInResponse: false }
+        return { ...state, signInError: action.payload.error, successInResponse: false }
     },
     [signUpSuccess](state) {
         return { ...state, email: '', password: '', successUpResponse: true }
     },
     [signUpFailed](state, action) {
-        return { ...state, signUpError: action.payload.error, isAuth: false, successUpResponse: false }
+        return { ...state, signUpError: action.payload.error, successUpResponse: false }
+    },
+    [signOutSuccess](state) {
+        return { ...state, email: '', passord: '', }
+    },
+    [signOutFailed](state) {
+        return { ...state }
     },
 }, INITIAL_STATE);
 
