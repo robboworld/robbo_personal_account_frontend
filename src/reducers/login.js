@@ -3,12 +3,10 @@ import { handleActions } from "redux-actions";
 import {
     emailOnChange,
     passwordOnChange,
-    signInSucces,
-    signInFailed,
-    signUpSuccess,
-    signUpFailed,
-    signOutSuccess,
-    signOutFailed,
+    signInSucces, signInFailed,
+    signUpSuccess, signUpFailed,
+    signOutSuccess, signOutFailed,
+    checkAuthSuccess, checkAuthFailed
 } from "@/actions";
 
 const INITIAL_STATE = {
@@ -17,6 +15,7 @@ const INITIAL_STATE = {
     password: '',
     signInError: '',
     signUpError: '',
+    isAuth: false,
     successInResponse: false,
     successUpResponse: false,
 }
@@ -29,21 +28,27 @@ export default handleActions({
         return { ...state, password: action.payload.password }
     },
     [signInSucces](state, action) {
-        return { ...state, successInResponse: true }
+        return { ...state, successInResponse: true, isAuth: true }
     },
     [signInFailed](state, action) {
-        return { ...state, signInError: action.payload.error, successInResponse: false }
+        return { ...state, signInError: action.payload.error, successInResponse: false, isAuth: false }
     },
     [signUpSuccess](state) {
-        return { ...state, email: '', password: '', successUpResponse: true }
+        return { ...state, email: '', password: '', successUpResponse: true, isAuth: true }
     },
     [signUpFailed](state, action) {
         return { ...state, signUpError: action.payload.error, successUpResponse: false }
     },
     [signOutSuccess](state) {
-        return { ...state, email: '', passord: '', }
+        return { ...state, email: '', password: '', isAuth: false }
     },
     [signOutFailed](state) {
+        return { ...state }
+    },
+    [checkAuthSuccess](state, action) {
+        return { ...state, isAuth: true }
+    },
+    [checkAuthFailed](state, action) {
         return { ...state }
     },
 }, INITIAL_STATE);

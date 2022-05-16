@@ -1,15 +1,10 @@
 import { call, put, take, takeLatest } from 'redux-saga/effects';
 import { authAPI } from '@/api';
 import {
-    signInSucces,
-    signInFailed,
-    signUpSuccess,
-    signUpFailed,
-    signInRequest,
-    signUpRequest,
-    signOutRequest,
-    signOutSuccess,
-    signOutFailed
+    signInSucces, signInFailed, signUpSuccess,
+    signUpFailed, signInRequest, signUpRequest,
+    signOutRequest, signOutSuccess, signOutFailed,
+    checkAuthRequest, checkAuthSuccess, checkAuthFailed
 } from '@/actions'
 
 function* signInSaga(action) {
@@ -17,9 +12,9 @@ function* signInSaga(action) {
         const email = action.payload.email;
         const password = action.payload.password;
         const response = yield call(authAPI.signIn, email, password);
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('isAuth', 'true');
-        yield put(signInSucces(response));
+        console.log(response)
+        localStorage.setItem('token', response.data.accessToken);
+        yield put(signInSucces(response))
     } catch (e) {
         yield put(signInFailed(e.message));
     }
@@ -30,9 +25,10 @@ function* signUpSaga(action) {
         const email = action.payload.email;
         const password = action.payload.password;
         const response = yield call(authAPI.signUp, email, password);
-        yield put(signUpSuccess());
+        console.log(response)
+        localStorage.setItem('token', response.data.accessToken);
+        yield put(signUpSuccess(response));
     } catch (e) {
-        localStorage.setItem('isAuth', 'false');
         yield put(signUpFailed(e.message));
     }
 }
@@ -40,8 +36,7 @@ function* signUpSaga(action) {
 function* signOutSaga(action) {
     try {
         const response = yield call(authAPI.signOut);
-        localStorage.setItem('token', '');
-        localStorage.setItem('isAuth', 'false');
+        localStorage.removeItem('token');
         yield put(signOutSuccess());
     } catch (e) {
         alert(e)
@@ -49,8 +44,21 @@ function* signOutSaga(action) {
     }
 }
 
+function* checkAuthSaga(action) {
+    try {
+        const response = yield call(authAPI.refresh);
+        console.log(response)
+        localStorage.setItem('token', response.data.accessToken);
+        yield put(checkAuthSuccess());
+    } catch (e) {
+        alert(e)
+        yield put(checkAuthFailed(e?.message));
+    }
+}
+
 export function* loginSaga() {
     yield takeLatest(signInRequest, signInSaga);
     yield takeLatest(signUpRequest, signUpSaga);
     yield takeLatest(signOutRequest, signOutSaga);
+    yield takeLatest(checkAuthRequest, checkAuthSaga);
 }

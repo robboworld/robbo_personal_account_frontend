@@ -9,3 +9,6 @@ export const SIGN_UP = 'SIGN_UP';
 export const SIGN_OUT = 'SIGN_OUT';
 export const SIGN_OUT_SUCCESS = 'SIGN_OUT_SUCCESS';
 export const SIGN_OUT_FAILED = 'SIGN_OUT_FAILED';
+export const CHECK_AUTH = 'CHECK_AUTH';
+export const CHECK_AUTH_SUCCESS = 'CHECK_AUTH_SUCCESS';
+export const CHECK_AUTH_FAILED = 'CHECK_AUTH_FAILED';

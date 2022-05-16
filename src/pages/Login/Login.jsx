@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from 'react-router-dom';
 
@@ -24,7 +24,8 @@ import { emailOnChange, passwordOnChange, signInRequest, signUpRequest } from "@
 import {
     getEmail, getPassword, getToken,
     getSignInError, getSignUpError,
-    getSuccessInResponse, getSuccessUpResponse
+    getSuccessInResponse, getSuccessUpResponse,
+    getIsAuth
 } from "@/reducers/login";
 
 import Input from "@/components/Input";
@@ -41,13 +42,10 @@ export default () => {
     const token = useSelector(state => getToken(state.login));
     const signInError = useSelector(state => getSignInError(state.login));
     const signUpError = useSelector(state => getSignUpError(state.login));
-    const isAuth = localStorage.getItem('isAuth');
+    const isAuth = useSelector(state => getIsAuth(state.login))
     const successInResponse = useSelector(state => getSuccessInResponse(state.login));
     const successUpResponse = useSelector(state => getSuccessUpResponse(state.login));
 
-    if (isAuth) {
-        return <Redirect to={"/"} />;
-    }
 
     const emailHandle = (email) => {
         dispatch(emailOnChange(email))
@@ -62,11 +60,15 @@ export default () => {
         dispatch(signUpRequest(email, password))
     }
 
+    if (isAuth) {
+        return <Redirect to={"/"} />;
+    }
+
     return (
         <PageLayout>
             <Card>
                 <LoginForm>
-                    {signIn &&
+                    {signIn ?
                         <MainContainer>
                             <SwitchInOut>
                                 <SignIn signIn={signIn} onClick={switchIn}><h4>Войти</h4></SignIn>
@@ -93,8 +95,7 @@ export default () => {
                                 <SuccessAlert><span>Успешно!</span></SuccessAlert>
                             }
                         </MainContainer>
-                    }
-                    {!signIn &&
+                        :
                         <MainContainer>
                             <SwitchInOut>
                                 <SignIn onClick={switchIn}><h4>Войти</h4></SignIn>
