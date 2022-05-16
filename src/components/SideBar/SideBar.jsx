@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useDispatch } from "react-redux"
 import * as FaIcons from "react-icons/fa"
 
 import {
@@ -7,15 +8,24 @@ import {
     MenuIconOpen,
     MenuIconClose,
     SidebarMenu,
-    MenuItems,
+    // MenuItems,
     MenuItemLinks
 } from "./components"
 
+import { signOutRequest } from "@/actions"
 import { SidebarData } from "./SideBarData"
+import MenuItem from './MenuItem'
 
 export default ({ }) => {
     const [close, setClose] = useState(false)
     const showSidebar = () => setClose(!close)
+    const dispatch = useDispatch();
+
+    const signOutHandler = (path) => {
+        console.log(path)
+        dispatch(signOutRequest())
+    }
+
     return (
         <SideBar>
             <Navbar>
@@ -31,12 +41,12 @@ export default ({ }) => {
 
                 {SidebarData.map((item, index) => {
                     return (
-                        <MenuItems key={index}>
-                            <MenuItemLinks to={item.path}>
-                                {item.icon}
-                                <span style={{ marginLeft: '16px' }}>{item.title}</span>
-                            </MenuItemLinks>
-                        </MenuItems>
+                        <MenuItem
+                            key={index}
+                            item={item}
+                            index={index}
+                            signOutHandler={signOutHandler}>
+                        </MenuItem>
                     )
                 })}
             </SidebarMenu>

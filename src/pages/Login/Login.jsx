@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Redirect } from 'react-router-dom';
 
 import { PageLayout } from "@/layouts";
 import {
@@ -15,10 +16,17 @@ import {
     SwitchInOut,
     SignIn,
     SignOut,
+    ErrorAlert,
+    SuccessAlert
 } from "./components";
 
 import { emailOnChange, passwordOnChange, signInRequest, signUpRequest } from "@/actions";
-import { getEmail, getPassword } from "@/reducers/login";
+import {
+    getEmail, getPassword, getToken,
+    getSignInError, getSignUpError,
+    getSuccessInResponse, getSuccessUpResponse,
+    getIsAuth
+} from "@/reducers/login";
 
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -31,6 +39,14 @@ export default () => {
     const dispatch = useDispatch();
     const email = useSelector(state => getEmail(state.login));
     const password = useSelector(state => getPassword(state.login));
+    const token = useSelector(state => getToken(state.login));
+    const signInError = useSelector(state => getSignInError(state.login));
+    const signUpError = useSelector(state => getSignUpError(state.login));
+    const isAuth = useSelector(state => getIsAuth(state.login))
+    const successInResponse = useSelector(state => getSuccessInResponse(state.login));
+    const successUpResponse = useSelector(state => getSuccessUpResponse(state.login));
+
+
     const emailHandle = (email) => {
         dispatch(emailOnChange(email))
     }
@@ -44,11 +60,15 @@ export default () => {
         dispatch(signUpRequest(email, password))
     }
 
+    if (isAuth) {
+        return <Redirect to={"/"} />;
+    }
+
     return (
         <PageLayout>
             <Card>
                 <LoginForm>
-                    {signIn &&
+                    {signIn ?
                         <MainContainer>
                             <SwitchInOut>
                                 <SignIn signIn={signIn} onClick={switchIn}><h4>Войти</h4></SignIn>
@@ -65,9 +85,17 @@ export default () => {
                             {/* <LoginWith>OR LOGIN WITH</LoginWith> */}
                             <HorizontalRule />
                             {/* <ForgotPassword>Forgot Password ?</ForgotPassword> */}
+                            {signUpError &&
+                                <ErrorAlert>
+                                    <span>Произошла ошибка: {signUpError}</span>
+                                </ErrorAlert>
+                            }
+                            {
+                                successUpResponse &&
+                                <SuccessAlert><span>Успешно!</span></SuccessAlert>
+                            }
                         </MainContainer>
-                    }
-                    {!signIn &&
+                        :
                         <MainContainer>
                             <SwitchInOut>
                                 <SignIn onClick={switchIn}><h4>Войти</h4></SignIn>
@@ -84,6 +112,15 @@ export default () => {
                             {/* <LoginWith>OR LOGIN WITH</LoginWith> */}
                             <HorizontalRule />
                             {/* <ForgotPassword>Forgot Password ?</ForgotPassword> */}
+                            {signInError &&
+                                <ErrorAlert>
+                                    <span>Произошла ошибка: {signInError}</span>
+                                </ErrorAlert>
+                            }
+                            {
+                                successInResponse &&
+                                <SuccessAlert><span>Успешно!</span></SuccessAlert>
+                            }
                         </MainContainer>
                     }
                 </LoginForm>
