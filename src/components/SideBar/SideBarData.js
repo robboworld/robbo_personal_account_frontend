@@ -28,6 +28,11 @@ export const SidebarData = [
         icon: <FaIcons.FaInfo />
     },
     {
+        title: 'Мои проекты',
+        path: '/informer',
+        icon: <FaIcons.FaInfo />
+    },
+    {
         title: 'Выйти',
         path: '/login',
         icon: <FaIcons.FaSignOutAlt />

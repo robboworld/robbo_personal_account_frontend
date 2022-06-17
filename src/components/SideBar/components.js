@@ -12,6 +12,7 @@ export const Navbar = styled.div`
     align-items: center;
     height: 3.5rem;
     background-color: #2F4F4F;
+    border-radius: 50%;
 `
 
 export const MenuIconOpen = styled(Link)`
