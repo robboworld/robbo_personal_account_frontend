@@ -22,8 +22,10 @@ export default ({ }) => {
     const dispatch = useDispatch();
 
     const signOutHandler = (path) => {
-        console.log(path)
-        dispatch(signOutRequest())
+        if (path === '/login') {
+            dispatch(signOutRequest())
+            return <Redirect to="/login" />
+        }
     }
 
     return (
