@@ -3,14 +3,6 @@ import * as axios from "axios";
 import instance from "./instance";
 
 export const authAPI = {
-    // me(token) {
-    //   return instance.get('api/profile/me', {
-    //     headers: {
-    //       'Authorization': `Bearer ${token}`,
-    //     }
-    //   });
-    // },
-
     signUp(email, password) {
         return instance.post('auth/sign-up', {
             email: email,
