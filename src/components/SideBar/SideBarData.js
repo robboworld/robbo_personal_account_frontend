@@ -8,6 +8,11 @@ export const SidebarData = [
         icon: <FaIcons.FaUserAlt />
     },
     {
+        title: 'Мои проекты',
+        path: '/projects',
+        icon: <FaIcons.FaInfo />
+    },
+    {
         title: 'Платежи',
         path: '/payments',
         icon: <FaIcons.FaCreditCard />
