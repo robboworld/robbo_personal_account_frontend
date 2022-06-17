@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import * as FaIcons from "react-icons/fa"
+import { Redirect } from "react-router-dom"
 
 import {
     SideBar,
