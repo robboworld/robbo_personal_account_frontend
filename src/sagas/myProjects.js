@@ -67,7 +67,7 @@ function* deleteProjectPageSaga(action) {
     }
 }
 
-export function* projectPageSaga() {
+export function* myProjectsSaga() {
     yield takeLatest(getAllProjectPages, getAllProjectPagesSaga);
     yield takeLatest(getProjectPageById, getProjectPageByIdSaga);
     yield takeLatest(createProjectPage, createProjectPageSaga);

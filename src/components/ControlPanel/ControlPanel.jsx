@@ -16,7 +16,8 @@ export default () => {
     const options = [
         { value: 'last-modified', label: 'Последнее изменение' },
         { value: 'alphabet', label: 'A-Я' },
-        { value: 'alphabet-reverse', label: 'Я-А' }
+        { value: 'alphabet-reverse', label: 'Я-А' },
+        { value: 'shared', label: ' Доступ' }
     ]
 
     const customStyles = {
