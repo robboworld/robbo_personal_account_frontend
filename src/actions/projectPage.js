@@ -7,9 +7,9 @@ import {
     CREATE_PROJECT_PAGE, CREATE_PROJECT_PAGE_FAILED, CREATE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE, DELETE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE_FAILED,
 } from "@/constants"
 
-export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, () => {
+export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, (token) => {
     return {
-
+        token
     }
 })
 
@@ -44,15 +44,15 @@ export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAIL
     }
 })
 
-export const createProjectPage = createAction(CREATE_PROJECT_PAGE, () => {
+export const createProjectPage = createAction(CREATE_PROJECT_PAGE, (token) => {
     return {
-
+        token
     }
 })
 
-export const createProjectPageSuccess = createAction(CREATE_PROJECT_PAGE_SUCCESS, () => {
+export const createProjectPageSuccess = createAction(CREATE_PROJECT_PAGE_SUCCESS, (response) => {
     return {
-
+        response
     }
 })
 
@@ -69,9 +69,9 @@ export const updateProjectPage = createAction(UPDATE_PROJECT_PAGE, () => {
     }
 })
 
-export const updateProjectPageSuccess = createAction(UPDATE_PROJECT_PAGE_SUCCESS, () => {
+export const updateProjectPageSuccess = createAction(UPDATE_PROJECT_PAGE_SUCCESS, (response) => {
     return {
-
+        response
     }
 })
 
@@ -81,15 +81,16 @@ export const updateProjectPageFailed = createAction(UPDATE_PROJECT_PAGE_FAILED, 
     }
 })
 
-export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, () => {
+export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (token, projectPageId) => {
     return {
-
+        token,
+        projectPageId
     }
 })
 
-export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, () => {
+export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, (response) => {
     return {
-
+        response
     }
 })
 

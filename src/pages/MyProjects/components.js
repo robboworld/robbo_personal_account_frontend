@@ -15,7 +15,7 @@ export const WelcomeText = styled.h2`
 
 export const ProjectPageItem = styled.li`
     border-bottom: 2px grey solid;
-    padding: 0.5rem;
+    padding: 1rem;
     margin: 0.5rem;
     list-style: none;
     display: flex;

@@ -2,11 +2,15 @@ import React from 'react'
 import Select from 'react-select'
 
 import { SelectWrapper, CreateNew } from './componets'
+import { createProjectPage } from '@/actions'
 
 import Flex from '@/components/Flex'
 import Button from '../UI/Button'
+import { useDispatch } from 'react-redux'
 
 export default () => {
+
+    const dispath = useDispatch()
 
     const options = [
         { value: 'last-modified', label: 'Последнее изменение' },
@@ -33,6 +37,13 @@ export default () => {
     }
 
 
+    const token = localStorage.getItem('token')
+
+    const createNewProjectPageHandler = () => {
+        dispath(createProjectPage(token));
+        window.location.replace('https://scratch.mit.edu/projects/703215105/');
+    }
+
     return (
         <Flex width={"100%"} margin={"0 0 2rem 0"} justify={"space-between"} align={"center"}>
             <SelectWrapper>
@@ -43,7 +54,7 @@ export default () => {
                 />
             </SelectWrapper>
             <CreateNew>
-                <Button content={"Создать новый"} background={"grey"} padding={"0.5rem"} />
+                <Button content={"Создать новый"} background={"grey"} padding={"0.5rem"} handleSubmit={createNewProjectPageHandler} />
             </CreateNew>
         </Flex>
     )

@@ -1,6 +1,6 @@
 import React from "react"
 import * as FaIcons from "react-icons/fa"
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE, PROJECT_MVP_PAGE_ROUTE } from '@/constants'
+import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE, MY_PROJECTS_ROUTE } from '@/constants'
 
 export const SidebarData = [
     {
@@ -10,7 +10,7 @@ export const SidebarData = [
     },
     {
         title: 'Мои проекты',
-        path: PROJECT_PAGE_ROUTE,
+        path: MY_PROJECTS_ROUTE,
         icon: <FaIcons.FaProjectDiagram />
     },
     // {
