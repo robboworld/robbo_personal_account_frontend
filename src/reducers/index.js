@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux'
 
 import login from './login'
-import projectPage from './projectPage'
+import myProjects from './myProjects'
 
 export const rootReducer = combineReducers({
   login,
-  projectPage,
+  myProjects,
 })

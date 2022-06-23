@@ -1,12 +1,13 @@
 import React from 'react'
 import Select from 'react-select'
+import { useDispatch } from 'react-redux'
+
 
 import { SelectWrapper, CreateNew } from './componets'
 import { createProjectPage } from '@/actions'
 
 import Flex from '@/components/Flex'
 import Button from '../UI/Button'
-import { useDispatch } from 'react-redux'
 
 export default () => {
 

@@ -7,10 +7,10 @@ import SideBar from "@/components/SideBar";
 
 import { checkAuthRequest, getAllProjectPages } from '@/actions';
 import { getIsAuth } from '@/reducers/login';
-import { getProjectPages } from "@/reducers/projectPage";
+import { getProjectPages } from "@/reducers/myProjects";
 import useIsAuth from "@/helpers/Hooks/useIsAuth";
 
-import ProjectPageItem from "./ProjectPageItem";
+import ProjectPageItem from "./MyProjectsItem";
 import Flex from "@/components/Flex";
 import ControlPanel from "@/components/ControlPanel";
 
@@ -23,7 +23,7 @@ export default () => {
         dispath(getAllProjectPages(token))
     }, [])
 
-    const projectPages = useSelector(state => getProjectPages(state.projectPage))
+    const projectPages = useSelector(state => getProjectPages(state.myProjects))
 
     return (
         <PageLayout>

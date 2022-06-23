@@ -1,2 +1,3 @@
-import ProjectPage from "./ProjectPage";
-export default ProjectPage
+import MyProjects from "./MyProjects";
+
+export default MyProjects

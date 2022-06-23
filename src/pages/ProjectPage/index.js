@@ -1,2 +1,2 @@
-import ProjectMvp from './ProjectMvp'
-export default ProjectMvp
+import ProjectPage from './ProjectPage'
+export default ProjectPage
