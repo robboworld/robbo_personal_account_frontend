@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 
-import { PageLayout } from "@/layouts";
-import { Card, MainContainer, WelcomeText } from "./components";
+import { PageLayout, Card } from "@/layouts";
+import { MainContainer, WelcomeText } from "./components";
 import SideBar from "@/components/SideBar";
 
 import { checkAuthRequest } from '@/actions';
 import { getIsAuth } from '@/reducers/login';
 import { getProjectPages } from "@/reducers/projectPage";
 import ProjectPageItem from "./ProjectPageItem";
+import Flex from "@/components/Flex";
+import ControlPanel from "@/components/ControlPanel";
 
 export default () => {
     // TO DO написать hook проверки авторизации
@@ -31,8 +33,9 @@ export default () => {
         <PageLayout>
             <Card>
                 <SideBar />
-                <MainContainer>
+                <Flex direction={"column"} align={"center"} >
                     <WelcomeText>Мои проекты</WelcomeText>
+                    <ControlPanel />
                     {
                         projectPages.map((projectPage, index) => {
                             return (
@@ -43,7 +46,7 @@ export default () => {
                             )
                         })
                     }
-                </MainContainer>
+                </Flex>
             </Card>
         </PageLayout>
     )

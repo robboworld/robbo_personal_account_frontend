@@ -13,11 +13,11 @@ export const SidebarData = [
         path: PROJECT_PAGE_ROUTE,
         icon: <FaIcons.FaProjectDiagram />
     },
-    {
-        title: 'На MVP',
-        path: PROJECT_MVP_PAGE_ROUTE,
-        icon: <FaIcons.FaDev />
-    },
+    // {
+    //     title: 'На MVP',
+    //     path: PROJECT_MVP_PAGE_ROUTE,
+    //     icon: <FaIcons.FaDev />
+    // },
     {
         title: 'Платежи',
         path: '/payments',

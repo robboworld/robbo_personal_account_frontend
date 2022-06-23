@@ -28,8 +28,8 @@ import {
     getIsAuth
 } from "@/reducers/login";
 
-import Input from "@/components/Input";
-import Button from "@/components/Button";
+import Input from "@/components/UI/Input";
+import Button from "@/components/UI/Button";
 
 export default () => {
     const [signIn, setSignIn] = useState(false);

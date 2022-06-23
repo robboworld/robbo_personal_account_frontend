@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 
-import { PageLayout } from "@/layouts";
-import { Card, MainContainer, WelcomeText, HardcoreLink } from "./components";
+import { PageLayout, Card } from "@/layouts";
+import { MainContainer, WelcomeText, HardcoreLink } from "./components";
 import SideBar from "@/components/SideBar";
 
 export default () => {
