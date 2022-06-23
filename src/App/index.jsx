@@ -7,7 +7,7 @@ import Loader from '@/components/Loader'
 
 const HomePage = lazy(() => import('@/pages/Home'))
 const LoginPage = lazy(() => import('@/pages/Login'))
-const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
+const ProjectPage = lazy(() => import('@/pages/ProjectPages'))
 const ProjectMvpPage = lazy(() => import('@/pages/ProjectMvp'))
 
 

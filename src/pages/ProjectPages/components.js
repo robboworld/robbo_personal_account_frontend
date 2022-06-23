@@ -29,4 +29,30 @@ export const WelcomeText = styled.h2`
   justify-content: center;
 `
 
+export const ProjectPageItem = styled.li`
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem 0 1.25rem;
+    cursor: pointer;
+    &:hover {
+      background-color: #2F4F4F;
+      color: white;
+      text-align: center;
+      border-radius: 5px;
+      span {
+         color: white;
+      }
+  }
+`
 
+export const ScratchLink = styled.a`
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    font-size: 20px;
+    text-decoration: none;
+    color: black;
+`
