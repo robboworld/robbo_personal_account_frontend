@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import * as FaIcons from "react-icons/fa"
+import { Redirect } from "react-router-dom"
 
 import {
     SideBar,
@@ -9,7 +10,7 @@ import {
     MenuIconClose,
     SidebarMenu,
     // MenuItems,
-    MenuItemLinks
+    MenuItemLinks,
 } from "./components"
 
 import { signOutRequest } from "@/actions"
@@ -19,9 +20,9 @@ import MenuItem from './MenuItem'
 export default ({ }) => {
     const [close, setClose] = useState(false)
     const showSidebar = () => setClose(!close)
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
-    const signOutHandler = (path) => {
+    const signOutHandler = path => {
         if (path === '/login') {
             dispatch(signOutRequest())
             return <Redirect to="/login" />
@@ -47,8 +48,7 @@ export default ({ }) => {
                             key={index}
                             item={item}
                             index={index}
-                            signOutHandler={signOutHandler}>
-                        </MenuItem>
+                            signOutHandler={signOutHandler} />
                     )
                 })}
             </SidebarMenu>

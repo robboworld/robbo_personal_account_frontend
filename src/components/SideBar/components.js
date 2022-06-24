@@ -33,7 +33,7 @@ export const MenuIconClose = styled(Link)`
 `
 
 export const SidebarMenu = styled.div`
-    width: 15vw;
+    width: 16%;
     height: 100vh;
     background-color: #2F4F4F;
     position: fixed;

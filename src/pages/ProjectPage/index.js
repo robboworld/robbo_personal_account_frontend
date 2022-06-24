@@ -1,2 +1,2 @@
-import ProjectPage from "./ProjectPage";
+import ProjectPage from './ProjectPage'
 export default ProjectPage

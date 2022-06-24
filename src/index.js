@@ -13,6 +13,8 @@ import { store } from '@/store'
 import theme from '@/theme'
 import GlobalStyles from '@/globalStyles'
 
+// TO DO Error Boundary
+
 ReactDOM.render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>
