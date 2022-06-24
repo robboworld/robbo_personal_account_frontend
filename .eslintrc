@@ -1,6 +1,15 @@
 {
-  "extends": ["standard", "standard-react", "prettier", "prettier/react"],
-  "plugins": ["prettier", "react-hooks", "cypress"],
+  "extends": [
+    "standard",
+    "standard-react",
+    "prettier",
+    "prettier/react"
+  ],
+  "plugins": [
+    "prettier",
+    "react-hooks",
+    "cypress"
+  ],
   "parser": "babel-eslint",
   "env": {
     "node": true,
@@ -9,7 +18,10 @@
     "cypress/globals": true
   },
   "rules": {
-    "arrow-parens": ["error", "as-needed"],
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
     "semi": "error",
     "prefer-destructuring": "error",
     "max-len": [
@@ -35,11 +47,19 @@
     "react/jsx-filename-extension": [
       2,
       {
-        "extensions": [".jsx"]
+        "extensions": [
+          ".jsx"
+        ]
       }
     ],
-    "jsx-quotes": ["error", "prefer-double"],
-    "comma-dangle": [2, "always-multiline"],
+    "jsx-quotes": [
+      "error",
+      "prefer-double"
+    ],
+    "comma-dangle": [
+      2,
+      "always-multiline"
+    ],
     "prefer-const": [
       "error",
       {
@@ -48,11 +68,16 @@
       }
     ],
     "react/prop-types": "off",
-    "react/jsx-fragments": [1, "element"]
+    "react/jsx-fragments": [
+      1,
+      "element"
+    ]
   },
   "overrides": [
     {
-      "files": ["src/index.js"],
+      "files": [
+        "src/index.js"
+      ],
       "rules": {
         "react/jsx-filename-extension": "off",
         "prettier/prettier": [

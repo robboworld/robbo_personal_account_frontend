@@ -23,4 +23,4 @@ export const StyledInput = styled.input`
     font-weight: 100;
     font-size: 1rem;
   }
-`;
+`

@@ -17,7 +17,7 @@ export default () => {
         { value: 'last-modified', label: 'Последнее изменение' },
         { value: 'alphabet', label: 'A-Я' },
         { value: 'alphabet-reverse', label: 'Я-А' },
-        { value: 'shared', label: ' Доступ' }
+        { value: 'shared', label: ' Доступ' },
     ]
 
     const customStyles = {
@@ -32,8 +32,8 @@ export default () => {
             backgroundColor: state.isSelected ? "green" : "white",
             "&:hover": {
                 backgroundColor: "green",
-                color: "white"
-            }
+                color: "white",
+            },
         }),
 
     }
@@ -42,12 +42,13 @@ export default () => {
     const token = localStorage.getItem('token')
 
     const createNewProjectPageHandler = () => {
-        dispath(createProjectPage(token));
-        window.location.replace('https://scratch.mit.edu/projects/703215105/');
+        dispath(createProjectPage(token))
+        window.location.replace('https://scratch.mit.edu/projects/703215105/')
     }
 
     return (
-        <Flex width={"100%"} margin={"0 0 2rem 0"} justify={"space-between"} align={"center"}>
+        <Flex width="100%" margin="0 0 2rem 0"
+            justify="space-between" align="center">
             <SelectWrapper>
                 <Select
                     styles={customStyles}
@@ -56,7 +57,10 @@ export default () => {
                 />
             </SelectWrapper>
             <CreateNew>
-                <Button content={"Создать новый"} background={"grey"} padding={"0.5rem"} handleSubmit={createNewProjectPageHandler} />
+                <Button content="Создать новый"
+                    background="grey"
+                    padding="0.5rem"
+                    handleSubmit={createNewProjectPageHandler} />
             </CreateNew>
         </Flex>
     )

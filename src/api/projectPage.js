@@ -1,10 +1,10 @@
-import * as axios from "axios";
+import * as axios from "axios"
 
-import instance from "./instance";
+import instance from "./instance"
 
 export const projectPageAPI = {
     createProjectPage(token) {
-        return instance.post('projectPage/',
+        return instance.post('project/',
             {
                 projectPage: {},
             },
@@ -26,10 +26,10 @@ export const projectPageAPI = {
             })
     },
 
-    updateProjectPage(token) {
-        return instance.update('projectPage/',
+    updateProjectPage(token, projectPage) {
+        return instance.put('projectPage/',
             {
-                projectPage: {},
+                projectPage: projectPage,
             },
             {
                 withCredentials: true,
@@ -56,7 +56,7 @@ export const projectPageAPI = {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
-            }
+            },
         )
-    }
+    },
 }

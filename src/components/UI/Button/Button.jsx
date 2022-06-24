@@ -1,5 +1,5 @@
 import React from "react"
-import styled from "styled-components";
+import styled from "styled-components"
 
 export default function Button({ content, handleSubmit, background, width, height, padding, margin }) {
   return <StyledButton
@@ -11,7 +11,7 @@ export default function Button({ content, handleSubmit, background, width, heigh
     margin={margin}
   >
     {content}
-  </StyledButton>;
+         </StyledButton>
 }
 
 const StyledButton = styled.button`
@@ -26,4 +26,4 @@ const StyledButton = styled.button`
   color: white;
   border-radius: 2rem;
   cursor: pointer;
-`;
+`

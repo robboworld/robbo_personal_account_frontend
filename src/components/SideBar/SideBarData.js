@@ -6,12 +6,12 @@ export const SidebarData = [
     {
         title: 'Профиль',
         path: '/profile',
-        icon: <FaIcons.FaUserAlt />
+        icon: <FaIcons.FaUserAlt />,
     },
     {
         title: 'Мои проекты',
         path: MY_PROJECTS_ROUTE,
-        icon: <FaIcons.FaProjectDiagram />
+        icon: <FaIcons.FaProjectDiagram />,
     },
     // {
     //     title: 'На MVP',
@@ -21,26 +21,26 @@ export const SidebarData = [
     {
         title: 'Платежи',
         path: '/payments',
-        icon: <FaIcons.FaCreditCard />
+        icon: <FaIcons.FaCreditCard />,
     },
     {
         title: 'Программа',
         path: '/program',
-        icon: <FaIcons.FaTasks />
+        icon: <FaIcons.FaTasks />,
     },
     {
         title: 'Мои курсы',
         path: '/courses',
-        icon: <FaIcons.FaBook />
+        icon: <FaIcons.FaBook />,
     },
     {
         title: 'Информер',
         path: '/informer',
-        icon: <FaIcons.FaInfo />
+        icon: <FaIcons.FaInfo />,
     },
     {
         title: 'Выйти',
         path: LOGIN_PAGE_ROUTE,
-        icon: <FaIcons.FaSignOutAlt />
-    }
+        icon: <FaIcons.FaSignOutAlt />,
+    },
 ]

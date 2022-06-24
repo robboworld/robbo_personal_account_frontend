@@ -1,5 +1,5 @@
 import React from "react"
-import { StyledInput } from "./components";
+import { StyledInput } from "./components"
 
 export default function Input({ type, placeholder, value, handleInput, onBlur, height, width, padding, margin, fontSize }) {
     return <StyledInput
@@ -7,11 +7,11 @@ export default function Input({ type, placeholder, value, handleInput, onBlur, h
         type={type}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => { handleInput(e.target.value) }}
+        onChange={e => { handleInput(e.target.value) }}
         width={width}
         height={height}
         padding={padding}
         margin={margin}
         fontSize={fontSize}
-    />;
+    />
 }

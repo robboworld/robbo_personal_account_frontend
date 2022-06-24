@@ -1,4 +1,4 @@
-import { handleActions } from "redux-actions";
+import { handleActions } from "redux-actions"
 
 import {
     emailOnChange,
@@ -6,8 +6,8 @@ import {
     signInSucces, signInFailed,
     signUpSuccess, signUpFailed,
     signOutSuccess, signOutFailed,
-    checkAuthSuccess, checkAuthFailed
-} from "@/actions";
+    checkAuthSuccess, checkAuthFailed,
+} from "@/actions"
 
 const INITIAL_STATE = {
     id: '',
@@ -51,14 +51,14 @@ export default handleActions({
     [checkAuthFailed](state, action) {
         return { ...state }
     },
-}, INITIAL_STATE);
+}, INITIAL_STATE)
 
-export const getId = state => state.id;
-export const getEmail = state => state.email;
-export const getPassword = state => state.password;
-export const getToken = state => state.token;
-export const getSignInError = state => state.signInError;
-export const getSignUpError = state => state.signUpError;
-export const getIsAuth = state => state.isAuth;
-export const getSuccessInResponse = state => state.successInResponse;
-export const getSuccessUpResponse = state => state.successUpResponse;
+export const getId = state => state.id
+export const getEmail = state => state.email
+export const getPassword = state => state.password
+export const getToken = state => state.token
+export const getSignInError = state => state.signInError
+export const getSignUpError = state => state.signUpError
+export const getIsAuth = state => state.isAuth
+export const getSuccessInResponse = state => state.successInResponse
+export const getSuccessUpResponse = state => state.successUpResponse

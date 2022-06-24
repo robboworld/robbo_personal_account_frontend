@@ -1,7 +1,7 @@
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import React, { useEffect, useState } from "react"
-import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { deleteProjectPage } from "@/actions"
 
@@ -10,7 +10,7 @@ import { ProjectPageItem, ScratchLink, Description, Avatar, LastModified, Remove
 export default ({ projectPage }) => {
 
     const dispath = useDispatch()
-    const history = useHistory();
+    const history = useHistory()
     const token = localStorage.getItem('token')
 
     const deleteProjectPageHandler = () => {
@@ -18,22 +18,35 @@ export default ({ projectPage }) => {
     }
 
     const toProjectPageHandler = () => {
-        history.push(`/projects/${projectPage.id}`);
+        history.push(`/projects/${projectPage.id}`)
+    }
+
+    const seeInsideHandler = () => {
+        window.location.replace('https://scratch.mit.edu/projects/703215105/editor')
     }
 
     return (
         <ProjectPageItem>
             <Avatar />
-            <Flex direction={"column"} margin={"0 1rem"} justify={"space-between"}>
+            <Flex direction="column" margin="0 1rem"
+                justify="space-between">
                 <ScratchLink onClick={toProjectPageHandler}> {projectPage.title}</ScratchLink>
                 <LastModified>
                     {"Последние изменение: " + projectPage.date}
                 </LastModified>
-                <Button content={"Перейти"} background={"grey"} height={"2rem"} width={"7rem"} padding={"0 1rem"} />
+                <Button
+                    content="Перейти"
+                    background="grey"
+                    height="2rem"
+                    width="7rem"
+                    padding="0 1rem"
+                    handleSubmit={seeInsideHandler}
+                />
             </Flex>
-            <Flex width={"58%"} justify={"flex-end"} align={"center"}>
+            <Flex width="58%" justify="flex-end"
+                align="center">
                 <RemoveProjectPage onClick={deleteProjectPageHandler}>
-                    {"удалить"}
+                    удалить
                 </RemoveProjectPage>
             </Flex>
         </ProjectPageItem>
