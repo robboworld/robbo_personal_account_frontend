@@ -33,10 +33,13 @@ function* signUpSaga(action) {
     }
 }
 
+
 function* signOutSaga(action) {
     try {
         const response = yield call(authAPI.signOut)
+        console.log(response)
         localStorage.removeItem('token')
+        console.log(localStorage.getItem('token'))
         yield put(signOutSuccess())
     } catch (e) {
         alert(e)
