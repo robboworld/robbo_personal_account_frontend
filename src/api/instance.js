@@ -1,12 +1,13 @@
 import * as axios from "axios"
+import config from "@/config"
 
 const instance = axios.create({
-    baseURL: 'http://0.0.0.0:8000/',
+    baseURL: config.backendURL,
     withCredentials: true,
     headers: {
         // 'Access-Control-Allow-Headers': 'x-requested-with, Content-Type, origin, authorization, accept, x-access-token',
         'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Origin': 'http://0.0.0.0:3030/',
+        'Access-Control-Allow-Origin': config.frontendURL,
     },
 })
 
@@ -22,7 +23,7 @@ instance.interceptors.response.use(config => {
     if (error.response.status == 401 && error.config && !error.config._isRetry) {
         originalRequest._isRetry = true
         try {
-            const response = await axios.get(`http://0.0.0.0:8000/auth/refresh`, { withCredentials: true })
+            const response = await axios.get(config.backendURL + `/auth/refresh`, { withCredentials: true })
             localStorage.setItem('token', response.data.accessToken)
             return instance.request(originalRequest)
         } catch (e) {

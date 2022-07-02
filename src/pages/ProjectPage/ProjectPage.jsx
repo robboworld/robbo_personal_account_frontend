@@ -9,9 +9,11 @@ import Button from "@/components/UI/Button"
 import Input from "@/components/UI/Input"
 import { getProjectPageById, onChangeProjectPageTitle, onSharedProject, updateProjectPage } from "@/actions"
 import { getProjectPage } from "@/reducers/projectPage"
+import config from "@/config"
 
 
-export default props => {
+export default (props) => {
+    console.log(props)
     const dispath = useDispatch()
     const [titleEditMode, setTitleEditMode] = useState(false)
     const [instructionsEditMode, setInstructionsEditMode] = useState(false)
@@ -53,7 +55,7 @@ export default props => {
     }
 
     const seeInsideHandler = () => {
-        window.location.replace('https://scratch.mit.edu/projects/703215105/editor')
+        window.location.replace(config.scratchURL + `project/${projectPageId}`)
     }
 
     return (

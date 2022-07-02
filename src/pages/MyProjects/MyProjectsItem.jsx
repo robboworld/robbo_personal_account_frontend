@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux"
 import { deleteProjectPage } from "@/actions"
 
 import { ProjectPageItem, ScratchLink, Description, Avatar, LastModified, RemoveProjectPage } from './components'
+import config from "@/config"
 
 export default ({ projectPage }) => {
 
@@ -22,7 +23,7 @@ export default ({ projectPage }) => {
     }
 
     const seeInsideHandler = () => {
-        window.location.replace('https://scratch.mit.edu/projects/703215105/editor')
+        window.location.replace(config.scratchURL + `project/${projectPage.id}`)
     }
 
     return (
