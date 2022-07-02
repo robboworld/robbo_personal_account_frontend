@@ -6,7 +6,7 @@ import { Redirect, useHistory } from "react-router-dom"
 import { checkAuthRequest } from '@/actions'
 import { getIsAuth } from '@/reducers/login'
 
-export default () => {
+export function useIsAuth() {
     const dispatch = useDispatch()
     const history = useHistory()
     useEffect(() => {

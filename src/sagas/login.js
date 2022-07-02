@@ -33,7 +33,6 @@ function* signUpSaga(action) {
     }
 }
 
-
 function* signOutSaga(action) {
     try {
         const response = yield call(authAPI.signOut)
@@ -52,7 +51,7 @@ function* checkAuthSaga(action) {
         const response = yield call(authAPI.refresh)
         console.log(response)
         localStorage.setItem('token', response.data.accessToken)
-        yield put(checkAuthSuccess())
+        yield put(checkAuthSuccess(response))
     } catch (e) {
         alert(e)
         yield put(checkAuthFailed(e?.message))

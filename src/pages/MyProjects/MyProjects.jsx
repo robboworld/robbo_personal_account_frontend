@@ -8,7 +8,7 @@ import SideBar from "@/components/SideBar"
 import { checkAuthRequest, getAllProjectPages } from '@/actions'
 import { getIsAuth } from '@/reducers/login'
 import { getProjectPages } from "@/reducers/myProjects"
-import useIsAuth from "@/helpers/Hooks/useIsAuth"
+import { useIsAuth } from "@/helpers/useIsAuth"
 
 import ProjectPageItem from "./MyProjectsItem"
 import Flex from "@/components/Flex"

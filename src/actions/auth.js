@@ -1,5 +1,7 @@
 import { createAction } from "redux-actions"
 
+import { parseJwt } from "@/helpers"
+
 import {
     EMAIL_ONCHANGE,
     PASSWORD_ONCHANGE,
@@ -63,5 +65,9 @@ export const signOutRequest = createAction(SIGN_OUT)
 export const signOutSuccess = createAction(SIGN_OUT_SUCCESS)
 export const signOutFailed = createAction(SIGN_OUT_FAILED)
 export const checkAuthRequest = createAction(CHECK_AUTH)
-export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS)
+export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
+    return {
+        id: parseJwt(response.data.accessToken)
+    }
+})
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED)

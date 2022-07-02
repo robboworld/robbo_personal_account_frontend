@@ -46,7 +46,7 @@ export default handleActions({
         return { ...state }
     },
     [checkAuthSuccess](state, action) {
-        return { ...state, isAuth: true }
+        return { ...state, isAuth: true, id: action.payload.id }
     },
     [checkAuthFailed](state, action) {
         return { ...state }
