@@ -1,6 +1,7 @@
 import { handleActions } from "redux-actions"
 
 import {
+    createProjectPage,
     createProjectPageFailed, createProjectPageSuccess,
     deleteProjectPageFailed, deleteProjectPageSuccess,
     getAllProjectPagesFailed, getAllProjectPagesSuccess,
@@ -8,6 +9,7 @@ import {
 
 const INITIAL_STATE = {
     newProjectId: '',
+    isFetching: false,
     projectPages: [
         {
             id: '1',
@@ -34,7 +36,7 @@ export default handleActions({
         return { ...state }
     },
     [createProjectPageSuccess](state, action) {
-        return { ...state }
+        return { ...state, newProjectId: action.payload.response.data.projectId, isFetching: false }
     },
     [createProjectPageFailed](state, action) {
         return { ...state }
@@ -48,3 +50,5 @@ export default handleActions({
 }, INITIAL_STATE)
 
 export const getProjectPages = state => state.projectPages
+export const getNewProjectId = state => state.newProjectId
+export const getIsFetching = state => state.isFetching

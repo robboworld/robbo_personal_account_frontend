@@ -23,7 +23,7 @@ export default ({ projectPage }) => {
     }
 
     const seeInsideHandler = () => {
-        window.location.replace(config.scratchURL + `project/${projectPage.id}`)
+        window.location.replace(config.scratchURL + `?#${projectPage.id}`)
     }
 
     return (

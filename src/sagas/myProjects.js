@@ -1,4 +1,4 @@
-import { call, put, take, takeLatest } from 'redux-saga/effects'
+import { call, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
 import { projectPageAPI } from '@/api'
 import {
     createProjectPage, createProjectPageFailed, createProjectPageSuccess,
@@ -70,7 +70,7 @@ function* deleteProjectPageSaga(action) {
 export function* myProjectsSaga() {
     yield takeLatest(getAllProjectPages, getAllProjectPagesSaga)
     yield takeLatest(getProjectPageById, getProjectPageByIdSaga)
-    yield takeLatest(createProjectPage, createProjectPageSaga)
+    yield takeEvery(createProjectPage, createProjectPageSaga)
     yield takeLatest(updateProjectPage, updateProjectPageSaga)
     yield takeLatest(deleteProjectPage, deleteProjectPageSaga)
 }

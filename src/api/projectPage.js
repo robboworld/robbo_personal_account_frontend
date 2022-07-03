@@ -4,7 +4,7 @@ import instance from "./instance"
 
 export const projectPageAPI = {
     createProjectPage(token) {
-        return instance.post('project/',
+        return instance.post('projectPage/',
             {
                 projectPage: {},
             },
