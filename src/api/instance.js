@@ -1,25 +1,32 @@
 import * as axios from "axios"
 import config from "@/config"
 
+
 const instance = axios.create({
-    baseURL: config.backendURL,
-    withCredentials: true,
-    headers: {
-        // 'Access-Control-Allow-Headers': 'x-requested-with, Content-Type, origin, authorization, accept, x-access-token',
-        'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Origin': config.frontendURL,
-    },
+  baseURL: 'http://localhost:8000/',
+  withCredentials: true,
+  headers: {
+    // 'Access-Control-Allow-Headers': 'x-requested-with, Content-Type, origin, authorization, accept, x-access-token',
+    'Access-Control-Allow-Credentials': true,
+    'Access-Control-Allow-Origin': 'http://localhost:3030/',
+  },
+
 })
 
 instance.interceptors.request.use(config => {
-    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
-    return config
+  config.headers.Authorization = `Bearer ${localStorage.getItem(
+    'token',
+  )}`
+  return config
 })
 
-instance.interceptors.response.use(config => {
+instance.interceptors.response.use(
+  config => {
     return config
-}, async error => {
+  },
+  async error => {
     const originalRequest = error.config
+
     if (error.response.status == 401 && error.config && !error.config._isRetry) {
         originalRequest._isRetry = true
         try {
@@ -29,8 +36,10 @@ instance.interceptors.response.use(config => {
         } catch (e) {
             console.log('НЕ АВТОРИЗОВАН')
         }
+
     }
     throw error
-})
+  },
+)
 
 export default instance
