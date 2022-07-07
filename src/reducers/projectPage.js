@@ -4,6 +4,8 @@ import { handleActions } from "redux-actions"
 
 import {
     getProjectPageByIdFailed, getProjectPageByIdSuccess,
+    onChangeProjectPageInstruction,
+    onChangeProjectPageNotes,
     onChangeProjectPageTitle,
     onSharedProject,
     updateProjectPageFailed, updateProjectPageSuccess,
@@ -38,6 +40,12 @@ export default handleActions({
     },
     [onChangeProjectPageTitle](state, action) {
         return { ...state, projectPage: { ...state.projectPage, title: action.payload.title } }
+    },
+    [onChangeProjectPageInstruction](state, action) {
+        return { ...state, projectPage: { ...state.projectPage, instructions: action.payload.instruction } }
+    },
+    [onChangeProjectPageNotes](state, action) {
+        return { ...state, projectPage: { ...state.projectPage, notes: action.payload.notes } }
     },
     [onSharedProject](state, action) {
         return { ...state, projectPage: { ...state.projectPage, isShared: action.payload.isShared } }

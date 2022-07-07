@@ -7,9 +7,10 @@ import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import Input from "@/components/UI/Input"
-import { getProjectPageById, onChangeProjectPageTitle, onSharedProject, updateProjectPage } from "@/actions"
+import { getProjectPageById, onChangeProjectPageInstruction, onChangeProjectPageNotes, onChangeProjectPageTitle, onSharedProject, updateProjectPage } from "@/actions"
 import { getProjectPage } from "@/reducers/projectPage"
 import config from "@/config"
+import Textarea from "@/components/UI/TextArea"
 
 
 export default (props) => {
@@ -30,6 +31,14 @@ export default (props) => {
 
     const onChangeTitleHandler = (title) => {
         dispath(onChangeProjectPageTitle(title))
+    }
+
+    const onChangeInstructionsHanler = (instructions) => {
+        dispath(onChangeProjectPageInstruction(instructions))
+    }
+
+    const onChangeNotesHanler = (notes) => {
+        dispath(onChangeProjectPageNotes(notes))
     }
 
     const onBlurHandler = (element) => {
@@ -114,36 +123,48 @@ export default (props) => {
                                 height="100%" align="center">
                                 <h4>Инструкция</h4>
                                 {
-                                    // instructionsEditMode ?
-                                    //     // TODO textarea
-                                    //     <Input
-                                    //         onBlur={() => { setInstructionsEditMode(false) }}
-                                    //         value={projectPage.instructions}
-                                    //         width="100%"
-
-                                    //     />
-                                    //     :
-                                    //     <Instructions onClick={() => { setInstructionsEditMode(true) }}>
-                                    //         {
-                                    //             projectPage.instructions
-                                    //         }
-                                    //     </Instructions>
-                                    <Instructions>
-                                        {
-                                            projectPage.instructions
-                                        }
-                                    </Instructions>
+                                    instructionsEditMode ?
+                                        <Textarea
+                                            onBlur={() => { onBlurHandler("instructions") }}
+                                            handleInput={onChangeInstructionsHanler}
+                                            value={projectPage.instructions}
+                                            width={"100%"}
+                                            height={"15vh"}
+                                            padding={"2rem"}
+                                            placeholder={"Инструкция здесь"}
+                                            fontSize={"1vw"}
+                                            margin={"1rem 0"}
+                                        /> :
+                                        <Instructions onClick={() => { setInstructionsEditMode(true) }}>
+                                            {
+                                                projectPage.instructions
+                                            }
+                                        </Instructions>
                                 }
 
                             </Flex>
                             <Flex direction="column" width="100%"
                                 height="100%" align="center">
                                 <h4>Примечание</h4>
-                                <Notes>
-                                    {
-                                        projectPage.notes
-                                    }
-                                </Notes>
+                                {
+                                    notesEditMode ?
+                                        <Textarea
+                                            onBlur={() => { onBlurHandler("notes") }}
+                                            handleInput={onChangeNotesHanler}
+                                            value={projectPage.notes}
+                                            width={"100%"}
+                                            height={"15vh"}
+                                            padding={"2rem"}
+                                            placeholder={"Примечание здесь"}
+                                            fontSize={"1vw"}
+                                            margin={"1rem 0"}
+                                        /> :
+                                        <Notes onClick={() => { setNotesEditMode(true) }}>
+                                            {
+                                                projectPage.notes
+                                            }
+                                        </Notes>
+                                }
                             </Flex>
                         </Flex>
 
