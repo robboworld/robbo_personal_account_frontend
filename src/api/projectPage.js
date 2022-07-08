@@ -39,7 +39,7 @@ export const projectPageAPI = {
             })
     },
 
-    getProjectPageById(token) {
+    getProjectPageById(token, id) {
         return instance.get(`projectPage/${id}`,
             {
                 withCredentials: true,

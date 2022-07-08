@@ -24,7 +24,8 @@ function* getAllProjectPagesSaga(action) {
 function* getProjectPageByIdSaga(action) {
     try {
 
-        const response = yield call(projectPageAPI.getProjectPageById)
+        const { token, id } = action.payload
+        const response = yield call(projectPageAPI.getProjectPageById, token, id)
         console.log(response)
 
         yield put(getProjectPageByIdSuccess(response))

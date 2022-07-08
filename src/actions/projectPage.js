@@ -26,21 +26,22 @@ export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILE
 })
 
 
-export const getProjectPageById = createAction(GET_PROJECT_PAGE_BY_ID, () => {
+export const getProjectPageById = createAction(GET_PROJECT_PAGE_BY_ID, (token, id) => {
     return {
-
+        token,
+        id
     }
 })
 
-export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, () => {
+export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, (response) => {
     return {
-
+        response
     }
 })
 
-export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, () => {
+export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, (err) => {
     return {
-
+        err
     }
 })
 

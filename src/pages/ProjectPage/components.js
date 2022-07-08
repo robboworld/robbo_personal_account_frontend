@@ -36,7 +36,7 @@ export const Instructions = styled.div`
   width: 100%;
   height: 15vh;
   margin: 1rem 0;
-  padding: 2rem;
+  padding: 1rem;
   overflow: auto;
   font-size: 1vw;
 `
@@ -47,7 +47,7 @@ border-radius: 0.5rem;
 width: 100%;
 height: 15vh;
 margin: 1rem 0;
-padding: 2rem;
+padding: 1rem;
 overflow: auto;
 font-size: 1vw;
 `

@@ -3,6 +3,7 @@
 import { handleActions } from "redux-actions"
 
 import {
+    getProjectPageById,
     getProjectPageByIdFailed, getProjectPageByIdSuccess,
     onChangeProjectPageInstruction,
     onChangeProjectPageNotes,
@@ -23,15 +24,18 @@ const INITIAL_STATE = {
         notes: '',
         preview: '',
     },
-
+    loading: false,
 }
 
 export default handleActions({
+    [getProjectPageById](state, action) {
+        return { ...state, loading: true }
+    },
     [getProjectPageByIdSuccess](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [getProjectPageByIdFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [updateProjectPageSuccess](state, action) {
         return { ...state }
@@ -54,3 +58,4 @@ export default handleActions({
 }, INITIAL_STATE)
 
 export const getProjectPage = state => state.projectPage
+export const getProjectPageLoading = state => state.loading 

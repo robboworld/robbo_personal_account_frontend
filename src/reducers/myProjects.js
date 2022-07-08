@@ -55,4 +55,4 @@ export default handleActions({
 
 export const getProjectPages = state => state.projectPages
 export const getNewProjectId = state => state.newProjectId
-export const getLoading = state => state.loading
+export const getMyProjectsLoading = state => state.loading
