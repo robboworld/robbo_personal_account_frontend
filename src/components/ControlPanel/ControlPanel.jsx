@@ -9,14 +9,13 @@ import { createProjectPage } from '@/actions'
 import Flex from '@/components/Flex'
 import Button from '../UI/Button'
 import { useSelector } from 'react-redux'
-import { getIsFetching, getNewProjectId } from '@/reducers/myProjects'
+import { getNewProjectId } from '@/reducers/myProjects'
 import config from '@/config'
 
 export default () => {
 
     const dispath = useDispatch()
     const newProjectId = useSelector(state => getNewProjectId(state.myProjects))
-    const isFetching = useSelector(state => getIsFetching(state.myProjects))
 
     const options = [
         { value: 'last-modified', label: 'Последнее изменение' },

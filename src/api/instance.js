@@ -4,11 +4,17 @@ import config from "@/config"
 
 const instance = axios.create({
   baseURL: config.backendURL[0],
-  withCredentials: true,
+  // withCredentials: true,
   headers: {
     // 'Access-Control-Allow-Headers': 'x-requested-with, Content-Type, origin, authorization, accept, x-access-token',
-    'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Origin': config.frontendURL[0],
+    // 'Access-Control-Allow-Credentials': true,
+    // 'Access-Control-Allow-Origin': config.frontendURL[0],
+    // 'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Z-Key, Authorization',
+    'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, OPTIONS',
+    // 'Access-Control-Allow-Origin': 'http://0.0.0.0:8000/',
   },
 
 })

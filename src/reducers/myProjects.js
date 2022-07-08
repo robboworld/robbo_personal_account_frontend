@@ -4,12 +4,13 @@ import {
     createProjectPage,
     createProjectPageFailed, createProjectPageSuccess,
     deleteProjectPageFailed, deleteProjectPageSuccess,
+    getAllProjectPages,
     getAllProjectPagesFailed, getAllProjectPagesSuccess,
 } from "@/actions"
 
 const INITIAL_STATE = {
     newProjectId: '',
-    isFetching: false,
+    loading: false,
     projectPages: [
         {
             id: '1',
@@ -29,11 +30,14 @@ const INITIAL_STATE = {
 }
 
 export default handleActions({
+    [getAllProjectPages](state, action) {
+        return { ...state, loading: true }
+    },
     [getAllProjectPagesSuccess](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [getAllProjectPagesFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [createProjectPageSuccess](state, action) {
         return { ...state, newProjectId: action.payload.response.data.projectId, isFetching: false }
@@ -51,4 +55,4 @@ export default handleActions({
 
 export const getProjectPages = state => state.projectPages
 export const getNewProjectId = state => state.newProjectId
-export const getIsFetching = state => state.isFetching
+export const getLoading = state => state.loading

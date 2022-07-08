@@ -14,7 +14,6 @@ import Textarea from "@/components/UI/TextArea"
 
 
 export default (props) => {
-    console.log(props)
     const dispath = useDispatch()
     const [titleEditMode, setTitleEditMode] = useState(false)
     const [instructionsEditMode, setInstructionsEditMode] = useState(false)
@@ -33,8 +32,8 @@ export default (props) => {
         dispath(onChangeProjectPageTitle(title))
     }
 
-    const onChangeInstructionsHanler = (instructions) => {
-        dispath(onChangeProjectPageInstruction(instructions))
+    const onChangeInstructionsHanler = (instruction) => {
+        dispath(onChangeProjectPageInstruction(instruction))
     }
 
     const onChangeNotesHanler = (notes) => {
@@ -47,7 +46,7 @@ export default (props) => {
                 setTitleEditMode(false)
                 dispath(updateProjectPage(token, projectPage))
                 return
-            case "instructions":
+            case "instruction":
                 setInstructionsEditMode(false)
                 dispath(updateProjectPage(token, projectPage))
                 return
@@ -125,9 +124,9 @@ export default (props) => {
                                 {
                                     instructionsEditMode ?
                                         <Textarea
-                                            onBlur={() => { onBlurHandler("instructions") }}
+                                            onBlur={() => { onBlurHandler("instruction") }}
                                             handleInput={onChangeInstructionsHanler}
-                                            value={projectPage.instructions}
+                                            value={projectPage.instruction}
                                             width={"100%"}
                                             height={"15vh"}
                                             padding={"2rem"}
@@ -137,7 +136,7 @@ export default (props) => {
                                         /> :
                                         <Instructions onClick={() => { setInstructionsEditMode(true) }}>
                                             {
-                                                projectPage.instructions
+                                                projectPage.instruction
                                             }
                                         </Instructions>
                                 }
