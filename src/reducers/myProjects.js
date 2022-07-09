@@ -1,6 +1,7 @@
 import { handleActions } from "redux-actions"
 
 import {
+    clearMyProjectsState,
     createProjectPage,
     createProjectPageFailed, createProjectPageSuccess,
     deleteProjectPageFailed, deleteProjectPageSuccess,
@@ -11,22 +12,7 @@ import {
 const INITIAL_STATE = {
     newProjectId: '',
     loading: false,
-    projectPages: [
-        {
-            id: '1',
-            title: 'Untitled-1',
-            date: '2022.06.15',
-            linkScratch: 'http://0.0.0.0:8601/',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-        {
-            id: '2',
-            title: 'Untitled-2',
-            date: '2022.06.15',
-            linkScratch: 'http://0.0.0.0:8601/',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-    ],
+    projectPages: [],
 }
 
 export default handleActions({
@@ -34,7 +20,8 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getAllProjectPagesSuccess](state, action) {
-        return { ...state, loading: false }
+        console.log(action)
+        return { ...state, loading: false, projectPages: action.payload.response.data.projectPages }
     },
     [getAllProjectPagesFailed](state, action) {
         return { ...state, loading: false }
@@ -50,6 +37,9 @@ export default handleActions({
     },
     [deleteProjectPageFailed](state, action) {
         return { ...state }
+    },
+    [clearMyProjectsState](state, action) {
+        return { ...state, newProjectId: '', loading: false, projectPages: [] }
     },
 }, INITIAL_STATE)
 

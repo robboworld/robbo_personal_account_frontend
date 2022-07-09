@@ -15,15 +15,15 @@ export default ({ projectPage }) => {
     const token = localStorage.getItem('token')
 
     const deleteProjectPageHandler = () => {
-        dispath(deleteProjectPage(token, projectPage.id))
+        dispath(deleteProjectPage(token, projectPage.projectId))
     }
 
     const toProjectPageHandler = () => {
-        history.push(`/projects/${projectPage.id}`)
+        history.push(`/projects/${projectPage.projectId}`)
     }
 
     const seeInsideHandler = () => {
-        window.location.replace(config.scratchURL + `?#${projectPage.id}`)
+        window.location.replace(config.scratchURL + `?#${projectPage.projectId}`)
     }
 
     return (
@@ -33,7 +33,7 @@ export default ({ projectPage }) => {
                 justify="space-between">
                 <ScratchLink onClick={toProjectPageHandler}> {projectPage.title}</ScratchLink>
                 <LastModified>
-                    {"Последние изменение: " + projectPage.date}
+                    {"Последние изменение: " + projectPage.lastModified}
                 </LastModified>
                 <Button
                     content="Перейти"

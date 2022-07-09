@@ -3,6 +3,7 @@
 import { handleActions } from "redux-actions"
 
 import {
+    clearProjectPageState,
     getProjectPageById,
     getProjectPageByIdFailed, getProjectPageByIdSuccess,
     onChangeProjectPageInstruction,
@@ -13,17 +14,7 @@ import {
 } from "@/actions"
 
 const INITIAL_STATE = {
-    projectPage:
-    {
-        projectId: '1',
-        title: 'Untitled-1',
-        lastModified: '2022.06.15',
-        isShared: false,
-        linkScratch: 'http://0.0.0.0:8601/',
-        instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        notes: '',
-        preview: '',
-    },
+    projectPage: {},
     loading: false,
 }
 
@@ -32,7 +23,7 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getProjectPageByIdSuccess](state, action) {
-        return { ...state, loading: false }
+        return { ...state, loading: false, projectPage: action.payload.response.data.projectPage }
     },
     [getProjectPageByIdFailed](state, action) {
         return { ...state, loading: false }
@@ -54,6 +45,9 @@ export default handleActions({
     },
     [onSharedProject](state, action) {
         return { ...state, projectPage: { ...state.projectPage, isShared: action.payload.isShared } }
+    },
+    [clearProjectPageState](state, action) {
+        return { ...state, loading: false, projectPage: {} }
     }
 }, INITIAL_STATE)
 

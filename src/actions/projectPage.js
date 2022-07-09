@@ -13,15 +13,15 @@ export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, token => {
     }
 })
 
-export const getAllProjectPagesSuccess = createAction(GET_ALL_PROJECT_PAGES_SUCCESS, () => {
+export const getAllProjectPagesSuccess = createAction(GET_ALL_PROJECT_PAGES_SUCCESS, (response) => {
     return {
-
+        response
     }
 })
 
-export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILED, () => {
+export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILED, (err) => {
     return {
-
+        err
     }
 })
 
@@ -125,3 +125,6 @@ export const onSharedProject = createAction(ONSHARED_PROJECT, (isShared) => {
         isShared
     }
 })
+
+export const clearProjectPageState = createAction()
+export const clearMyProjectsState = createAction()

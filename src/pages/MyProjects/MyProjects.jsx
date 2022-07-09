@@ -5,7 +5,7 @@ import { PageLayout, Card } from "@/layouts"
 import { MainContainer, WelcomeText } from "./components"
 import SideBar from "@/components/SideBar"
 
-import { checkAuthRequest, getAllProjectPages } from '@/actions'
+import { checkAuthRequest, clearMyProjectsState, getAllProjectPages } from '@/actions'
 import { getIsAuth } from '@/reducers/login'
 import { getMyProjectsLoading, getProjectPages } from "@/reducers/myProjects"
 import { useIsAuth } from "@/helpers/useIsAuth"
@@ -22,6 +22,7 @@ export default () => {
     const token = localStorage.getItem('token')
     useEffect(() => {
         dispath(getAllProjectPages(token))
+        return dispath(clearMyProjectsState())
     }, [])
 
     const projectPages = useSelector(state => getProjectPages(state.myProjects))

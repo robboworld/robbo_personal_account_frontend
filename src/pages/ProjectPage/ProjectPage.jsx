@@ -7,7 +7,7 @@ import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import Input from "@/components/UI/Input"
-import { getProjectPageById, onChangeProjectPageInstruction, onChangeProjectPageNotes, onChangeProjectPageTitle, onSharedProject, updateProjectPage } from "@/actions"
+import { clearProjectPageState, getProjectPageById, onChangeProjectPageInstruction, onChangeProjectPageNotes, onChangeProjectPageTitle, onSharedProject, updateProjectPage } from "@/actions"
 import { getProjectPage, getProjectPageLoading } from "@/reducers/projectPage"
 import config from "@/config"
 import Textarea from "@/components/UI/TextArea"
@@ -23,8 +23,8 @@ export default (props) => {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        console.log("gmf")
         dispath(getProjectPageById(token, projectPageId))
+        return dispath(clearProjectPageState())
     }, [])
 
     const projectPage = useSelector(state => getProjectPage(state.projectPage))
