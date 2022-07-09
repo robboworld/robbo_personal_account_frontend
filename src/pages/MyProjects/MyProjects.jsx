@@ -22,7 +22,9 @@ export default () => {
     const token = localStorage.getItem('token')
     useEffect(() => {
         dispath(getAllProjectPages(token))
-        return dispath(clearMyProjectsState())
+        return () => {
+            dispath(clearMyProjectsState())
+        }
     }, [])
 
     const projectPages = useSelector(state => getProjectPages(state.myProjects))
@@ -42,6 +44,7 @@ export default () => {
                             return (
                                 <ProjectPageItem
                                     projectPage={projectPage}
+                                    projectPageIndex={index}
                                     key={index}
                                 />
                             )

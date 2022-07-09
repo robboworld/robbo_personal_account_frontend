@@ -24,7 +24,9 @@ export default (props) => {
 
     useEffect(() => {
         dispath(getProjectPageById(token, projectPageId))
-        return dispath(clearProjectPageState())
+        return () => {
+            dispath(clearProjectPageState())
+        }
     }, [])
 
     const projectPage = useSelector(state => getProjectPage(state.projectPage))

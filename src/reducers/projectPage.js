@@ -10,6 +10,7 @@ import {
     onChangeProjectPageNotes,
     onChangeProjectPageTitle,
     onSharedProject,
+    updateProjectPage,
     updateProjectPageFailed, updateProjectPageSuccess,
 } from "@/actions"
 
@@ -28,11 +29,14 @@ export default handleActions({
     [getProjectPageByIdFailed](state, action) {
         return { ...state, loading: false }
     },
+    [updateProjectPage](state, action) {
+        return { ...state, loading: true }
+    },
     [updateProjectPageSuccess](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [updateProjectPageFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: true }
     },
     [onChangeProjectPageTitle](state, action) {
         return { ...state, projectPage: { ...state.projectPage, title: action.payload.title } }

@@ -8,14 +8,14 @@ import { deleteProjectPage } from "@/actions"
 import { ProjectPageItem, ScratchLink, Description, Avatar, LastModified, RemoveProjectPage } from './components'
 import config from "@/config"
 
-export default ({ projectPage }) => {
+export default ({ projectPageIndex, projectPage }) => {
 
     const dispath = useDispatch()
     const history = useHistory()
     const token = localStorage.getItem('token')
 
     const deleteProjectPageHandler = () => {
-        dispath(deleteProjectPage(token, projectPage.projectId))
+        dispath(deleteProjectPage(token, projectPage.projectId, projectPageIndex))
     }
 
     const toProjectPageHandler = () => {

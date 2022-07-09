@@ -4,7 +4,11 @@ import {
     GET_ALL_PROJECT_PAGES, GET_ALL_PROJECT_PAGES_FAILED, GET_ALL_PROJECT_PAGES_SUCCESS,
     GET_PROJECT_PAGE_BY_ID, GET_PROJECT_PAGE_BY_ID_FAILED, GET_PROJECT_PAGE_BY_ID_SUCCESS,
     UPDATE_PROJECT_PAGE, UPDATE_PROJECT_PAGE_FAILED, UPDATE_PROJECT_PAGE_SUCCESS,
-    CREATE_PROJECT_PAGE, CREATE_PROJECT_PAGE_FAILED, CREATE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE, DELETE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE_FAILED, ONCHANGE_PROJECT_PAGE_TITLE, ONCHANGE_PROJECT_PAGE_INSTRUCTION, ONCHANGE_PROJECT_PAGE_NOTES, ONSHARED_PROJECT,
+    CREATE_PROJECT_PAGE, CREATE_PROJECT_PAGE_FAILED, CREATE_PROJECT_PAGE_SUCCESS,
+    DELETE_PROJECT_PAGE, DELETE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE_FAILED,
+    ONCHANGE_PROJECT_PAGE_TITLE, ONCHANGE_PROJECT_PAGE_INSTRUCTION, ONCHANGE_PROJECT_PAGE_NOTES,
+    ONSHARED_PROJECT,
+    CLEAR_PROJECT_PAGE_STATE, CLEAR_MY_PROJECTS_STATE,
 } from "@/constants"
 
 export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, token => {
@@ -83,16 +87,17 @@ export const updateProjectPageFailed = createAction(UPDATE_PROJECT_PAGE_FAILED, 
     }
 })
 
-export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (token, projectPageId) => {
+export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (token, projectPageId, projectPageIndex) => {
     return {
         token,
         projectPageId,
+        projectPageIndex
     }
 })
 
-export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, response => {
+export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, projectPageIndex => {
     return {
-        response,
+        projectPageIndex,
     }
 })
 
@@ -126,5 +131,5 @@ export const onSharedProject = createAction(ONSHARED_PROJECT, (isShared) => {
     }
 })
 
-export const clearProjectPageState = createAction()
-export const clearMyProjectsState = createAction()
+export const clearProjectPageState = createAction(CLEAR_PROJECT_PAGE_STATE)
+export const clearMyProjectsState = createAction(CLEAR_MY_PROJECTS_STATE)

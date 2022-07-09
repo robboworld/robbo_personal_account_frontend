@@ -58,11 +58,11 @@ function* updateProjectPageSaga(action) {
 
 function* deleteProjectPageSaga(action) {
     try {
-        const { token, projectPageId } = action.payload
+        const { token, projectPageId, projectPageIndex } = action.payload
         const response = yield call(projectPageAPI.deleteProjectPage, token, projectPageId)
         console.log(response)
 
-        yield put(deleteProjectPageSuccess(response))
+        yield put(deleteProjectPageSuccess(projectPageIndex))
     } catch (e) {
         yield put(deleteProjectPageFailed(e.message))
     }

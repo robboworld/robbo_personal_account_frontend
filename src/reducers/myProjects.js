@@ -4,6 +4,7 @@ import {
     clearMyProjectsState,
     createProjectPage,
     createProjectPageFailed, createProjectPageSuccess,
+    deleteProjectPage,
     deleteProjectPageFailed, deleteProjectPageSuccess,
     getAllProjectPages,
     getAllProjectPagesFailed, getAllProjectPagesSuccess,
@@ -32,11 +33,16 @@ export default handleActions({
     [createProjectPageFailed](state, action) {
         return { ...state }
     },
+    [deleteProjectPage](state, action) {
+        return { ...state, loading: true }
+    },
     [deleteProjectPageSuccess](state, action) {
-        return { ...state }
+        let newProjectPages = [...state.projectPages];
+        newProjectPages.splice(action.payload.projectPageIndex, 1)
+        return { ...state, loading: false, projectPages: newProjectPages }
     },
     [deleteProjectPageFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [clearMyProjectsState](state, action) {
         return { ...state, newProjectId: '', loading: false, projectPages: [] }
