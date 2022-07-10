@@ -71,7 +71,7 @@ export const checkAuthRequest = createAction(CHECK_AUTH, token => {
 })
 export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
     return {
-        // id: parseJwt(response.data.accessToken)
+        id: response.data
     }
 })
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED)

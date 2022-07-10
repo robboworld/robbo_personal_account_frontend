@@ -11,13 +11,7 @@ export function useIsAuth() {
     const history = useHistory()
     useEffect(() => {
         if (localStorage.getItem('token')) {
-            dispatch(checkAuthRequest())
+            dispatch(checkAuthRequest(localStorage.getItem('token')))
         }
     }, [])
-
-    const isAuth = useSelector(state => getIsAuth(state.login))
-    if (!isAuth) {
-        // return <Redirect to={"/login"} />;
-        history.push(`/login`)
-    }
 }

@@ -61,7 +61,6 @@ export default () => {
     }
 
     if (isAuth) {
-        console.log("ОТПРАВЛЯЮ НА ДОМАШНЮЮ")
         return <Redirect to="/" />
     }
 

@@ -23,11 +23,10 @@ export default ({ }) => {
     const showSidebar = () => setClose(!close)
     const dispatch = useDispatch()
     const isAuth = useSelector(state => getIsAuth(state.login))
+
     const signOutHandler = path => {
         if (path === '/login') {
             dispatch(signOutRequest())
-            console.log(isAuth)
-            // return <Redirect to="/login" />
         }
     }
 

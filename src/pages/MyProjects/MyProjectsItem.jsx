@@ -1,12 +1,14 @@
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import React, { useEffect, useState } from "react"
+import { toast } from 'react-toastify';
 import { useHistory } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { deleteProjectPage } from "@/actions"
 
 import { ProjectPageItem, ScratchLink, Description, Avatar, LastModified, RemoveProjectPage } from './components'
 import config from "@/config"
+
 
 export default ({ projectPageIndex, projectPage }) => {
 

@@ -1,4 +1,4 @@
-import { call, put, take, takeLatest } from 'redux-saga/effects'
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import { authAPI } from '@/api'
 import {
     signInSucces, signInFailed, signUpSuccess,
@@ -6,6 +6,7 @@ import {
     signOutRequest, signOutSuccess, signOutFailed,
     checkAuthRequest, checkAuthSuccess, checkAuthFailed,
 } from '@/actions'
+import { toast } from 'react-toastify'
 
 function* signInSaga(action) {
     try {
@@ -16,6 +17,7 @@ function* signInSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signInSucces(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(signInFailed(e.message))
     }
 }
@@ -29,19 +31,19 @@ function* signUpSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signUpSuccess(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(signUpFailed(e.message))
     }
 }
 
 function* signOutSaga(action) {
     try {
+        localStorage.removeItem('token')
         const response = yield call(authAPI.signOut)
         console.log(response)
-        localStorage.removeItem('token')
-        console.log(localStorage.getItem('token'))
         yield put(signOutSuccess())
     } catch (e) {
-        alert(e)
+        toast.error(e?.message)
         yield put(signOutFailed(e.message))
     }
 }
@@ -54,7 +56,8 @@ function* checkAuthSaga(action) {
         // localStorage.setItem('token', response.data.accessToken)
         yield put(checkAuthSuccess(response))
     } catch (e) {
-        alert(e)
+        // alert(e)
+        toast.error(e?.message)
         yield put(checkAuthFailed(e?.message))
     }
 }
@@ -62,6 +65,6 @@ function* checkAuthSaga(action) {
 export function* loginSaga() {
     yield takeLatest(signInRequest, signInSaga)
     yield takeLatest(signUpRequest, signUpSaga)
-    yield takeLatest(signOutRequest, signOutSaga)
+    yield takeEvery(signOutRequest, signOutSaga)
     yield takeLatest(checkAuthRequest, checkAuthSaga)
 }

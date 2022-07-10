@@ -21,7 +21,6 @@ export default () => {
   const isAuth = useSelector(state => getIsAuth(state.login))
 
   if (!isAuth) {
-    console.log("REDIRECT TO LOGIn")
     return <Redirect to="/login" />
   }
 

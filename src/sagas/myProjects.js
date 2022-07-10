@@ -17,6 +17,7 @@ function* getAllProjectPagesSaga(action) {
 
         yield put(getAllProjectPagesSuccess(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(getAllProjectPagesFailed(e.message))
     }
 }
@@ -30,6 +31,7 @@ function* getProjectPageByIdSaga(action) {
 
         yield put(getProjectPageByIdSuccess(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(getProjectPageByIdFailed(e.message))
     }
 }
@@ -41,6 +43,7 @@ function* createProjectPageSaga(action) {
         console.log(response)
         yield put(createProjectPageSuccess(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(createProjectPageFailed(e.message))
     }
 }
