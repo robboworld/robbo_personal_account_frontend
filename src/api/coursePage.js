@@ -3,8 +3,8 @@ import * as axios from "axios"
 import instance from "./instance"
 
 export const coursePageAPI = {
-    getCoursePageById(token) {
-        return instance.get(`coursePage/${id}`,
+    getCoursePageById(token, id) {
+        return instance.get(`course/getCourseContent/${id}`,
             {
                 withCredentials: true,
                 headers: {
@@ -14,7 +14,7 @@ export const coursePageAPI = {
     },
 
     getAllCoursePages(token) {
-        return instance.get('coursePage/',
+        return instance.get('course/getCoursesByUser',
             {
                 withCredentials: true,
                 headers: {

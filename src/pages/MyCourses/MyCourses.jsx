@@ -5,14 +5,15 @@ import { PageLayout, Card } from "@/layouts"
 import { MainContainer, WelcomeText } from "./components"
 import SideBar from "@/components/SideBar"
 
-import { checkAuthRequest, getAllProjectPages } from '@/actions'
+import { checkAuthRequest, clearAllCoursePagesState, getAllProjectPages } from '@/actions'
 import { getIsAuth } from '@/reducers/login'
-import { getCoursePages } from "@/reducers/myCourses"
+import { getCoursePages, getCoursePagesLoading } from "@/reducers/myCourses"
 import { useIsAuth } from "@/helpers/useIsAuth"
 
 import { getAllCoursePages } from "@/actions"
 import CoursePageItem from "./MyCoursesItem"
 import Flex from "@/components/Flex"
+import Loader from "../../components/Loader"
 
 export default () => {
     const dispatch = useDispatch()
@@ -21,9 +22,14 @@ export default () => {
     const token = localStorage.getItem('token')
     useEffect(() => {
         dispatch(getAllCoursePages(token))
+
+        return () => {
+            dispatch(clearAllCoursePagesState())
+        }
     }, [])
 
     const coursePages = useSelector(state => getCoursePages(state.myCourses))
+    const loading = useSelector(state => getCoursePagesLoading(state.myCourses))
 
     return (
         <PageLayout>
@@ -32,14 +38,17 @@ export default () => {
                 <Flex direction="column" align="center">
                     <WelcomeText>Мои Курсы</WelcomeText>
                     {
-                        coursePages?.map((coursePage, index) => {
-                            return (
-                                <CoursePageItem
-                                    coursePage={coursePage}
-                                    key={index}
-                                />
-                            )
-                        })
+                        loading ?
+                            <Loader />
+                            :
+                            coursePages?.map((coursePage, index) => {
+                                return (
+                                    <CoursePageItem
+                                        coursePage={coursePage}
+                                        key={index}
+                                    />
+                                )
+                            })
                     }
                 </Flex>
             </Card>
