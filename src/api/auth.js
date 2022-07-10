@@ -25,6 +25,17 @@ export const authAPI = {
     },
 
     refresh() {
-        return instance.get('auth/refresh', { withCredentials: true })
+        return instance.get('auth/refresh', {
+            withCredentials: true,
+        })
     },
+
+    checkAuth(token) {
+        return instance.get('auth/check-auth', {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
 }

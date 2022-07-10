@@ -61,6 +61,7 @@ export default () => {
     }
 
     if (isAuth) {
+        console.log("ОТПРАВЛЯЮ НА ДОМАШНЮЮ")
         return <Redirect to="/" />
     }
 
@@ -77,9 +78,9 @@ export default () => {
                             <WelcomeText>Добро пожаловать!</WelcomeText>
                             <InputContainer>
                                 <Input type="text" placeholder="Email"
-value={email} handleInput={emailHandle} />
+                                    value={email} handleInput={emailHandle} />
                                 <Input type="password" placeholder="Password"
-value={password} handleInput={passwordHandle} />
+                                    value={password} handleInput={passwordHandle} />
                             </InputContainer>
                             <ButtonContainer>
                                 <Button content="Регистрация" handleSubmit={signUpSubmit} />
@@ -96,8 +97,8 @@ value={password} handleInput={passwordHandle} />
                                 successUpResponse &&
                                 <SuccessAlert><span>Успешно!</span></SuccessAlert>
                             }
-                          </MainContainer>
-                        :                        <MainContainer>
+                        </MainContainer>
+                        : <MainContainer>
                             <SwitchInOut>
                                 <SignIn onClick={switchIn}><h4>Войти</h4></SignIn>
                                 <SignOut onClick={switchUp}><h4>Регистрация</h4></SignOut>
@@ -105,9 +106,9 @@ value={password} handleInput={passwordHandle} />
                             <WelcomeText>Добро пожаловать!</WelcomeText>
                             <InputContainer>
                                 <Input type="text" placeholder="Email"
-value={email} handleInput={emailHandle} />
+                                    value={email} handleInput={emailHandle} />
                                 <Input type="password" placeholder="Password"
-value={password} handleInput={passwordHandle} />
+                                    value={password} handleInput={passwordHandle} />
                             </InputContainer>
                             <ButtonContainer>
                                 <Button content="Войти" handleSubmit={signInSubmit} />
@@ -124,7 +125,7 @@ value={password} handleInput={passwordHandle} />
                                 successInResponse &&
                                 <SuccessAlert><span>Успешно!</span></SuccessAlert>
                             }
-                                                 </MainContainer>
+                        </MainContainer>
                     }
                 </LoginForm>
             </Card>

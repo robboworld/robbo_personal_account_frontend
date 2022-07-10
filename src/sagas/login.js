@@ -48,9 +48,10 @@ function* signOutSaga(action) {
 
 function* checkAuthSaga(action) {
     try {
-        const response = yield call(authAPI.refresh)
+        const { token } = action.payload.token
+        const response = yield call(authAPI.checkAuth, token)
         console.log(response)
-        localStorage.setItem('token', response.data.accessToken)
+        // localStorage.setItem('token', response.data.accessToken)
         yield put(checkAuthSuccess(response))
     } catch (e) {
         alert(e)
