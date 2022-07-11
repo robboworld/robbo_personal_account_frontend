@@ -36,9 +36,9 @@ export const LittleDescription = styled.div`
   text-overflow: ellipsis;
 `
 
-export const Avatar = styled.div`
+export const Avatar = styled.img`
   width: 90px;
   height: 90px;
   background-color: green;
-  cursor: pointer;
+  object-fit: cover;
 `

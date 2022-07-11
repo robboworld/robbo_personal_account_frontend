@@ -105,6 +105,10 @@ export const WelcomeText = styled.h2`
   color: black;
 `
 
+export const Text = styled.p`
+  font-size: 16px;
+`
+
 export const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -112,6 +116,21 @@ export const InputContainer = styled.div`
   align-items: center;
   height: 20%;
   width: 100%;
+`
+
+export const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem;
+  width: 70%;
+  text-transform: none;
+  letter-spacing: 0;
+  @media only screen and (min-width: 320px) and (max-width: 768px), (min-width: 1280px){
+    flex-direction: column;
+    gap: 0.3rem;
+  }
 `
 
 export const ButtonContainer = styled.div`
