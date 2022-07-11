@@ -3,45 +3,57 @@
 import { handleActions } from "redux-actions"
 
 import {
+    clearProjectPageState,
+    getProjectPageById,
     getProjectPageByIdFailed, getProjectPageByIdSuccess,
+    onChangeProjectPageInstruction,
+    onChangeProjectPageNotes,
     onChangeProjectPageTitle,
     onSharedProject,
+    updateProjectPage,
     updateProjectPageFailed, updateProjectPageSuccess,
 } from "@/actions"
 
 const INITIAL_STATE = {
-    projectPage:
-    {
-        id: '1',
-        title: 'Untitled-1',
-        date: '2022.06.15',
-        isShared: false,
-        linkScratch: 'http://0.0.0.0:8601/',
-        instructions: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        notes: '',
-    },
-
+    projectPage: {},
+    loading: false,
 }
 
 export default handleActions({
+    [getProjectPageById](state, action) {
+        return { ...state, loading: true }
+    },
     [getProjectPageByIdSuccess](state, action) {
-        return { ...state }
+        return { ...state, loading: false, projectPage: action.payload.response.data.projectPage }
     },
     [getProjectPageByIdFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
+    },
+    [updateProjectPage](state, action) {
+        return { ...state, loading: true }
     },
     [updateProjectPageSuccess](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [updateProjectPageFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: true }
     },
     [onChangeProjectPageTitle](state, action) {
         return { ...state, projectPage: { ...state.projectPage, title: action.payload.title } }
     },
+    [onChangeProjectPageInstruction](state, action) {
+        return { ...state, projectPage: { ...state.projectPage, instruction: action.payload.instruction } }
+    },
+    [onChangeProjectPageNotes](state, action) {
+        return { ...state, projectPage: { ...state.projectPage, notes: action.payload.notes } }
+    },
     [onSharedProject](state, action) {
         return { ...state, projectPage: { ...state.projectPage, isShared: action.payload.isShared } }
+    },
+    [clearProjectPageState](state, action) {
+        return { ...state, loading: false, projectPage: {} }
     }
 }, INITIAL_STATE)
 
 export const getProjectPage = state => state.projectPage
+export const getProjectPageLoading = state => state.loading 

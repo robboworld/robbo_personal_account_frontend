@@ -19,10 +19,10 @@ export const projectPageAPI = {
     deleteProjectPage(token, projectPageId) {
         return instance.delete(`projectPage/${projectPageId}`,
             {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
+                // withCredentials: true,
+                // headers: {
+                //     'Authorization': `Bearer ${token}`,
+                // },
             })
     },
 
@@ -32,14 +32,14 @@ export const projectPageAPI = {
                 projectPage: projectPage,
             },
             {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
+                // withCredentials: true,
+                // headers: {
+                //     'Authorization': `Bearer ${token}`,
+                // },
             })
     },
 
-    getProjectPageById(token) {
+    getProjectPageById(token, id) {
         return instance.get(`projectPage/${id}`,
             {
                 withCredentials: true,

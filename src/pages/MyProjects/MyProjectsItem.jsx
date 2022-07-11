@@ -1,6 +1,7 @@
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import React, { useEffect, useState } from "react"
+import { toast } from 'react-toastify';
 import { useHistory } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { deleteProjectPage } from "@/actions"
@@ -8,22 +9,23 @@ import { deleteProjectPage } from "@/actions"
 import { ProjectPageItem, ScratchLink, Description, Avatar, LastModified, RemoveProjectPage } from './components'
 import config from "@/config"
 
-export default ({ projectPage }) => {
+
+export default ({ projectPageIndex, projectPage }) => {
 
     const dispath = useDispatch()
     const history = useHistory()
     const token = localStorage.getItem('token')
 
     const deleteProjectPageHandler = () => {
-        dispath(deleteProjectPage(token, projectPage.id))
+        dispath(deleteProjectPage(token, projectPage.projectId, projectPageIndex))
     }
 
     const toProjectPageHandler = () => {
-        history.push(`/projects/${projectPage.id}`)
+        history.push(`/projects/${projectPage.projectId}`)
     }
 
     const seeInsideHandler = () => {
-        window.location.replace(config.scratchURL + `?#${projectPage.id}`)
+        window.location.replace(config.scratchURL + `?#${projectPage.projectId}`)
     }
 
     return (
@@ -33,7 +35,7 @@ export default ({ projectPage }) => {
                 justify="space-between">
                 <ScratchLink onClick={toProjectPageHandler}> {projectPage.title}</ScratchLink>
                 <LastModified>
-                    {"Последние изменение: " + projectPage.date}
+                    {"Последние изменение: " + projectPage.lastModified}
                 </LastModified>
                 <Button
                     content="Перейти"

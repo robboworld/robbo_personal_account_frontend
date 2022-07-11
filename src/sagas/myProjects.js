@@ -17,6 +17,7 @@ function* getAllProjectPagesSaga(action) {
 
         yield put(getAllProjectPagesSuccess(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(getAllProjectPagesFailed(e.message))
     }
 }
@@ -24,11 +25,13 @@ function* getAllProjectPagesSaga(action) {
 function* getProjectPageByIdSaga(action) {
     try {
 
-        const response = yield call(projectPageAPI.getProjectPageById)
+        const { token, id } = action.payload
+        const response = yield call(projectPageAPI.getProjectPageById, token, id)
         console.log(response)
 
         yield put(getProjectPageByIdSuccess(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(getProjectPageByIdFailed(e.message))
     }
 }
@@ -40,6 +43,7 @@ function* createProjectPageSaga(action) {
         console.log(response)
         yield put(createProjectPageSuccess(response))
     } catch (e) {
+        toast.error(e?.message)
         yield put(createProjectPageFailed(e.message))
     }
 }
@@ -57,11 +61,11 @@ function* updateProjectPageSaga(action) {
 
 function* deleteProjectPageSaga(action) {
     try {
-        const { token, projectPageId } = action.payload
+        const { token, projectPageId, projectPageIndex } = action.payload
         const response = yield call(projectPageAPI.deleteProjectPage, token, projectPageId)
         console.log(response)
 
-        yield put(deleteProjectPageSuccess(response))
+        yield put(deleteProjectPageSuccess(projectPageIndex))
     } catch (e) {
         yield put(deleteProjectPageFailed(e.message))
     }

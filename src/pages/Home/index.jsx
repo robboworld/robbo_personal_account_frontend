@@ -14,14 +14,11 @@ export default () => {
   const dispatch = useDispatch()
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      dispatch(checkAuthRequest())
+      dispatch(checkAuthRequest(localStorage.getItem('token')))
     }
   }, [])
 
   const isAuth = useSelector(state => getIsAuth(state.login))
-
-  const login = useSelector(state => state.login)
-  console.log(login)
 
   if (!isAuth) {
     return <Redirect to="/login" />

@@ -71,10 +71,14 @@ export const signUpRequest = createAction(SIGN_UP, (email, password) => {
 export const signOutRequest = createAction(SIGN_OUT)
 export const signOutSuccess = createAction(SIGN_OUT_SUCCESS)
 export const signOutFailed = createAction(SIGN_OUT_FAILED)
-export const checkAuthRequest = createAction(CHECK_AUTH)
+export const checkAuthRequest = createAction(CHECK_AUTH, token => {
+    return {
+        token
+    }
+})
 export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
     return {
-        id: parseJwt(response.data.accessToken)
+        id: response.data
     }
 })
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED)
