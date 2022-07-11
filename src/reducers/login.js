@@ -3,6 +3,7 @@ import { handleActions } from "redux-actions"
 import {
     emailOnChange,
     passwordOnChange,
+    roleOnChange,
     signInSucces, signInFailed,
     signUpSuccess, signUpFailed,
     signOutSuccess, signOutFailed,
@@ -10,9 +11,16 @@ import {
 } from "@/actions"
 
 const INITIAL_STATE = {
+    roles: [
+        { value: 'student', label: 'Ученик' },
+        { value: 'teacher', label: 'Учитель' },
+        { value: 'parent', label: 'Родитель' },
+        { value: 'admin', label: ' Администратор' },
+    ],
     id: '',
     email: '',
     password: '',
+    role: {},
     signInError: '',
     signUpError: '',
     isAuth: false,
@@ -26,6 +34,9 @@ export default handleActions({
     },
     [passwordOnChange](state, action) {
         return { ...state, password: action.payload.password }
+    },
+    [roleOnChange](state, action) {
+        return { ...state, role: action.payload.role }
     },
     [signInSucces](state, action) {
         return { ...state, successInResponse: true, isAuth: true }
@@ -56,6 +67,8 @@ export default handleActions({
 export const getId = state => state.id
 export const getEmail = state => state.email
 export const getPassword = state => state.password
+export const getRoles = state => state.roles
+export const getRole = state => state.role
 export const getToken = state => state.token
 export const getSignInError = state => state.signInError
 export const getSignUpError = state => state.signUpError

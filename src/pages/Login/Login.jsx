@@ -7,7 +7,9 @@ import {
     Card,
     MainContainer,
     WelcomeText,
+    Text,
     InputContainer,
+    SelectContainer,
     ButtonContainer,
     LoginWith,
     HorizontalRule,
@@ -20,16 +22,19 @@ import {
     SuccessAlert,
 } from "./components"
 
-import { emailOnChange, passwordOnChange, signInRequest, signUpRequest } from "@/actions"
+import { emailOnChange, passwordOnChange, roleOnChange, signInRequest, signUpRequest } from "@/actions"
 import {
     getEmail, getPassword, getToken,
     getSignInError, getSignUpError,
     getSuccessInResponse, getSuccessUpResponse,
     getIsAuth,
+    getRoles,
+    getRole,
 } from "@/reducers/login"
 
 import Input from "@/components/UI/Input"
 import Button from "@/components/UI/Button"
+import CustomSelect from "@/components/UI/Select/Select"
 
 export default () => {
     const [signIn, setSignIn] = useState(false)
@@ -39,13 +44,14 @@ export default () => {
     const dispatch = useDispatch()
     const email = useSelector(state => getEmail(state.login))
     const password = useSelector(state => getPassword(state.login))
+    const roles = useSelector(state => getRoles(state.login))
+    const role = useSelector(state => getRole(state.login))
     const token = useSelector(state => getToken(state.login))
     const signInError = useSelector(state => getSignInError(state.login))
     const signUpError = useSelector(state => getSignUpError(state.login))
     const isAuth = useSelector(state => getIsAuth(state.login))
     const successInResponse = useSelector(state => getSuccessInResponse(state.login))
     const successUpResponse = useSelector(state => getSuccessUpResponse(state.login))
-
 
     const emailHandle = email => {
         dispatch(emailOnChange(email))
@@ -58,6 +64,10 @@ export default () => {
     }
     const signUpSubmit = () => {
         dispatch(signUpRequest(email, password))
+    }
+    const onSelectChange = (value) => {
+        console.log(value)
+        dispatch(roleOnChange(value))
     }
 
     if (isAuth) {
@@ -77,10 +87,18 @@ export default () => {
                             <WelcomeText>Добро пожаловать!</WelcomeText>
                             <InputContainer>
                                 <Input type="text" placeholder="Email"
-value={email} handleInput={emailHandle} />
+                                    value={email} handleInput={emailHandle} />
                                 <Input type="password" placeholder="Password"
-value={password} handleInput={passwordHandle} />
+                                    value={password} handleInput={passwordHandle} />
                             </InputContainer>
+                            <SelectContainer>
+                                <Text>Выберите роль</Text>
+                                <CustomSelect
+                                    options={roles}
+                                    onChange={onSelectChange}
+                                    value={role}
+                                />
+                            </SelectContainer>
                             <ButtonContainer>
                                 <Button content="Регистрация" handleSubmit={signUpSubmit} />
                             </ButtonContainer>
@@ -96,8 +114,8 @@ value={password} handleInput={passwordHandle} />
                                 successUpResponse &&
                                 <SuccessAlert><span>Успешно!</span></SuccessAlert>
                             }
-                          </MainContainer>
-                        :                        <MainContainer>
+                        </MainContainer>
+                        : <MainContainer>
                             <SwitchInOut>
                                 <SignIn onClick={switchIn}><h4>Войти</h4></SignIn>
                                 <SignOut onClick={switchUp}><h4>Регистрация</h4></SignOut>
@@ -105,9 +123,9 @@ value={password} handleInput={passwordHandle} />
                             <WelcomeText>Добро пожаловать!</WelcomeText>
                             <InputContainer>
                                 <Input type="text" placeholder="Email"
-value={email} handleInput={emailHandle} />
+                                    value={email} handleInput={emailHandle} />
                                 <Input type="password" placeholder="Password"
-value={password} handleInput={passwordHandle} />
+                                    value={password} handleInput={passwordHandle} />
                             </InputContainer>
                             <ButtonContainer>
                                 <Button content="Войти" handleSubmit={signInSubmit} />
@@ -124,7 +142,7 @@ value={password} handleInput={passwordHandle} />
                                 successInResponse &&
                                 <SuccessAlert><span>Успешно!</span></SuccessAlert>
                             }
-                                                 </MainContainer>
+                        </MainContainer>
                     }
                 </LoginForm>
             </Card>
