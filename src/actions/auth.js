@@ -5,6 +5,7 @@ import { parseJwt } from "@/helpers"
 import {
     EMAIL_ONCHANGE,
     PASSWORD_ONCHANGE,
+    ROLE_ONCHANGE,
     SIGN_IN_SUCCESS, SIGN_IN_FAILED, SIGN_IN,
     SIGN_UP_FAILED, SIGN_UP, SIGN_UP_SUCCESS,
     SIGN_OUT, SIGN_OUT_SUCCESS, SIGN_OUT_FAILED,
@@ -20,6 +21,12 @@ export const emailOnChange = createAction(EMAIL_ONCHANGE, email => {
 export const passwordOnChange = createAction(PASSWORD_ONCHANGE, password => {
     return {
         password,
+    }
+})
+
+export const roleOnChange = createAction(ROLE_ONCHANGE, role => {
+    return {
+        role,
     }
 })
 

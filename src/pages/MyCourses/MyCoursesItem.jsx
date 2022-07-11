@@ -16,16 +16,15 @@ export default ({ coursePage }) => {
         history.push(`/courses/${coursePage.id}`)
     }
 
-
     return (
         <CoursePageItem>
             <Flex>
-                <Avatar />
+                <Avatar src={coursePage.media.image.small} />
             </Flex>
             <Flex direction="column" margin="0 1rem"
                 justify="space-between" width="100%">
-                <TitleLink onClick={toCoursePageHandler}> {coursePage.title}</TitleLink>
-                <LittleDescription>{coursePage.description}</LittleDescription>
+                <TitleLink onClick={toCoursePageHandler}> {coursePage.name}</TitleLink>
+                <LittleDescription>{coursePage.short_description}</LittleDescription>
             </Flex>
         </CoursePageItem>
     )

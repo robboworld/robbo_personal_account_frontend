@@ -12,7 +12,7 @@ function* getAllCoursePagesSaga(action) {
         const response = yield call(coursePageAPI.getAllCoursePages, token)
         console.log(response)
 
-        yield put(getAllCoursePagesSuccess(response))
+        yield put(getAllCoursePagesSuccess(response.data.results))
     } catch (e) {
         yield put(getAllCoursePagesFailed(e.message))
     }
@@ -20,11 +20,12 @@ function* getAllCoursePagesSaga(action) {
 
 function* getCoursePageByIdSaga(action) {
     try {
-
-        const response = yield call(coursePageAPI.getCoursePageById)
+        const { token } = action.payload
+        const { id } = action.payload
+        const response = yield call(coursePageAPI.getCoursePageById, token, id)
         console.log(response)
 
-        yield put(getCoursePageByIdSuccess(response))
+        yield put(getCoursePageByIdSuccess(response.data))
     } catch (e) {
         yield put(getCoursePageByIdFailed(e.message))
     }

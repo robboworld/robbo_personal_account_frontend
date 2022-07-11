@@ -9,11 +9,11 @@ export const Title = styled.div`
     margin-bottom: 1rem;
 `
 
-export const Avatar = styled.div`
+export const Avatar = styled.img`
     width: 250px;
     height: 250px;
     background-color: green;
-    cursor: pointer;
+    object-fit: cover;
 `
 
 export const Description = styled.div`
