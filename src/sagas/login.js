@@ -6,7 +6,6 @@ import {
     signOutRequest, signOutSuccess, signOutFailed,
     checkAuthRequest, checkAuthSuccess, checkAuthFailed,
 } from '@/actions'
-import { toast } from 'react-toastify'
 
 function* signInSaga(action) {
     try {
@@ -17,7 +16,6 @@ function* signInSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signInSucces(response))
     } catch (e) {
-        toast.error(e?.message)
         yield put(signInFailed(e.message))
     }
 }
@@ -31,7 +29,6 @@ function* signUpSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signUpSuccess(response))
     } catch (e) {
-        toast.error(e?.message)
         yield put(signUpFailed(e.message))
     }
 }
@@ -43,7 +40,6 @@ function* signOutSaga(action) {
         console.log(response)
         yield put(signOutSuccess())
     } catch (e) {
-        toast.error(e?.message)
         yield put(signOutFailed(e.message))
     }
 }
@@ -53,10 +49,8 @@ function* checkAuthSaga(action) {
         const { token } = action.payload.token
         const response = yield call(authAPI.checkAuth, token)
         console.log(response)
-        // localStorage.setItem('token', response.data.accessToken)
-        yield put(checkAuthSuccess(response))
+        put(checkAuthSuccess(response))
     } catch (e) {
-        // alert(e)
         toast.error(e?.message)
         yield put(checkAuthFailed(e?.message))
     }

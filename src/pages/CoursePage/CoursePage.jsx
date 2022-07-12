@@ -7,23 +7,24 @@ import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import { getCoursePage, getCoursePageLoading } from "@/reducers/coursePage"
-import { getCoursePageById, clearCoursePageState } from "@/actions"
 import { getIsAuth } from '@/reducers/login'
 import { useIsAuth } from "@/helpers/useIsAuth"
 import Loader from "../../components/Loader"
+import { useActions } from "@/helpers/useActions"
 
 export default props => {
-    const dispatch = useDispatch()
+    const { getCoursePageById, clearCoursePageState } = useActions()
     useIsAuth()
 
     const token = localStorage.getItem('token')
+    // TO DO useParams
     const { coursePageId } = props.match.params
 
     useEffect(() => {
-        dispatch(getCoursePageById(token, coursePageId))
+        getCoursePageById(token, coursePageId)
 
         return () => {
-            dispatch(clearCoursePageState())
+            clearCoursePageState()
         }
     }, [])
 

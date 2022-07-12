@@ -4,7 +4,7 @@ import config from "@/config"
 
 const instance = axios.create({
   baseURL: config.backendURL[0],
-  withCredentials: true,
+  // withCredentials: true,
   headers: {
     // 'Access-Control-Allow-Headers': 'x-requested-with, Content-Type, origin, authorization, accept, x-access-token',
     // 'Access-Control-Allow-Credentials': true,

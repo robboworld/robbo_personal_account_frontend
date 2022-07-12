@@ -22,7 +22,6 @@ import {
     SuccessAlert,
 } from "./components"
 
-import { emailOnChange, passwordOnChange, roleOnChange, signInRequest, signUpRequest } from "@/actions"
 import {
     getEmail, getPassword, getToken,
     getSignInError, getSignUpError,
@@ -35,13 +34,14 @@ import {
 import Input from "@/components/UI/Input"
 import Button from "@/components/UI/Button"
 import CustomSelect from "@/components/UI/Select/Select"
+import { useActions } from "@/helpers/useActions"
 
 export default () => {
     const [signIn, setSignIn] = useState(false)
     const switchIn = () => setSignIn(false)
     const switchUp = () => setSignIn(true)
 
-    const dispatch = useDispatch()
+    const { emailOnChange, passwordOnChange, signInRequest, signUpRequest, roleOnChange } = useActions()
     const email = useSelector(state => getEmail(state.login))
     const password = useSelector(state => getPassword(state.login))
     const roles = useSelector(state => getRoles(state.login))
@@ -54,20 +54,20 @@ export default () => {
     const successUpResponse = useSelector(state => getSuccessUpResponse(state.login))
 
     const emailHandle = email => {
-        dispatch(emailOnChange(email))
+        emailOnChange(email)
     }
     const passwordHandle = password => {
-        dispatch(passwordOnChange(password))
+        passwordOnChange(password)
     }
     const signInSubmit = () => {
-        dispatch(signInRequest(email, password))
+        signInRequest(email, password)
     }
     const signUpSubmit = () => {
-        dispatch(signUpRequest(email, password))
+        signUpRequest(email, password)
     }
     const onSelectChange = (value) => {
         console.log(value)
-        dispatch(roleOnChange(value))
+        roleOnChange(value)
     }
 
     if (isAuth) {

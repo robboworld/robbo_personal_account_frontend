@@ -4,17 +4,17 @@ import { useDispatch } from 'react-redux'
 
 
 import { SelectWrapper, CreateNew } from './componets'
-import { createProjectPage } from '@/actions'
 
 import Flex from '@/components/Flex'
 import Button from '../UI/Button'
 import { useSelector } from 'react-redux'
 import { getNewProjectId } from '@/reducers/myProjects'
 import config from '@/config'
+import { useActions } from '@/helpers/useActions'
 
 export default () => {
 
-    const dispath = useDispatch()
+    const { createProjectPage } = useActions()
     const newProjectId = useSelector(state => getNewProjectId(state.myProjects))
 
     const options = [
@@ -46,7 +46,7 @@ export default () => {
     const token = localStorage.getItem('token')
 
     const createNewProjectPageHandler = () => {
-        dispath(createProjectPage(token))
+        createProjectPage(token)
     }
 
     if (newProjectId) {

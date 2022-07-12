@@ -7,25 +7,35 @@ import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import Input from "@/components/UI/Input"
-import { clearProjectPageState, getProjectPageById, onChangeProjectPageInstruction, onChangeProjectPageNotes, onChangeProjectPageTitle, onSharedProject, updateProjectPage } from "@/actions"
 import { getProjectPage, getProjectPageLoading } from "@/reducers/projectPage"
 import config from "@/config"
 import Textarea from "@/components/UI/TextArea"
 import Loader from "@/components/Loader"
+import { useActions } from "@/helpers/useActions"
 
 
 export default (props) => {
-    const dispath = useDispatch()
+    const {
+        getProjectPageById,
+        clearProjectPageState,
+        onChangeProjectPageTitle,
+        onChangeProjectPageInstruction,
+        onSharedProject,
+        updateProjectPage
+    } = useActions()
+
     const [titleEditMode, setTitleEditMode] = useState(false)
     const [instructionsEditMode, setInstructionsEditMode] = useState(false)
     const [notesEditMode, setNotesEditMode] = useState(false)
+
+    // TO DO useParams
     const { projectPageId } = props.match.params
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        dispath(getProjectPageById(token, projectPageId))
+        getProjectPageById(token, projectPageId)
         return () => {
-            dispath(clearProjectPageState())
+            clearProjectPageState()
         }
     }, [])
 
@@ -33,37 +43,37 @@ export default (props) => {
     const loading = useSelector(state => getProjectPageLoading(state.projectPage))
 
     const onChangeTitleHandler = (title) => {
-        dispath(onChangeProjectPageTitle(title))
+        onChangeProjectPageTitle(title)
     }
 
     const onChangeInstructionsHanler = (instruction) => {
-        dispath(onChangeProjectPageInstruction(instruction))
+        onChangeProjectPageInstruction(instruction)
     }
 
     const onChangeNotesHanler = (notes) => {
-        dispath(onChangeProjectPageNotes(notes))
+        onChangeProjectPageNotes(notes)
     }
 
     const onBlurHandler = (element) => {
         switch (element) {
             case "title":
                 setTitleEditMode(false)
-                dispath(updateProjectPage(token, projectPage))
+                updateProjectPage(token, projectPage)
                 return
             case "instruction":
                 setInstructionsEditMode(false)
-                dispath(updateProjectPage(token, projectPage))
+                updateProjectPage(token, projectPage)
                 return
             case "notes":
                 setNotesEditMode(false)
-                dispath(updateProjectPage(token, projectPage))
+                updateProjectPage(token, projectPage)
                 return
         }
     }
 
     const onSharedHandler = () => {
-        dispath(onSharedProject(!projectPage.isShared))
-        dispath(updateProjectPage(token, projectPage))
+        onSharedProject(!projectPage.isShared)
+        updateProjectPage(token, projectPage)
     }
 
     const seeInsideHandler = () => {

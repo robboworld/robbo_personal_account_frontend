@@ -9,14 +9,11 @@ import SideBar from '@/components/SideBar'
 
 import { checkAuthRequest } from '@/actions'
 import { getIsAuth } from '@/reducers/login'
+import { useIsAuth } from '@/helpers'
 
 export default () => {
   const dispatch = useDispatch()
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      dispatch(checkAuthRequest(localStorage.getItem('token')))
-    }
-  }, [])
+  useIsAuth()
 
   const isAuth = useSelector(state => getIsAuth(state.login))
 

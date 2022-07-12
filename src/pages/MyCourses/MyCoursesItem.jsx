@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux"
 import { CoursePageItem, Avatar, TitleLink, LittleDescription } from './components'
 
 export default ({ coursePage }) => {
-
-    const dispatсh = useDispatch()
     const history = useHistory()
     const token = localStorage.getItem('token')
 

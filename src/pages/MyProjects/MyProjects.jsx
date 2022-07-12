@@ -6,7 +6,6 @@ import { PageLayout, Card } from "@/layouts"
 import { MainContainer, WelcomeText } from "./components"
 import SideBar from "@/components/SideBar"
 
-import { checkAuthRequest, clearMyProjectsState, getAllProjectPages } from '@/actions'
 import { getIsAuth } from '@/reducers/login'
 import { getMyProjectsLoading, getProjectPages } from "@/reducers/myProjects"
 import { useIsAuth } from "@/helpers/useIsAuth"
@@ -15,16 +14,18 @@ import ProjectPageItem from "./MyProjectsItem"
 import Flex from "@/components/Flex"
 import ControlPanel from "@/components/ControlPanel"
 import Loader from "@/components/Loader"
+import { useActions } from "@/helpers/useActions"
 
 export default () => {
-    const dispath = useDispatch()
     useIsAuth()
+
+    const { getAllProjectPages, clearMyProjectsState } = useActions()
 
     const token = localStorage.getItem('token')
     useEffect(() => {
-        dispath(getAllProjectPages(token))
+        getAllProjectPages(token)
         return () => {
-            dispath(clearMyProjectsState())
+            clearMyProjectsState()
         }
     }, [])
 

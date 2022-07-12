@@ -14,17 +14,17 @@ import { getAllCoursePages } from "@/actions"
 import CoursePageItem from "./MyCoursesItem"
 import Flex from "@/components/Flex"
 import Loader from "../../components/Loader"
+import { useActions } from "@/helpers/useActions"
 
 export default () => {
-    const dispatch = useDispatch()
+    const { getAllCoursePages, clearAllCoursePagesState } = useActions()
     useIsAuth()
 
     const token = localStorage.getItem('token')
     useEffect(() => {
-        dispatch(getAllCoursePages(token))
-
+        getAllCoursePages(token)
         return () => {
-            dispatch(clearAllCoursePagesState())
+            clearAllCoursePagesState()
         }
     }, [])
 

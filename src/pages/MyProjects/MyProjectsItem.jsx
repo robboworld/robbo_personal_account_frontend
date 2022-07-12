@@ -4,20 +4,20 @@ import React, { useEffect, useState } from "react"
 import { toast } from 'react-toastify';
 import { useHistory } from "react-router-dom"
 import { useDispatch } from "react-redux"
-import { deleteProjectPage } from "@/actions"
 
 import { ProjectPageItem, ScratchLink, Description, Avatar, LastModified, RemoveProjectPage } from './components'
 import config from "@/config"
+import { useActions } from "@/helpers/useActions";
 
 
 export default ({ projectPageIndex, projectPage }) => {
 
-    const dispath = useDispatch()
+    const { deleteProjectPage } = useActions()
     const history = useHistory()
     const token = localStorage.getItem('token')
 
     const deleteProjectPageHandler = () => {
-        dispath(deleteProjectPage(token, projectPage.projectId, projectPageIndex))
+        deleteProjectPage(token, projectPage.projectId, projectPageIndex)
     }
 
     const toProjectPageHandler = () => {
