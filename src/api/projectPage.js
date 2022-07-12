@@ -1,6 +1,4 @@
-import * as axios from "axios"
-
-import instance from "./instance"
+import instance from './instance'
 
 export const projectPageAPI = {
     createProjectPage(token) {

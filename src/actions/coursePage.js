@@ -1,10 +1,10 @@
-import { createAction } from "redux-actions"
+import { createAction } from 'redux-actions'
 
-import { 
+import {
     GET_ALL_COURSE_PAGES, GET_ALL_COURSE_PAGES_SUCCESS, GET_ALL_COURSE_PAGES_FAILED,
     GET_COURSE_PAGE_BY_ID, GET_COURSE_PAGE_BY_ID_SUCCESS, GET_COURSE_PAGE_BY_ID_FAILED,
-    CLEAR_COURSE_PAGE_STATE, CLEAR_ALL_COURSE_PAGES_STATE
-} from "@/constants"
+    CLEAR_COURSE_PAGE_STATE, CLEAR_ALL_COURSE_PAGES_STATE,
+} from '@/constants'
 
 export const getAllCoursePages = createAction(GET_ALL_COURSE_PAGES, token => {
     return {
@@ -14,13 +14,13 @@ export const getAllCoursePages = createAction(GET_ALL_COURSE_PAGES, token => {
 
 export const getAllCoursePagesSuccess = createAction(GET_ALL_COURSE_PAGES_SUCCESS, courses => {
     return {
-        courses
+        courses,
     }
 })
 
-export const getAllCoursePagesFailed = createAction(GET_ALL_COURSE_PAGES_FAILED, (err) => {
+export const getAllCoursePagesFailed = createAction(GET_ALL_COURSE_PAGES_FAILED, err => {
     return {
-        err
+        err,
     }
 })
 
@@ -28,19 +28,19 @@ export const getAllCoursePagesFailed = createAction(GET_ALL_COURSE_PAGES_FAILED,
 export const getCoursePageById = createAction(GET_COURSE_PAGE_BY_ID, (token, id) => {
     return {
         token,
-        id
+        id,
     }
 })
 
 export const getCoursePageByIdSuccess = createAction(GET_COURSE_PAGE_BY_ID_SUCCESS, course => {
     return {
-        course
+        course,
     }
 })
 
-export const getCoursePageByIdFailed = createAction(GET_COURSE_PAGE_BY_ID_FAILED, (err) => {
+export const getCoursePageByIdFailed = createAction(GET_COURSE_PAGE_BY_ID_FAILED, err => {
     return {
-        err
+        err,
     }
 })
 

@@ -1,9 +1,8 @@
 import React from 'react'
 import * as FaIcons from 'react-icons/fa'
+
 import {
-  HOME_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
-  PROJECT_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
 } from '@/constants'

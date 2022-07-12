@@ -1,4 +1,5 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+
 import { authAPI } from '@/api'
 import {
     signInSucces, signInFailed, signUpSuccess,
@@ -51,7 +52,6 @@ function* checkAuthSaga(action) {
         console.log(response)
         put(checkAuthSuccess(response))
     } catch (e) {
-        toast.error(e?.message)
         yield put(checkAuthFailed(e?.message))
     }
 }

@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { ToastContainer } from "react-toastify"
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
-import { PageLayout, Card } from "@/layouts"
-import { MainContainer, WelcomeText } from "./components"
-import SideBar from "@/components/SideBar"
+import { WelcomeText } from './components'
 
-import { getIsAuth } from '@/reducers/login'
-import { getMyProjectsLoading, getProjectPages } from "@/reducers/myProjects"
-import { useIsAuth } from "@/helpers/useIsAuth"
+import ProjectPageItem from './MyProjectsItem'
 
-import ProjectPageItem from "./MyProjectsItem"
-import Flex from "@/components/Flex"
-import ControlPanel from "@/components/ControlPanel"
-import Loader from "@/components/Loader"
-import { useActions } from "@/helpers/useActions"
+import { PageLayout, Card } from '@/layouts'
+import SideBar from '@/components/SideBar'
+
+import { getMyProjectsLoading, getProjectPages } from '@/reducers/myProjects'
+import { useIsAuth } from '@/helpers/useIsAuth'
+
+
+import Flex from '@/components/Flex'
+import ControlPanel from '@/components/ControlPanel'
+import Loader from '@/components/Loader'
+import { useActions } from '@/helpers/useActions'
 
 export default () => {
     useIsAuth()
@@ -36,13 +37,13 @@ export default () => {
         <PageLayout>
             <Card>
                 <SideBar />
-                <Flex direction="column" align="center" >
+                <Flex direction='column' align='center' >
                     <WelcomeText>Мои проекты</WelcomeText>
                     <ControlPanel />
 
-                    {loading ?
-                        <Loader /> :
-                        projectPages?.map((projectPage, index) => {
+                    {loading
+                        ? <Loader />
+                        : projectPages?.map((projectPage, index) => {
                             return (
                                 <ProjectPageItem
                                     projectPage={projectPage}

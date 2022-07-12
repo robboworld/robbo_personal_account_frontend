@@ -1,13 +1,14 @@
-import React from "react"
-import { StyledInput } from "./components"
+import React from 'react'
+
+import { StyledInput } from './components'
 
 export default
     (
         { type, placeholder, value,
             handleInput, onBlur, height,
             width, padding, margin,
-            fontSize
-        }
+            fontSize,
+        },
     ) => {
         return <StyledInput
             onBlur={onBlur}

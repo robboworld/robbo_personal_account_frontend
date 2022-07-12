@@ -1,6 +1,7 @@
-import React from "react"
+import React from 'react'
 import Select from 'react-select'
-import { SelectWrapper } from "./components"
+
+import { SelectWrapper } from './components'
 
 const customStyles = {
     control: base => ({
@@ -11,23 +12,23 @@ const customStyles = {
     option: (base, state) => ({
         ...base,
         height: '100%',
-        backgroundColor: state.isSelected ? "green" : "white",
-        "&:hover": {
-            backgroundColor: "green",
-            color: "white",
+        backgroundColor: state.isSelected ? 'green' : 'white',
+        '&:hover': {
+            backgroundColor: 'green',
+            color: 'white',
         },
     }),
 
 }
 
 export default function CustomSelect({ options, onChange, value }) {
-    return <SelectWrapper>
+    return (<SelectWrapper>
         <Select
             styles={customStyles}
             options={options}
             onChange={onChange}
             value={value}
         />
-    </SelectWrapper>
+            </SelectWrapper>)
 
 }

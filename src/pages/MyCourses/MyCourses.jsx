@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
-import { PageLayout, Card } from "@/layouts"
-import { MainContainer, WelcomeText } from "./components"
-import SideBar from "@/components/SideBar"
+import { WelcomeText } from './components'
 
-import { checkAuthRequest, clearAllCoursePagesState, getAllProjectPages } from '@/actions'
-import { getIsAuth } from '@/reducers/login'
-import { getCoursePages, getCoursePagesLoading } from "@/reducers/myCourses"
-import { useIsAuth } from "@/helpers/useIsAuth"
+import CoursePageItem from './MyCoursesItem'
 
-import { getAllCoursePages } from "@/actions"
-import CoursePageItem from "./MyCoursesItem"
-import Flex from "@/components/Flex"
-import Loader from "../../components/Loader"
-import { useActions } from "@/helpers/useActions"
+import { PageLayout, Card } from '@/layouts'
+import SideBar from '@/components/SideBar'
+import Loader from '@/components/Loader'
+
+import { getCoursePages, getCoursePagesLoading } from '@/reducers/myCourses'
+import { useIsAuth } from '@/helpers/useIsAuth'
+
+
+import Flex from '@/components/Flex'
+
+
+import { useActions } from '@/helpers/useActions'
 
 export default () => {
     const { getAllCoursePages, clearAllCoursePagesState } = useActions()
@@ -35,13 +37,12 @@ export default () => {
         <PageLayout>
             <Card>
                 <SideBar />
-                <Flex direction="column" align="center">
+                <Flex direction='column' align='center'>
                     <WelcomeText>Мои Курсы</WelcomeText>
                     {
-                        loading ?
-                            <Loader />
-                            :
-                            coursePages?.map((coursePage, index) => {
+                        loading
+                            ? <Loader />
+                            : coursePages?.map((coursePage, index) => {
                                 return (
                                     <CoursePageItem
                                         coursePage={coursePage}

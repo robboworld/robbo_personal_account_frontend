@@ -1,4 +1,4 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
 import {
     emailOnChange,
@@ -8,7 +8,7 @@ import {
     signUpSuccess, signUpFailed,
     signOutSuccess, signOutFailed,
     checkAuthSuccess, checkAuthFailed,
-} from "@/actions"
+} from '@/actions'
 
 const INITIAL_STATE = {
     roles: [

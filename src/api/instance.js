@@ -1,5 +1,6 @@
-import * as axios from "axios"
-import config from "@/config"
+import * as axios from 'axios'
+
+import config from '@/config'
 
 
 const instance = axios.create({
@@ -33,10 +34,10 @@ instance.interceptors.response.use(
   async error => {
     const originalRequest = error.config
 
-    if (error.response.status == 401 && error.config && !error.config._isRetry) {
+    if (error.response.status === 401 && error.config && !error.config._isRetry) {
       originalRequest._isRetry = true
       try {
-        const response = await axios.get(config.backendURL[0] + `auth/refresh`, { withCredentials: true })
+        const response = await axios.get(config.backendURL[0] + 'auth/refresh', { withCredentials: true })
         localStorage.setItem('token', response.data.accessToken)
         return instance.request(originalRequest)
       } catch (e) {

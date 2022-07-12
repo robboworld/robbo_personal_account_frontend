@@ -1,6 +1,4 @@
-import * as axios from "axios"
-
-import instance from "./instance"
+import instance from './instance'
 
 export const authAPI = {
     signUp(email, password) {
@@ -37,5 +35,5 @@ export const authAPI = {
                 'Authorization': `Bearer ${token}`,
             },
         })
-    }
+    },
 }

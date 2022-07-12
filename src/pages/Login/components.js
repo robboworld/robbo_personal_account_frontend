@@ -31,9 +31,9 @@ export const SignIn = styled.div`
     width: 100%;
     height: 100%;
     cursor: pointer;
-    background: ${({ signIn }) => signIn ? "linear-gradient(to right, #14163c 0%, #03217b 79%)" : "white"};
-    color: ${({ signIn }) => signIn ? "white" : "black"};
-    box-shadow: ${({ signIn }) => signIn ? "inset -10px -10px 50px black" : "none"};
+    background: ${({ signIn }) => signIn ? 'linear-gradient(to right, #14163c 0%, #03217b 79%)' : 'white'};
+    color: ${({ signIn }) => signIn ? 'white' : 'black'};
+    box-shadow: ${({ signIn }) => signIn ? 'inset -10px -10px 50px black' : 'none'};
     border-bottom-right-radius: 10px;
 `
 
@@ -44,9 +44,9 @@ export const SignOut = styled.div`
     width: 100%;
     height: 50px;
     cursor: pointer;
-    background: ${({ signIn }) => !signIn ? "linear-gradient(to right, #14163c 0%, #03217b 79%)" : "white"};
-    color: ${({ signIn }) => !signIn ? "white" : "black"};
-    box-shadow: ${({ signIn }) => !signIn ? "inset 10px -10px 50px black" : "none"};
+    background: ${({ signIn }) => !signIn ? 'linear-gradient(to right, #14163c 0%, #03217b 79%)' : 'white'};
+    color: ${({ signIn }) => !signIn ? 'white' : 'black'};
+    box-shadow: ${({ signIn }) => !signIn ? 'inset 10px -10px 50px black' : 'none'};
     border-bottom-left-radius: 10px;
 `
 

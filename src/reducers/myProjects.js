@@ -1,4 +1,4 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
 import {
     clearMyProjectsState,
@@ -8,7 +8,7 @@ import {
     deleteProjectPageFailed, deleteProjectPageSuccess,
     getAllProjectPages,
     getAllProjectPagesFailed, getAllProjectPagesSuccess,
-} from "@/actions"
+} from '@/actions'
 
 const INITIAL_STATE = {
     newProjectId: '',
@@ -27,17 +27,20 @@ export default handleActions({
     [getAllProjectPagesFailed](state, action) {
         return { ...state, loading: false }
     },
+    [createProjectPage](state) {
+        return { ...state, loading: true }
+    },
     [createProjectPageSuccess](state, action) {
-        return { ...state, newProjectId: action.payload.response.data.projectId, isFetching: false }
+        return { ...state, newProjectId: action.payload.response.data.projectId, loading: false }
     },
     [createProjectPageFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: true }
     },
     [deleteProjectPage](state, action) {
         return { ...state, loading: true }
     },
     [deleteProjectPageSuccess](state, action) {
-        let newProjectPages = [...state.projectPages];
+        const newProjectPages = [...state.projectPages]
         newProjectPages.splice(action.payload.projectPageIndex, 1)
         return { ...state, loading: false, projectPages: newProjectPages }
     },
