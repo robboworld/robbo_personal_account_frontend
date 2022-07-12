@@ -8,7 +8,8 @@
   "plugins": [
     "prettier",
     "react-hooks",
-    "cypress"
+    "cypress",
+    "import"
   ],
   "parser": "babel-eslint",
   "env": {
@@ -54,7 +55,7 @@
     ],
     "jsx-quotes": [
       "error",
-      "prefer-double"
+      "prefer-single"
     ],
     "comma-dangle": [
       2,
@@ -71,6 +72,22 @@
     "react/jsx-fragments": [
       1,
       "element"
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "object",
+          "type"
+        ],
+        "newlines-between": "always-and-inside-groups"
+      }
     ]
   },
   "overrides": [
@@ -79,13 +96,7 @@
         "src/index.js"
       ],
       "rules": {
-        "react/jsx-filename-extension": "off",
-        "prettier/prettier": [
-          "error",
-          {
-            "singleQuote": true
-          }
-        ]
+        "react/jsx-filename-extension": "off"
       }
     }
   ]

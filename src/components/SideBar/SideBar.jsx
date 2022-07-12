@@ -1,7 +1,5 @@
-import React, { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import * as FaIcons from "react-icons/fa"
-import { Redirect } from "react-router-dom"
+import React, { useState } from 'react'
+import * as FaIcons from 'react-icons/fa'
 
 import {
     SideBar,
@@ -9,37 +7,34 @@ import {
     MenuIconOpen,
     MenuIconClose,
     SidebarMenu,
-    // MenuItems,
-    MenuItemLinks,
-} from "./components"
+} from './components'
 
-import { signOutRequest } from "@/actions"
-import { SidebarData } from "./SideBarData"
+import { SidebarData } from './SideBarData.jsx'
 import MenuItem from './MenuItem'
-import { getIsAuth } from "@/reducers/login"
 
-export default ({ }) => {
+import { useActions } from '@/helpers/useActions'
+
+export default () => {
     const [close, setClose] = useState(false)
     const showSidebar = () => setClose(!close)
-    const dispatch = useDispatch()
-    const isAuth = useSelector(state => getIsAuth(state.login))
+    const { signOutRequest } = useActions()
 
     const signOutHandler = path => {
         if (path === '/login') {
-            dispatch(signOutRequest())
+            signOutRequest()
         }
     }
 
     return (
         <SideBar>
             <Navbar>
-                <MenuIconOpen to="#" onClick={showSidebar}>
+                <MenuIconOpen to='#' onClick={showSidebar}>
                     <FaIcons.FaBars />
                 </MenuIconOpen>
             </Navbar>
 
             <SidebarMenu close={close}>
-                <MenuIconClose to="#" onClick={showSidebar}>
+                <MenuIconClose to='#' onClick={showSidebar}>
                     <FaIcons.FaTimes />
                 </MenuIconClose>
 

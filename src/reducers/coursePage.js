@@ -1,6 +1,6 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
-import { getCoursePageById, getCoursePageByIdFailed, getCoursePageByIdSuccess, clearCoursePageState } from "@/actions"
+import { getCoursePageById, getCoursePageByIdFailed, getCoursePageByIdSuccess, clearCoursePageState } from '@/actions'
 
 const INITIAL_STATE = {
     loading: true,
@@ -19,7 +19,7 @@ export default handleActions({
     },
     [clearCoursePageState](state, action) {
         return {...state, coursePage:{}, loading: true}
-    }
+    },
 }, INITIAL_STATE)
 
 export const getCoursePage = state => state.coursePage

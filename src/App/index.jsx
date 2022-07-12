@@ -46,7 +46,7 @@ export default () => (
         path={COURSE_PAGE_ROUTE}
         component={CoursePage}
       />
-      <Redirect from="/" to="/home" />
+      <Redirect from='/' to='/home' />
     </Switch>
   </Suspense>
 )

@@ -1,4 +1,4 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
 import {
     emailOnChange,
@@ -8,7 +8,7 @@ import {
     signUpSuccess, signUpFailed,
     signOutSuccess, signOutFailed,
     checkAuthSuccess, checkAuthFailed,
-} from "@/actions"
+} from '@/actions'
 
 const INITIAL_STATE = {
     roles: [
@@ -21,11 +21,7 @@ const INITIAL_STATE = {
     email: '',
     password: '',
     role: {},
-    signInError: '',
-    signUpError: '',
     isAuth: false,
-    successInResponse: false,
-    successUpResponse: false,
 }
 
 export default handleActions({
@@ -39,16 +35,16 @@ export default handleActions({
         return { ...state, role: action.payload.role }
     },
     [signInSucces](state, action) {
-        return { ...state, successInResponse: true, isAuth: true }
+        return { ...state, isAuth: true }
     },
     [signInFailed](state, action) {
-        return { ...state, signInError: action.payload.error, successInResponse: false, isAuth: false }
+        return { ...state, isAuth: false }
     },
     [signUpSuccess](state) {
-        return { ...state, email: '', password: '', successUpResponse: true, isAuth: true }
+        return { ...state, email: '', password: '', isAuth: true }
     },
     [signUpFailed](state, action) {
-        return { ...state, signUpError: action.payload.error, successUpResponse: false }
+        return { ...state }
     },
     [signOutSuccess](state) {
         return { ...state, email: '', password: '', isAuth: false }
@@ -64,6 +60,7 @@ export default handleActions({
     },
 }, INITIAL_STATE)
 
+export const getLoginState = state => state
 export const getId = state => state.id
 export const getEmail = state => state.email
 export const getPassword = state => state.password

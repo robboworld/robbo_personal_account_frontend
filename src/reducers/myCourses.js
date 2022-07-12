@@ -1,8 +1,8 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
 import {
-    getAllCoursePagesSuccess, getAllCoursePagesFailed, clearAllCoursePagesState
-} from "@/actions"
+    getAllCoursePagesSuccess, getAllCoursePagesFailed, clearAllCoursePagesState,
+} from '@/actions'
 
 const INITIAL_STATE = {
     loading: true,
@@ -18,7 +18,7 @@ export default handleActions({
     },
     [clearAllCoursePagesState](state, action) {
         return {...state, coursePages: [], loading: true }
-    }
+    },
 }, INITIAL_STATE)
 
 export const getCoursePages = state => state.coursePages

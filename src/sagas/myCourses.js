@@ -1,8 +1,9 @@
-import { call, put, take, takeLatest } from 'redux-saga/effects'
+import { call, put, takeLatest } from 'redux-saga/effects'
+
 import { coursePageAPI } from '@/api'
-import { 
+import {
     getAllCoursePages, getAllCoursePagesFailed, getAllCoursePagesSuccess,
-    getCoursePageById, getCoursePageByIdFailed, getCoursePageByIdSuccess
+    getCoursePageById, getCoursePageByIdFailed, getCoursePageByIdSuccess,
 } from '@/actions'
 
 

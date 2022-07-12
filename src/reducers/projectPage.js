@@ -1,6 +1,6 @@
 
 
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
 import {
     clearProjectPageState,
@@ -12,7 +12,7 @@ import {
     onSharedProject,
     updateProjectPage,
     updateProjectPageFailed, updateProjectPageSuccess,
-} from "@/actions"
+} from '@/actions'
 
 const INITIAL_STATE = {
     projectPage: {},
@@ -52,7 +52,7 @@ export default handleActions({
     },
     [clearProjectPageState](state, action) {
         return { ...state, loading: false, projectPage: {} }
-    }
+    },
 }, INITIAL_STATE)
 
 export const getProjectPage = state => state.projectPage

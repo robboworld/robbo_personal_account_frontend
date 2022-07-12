@@ -1,6 +1,4 @@
-import { createAction } from "redux-actions"
-
-import { parseJwt } from "@/helpers"
+import { createAction } from 'redux-actions'
 
 import {
     EMAIL_ONCHANGE,
@@ -10,7 +8,7 @@ import {
     SIGN_UP_FAILED, SIGN_UP, SIGN_UP_SUCCESS,
     SIGN_OUT, SIGN_OUT_SUCCESS, SIGN_OUT_FAILED,
     CHECK_AUTH, CHECK_AUTH_SUCCESS, CHECK_AUTH_FAILED,
-} from "@/constants"
+} from '@/constants'
 
 export const emailOnChange = createAction(EMAIL_ONCHANGE, email => {
     return {
@@ -73,12 +71,12 @@ export const signOutSuccess = createAction(SIGN_OUT_SUCCESS)
 export const signOutFailed = createAction(SIGN_OUT_FAILED)
 export const checkAuthRequest = createAction(CHECK_AUTH, token => {
     return {
-        token
+        token,
     }
 })
 export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
     return {
-        id: response.data
+        id: response.data,
     }
 })
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED)

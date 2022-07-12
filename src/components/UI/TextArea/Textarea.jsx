@@ -1,5 +1,6 @@
-import React from "react"
-import { StyledTextarea } from "./components"
+import React from 'react'
+
+import { StyledTextarea } from './components'
 
 export default (
     {
@@ -8,7 +9,7 @@ export default (
         height, width,
         padding, margin,
         placeholder,
-    }
+    },
 ) => {
     return <StyledTextarea
         onChange={e => { handleInput(e.target.value) }}

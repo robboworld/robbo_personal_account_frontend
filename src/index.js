@@ -7,7 +7,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { ToastContainer } from 'react-toastify'
-import { injectStyle } from "react-toastify/dist/inject-style";
+import { injectStyle } from 'react-toastify/dist/inject-style'
+
 import Application from '@/App'
 
 import { store } from '@/store'
@@ -16,8 +17,8 @@ import GlobalStyles from '@/globalStyles'
 
 // TO DO Error Boundary
 
-if (typeof window !== "undefined") {
-  injectStyle();
+if (typeof window !== 'undefined') {
+  injectStyle()
 }
 
 ReactDOM.render(
@@ -29,7 +30,7 @@ ReactDOM.render(
       </BrowserRouter>
     </ThemeProvider>
     <ToastContainer
-      position="bottom-right"
+      position='bottom-right'
       autoClose={5000}
       hideProgressBar={false}
       newestOnTop={false}

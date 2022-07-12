@@ -1,4 +1,4 @@
-import { createAction } from "redux-actions"
+import { createAction } from 'redux-actions'
 
 import {
     GET_ALL_PROJECT_PAGES, GET_ALL_PROJECT_PAGES_FAILED, GET_ALL_PROJECT_PAGES_SUCCESS,
@@ -9,7 +9,7 @@ import {
     ONCHANGE_PROJECT_PAGE_TITLE, ONCHANGE_PROJECT_PAGE_INSTRUCTION, ONCHANGE_PROJECT_PAGE_NOTES,
     ONSHARED_PROJECT,
     CLEAR_PROJECT_PAGE_STATE, CLEAR_MY_PROJECTS_STATE,
-} from "@/constants"
+} from '@/constants'
 
 export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, token => {
     return {
@@ -17,15 +17,15 @@ export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, token => {
     }
 })
 
-export const getAllProjectPagesSuccess = createAction(GET_ALL_PROJECT_PAGES_SUCCESS, (response) => {
+export const getAllProjectPagesSuccess = createAction(GET_ALL_PROJECT_PAGES_SUCCESS, response => {
     return {
-        response
+        response,
     }
 })
 
-export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILED, (err) => {
+export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILED, err => {
     return {
-        err
+        err,
     }
 })
 
@@ -33,19 +33,19 @@ export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILE
 export const getProjectPageById = createAction(GET_PROJECT_PAGE_BY_ID, (token, id) => {
     return {
         token,
-        id
+        id,
     }
 })
 
-export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, (response) => {
+export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, response => {
     return {
-        response
+        response,
     }
 })
 
-export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, (err) => {
+export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, err => {
     return {
-        err
+        err,
     }
 })
 
@@ -71,7 +71,7 @@ export const createProjectPageFailed = createAction(CREATE_PROJECT_PAGE_FAILED, 
 export const updateProjectPage = createAction(UPDATE_PROJECT_PAGE, (token, projectPage) => {
     return {
         token,
-        projectPage
+        projectPage,
     }
 })
 
@@ -81,9 +81,9 @@ export const updateProjectPageSuccess = createAction(UPDATE_PROJECT_PAGE_SUCCESS
     }
 })
 
-export const updateProjectPageFailed = createAction(UPDATE_PROJECT_PAGE_FAILED, (err) => {
+export const updateProjectPageFailed = createAction(UPDATE_PROJECT_PAGE_FAILED, err => {
     return {
-        err
+        err,
     }
 })
 
@@ -91,7 +91,7 @@ export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (token, proje
     return {
         token,
         projectPageId,
-        projectPageIndex
+        projectPageIndex,
     }
 })
 
@@ -107,27 +107,27 @@ export const deleteProjectPageFailed = createAction(DELETE_PROJECT_PAGE_FAILED, 
     }
 })
 
-export const onChangeProjectPageTitle = createAction(ONCHANGE_PROJECT_PAGE_TITLE, (title) => {
+export const onChangeProjectPageTitle = createAction(ONCHANGE_PROJECT_PAGE_TITLE, title => {
     return {
-        title
+        title,
     }
 })
 
-export const onChangeProjectPageInstruction = createAction(ONCHANGE_PROJECT_PAGE_INSTRUCTION, (instruction) => {
+export const onChangeProjectPageInstruction = createAction(ONCHANGE_PROJECT_PAGE_INSTRUCTION, instruction => {
     return {
-        instruction
+        instruction,
     }
 })
 
-export const onChangeProjectPageNotes = createAction(ONCHANGE_PROJECT_PAGE_NOTES, (notes) => {
+export const onChangeProjectPageNotes = createAction(ONCHANGE_PROJECT_PAGE_NOTES, notes => {
     return {
-        notes
+        notes,
     }
 })
 
-export const onSharedProject = createAction(ONSHARED_PROJECT, (isShared) => {
+export const onSharedProject = createAction(ONSHARED_PROJECT, isShared => {
     return {
-        isShared
+        isShared,
     }
 })
 

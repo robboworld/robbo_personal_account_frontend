@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react'
 
-import { Flex } from "./components"
+import { Flex } from './components'
 
 export default props => {
 
