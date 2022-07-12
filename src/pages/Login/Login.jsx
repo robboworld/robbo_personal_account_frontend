@@ -15,25 +15,14 @@ import {
     SwitchInOut,
     SignIn,
     SignOut,
-    ErrorAlert,
-    SuccessAlert,
 } from './components'
 
 import { PageLayout } from '@/layouts'
-
-import {
-    getEmail, getPassword,
-    getSignInError, getSignUpError,
-    getSuccessInResponse, getSuccessUpResponse,
-    getIsAuth,
-    getRoles,
-    getRole,
-} from '@/reducers/login'
-
 import Input from '@/components/UI/Input'
 import Button from '@/components/UI/Button'
 import CustomSelect from '@/components/UI/Select/Select'
 import { useActions } from '@/helpers/useActions'
+import { getLoginState } from '@/reducers/login'
 
 export default () => {
     const [signIn, setSignIn] = useState(false)
@@ -41,15 +30,7 @@ export default () => {
     const switchUp = () => setSignIn(true)
 
     const { emailOnChange, passwordOnChange, signInRequest, signUpRequest, roleOnChange } = useActions()
-    const email = useSelector(state => getEmail(state.login))
-    const password = useSelector(state => getPassword(state.login))
-    const roles = useSelector(state => getRoles(state.login))
-    const role = useSelector(state => getRole(state.login))
-    const signInError = useSelector(state => getSignInError(state.login))
-    const signUpError = useSelector(state => getSignUpError(state.login))
-    const isAuth = useSelector(state => getIsAuth(state.login))
-    const successInResponse = useSelector(state => getSuccessInResponse(state.login))
-    const successUpResponse = useSelector(state => getSuccessUpResponse(state.login))
+    const { email, password, roles, role, isAuth } = useSelector(state => getLoginState(state.login))
 
     const emailHandle = email => {
         emailOnChange(email)
@@ -57,14 +38,8 @@ export default () => {
     const passwordHandle = password => {
         passwordOnChange(password)
     }
-    const signInSubmit = () => {
-        signInRequest(email, password)
-    }
-    const signUpSubmit = () => {
-        signUpRequest(email, password)
-    }
+
     const onSelectChange = value => {
-        console.log(value)
         roleOnChange(value)
     }
 
@@ -99,20 +74,9 @@ export default () => {
                                     />
                                 </SelectContainer>
                                 <ButtonContainer>
-                                    <Button content='Регистрация' handleSubmit={signUpSubmit} />
+                                    <Button content='Регистрация' handleSubmit={() => { signUpRequest(email, password) }} />
                                 </ButtonContainer>
-                                {/* <LoginWith>OR LOGIN WITH</LoginWith> */}
                                 <HorizontalRule />
-                                {/* <ForgotPassword>Forgot Password ?</ForgotPassword> */}
-                                {signUpError &&
-                                    <ErrorAlert>
-                                        <span>Произошла ошибка: {signUpError}</span>
-                                    </ErrorAlert>
-                                }
-                                {
-                                    successUpResponse &&
-                                    <SuccessAlert><span>Успешно!</span></SuccessAlert>
-                                }
                             </MainContainer>
                         )
                         : (
@@ -129,20 +93,9 @@ export default () => {
                                         value={password} handleInput={passwordHandle} />
                                 </InputContainer>
                                 <ButtonContainer>
-                                    <Button content='Войти' handleSubmit={signInSubmit} />
+                                    <Button content='Войти' handleSubmit={() => { signInRequest(email, password) }} />
                                 </ButtonContainer>
-                                {/* <LoginWith>OR LOGIN WITH</LoginWith> */}
                                 <HorizontalRule />
-                                {/* <ForgotPassword>Forgot Password ?</ForgotPassword> */}
-                                {signInError &&
-                                    <ErrorAlert>
-                                        <span>Произошла ошибка: {signInError}</span>
-                                    </ErrorAlert>
-                                }
-                                {
-                                    successInResponse &&
-                                    <SuccessAlert><span>Успешно!</span></SuccessAlert>
-                                }
                             </MainContainer>
                         )
                     }
