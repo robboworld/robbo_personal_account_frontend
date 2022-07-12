@@ -50,7 +50,7 @@ function* checkAuthSaga(action) {
         const { token } = action.payload.token
         const response = yield call(authAPI.checkAuth, token)
         console.log(response)
-        put(checkAuthSuccess(response))
+        yield put(checkAuthSuccess(response))
     } catch (e) {
         yield put(checkAuthFailed(e?.message))
     }

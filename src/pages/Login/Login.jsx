@@ -23,8 +23,10 @@ import Button from '@/components/UI/Button'
 import CustomSelect from '@/components/UI/Select/Select'
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
+import { useIsAuth } from '@/helpers'
 
 export default () => {
+    useIsAuth()
     const [signIn, setSignIn] = useState(false)
     const switchIn = () => setSignIn(false)
     const switchUp = () => setSignIn(true)
