@@ -40,6 +40,15 @@ export const SidebarMenu = styled.div`
     top: 0;
     left: ${({ close }) => close ? '0' : '-100%'};
     transition: .6s;
+    overflow: auto;
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+      
+    ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: ${({ theme }) => theme.colors.white};
+    }
 `
 
 export const MenuItems = styled.li`

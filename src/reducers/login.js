@@ -12,15 +12,17 @@ import {
 
 const INITIAL_STATE = {
     roles: [
-        { value: 'student', label: 'Ученик' },
-        { value: 'teacher', label: 'Учитель' },
-        { value: 'parent', label: 'Родитель' },
-        { value: 'admin', label: ' Администратор' },
+        { value: 0, label: 'Ученик' },
+        { value: 1, label: 'Учитель' },
+        { value: 2, label: 'Родитель' },
+        { value: 3, label: 'Свободный слушатель' },
+        // { value: 'admin', label: ' Администратор' },
     ],
     id: '',
     email: '',
     password: '',
     role: {},
+    userRole: null,
     isAuth: false,
 }
 
@@ -53,10 +55,10 @@ export default handleActions({
         return { ...state }
     },
     [checkAuthSuccess](state, action) {
-        return { ...state, isAuth: true, id: action.payload.id }
+        return { ...state, isAuth: true, id: action.payload.id, userRole: action.payload.role }
     },
     [checkAuthFailed](state, action) {
-        return { ...state }
+        return { ...state, isAuth: false }
     },
 }, INITIAL_STATE)
 
@@ -66,9 +68,6 @@ export const getEmail = state => state.email
 export const getPassword = state => state.password
 export const getRoles = state => state.roles
 export const getRole = state => state.role
+export const getUserRole = state => state.userRole
 export const getToken = state => state.token
-export const getSignInError = state => state.signInError
-export const getSignUpError = state => state.signUpError
 export const getIsAuth = state => state.isAuth
-export const getSuccessInResponse = state => state.successInResponse
-export const getSuccessUpResponse = state => state.successUpResponse

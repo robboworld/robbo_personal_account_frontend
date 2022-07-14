@@ -59,10 +59,11 @@ export const signUpFailed = createAction(SIGN_UP_FAILED, error => {
     }
 })
 
-export const signUpRequest = createAction(SIGN_UP, (email, password) => {
+export const signUpRequest = createAction(SIGN_UP, (email, password, role) => {
     return {
         email,
         password,
+        role,
     }
 })
 
@@ -76,7 +77,8 @@ export const checkAuthRequest = createAction(CHECK_AUTH, token => {
 })
 export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
     return {
-        id: response.data,
+        id: response.data.id,
+        role: response.data.role,
     }
 })
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED)

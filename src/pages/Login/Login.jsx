@@ -76,7 +76,11 @@ export default () => {
                                     />
                                 </SelectContainer>
                                 <ButtonContainer>
-                                    <Button content='Регистрация' handleSubmit={() => { signUpRequest(email, password) }} />
+                                    <Button
+                                        content='Регистрация'
+                                        handleSubmit={() => { signUpRequest(email, password, role.value) }}
+                                        padding='10px'
+                                    />
                                 </ButtonContainer>
                                 <HorizontalRule />
                             </MainContainer>
@@ -95,7 +99,11 @@ export default () => {
                                         value={password} handleInput={passwordHandle} />
                                 </InputContainer>
                                 <ButtonContainer>
-                                    <Button content='Войти' handleSubmit={() => { signInRequest(email, password) }} />
+                                    <Button
+                                        content='Войти'
+                                        handleSubmit={() => { signInRequest(email, password) }}
+                                        padding='10px'
+                                    />
                                 </ButtonContainer>
                                 <HorizontalRule />
                             </MainContainer>
