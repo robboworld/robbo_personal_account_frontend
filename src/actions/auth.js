@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions'
+import { toast } from 'react-toastify'
 
 import {
     EMAIL_ONCHANGE,
@@ -9,6 +10,7 @@ import {
     SIGN_OUT, SIGN_OUT_SUCCESS, SIGN_OUT_FAILED,
     CHECK_AUTH, CHECK_AUTH_SUCCESS, CHECK_AUTH_FAILED,
 } from '@/constants'
+
 
 export const emailOnChange = createAction(EMAIL_ONCHANGE, email => {
     return {
@@ -42,6 +44,7 @@ export const signInSucces = createAction(SIGN_IN_SUCCESS, response => {
 })
 
 export const signInFailed = createAction(SIGN_IN_FAILED, error => {
+    toast.error(error)
     return {
         error,
     }
@@ -54,6 +57,7 @@ export const signUpSuccess = createAction(SIGN_UP_SUCCESS, response => {
 })
 
 export const signUpFailed = createAction(SIGN_UP_FAILED, error => {
+    toast.error(error)
     return {
         error,
     }
@@ -81,4 +85,9 @@ export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
         role: response.data.role,
     }
 })
-export const checkAuthFailed = createAction(CHECK_AUTH_FAILED)
+export const checkAuthFailed = createAction(CHECK_AUTH_FAILED, error => {
+    toast.error(error)
+    return {
+        error,
+    }
+})

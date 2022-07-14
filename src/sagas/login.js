@@ -17,6 +17,7 @@ function* signInSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signInSucces(response))
     } catch (e) {
+        console.log(e.response)
         yield put(signInFailed(e.message))
     }
 }
@@ -29,7 +30,8 @@ function* signUpSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signUpSuccess(response))
     } catch (e) {
-        yield put(signUpFailed(e.message))
+        console.log(e.response)
+        yield put(signUpFailed(e.response.data))
     }
 }
 
@@ -40,6 +42,7 @@ function* signOutSaga(action) {
         console.log(response)
         yield put(signOutSuccess())
     } catch (e) {
+        console.log(e.response)
         yield put(signOutFailed(e.message))
     }
 }
@@ -51,6 +54,7 @@ function* checkAuthSaga(action) {
         console.log(response)
         yield put(checkAuthSuccess(response))
     } catch (e) {
+        console.log(e.response)
         yield put(checkAuthFailed(e?.message))
     }
 }
