@@ -16,8 +16,9 @@ export const Avatar = styled.img`
     object-fit: cover;
 `
 
-export const Description = styled.div`
+export const Description = styled.p`
     min-height: 20%;
     width: 100%;
     margin: 1rem 0;
+    white-space: pre-wrap;
 `
