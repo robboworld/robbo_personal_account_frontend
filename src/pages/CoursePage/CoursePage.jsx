@@ -11,8 +11,11 @@ import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { useIsAuth } from '@/helpers/useIsAuth'
 import { useActions } from '@/helpers/useActions'
+import { courseDescriptionParser } from '@/helpers/courseDescriptionParser'
 
 export default props => {
+    const EDX_TEST_COURSES_ADDRESS = 'https://edx-test.ru/courses/'
+
     const { getCoursePageById, clearCoursePageState } = useActions()
     useIsAuth()
 
@@ -28,9 +31,12 @@ export default props => {
         }
     }, [])
 
-
     const loading = useSelector(state => getCoursePageLoading(state.coursePage))
     const coursePage = useSelector(state => getCoursePage(state.coursePage))
+
+    const openCourseButtonHandler = () => {
+        window.open(EDX_TEST_COURSES_ADDRESS + coursePage.course_id + '/about')
+    }
 
     return (
         <PageLayout>
@@ -51,6 +57,7 @@ export default props => {
                                                 content='Открыть курс'
                                                 background='darkgreen'
                                                 margin='1rem 0 0 0' padding='0.5rem'
+                                                handleSubmit={openCourseButtonHandler}
                                             />
                                             <Button
                                                 content='Прогресс'
@@ -72,7 +79,7 @@ export default props => {
                                             <Flex direction='column'>
                                                 <h4>Описание курса</h4>
                                                 <Description>
-                                                    {coursePage.short_description}
+                                                    {courseDescriptionParser(coursePage)}
                                                 </Description>
 
                                             </Flex>
