@@ -5,6 +5,7 @@ import {
   LOGIN_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
+  TEACHERS_PAGE_ROUTE,
 } from '@/constants'
 
 export const SidebarDataStudent = [
@@ -91,22 +92,22 @@ export const SidebarDataSuperAdmin = [
   },
   {
     title: 'Уроки',
-    path: '/payments',
+    path: '/',
     icon: <FaIcons.FaCreditCard />,
   },
   {
     title: 'Задачи',
-    path: '/program',
+    path: '/',
     icon: <FaIcons.FaTasks />,
   },
   {
     title: 'Клиенты',
-    path: MY_COURSES_ROUTE,
+    path: '/',
     icon: <FaIcons.FaBook />,
   },
   {
     title: 'Группы (Robbo Units)',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
@@ -116,47 +117,47 @@ export const SidebarDataSuperAdmin = [
   },
   {
     title: 'Unit Админы',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Педагоги',
-    path: '/informer',
+    path: TEACHERS_PAGE_ROUTE,
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Свободные слушатели',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Финансы',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Лиды',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Звонки',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Доступ в CRM',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Абонементы',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {
     title: 'Информер',
-    path: '/informer',
+    path: '/',
     icon: <FaIcons.FaInfo />,
   },
   {

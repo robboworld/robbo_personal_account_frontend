@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { DigitalTail, StyledSpan } from './components'
 
 import Flex from '@/components/Flex'
-import { useActions } from '@/helpers/useActions'
+// import { useActions } from '@/helpers/useActions'
 
 export default () => {
     useEffect(() => {

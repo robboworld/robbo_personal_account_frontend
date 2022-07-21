@@ -36,6 +36,6 @@ export const DigitalTail = styled.div`
   heigth: 10%;
   border: solid;
   border-radius: 10px;
-  padding: 10px;
+  padding: 10px;  
   overflow: auto;
 `
