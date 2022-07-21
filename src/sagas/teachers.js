@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from 'redux-saga/effects'
+import { call, takeLatest } from 'redux-saga/effects'
 
 import { teachersAPI } from '@/api'
 import { getTeachers } from '@/actions/teachers'
