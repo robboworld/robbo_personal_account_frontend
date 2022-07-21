@@ -5,6 +5,7 @@ import {
   LOGIN_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
+  CLIENTS_ROUTE,
 } from '@/constants'
 
 export const SidebarDataStudent = [
@@ -96,7 +97,7 @@ export const SidebarDataSuperAdmin = [
   },
   {
     title: 'Клиенты',
-    path: MY_COURSES_ROUTE,
+    path: CLIENTS_ROUTE,
     icon: <FaIcons.FaBook />,
   },
   {

@@ -1,0 +1,2 @@
+export const GET_CLIENT_PAGE_BY_ID = 'GET_CLIENT_PAGE_BY_ID'
+export const GET_CLIENTS = 'GET_CLIENTS'
