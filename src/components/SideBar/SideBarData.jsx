@@ -80,8 +80,13 @@ export const SidebarDataParent = [
 
 export const SidebarDataSuperAdmin = [
   {
-    title: 'Аналитика',
+    title: 'Профиль',
     path: '/profile',
+    icon: <FaIcons.FaUserAlt />,
+  },
+  {
+    title: 'Аналитика',
+    path: '/',
     icon: <FaIcons.FaUserAlt />,
   },
   {
