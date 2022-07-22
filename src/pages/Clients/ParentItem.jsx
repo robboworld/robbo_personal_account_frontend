@@ -1,19 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { useHistory } from 'react-router-dom'
+import ParentPage from '../ParentPage'
 
-import { ParentItem, Title } from './components'
+import { DeleteButton, ParentItem, Title } from './components'
 
 export default ({ parent }) => {
-    const history = useHistory()
+    const [open, setOpen] = useState(false)
 
     const toCoursePageHandler = () => {
-        history.push(`/client/${parent.id}`)
+        setOpen(true)
     }
 
     return (
         <ParentItem>
             <Title onClick={toCoursePageHandler}> {parent.name}</Title>
+            <DeleteButton>×</DeleteButton>
+            <ParentPage open={open} setOpen={setOpen} />
         </ParentItem>
     )
 }

@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE, MY_PROJECTS_ROUTE, MY_COURSES_ROUTE, COURSE_PAGE_ROUTE, CLIENTS_ROUTE, CLIENT_PAGE_ROUTE } from '@/constants'
+import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE, MY_PROJECTS_ROUTE, MY_COURSES_ROUTE, COURSE_PAGE_ROUTE, CLIENTS_ROUTE } from '@/constants'
 
 import Loader from '@/components/Loader'
 
@@ -12,7 +12,6 @@ const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const MyCourses = lazy(() => import('@/pages/MyCourses'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const Clients = lazy(() => import('@/pages/Clients'))
-const ParentPage = lazy(() => import('@/pages/ParentPage'))
 
 
 export default () => (
@@ -52,11 +51,6 @@ export default () => (
         exact
         path={CLIENTS_ROUTE}
         component={Clients}
-      />
-      <Route
-        exact
-        path={CLIENT_PAGE_ROUTE}
-        component={ParentPage}
       />
       <Redirect from='/' to='/home' />
     </Switch>
