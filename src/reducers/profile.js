@@ -1,14 +1,23 @@
 import { handleActions } from 'redux-actions'
 
-import { clearProfileState, deleteProfile, deleteProfileFailed, deleteProfileSuccess, getProfileById, getProfileByIdFailed, getProfileByIdSuccess, profileEmailOnChange } from '@/actions/profile'
+import {
+    clearProfileState, deleteProfile, deleteProfileFailed,
+    deleteProfileSuccess, getProfileById, getProfileByIdFailed,
+    getProfileByIdSuccess, profileEmailOnChange, profileFirstnameOnChange,
+    profileLastnameOnChange, profileMiddlenameOnChange, profileNicknameOnChange,
+} from '@/actions/profile'
 
 const INITIAL_STATE = {
     id: null,
     email: 'rupychman@mail.ru',
+    nickname: 'skinnykaen',
     joinedAt: "10.05.2022",
     avatar: null,
     role: 'Ученик',
-    // aboutMe: "",
+    firstname: 'Евгений',
+    lastname: 'Сущевич',
+    middlename: 'Павлович',
+    aboutMe: "",
     // workingOn: "",
     // informationTrail: "",
     loading: false,
@@ -17,6 +26,18 @@ const INITIAL_STATE = {
 export default handleActions({
     [profileEmailOnChange](state, action) {
         return { ...state, email: action.payload.email }
+    },
+    [profileNicknameOnChange](state, action) {
+        return { ...state, nickname: action.payload.nickname }
+    },
+    [profileLastnameOnChange](state, action) {
+        return { ...state, lastname: action.payload.lastname }
+    },
+    [profileFirstnameOnChange](state, action) {
+        return { ...state, firstname: action.payload.firstname }
+    },
+    [profileMiddlenameOnChange](state, action) {
+        return { ...state, middlename: action.payload.middlename }
     },
     [clearProfileState](state) {
         return { ...state, id: null, email: null, joinedAt: null, role: null, loading: false }
