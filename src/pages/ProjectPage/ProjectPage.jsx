@@ -133,7 +133,7 @@ export default props => {
                                     handleSubmit={seeInsideHandler}
                                 />
                             </Flex>
-                            <Flex column='row' justify='space-between'
+                            <Flex direction='row' justify='space-between'
                                 width='100%' height='41%'
                                 padding='2rem 0'>
                                 <ProjectStage />

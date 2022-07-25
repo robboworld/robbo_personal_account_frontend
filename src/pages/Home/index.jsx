@@ -24,7 +24,6 @@ export default () => {
       <Card>
         <Heading id='welcome'>Welcome to Robbo Student Account!</Heading>
         <SideBar />
-        {/* <Loader /> */}
       </Card>
     </PageLayout>
   )

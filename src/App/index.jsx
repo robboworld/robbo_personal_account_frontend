@@ -1,7 +1,11 @@
 import React, { lazy, Suspense } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE, MY_PROJECTS_ROUTE, MY_COURSES_ROUTE, COURSE_PAGE_ROUTE, CLIENTS_ROUTE } from '@/constants'
+import {
+  HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE,
+  MY_PROJECTS_ROUTE, MY_COURSES_ROUTE, COURSE_PAGE_ROUTE,
+  PROFILE_PAGE_ROUTE, TEACHERS_PAGE_ROUTE, CLIENTS_ROUTE,
+} from '@/constants'
 
 import Loader from '@/components/Loader'
 
@@ -11,6 +15,8 @@ const MyProjects = lazy(() => import('@/pages/MyProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const MyCourses = lazy(() => import('@/pages/MyCourses'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
+const ProfilePage = lazy(() => import('@/pages/Profile'))
+const TeachersPage = lazy(() => import('@/pages/Teachers'))
 const Clients = lazy(() => import('@/pages/Clients'))
 
 
@@ -51,6 +57,17 @@ export default () => (
         exact
         path={CLIENTS_ROUTE}
         component={Clients}
+      />
+      
+       <Route
+        exact
+        path={TEACHERS_PAGE_ROUTE}
+        component={TeachersPage}
+      />
+      <Route
+        exact
+        path={PROFILE_PAGE_ROUTE}
+        component={ProfilePage}
       />
       <Redirect from='/' to='/home' />
     </Switch>
