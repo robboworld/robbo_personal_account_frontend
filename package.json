@@ -14,6 +14,8 @@
     "cypress:test": "start-server-and-test start http://localhost:3000 cypress:run"
   },
   "dependencies": {
+    "@mui/material": "^5.9.1",
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@5.8.0",
     "axios": "^0.19.0",
     "body-parser": "^1.19.0",
     "eslint-plugin-import": "^2.26.0",
@@ -76,5 +78,8 @@
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.2",
     "webpack-merge": "^4.2.2"
+  },
+  "resolutions": {
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@5.8.0"
   }
 }
