@@ -1,19 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { StyledListItem } from './components'
-
-import Flex from '@/components/Flex'
-
+import { StyledListItem, DeleteButton, Title } from './components'
 
 export default ({
     label,
     handleClick,
+    render,
 }) => {
+    const [open, setOpen] = useState(false)
+
     return (
-        <Flex>
-            <StyledListItem>
-                {label}
-            </StyledListItem>
-        </Flex>
+
+        <StyledListItem>
+            <Title onClick={() => { setOpen(true) }}> {label}</Title>
+            <DeleteButton>×</DeleteButton>
+            {/* <ParentPage open={open} setOpen={setOpen} /> */}
+            {
+                render(open, setOpen)
+            }
+        </StyledListItem>
+
     )
 }

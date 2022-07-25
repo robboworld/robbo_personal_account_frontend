@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import SideBar from "@/components/SideBar"
@@ -9,9 +9,12 @@ import { getTeachersState } from '@/reducers/teachers'
 import { useActions } from '@/helpers/useActions'
 import { Button } from '@/components/UI'
 import ListItem from '@/components/ListItem'
+import ParentPage from '@/pages/ParentPage'
 
 
 export default () => {
+
+    // const [open, setOpen] = useState(false)
     useIsAuth()
     // const isAuth = useSelector()
     // if (!isAuth)
@@ -51,7 +54,10 @@ export default () => {
                         {
                             teachers.map((teacher, index) => {
                                 return (
-                                    <ListItem key={index} label={teacher.firstname} />
+                                    <ListItem
+                                        key={index} label={teacher.firstname}
+                                        render={(open, setOpen) => <ParentPage open={open} setOpen={setOpen} />}
+                                    />
                                 )
                             })
                         }
