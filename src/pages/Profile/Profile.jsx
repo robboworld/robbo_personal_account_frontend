@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
-import { Headind, StyledSpan, AvatarWrapper, AboutMe } from './components'
+import { Headind, AvatarWrapper, AboutMe } from './components'
 import DigitalTail from './DigitalTail'
 
 import { PageLayout, Card } from '@/layouts'
@@ -11,7 +11,7 @@ import { useIsAuth } from '@/helpers'
 import { getProfile } from '@/reducers/profile'
 import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
-import { Button, Input, Textarea } from '@/components/UI'
+import { Button, Input, Textarea, StyledSpan } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { getIsAuth } from '@/reducers/login'
 
@@ -84,12 +84,23 @@ export default () => {
                                             margin='0 20px 0 0'
                                             style={{ 'borderRight': 'solid' }}
                                         >
-                                            <StyledSpan size='1rem' height='2.8rem'>Email</StyledSpan>
-                                            <StyledSpan size='1rem' height='2.8rem'>Фамилия</StyledSpan>
-                                            <StyledSpan size='1rem' height='2.8rem'>Имя</StyledSpan>
-                                            <StyledSpan size='1rem' height='2.8rem'>Отчество</StyledSpan>
-                                            <StyledSpan size='1rem' height='2.8rem'>Никнейм</StyledSpan>
-                                            <StyledSpan size='1rem' height='2.8rem'>Аккаунт создан</StyledSpan>
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Email' />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Фамилия'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Имя'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Отчество'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                constent='Никнейм'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Аккаунт создан'
+                                            />
                                         </Flex>
 
                                         <Flex
@@ -133,9 +144,8 @@ export default () => {
                                                                 <StyledSpan
                                                                     size='1rem'
                                                                     width='100%'
-                                                                >
-                                                                    {email}
-                                                                </StyledSpan>
+                                                                    content={email}
+                                                                />
                                                                 <Button
                                                                     height='2rem'
                                                                     content='Изменить'
@@ -188,7 +198,9 @@ export default () => {
                                                                 justify='space-around'
                                                                 align='center'
                                                             >
-                                                                <StyledSpan size='1rem' width='100%'>{lastname}</StyledSpan>
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={lastname}
+                                                                />
                                                                 <Button
                                                                     height='2rem'
                                                                     content='Изменить'
@@ -241,7 +253,9 @@ export default () => {
                                                                 justify='space-around'
                                                                 align='center'
                                                             >
-                                                                <StyledSpan size='1rem' width='100%'>{firstname}</StyledSpan>
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={firstname}
+                                                                />
                                                                 <Button
                                                                     height='2rem'
                                                                     content='Изменить'
@@ -294,7 +308,9 @@ export default () => {
                                                                 justify='space-around'
                                                                 align='center'
                                                             >
-                                                                <StyledSpan size='1rem' width='100%'>{middlename}</StyledSpan>
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={middlename}
+                                                                />
                                                                 <Button
                                                                     height='2rem'
                                                                     content='Изменить'
@@ -348,7 +364,9 @@ export default () => {
                                                                 justify='space-around'
                                                                 align='center'
                                                             >
-                                                                <StyledSpan size='1rem' width='100%'>{nickname}</StyledSpan>
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={nickname}
+                                                                />
                                                                 <Button
                                                                     height='2rem'
                                                                     content='Изменить'
@@ -371,10 +389,8 @@ export default () => {
                                             >
                                                 <StyledSpan
                                                     size='1rem'
-
-                                                >
-                                                    {joinedAt}
-                                                </StyledSpan>
+                                                    content={joinedAt}
+                                                />
                                             </Flex>
 
                                             <Flex
@@ -385,10 +401,8 @@ export default () => {
                                             >
                                                 <StyledSpan
                                                     size='1rem'
-
-                                                >
-                                                    {role}
-                                                </StyledSpan>
+                                                    content={role}
+                                                />
                                             </Flex>
 
                                         </Flex>

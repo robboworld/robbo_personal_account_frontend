@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 
-import { DigitalTail, StyledSpan } from './components'
+import { DigitalTail } from './components'
 
+import { StyledSpan } from '@/components/UI'
 import Flex from '@/components/Flex'
 // import { useActions } from '@/helpers/useActions'
 
