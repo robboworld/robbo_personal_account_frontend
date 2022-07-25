@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
-import { Email, Headind, StyledSpan, AvatarWrapper } from './components'
+import { Headind, AvatarWrapper, AboutMe } from './components'
 import DigitalTail from './DigitalTail'
 
 import { PageLayout, Card } from '@/layouts'
@@ -10,16 +11,32 @@ import { useIsAuth } from '@/helpers'
 import { getProfile } from '@/reducers/profile'
 import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
-import { Button, Input } from '@/components/UI'
+import { Button, Input, Textarea, StyledSpan } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
-
+import { getIsAuth } from '@/reducers/login'
 
 export default () => {
     useIsAuth()
+    const isAuth = useSelector(state => getIsAuth(state.login))
 
-    const { profileEmailOnChange, deleteProfile } = useActions()
+    if (!isAuth) {
+        return <Redirect to='/login' />
+    }
+
+    const { profileEmailOnChange,
+        deleteProfile,
+        profileFirstnameOnChange,
+        profileLastnameOnChange,
+        profileMiddlenameOnChange,
+        profileNicknameOnChange,
+    } = useActions()
 
     const [emailEditMode, setEmailEditMode] = useState(false)
+    const [nicknameEditMode, setNicknameEditMode] = useState(false)
+    const [lastnameEditMode, setLastnameEditMode] = useState(false)
+    const [firstnameEditMode, setFirstnameEditMode] = useState(false)
+    const [middlenameEditMode, setMiddlenameEditMode] = useState(false)
+    const [aboutMeEditMode, setAbouMeEditMode] = useState(false)
 
     useEffect(() => {
         // getProfileById(token, projectPageId)
@@ -28,27 +45,17 @@ export default () => {
         }
     }, [])
 
-    const onBlurHandler = element => {
-        switch (element) {
-            case 'email':
-                setEmailEditMode(false)
-            // updateProjectPage(token, projectPage)
-            // return
-        }
-    }
-
     const {
         email,
         joinedAt,
         loading,
         role,
+        firstname,
+        lastname,
+        middlename,
+        nickname,
+        aboutMe,
     } = useSelector(state => getProfile(state.profile))
-
-
-
-    const onChangeEmailHandler = email => {
-        profileEmailOnChange(email)
-    }
 
     return (
         <PageLayout>
@@ -77,9 +84,23 @@ export default () => {
                                             margin='0 20px 0 0'
                                             style={{ 'borderRight': 'solid' }}
                                         >
-                                            <StyledSpan size='2rem' margin='0 10px 20px 0'>Email</StyledSpan>
-                                            <StyledSpan size='2rem' margin='0 10px 20px 0'>Аккаунт создан</StyledSpan>
-                                            <StyledSpan size='2rem' margin='0 10px 20px 0'>{role}</StyledSpan>
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Email' />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Фамилия'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Имя'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Отчество'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                constent='Никнейм'
+                                            />
+                                            <StyledSpan size='1rem' height='2.8rem'
+                                                content='Аккаунт создан'
+                                            />
                                         </Flex>
 
                                         <Flex
@@ -88,57 +109,337 @@ export default () => {
                                         >
                                             <Flex
                                                 width='100%'
-                                                justify='space-between'
                                                 margin='0 0 10px 0'
+                                                justify='space-between'
+                                                align='center'
                                             >
                                                 {
                                                     emailEditMode
                                                         ? (
-                                                            <Input
-                                                                onBlur={() => { onBlurHandler('email') }}
-                                                                height='2rem'
-                                                                fontSize='2rem'
+                                                            <Flex
                                                                 width='100%'
-                                                                padding='1.5rem'
-                                                                value={email}
-                                                                handleInput={onChangeEmailHandler}
-                                                            />
+                                                                justify='space-between'
+                                                                align='center'
+                                                            >
+                                                                <Input
+                                                                    height='2rem'
+                                                                    fontSize='1rem'
+                                                                    width='100%'
+                                                                    padding='0.5rem'
+                                                                    value={email}
+                                                                    handleInput={email => { profileEmailOnChange(email) }}
+                                                                />
+                                                                <Button
+                                                                    content='Готово'
+                                                                    height='2rem'
+                                                                    padding='10px'
+                                                                    background='green'
+                                                                    margin='0 0 0 10px'
+                                                                    handleSubmit={() => { setEmailEditMode(false) }}
+                                                                />
+                                                            </Flex>
                                                         )
                                                         : (
-                                                            <Email>
-                                                                <span>{email}</span>
-                                                            </Email>
+                                                            <Flex width='100%' justify='space-around'>
+                                                                <StyledSpan
+                                                                    size='1rem'
+                                                                    width='100%'
+                                                                    content={email}
+                                                                />
+                                                                <Button
+                                                                    height='2rem'
+                                                                    content='Изменить'
+                                                                    background='grey'
+                                                                    padding='0.5rem'
+                                                                    margin='0 0 0 3.5rem'
+                                                                    handleSubmit={() => { setEmailEditMode(true) }}
+                                                                />
+                                                            </Flex>
                                                         )
                                                 }
-                                                <Button
-                                                    content='Изменить'
-                                                    background='grey'
-                                                    padding='0.5rem'
-                                                    margin='0 0.5rem'
-                                                    handleSubmit={() => { setEmailEditMode(true) }}
+
+                                            </Flex>
+
+                                            <Flex
+                                                width='100%'
+                                                justify='space-between'
+                                                align='center'
+                                                margin='0 0 10px 0'
+                                            >
+                                                {
+                                                    lastnameEditMode
+                                                        ? (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-between'
+                                                                align='center'
+                                                            >
+                                                                <Input
+                                                                    height='2rem'
+                                                                    fontSize='1rem'
+                                                                    width='100%'
+                                                                    padding='0.5rem'
+                                                                    value={lastname}
+                                                                    handleInput={lastname => { profileLastnameOnChange(lastname) }}
+                                                                />
+                                                                <Button
+                                                                    content='Готово'
+                                                                    height='2rem'
+                                                                    padding='10px'
+                                                                    background='green'
+                                                                    margin='0 0 0 3.5rem'
+                                                                    handleSubmit={() => { setLastnameEditMode(false) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+                                                        : (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-around'
+                                                                align='center'
+                                                            >
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={lastname}
+                                                                />
+                                                                <Button
+                                                                    height='2rem'
+                                                                    content='Изменить'
+                                                                    background='grey'
+                                                                    padding='0.5rem'
+                                                                    margin='0 0 0 3.5rem'
+                                                                    handleSubmit={() => { setLastnameEditMode(true) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+
+                                                }
+                                            </Flex>
+
+                                            <Flex
+                                                width='100%'
+                                                justify='space-between'
+                                                margin='0 0 10px 0'
+                                                align='center'
+                                            >
+                                                {
+                                                    firstnameEditMode
+                                                        ? (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-between'
+                                                                align='center'
+                                                            >
+                                                                <Input
+                                                                    height='2rem'
+                                                                    fontSize='1rem'
+                                                                    width='100%'
+                                                                    padding='0.5rem'
+                                                                    value={firstname}
+                                                                    handleInput={firstname => { profileFirstnameOnChange(firstname) }}
+                                                                />
+                                                                <Button
+                                                                    content='Готово'
+                                                                    height='2rem'
+                                                                    padding='10px'
+                                                                    background='green'
+                                                                    margin='0 0 0 10px'
+                                                                    handleSubmit={() => { setFirstnameEditMode(false) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+                                                        : (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-around'
+                                                                align='center'
+                                                            >
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={firstname}
+                                                                />
+                                                                <Button
+                                                                    height='2rem'
+                                                                    content='Изменить'
+                                                                    background='grey'
+                                                                    padding='0.5rem'
+                                                                    margin='0 0 0 3.5rem'
+                                                                    handleSubmit={() => { setFirstnameEditMode(true) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+
+                                                }
+                                            </Flex>
+
+                                            <Flex
+                                                width='100%'
+                                                justify='space-between'
+                                                margin='0 0 10px 0'
+                                                align='center'
+                                            >
+                                                {
+                                                    middlenameEditMode
+                                                        ? (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-between'
+                                                                align='center'
+                                                            >
+                                                                <Input
+                                                                    height='2rem'
+                                                                    fontSize='1rem'
+                                                                    width='100%'
+                                                                    padding='0.5rem'
+                                                                    value={middlename}
+                                                                    handleInput={middlename => { profileMiddlenameOnChange(middlename) }}
+                                                                />
+                                                                <Button
+                                                                    content='Готово'
+                                                                    height='2rem'
+                                                                    padding='10px'
+                                                                    background='green'
+                                                                    margin='0 0 0 10px'
+                                                                    handleSubmit={() => { setMiddlenameEditMode(false) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+                                                        : (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-around'
+                                                                align='center'
+                                                            >
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={middlename}
+                                                                />
+                                                                <Button
+                                                                    height='2rem'
+                                                                    content='Изменить'
+                                                                    background='grey'
+                                                                    padding='0.5rem'
+                                                                    margin='0 0 0 3.5rem'
+                                                                    handleSubmit={() => { setMiddlenameEditMode(true) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+
+                                                }
+                                            </Flex>
+
+
+                                            <Flex
+                                                width='100%'
+                                                justify='space-between'
+                                                margin='0 0 10px 0'
+                                                align='center'
+                                            >
+                                                {
+                                                    nicknameEditMode
+                                                        ? (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-between'
+                                                                align='center'
+                                                            >
+                                                                <Input
+                                                                    height='2rem'
+                                                                    fontSize='1rem'
+                                                                    width='100%'
+                                                                    padding='0.5rem'
+                                                                    value={nickname}
+                                                                    handleInput={nickname => { profileNicknameOnChange(nickname) }}
+                                                                />
+                                                                <Button
+                                                                    content='Готово'
+                                                                    height='2rem'
+                                                                    padding='10px'
+                                                                    background='green'
+                                                                    margin='0 0 0 10px'
+                                                                    handleSubmit={() => { setNicknameEditMode(false) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+                                                        : (
+                                                            <Flex
+                                                                width='100%'
+                                                                justify='space-around'
+                                                                align='center'
+                                                            >
+                                                                <StyledSpan size='1rem' width='100%'
+                                                                    content={nickname}
+                                                                />
+                                                                <Button
+                                                                    height='2rem'
+                                                                    content='Изменить'
+                                                                    background='grey'
+                                                                    padding='0.5rem'
+                                                                    margin='0 0 0 3.5rem'
+                                                                    handleSubmit={() => { setNicknameEditMode(true) }}
+                                                                />
+                                                            </Flex>
+                                                        )
+
+                                                }
+                                            </Flex>
+
+                                            <Flex
+                                                width='100%'
+                                                justify='space-between'
+                                                align='center'
+                                                height='3.2rem'
+                                            >
+                                                <StyledSpan
+                                                    size='1rem'
+                                                    content={joinedAt}
                                                 />
                                             </Flex>
 
-                                            <StyledSpan size='2rem' margin='0 10px 10px 0'>{joinedAt}</StyledSpan>
+                                            <Flex
+                                                width='100%'
+                                                justify='space-between'
+                                                align='center'
+                                                height='3.2rem'
+                                            >
+                                                <StyledSpan
+                                                    size='1rem'
+                                                    content={role}
+                                                />
+                                            </Flex>
 
                                         </Flex>
-
-                                        {/* <Flex align='center'>
-                                        <StyledSpan size='2rem' margin='0 10px 0 0'>Пароль</StyledSpan>
-                                        <Button
-                                            content='Изменить'
-                                            background='grey'
-                                            padding='0.5rem'
-                                            margin='0 0.5rem'
-                                        />
-                                    </Flex> */}
                                     </Flex>
                                 </Flex>
                                 <Flex
                                     width='100%'
+                                    align='flex-start'
                                 >
                                     <DigitalTail />
+                                    <Flex direction='column' width='100%'
+                                        height='100%' align='center'>
+                                        <h4>Обо мне</h4>
+                                        {
+                                            aboutMeEditMode
+                                                ? (
+                                                    <Textarea
+                                                        // onBlur={() => { onBlurHandler('instruction') }}
+                                                        handleInput={aboutMe => { }}
+                                                        value={aboutMe}
+                                                        width='100%'
+                                                        height='15vh'
+                                                        padding='2rem'
+                                                        placeholder=''
+                                                        fontSize='1vw'
+                                                        margin='1rem 0'
+                                                    />)
+                                                : (
+                                                    <AboutMe onClick={() => { setAbouMeEditMode(true) }}>
+                                                        {aboutMe}
+                                                    </AboutMe>
+                                                )
+                                        }
+
+                                    </Flex>
                                 </Flex>
+
                                 <Flex
                                     width='100%'
                                     justify='center'>
