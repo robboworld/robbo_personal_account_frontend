@@ -3,18 +3,18 @@ import { useSelector } from 'react-redux'
 
 import { ListParents, WelcomeText } from './components'
 
-import ParentItem from './ParentItem'
-
 import { getParents } from '@/reducers/clients'
 
 import { PageLayout, Card } from '@/layouts'
 import SideBar from '@/components/SideBar'
 import Flex from '@/components/Flex'
 import Button from '@/components/UI/Button'
+import ListItem from '@/components/ListItem'
+import ParentPage from '@/pages/ParentPage'
 
 export default () => {
 
-    const parents = useSelector(state => getParents(state.clients))
+    const { parents } = useSelector(state => getParents(state.clients))
 
     return (
         <PageLayout>
@@ -38,9 +38,10 @@ export default () => {
                     {
                         parents?.map((parent, index) => {
                             return (
-                                <ParentItem
-                                    parent={parent}
+                                <ListItem
+                                    label={parent.name}
                                     key={index}
+                                    render={(open, setOpen) => <ParentPage open={open} setOpen={setOpen} />}
                                 />
                             )
                         })

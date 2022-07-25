@@ -14,7 +14,6 @@ export default ({
         <StyledListItem>
             <Title onClick={() => { setOpen(true) }}> {label}</Title>
             <DeleteButton>×</DeleteButton>
-            {/* <ParentPage open={open} setOpen={setOpen} /> */}
             {
                 render(open, setOpen)
             }
