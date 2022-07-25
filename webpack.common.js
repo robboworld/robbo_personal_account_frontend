@@ -66,7 +66,6 @@ module.exports = {
     extensions: ['*', '.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
-      '@mui/styled-engine': '@mui/styled-engine-sc',
     },
   },
 }

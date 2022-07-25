@@ -23,14 +23,14 @@ export default () => {
                 <WelcomeText>Клиенты</WelcomeText>
                 <Flex direction='row' justify='flex-end'
                     align='flex-start'>
-                    <Button
+                    {/* <Button
                         content='Добавить клиента'
                         background='darkgreen'
                         margin='0 0.3rem 0 0 ' padding='0.5rem'
-                    />
+                    /> */}
                     <Button
                         content='Добавить родителя'
-                        background='darkgrey'
+                        background='darkgreen'
                         padding='0.5rem'
                     />
                 </Flex>

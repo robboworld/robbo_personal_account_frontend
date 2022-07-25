@@ -1,24 +1,27 @@
 import React from "react"
 import { useSelector } from "react-redux"
 
-import { StyledModal, ModalCard, ListChildrens, SubTitle, Title, CloseModalButton } from "./components"
+import {
+    StyledModal, ModalCard, ListChildrens,
+    SubTitle, Title, CloseModalButton,
+} from "./components"
 import ChildrenItem from "./ChildrenItem"
 
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import { getClientPage } from "@/reducers/clientPage"
 
-export default props => {
+export default ({ open, setOpen }) => {
 
     const clientPage = useSelector(state => getClientPage(state.clientPage))
 
     const handleClose = () => {
-        props.setOpen(false)
+        setOpen(false)
     }
 
     return (
         <StyledModal
-            open={props.open}
+            open={open}
             onClose={handleClose}
         >
             <ModalCard>
