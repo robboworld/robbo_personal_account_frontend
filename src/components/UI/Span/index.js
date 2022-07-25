@@ -1,2 +1,2 @@
-import StyledSpan from './index'
+import StyledSpan from './Span'
 export default StyledSpan

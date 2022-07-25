@@ -45,28 +45,3 @@ root.render(
     />
   </Provider>,
 )
-
-// ReactDOM.render(
-//   <Provider store={store}>
-//     <ThemeProvider theme={theme}>
-//       <BrowserRouter>
-//         <ErrorBoundary>
-//           <Application />
-//         </ErrorBoundary>
-//         <GlobalStyles />
-//       </BrowserRouter>
-//     </ThemeProvider>
-//     <ToastContainer
-//       position='bottom-right'
-//       autoClose={5000}
-//       hideProgressBar={false}
-//       newestOnTop={false}
-//       closeOnClick
-//       rtl={false}
-//       pauseOnFocusLoss
-//       draggable
-//       pauseOnHover
-//     />
-//   </Provider>,
-//   document.getElementById('root'),
-// )
