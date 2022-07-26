@@ -94,7 +94,7 @@ export default () => {
                                                 content='Отчество'
                                             />
                                             <StyledSpan size='1rem' height='2.8rem'
-                                                constent='Никнейм'
+                                                content='Никнейм'
                                             />
                                             <StyledSpan size='1rem' height='2.8rem'
                                                 content='Аккаунт создан'
@@ -107,7 +107,7 @@ export default () => {
                                         >
                                             <Flex
                                                 width='100%'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 justify='space-between'
                                                 align='center'
                                             >
@@ -164,7 +164,7 @@ export default () => {
                                                 width='100%'
                                                 justify='space-between'
                                                 align='center'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                             >
                                                 {
                                                     lastnameEditMode
@@ -218,7 +218,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 align='center'
                                             >
                                                 {
@@ -273,7 +273,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 align='center'
                                             >
                                                 {
@@ -329,7 +329,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 align='center'
                                             >
                                                 {
