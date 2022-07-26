@@ -14,7 +14,7 @@ import ParentPage from '@/pages/ParentPage'
 
 export default () => {
 
-    const { parents } = useSelector(state => getParents(state.clients))
+    const parents = useSelector(state => getParents(state.clients))
 
     return (
         <PageLayout>

@@ -41,14 +41,6 @@ export const ListChildrens = styled.ul`
     padding: 0 2rem 2rem 2rem;
 `
 
-export const ChildrenItem = styled.li`
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-`
-
 export const DeleteButton = styled.button`
     font-size: 20px;
     padding: 1rem;

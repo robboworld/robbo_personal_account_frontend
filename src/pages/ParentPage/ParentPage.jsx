@@ -5,11 +5,11 @@ import {
     StyledModal, ModalCard, ListChildrens,
     SubTitle, Title, CloseModalButton,
 } from "./components"
-import ChildrenItem from "./ChildrenItem"
 
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
 import { getClientPage } from "@/reducers/clientPage"
+import ListItem from "@/components/ListItem"
 
 export default ({ open, setOpen }) => {
 
@@ -43,9 +43,10 @@ export default ({ open, setOpen }) => {
                     {
                         clientPage.childrens?.map((children, index) => {
                             return (
-                                <ChildrenItem
-                                    children={children}
+                                <ListItem
+                                    label={children.name}
                                     key={index}
+                                    render={() => { }}
                                 />
                             )
                         })
