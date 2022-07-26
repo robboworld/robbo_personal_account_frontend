@@ -8,18 +8,8 @@ const INITIAL_STATE = {
         id: '1',
         name: 'Иван Иванович Иванов',
         childrens: [
-            {name: 'Мария Ивановна Иванова'},
-            {name: 'Алексей Иванович Иванов'},
-            {name: 'Александра Ивановна Иванова'},
-            {name: 'Мария Ивановна Иванова'},
-            {name: 'Алексей Иванович Иванов'},
-            {name: 'Александра Ивановна Иванова'},
-            {name: 'Мария Ивановна Иванова'},
-            {name: 'Алексей Иванович Иванов'},
-            {name: 'Александра Ивановна Иванова'},
-            {name: 'Мария Ивановна Иванова'},
-            {name: 'Алексей Иванович Иванов'},
-            {name: 'Александра Ивановна Иванова'},
+            { name: 'Мария Ивановна Иванова' },
+            { name: 'Алексей Иванович Иванов' },
         ],
     },
 
@@ -27,10 +17,10 @@ const INITIAL_STATE = {
 
 export default handleActions({
     [getClientPageByIdFailed](state, action) {
-        return {...state}
+        return { ...state }
     },
     [getClientPageByIdSuccess](state, action) {
-        return {...state}
+        return { ...state }
     },
 }, INITIAL_STATE)
 

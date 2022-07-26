@@ -11,7 +11,7 @@ import { getTeachersState } from '@/reducers/teachers'
 import { useActions } from '@/helpers/useActions'
 import { Button, ModalWindow } from '@/components/UI'
 import ListItem from '@/components/ListItem'
-import ParentPage from '@/pages/ParentPage'
+import TeacherContent from '@/components/TeacherContent'
 
 
 export default () => {
@@ -48,16 +48,15 @@ export default () => {
                             teachers.map((teacher, index) => {
                                 return (
                                     <ListItem
-                                        key={index} label={teacher.firstname}
+                                        key={index}
+                                        label={`${teacher.lastname} ${teacher.firstname} ${teacher.middlename}`}
                                         render={(open, setOpen) => (
                                             <ModalWindow
                                                 open={open} setOpen={setOpen}
-                                                width='35%' height='30%'
-                                                title={`${teacher.lastname} ${teacher.firstname} ${teacher.middlename}`}
+                                                width='65%' height='80%'
                                                 content={() => (
-                                                    <div>Content</div>
+                                                    <TeacherContent teacher={teacher} />
                                                 )}
-                                                footer={() => { }}
                                             />
                                         )}
                                     />
