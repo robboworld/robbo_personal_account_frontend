@@ -67,8 +67,6 @@ export default () => {
                         ? <Loader />
                         : (
                             <Flex direction='column'>
-
-
                                 <Flex margin='0.5rem'>
                                     <AvatarWrapper />
                                     <Flex
@@ -96,7 +94,7 @@ export default () => {
                                                 content='Отчество'
                                             />
                                             <StyledSpan size='1rem' height='2.8rem'
-                                                constent='Никнейм'
+                                                content='Никнейм'
                                             />
                                             <StyledSpan size='1rem' height='2.8rem'
                                                 content='Аккаунт создан'
@@ -109,7 +107,7 @@ export default () => {
                                         >
                                             <Flex
                                                 width='100%'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 justify='space-between'
                                                 align='center'
                                             >
@@ -140,7 +138,9 @@ export default () => {
                                                             </Flex>
                                                         )
                                                         : (
-                                                            <Flex width='100%' justify='space-around'>
+                                                            <Flex width='100%' justify='space-around'
+                                                                align='center'
+                                                            >
                                                                 <StyledSpan
                                                                     size='1rem'
                                                                     width='100%'
@@ -164,7 +164,7 @@ export default () => {
                                                 width='100%'
                                                 justify='space-between'
                                                 align='center'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                             >
                                                 {
                                                     lastnameEditMode
@@ -187,7 +187,7 @@ export default () => {
                                                                     height='2rem'
                                                                     padding='10px'
                                                                     background='green'
-                                                                    margin='0 0 0 3.5rem'
+                                                                    margin='0 0 0 10px'
                                                                     handleSubmit={() => { setLastnameEditMode(false) }}
                                                                 />
                                                             </Flex>
@@ -218,7 +218,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 align='center'
                                             >
                                                 {
@@ -273,7 +273,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 align='center'
                                             >
                                                 {
@@ -329,7 +329,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 10px 0'
+                                                margin='0 0 12px 0'
                                                 align='center'
                                             >
                                                 {
@@ -413,6 +413,14 @@ export default () => {
                                     align='flex-start'
                                 >
                                     <DigitalTail />
+                                    {/* <Flex direction='column' width='100%'
+                                        height='100%' align='center'
+                                        margin='0 10px 0 0'>
+                                        <h4>Цифровой след</h4>
+                                        <AboutMe onClick={() => { setAbouMeEditMode(true) }}>
+                                            {aboutMe}
+                                        </AboutMe>
+                                    </Flex> */}
                                     <Flex direction='column' width='100%'
                                         height='100%' align='center'>
                                         <h4>Обо мне</h4>
@@ -420,7 +428,7 @@ export default () => {
                                             aboutMeEditMode
                                                 ? (
                                                     <Textarea
-                                                        // onBlur={() => { onBlurHandler('instruction') }}
+                                                        onBlur={() => { setAbouMeEditMode(true) }}
                                                         handleInput={aboutMe => { }}
                                                         value={aboutMe}
                                                         width='100%'

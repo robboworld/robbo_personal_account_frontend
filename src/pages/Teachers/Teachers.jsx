@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
+
+import { WelcomeText } from './components'
 
 import SideBar from "@/components/SideBar"
 import { Card, PageLayout } from "@/layouts"
@@ -7,14 +9,12 @@ import Flex from '@/components/Flex'
 import { useIsAuth } from '@/helpers'
 import { getTeachersState } from '@/reducers/teachers'
 import { useActions } from '@/helpers/useActions'
-import { Button } from '@/components/UI'
+import { Button, ModalWindow } from '@/components/UI'
 import ListItem from '@/components/ListItem'
-import ParentPage from '@/pages/ParentPage'
+import TeacherContent from '@/components/TeacherContent'
 
 
 export default () => {
-
-    // const [open, setOpen] = useState(false)
     useIsAuth()
     // const isAuth = useSelector()
     // if (!isAuth)
@@ -26,14 +26,8 @@ export default () => {
     return (
         <PageLayout>
             <Card>
-                <Flex
-                    widht='100%'
-                    justify='center'
-                >
-                    <h3>Педагоги</h3>
-                </Flex>
-
                 <SideBar />
+                <WelcomeText>Педагоги</WelcomeText>
                 <Flex
                     padding='10px 0'
                     justify='flex-end'
@@ -49,14 +43,22 @@ export default () => {
                     widht='100%'
                     direction='column' j
                     justify=' center'>
-                    <h3>Список педагогов</h3>
                     <Flex direction='column'>
                         {
                             teachers.map((teacher, index) => {
                                 return (
                                     <ListItem
-                                        key={index} label={teacher.firstname}
-                                        render={(open, setOpen) => <ParentPage open={open} setOpen={setOpen} />}
+                                        key={index}
+                                        label={`${teacher.lastname} ${teacher.firstname} ${teacher.middlename}`}
+                                        render={(open, setOpen) => (
+                                            <ModalWindow
+                                                open={open} setOpen={setOpen}
+                                                width='65%' height='80%'
+                                                content={() => (
+                                                    <TeacherContent teacher={teacher} />
+                                                )}
+                                            />
+                                        )}
                                     />
                                 )
                             })

@@ -10,11 +10,12 @@ import SideBar from '@/components/SideBar'
 import Flex from '@/components/Flex'
 import Button from '@/components/UI/Button'
 import ListItem from '@/components/ListItem'
-import ParentPage from '@/pages/ParentPage'
+import ParentPage from '@/components/ParentContent'
+import { ModalWindow } from '@/components/UI'
 
 export default () => {
 
-    const { parents } = useSelector(state => getParents(state.clients))
+    const parents = useSelector(state => getParents(state.clients))
 
     return (
         <PageLayout>
@@ -41,7 +42,17 @@ export default () => {
                                 <ListItem
                                     label={parent.name}
                                     key={index}
-                                    render={(open, setOpen) => <ParentPage open={open} setOpen={setOpen} />}
+                                    render={(open, setOpen) => (
+                                        <ModalWindow
+                                            open={open} setOpen={setOpen}
+                                            width='65%' height='80%'
+                                            content={() => (
+                                                <ParentPage client={parent} open={open}
+                                                    setOpen={setOpen}
+                                                />
+                                            )}
+                                        />
+                                    )}
                                 />
                             )
                         })
