@@ -10,9 +10,8 @@ import {
 
 function* signInSaga(action) {
     try {
-        const { email } = action.payload
-        const { password } = action.payload
-        const response = yield call(authAPI.signIn, email, password)
+        const { email, password, role } = action.payload
+        const response = yield call(authAPI.signIn, email, password, role)
         console.log(response)
         localStorage.setItem('token', response.data.accessToken)
         yield put(signInSucces(response))

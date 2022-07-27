@@ -22,13 +22,13 @@ import {
 import MenuItem from './MenuItem'
 
 import { useActions } from '@/helpers/useActions'
-import { getUserRole } from '@/reducers/login'
+import { getLoginState } from '@/reducers/login'
 
 export default () => {
     const [close, setClose] = useState(false)
     const showSidebar = () => setClose(!close)
     const { signOutRequest } = useActions()
-    const userRole = useSelector(state => getUserRole(state.login))
+    const { userRole } = useSelector(state => getLoginState(state.login))
 
     let SideBarData = []
     switch (userRole) {

@@ -10,11 +10,12 @@ export const authAPI = {
             })
     },
 
-    signIn(email, password) {
+    signIn(email, password, role) {
         return instance.post('auth/sign-in',
             {
                 email: email,
                 password: password,
+                role: role,
             },
         )
     },

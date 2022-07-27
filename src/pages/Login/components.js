@@ -114,7 +114,7 @@ export const InputContainer = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  height: 20%;
+  // height: 50%;
   width: 100%;
 `
 
@@ -166,26 +166,4 @@ export const IconsContainer = styled.div`
 export const ForgotPassword = styled.h4`
   cursor: pointer;
   color: black;
-`
-
-export const ErrorAlert = styled.div`
-  padding: 5%;
-  width: 90%;
-  // min-height: 5rem;
-  background: red;
-  border-radius: 10px;
-  color: white;
-  text-transform: none;
-  letter-spacing: 0;
-`
-
-export const SuccessAlert = styled.div`
-  padding: 5%;
-  width: 90%;
-  // min-height: 5rem;
-  background: green;
-  border-radius: 10px;
-  color: white;
-  text-transform: none;
-  letter-spacing: 0;
 `
