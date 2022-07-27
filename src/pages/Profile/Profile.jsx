@@ -18,6 +18,8 @@ import { getIsAuth } from '@/reducers/login'
 export default () => {
     useIsAuth()
     const isAuth = useSelector(state => getIsAuth(state.login))
+    const token = localStorage.getItem('token')
+    const { getProfileById } = useActions()
 
     if (!isAuth) {
         return <Redirect to='/login' />
@@ -39,7 +41,7 @@ export default () => {
     const [aboutMeEditMode, setAbouMeEditMode] = useState(false)
 
     useEffect(() => {
-        // getProfileById(token, projectPageId)
+        getProfileById(token)
         return () => {
             // clearProfileState()
         }
@@ -107,7 +109,7 @@ export default () => {
                                         >
                                             <Flex
                                                 width='100%'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 justify='space-between'
                                                 align='center'
                                             >
@@ -164,7 +166,7 @@ export default () => {
                                                 width='100%'
                                                 justify='space-between'
                                                 align='center'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                             >
                                                 {
                                                     lastnameEditMode
@@ -218,7 +220,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 align='center'
                                             >
                                                 {
@@ -273,7 +275,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 align='center'
                                             >
                                                 {
@@ -329,7 +331,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 align='center'
                                             >
                                                 {

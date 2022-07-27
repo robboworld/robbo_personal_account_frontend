@@ -6,18 +6,19 @@ import {
     getProfileByIdSuccess, profileEmailOnChange, profileFirstnameOnChange,
     profileLastnameOnChange, profileMiddlenameOnChange, profileNicknameOnChange,
 } from '@/actions/profile'
+import { UserRole } from '@/constants'
 
 const INITIAL_STATE = {
     id: null,
-    email: 'rupychman@mail.ru',
-    nickname: 'skinnykaen',
-    joinedAt: "10.05.2022",
+    email: '',
+    nickname: '',
+    joinedAt: '',
     avatar: null,
-    role: 'Ученик',
-    firstname: 'Евгений',
-    lastname: 'Сущевич',
-    middlename: 'Павлович',
-    aboutMe: "",
+    role: '',
+    firstname: '',
+    lastname: '',
+    middlename: '',
+    aboutMe: '',
     // workingOn: "",
     // informationTrail: "",
     loading: false,
@@ -46,7 +47,12 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getProfileByIdSuccess](state, action) {
-        return { ...state, loading: false }
+        const { email, nickname, lastname, firstname, createdAt, role } = action.payload.response
+        return {
+            ...state, loading: false, email: email,
+            nickname: nickname, firstname: firstname,
+            lastname: lastname, joinedAt: createdAt, role: UserRole[role],
+        }
     },
     [getProfileByIdFailed](state, action) {
         return { ...state, loading: false }
