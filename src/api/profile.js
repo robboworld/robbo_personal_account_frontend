@@ -1,5 +1,7 @@
 import instance from './instance'
 
+import { userRoleAPI } from '@/constants'
+
 export const profileAPI = {
     getProfileById(token) {
         return instance.get('users/',
@@ -12,6 +14,17 @@ export const profileAPI = {
     },
     deleteAccount(token) {
         return instance.delete('users/',
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
+    updateProfile(token, profile) {
+        return instance.put(`users/${userRoleAPI[profile.role]}`,
+            {
+                [userRoleAPI[profile.role]]: profile,
+            },
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,

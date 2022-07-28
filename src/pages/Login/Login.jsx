@@ -24,7 +24,7 @@ import CustomSelect from '@/components/UI/Select/Select'
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
 import { useIsAuth } from '@/helpers'
-import { FREE_LISTENER, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN, UserRole } from '@/constants'
+import { FREE_LISTENER, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN, userRole } from '@/constants'
 
 export default () => {
     useIsAuth()
@@ -46,12 +46,12 @@ export default () => {
     } = useSelector(state => getLoginState(state.login))
 
     const roles = [
-        { value: STUDENT, label: UserRole[STUDENT] },
-        { value: TEACHER, label: UserRole[TEACHER] },
-        { value: PARENT, label: UserRole[PARENT] },
-        { value: FREE_LISTENER, label: UserRole[FREE_LISTENER] },
-        { value: UNIT_ADMIN, label: UserRole[UNIT_ADMIN] },
-        { value: SUPER_ADMIN, label: UserRole[SUPER_ADMIN] },
+        { value: STUDENT, label: userRole[STUDENT] },
+        { value: TEACHER, label: userRole[TEACHER] },
+        { value: PARENT, label: userRole[PARENT] },
+        { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
+        { value: UNIT_ADMIN, label: userRole[UNIT_ADMIN] },
+        { value: SUPER_ADMIN, label: userRole[SUPER_ADMIN] },
     ]
 
     if (isAuth) {

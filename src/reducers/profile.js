@@ -4,54 +4,39 @@ import {
     clearProfileState, deleteProfile, deleteProfileFailed,
     deleteProfileSuccess, getProfileById, getProfileByIdFailed,
     getProfileByIdSuccess, profileEmailOnChange, profileFirstnameOnChange,
-    profileLastnameOnChange, profileMiddlenameOnChange, profileNicknameOnChange,
+    profileLastnameOnChange, profileMiddlenameOnChange, profileNicknameOnChange, updateProfile, updateProfileFailed, updateProfileSuccess,
 } from '@/actions/profile'
-import { UserRole } from '@/constants'
 
 const INITIAL_STATE = {
-    id: null,
-    email: '',
-    nickname: '',
-    joinedAt: '',
-    avatar: null,
-    role: '',
-    firstname: '',
-    lastname: '',
-    middlename: '',
-    aboutMe: '',
-    // workingOn: "",
-    // informationTrail: "",
+    profile: {},
     loading: false,
 }
 
 export default handleActions({
     [profileEmailOnChange](state, action) {
-        return { ...state, email: action.payload.email }
+        return { ...state, profile: { ...state.profile, email: action.payload.email } }
     },
     [profileNicknameOnChange](state, action) {
-        return { ...state, nickname: action.payload.nickname }
+        return { ...state, profile: { ...state.profile, nickname: action.payload.nickname } }
     },
     [profileLastnameOnChange](state, action) {
-        return { ...state, lastname: action.payload.lastname }
+        return { ...state, profile: { ...state.profile, lastname: action.payload.lastname } }
     },
     [profileFirstnameOnChange](state, action) {
-        return { ...state, firstname: action.payload.firstname }
+        return { ...state, profile: { ...state.profile, firstname: action.payload.firstname } }
     },
     [profileMiddlenameOnChange](state, action) {
-        return { ...state, middlename: action.payload.middlename }
+        return { ...state, profile: { ...state.profile, middlename: action.payload.middlename } }
     },
     [clearProfileState](state) {
-        return { ...state, id: null, email: null, joinedAt: null, role: null, loading: false }
+        return { ...state, profile: {}, loading: false }
     },
     [getProfileById](state) {
         return { ...state, loading: true }
     },
     [getProfileByIdSuccess](state, action) {
-        const { email, nickname, lastname, firstname, createdAt, role } = action.payload.response
         return {
-            ...state, loading: false, email: email,
-            nickname: nickname, firstname: firstname,
-            lastname: lastname, joinedAt: createdAt, role: UserRole[role],
+            ...state, loading: false, profile: action.payload.response,
         }
     },
     [getProfileByIdFailed](state, action) {
@@ -66,7 +51,17 @@ export default handleActions({
     [deleteProfileFailed](state, action) {
         return { ...state, loading: false }
     },
+    [updateProfile](state, action) {
+        return { ...state, loading: true }
+    },
+    [updateProfileSuccess](state, action) {
+        return { ...state, loading: false }
+    },
+    [updateProfileFailed](state, action) {
+        return { ...state, loading: false }
+    },
 }, INITIAL_STATE)
 
-export const getProfile = state => state
+export const getProfileState = state => state
+export const getProfile = state => state.profile
 export const getProfileLoading = state => state.loading
