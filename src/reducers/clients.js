@@ -1,46 +1,27 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    getClientsSuccess, getClientsFailed, clearClientsState,
+    getClientsSuccess, getClientsFailed, clearClientsState, getClients,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    loading: true,
-    parents: [
-        {
-            id: 1,
-            name: 'Иван Иванович Иванов',
-            childrens: [
-                { name: 'Мария Ивановна Иванова' },
-                { name: 'Алексей Иванович Иванов' },
-            ],
-        },
-        {
-            id: 2,
-            name: 'Сергей Сергеевич Сергеев',
-            childrens: [
-                { name: 'Мария Сергеевна Сергеева' },
-            ],
-        },
-        {
-            id: 3,
-            name: 'Василий Вальевич Васильев',
-            childrens: [
-            ],
-        },
-    ],
+    loading: false,
+    parents: [],
 }
 
 export default handleActions({
+    [getClients](state, action) {
+        return { ...state, loading: true }
+    },
     [getClientsSuccess](state, action) {
-        return { ...state }
+        return { ...state, loading: false, parents: action.payload.clients }
     },
     [getClientsFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
     },
     [clearClientsState](state, action) {
         return { ...state }
     },
 }, INITIAL_STATE)
 
-export const getParents = state => state.parents
+export const getClientsState = state => state

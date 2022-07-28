@@ -8,7 +8,7 @@ import {
     SIGN_OUT, SIGN_OUT_SUCCESS, SIGN_OUT_FAILED,
     CHECK_AUTH, CHECK_AUTH_SUCCESS, CHECK_AUTH_FAILED,
     NICKNAME_ONCHANGE, LASTNAME_ONCHANGE, FIRSTNAME_ONCHANGE,
-    MIDDLENAME_ONCHANGE, SIGN_IN_ROLE_ONCHANGE, SIGN_UP_ROLE_ONCHANGE,
+    MIDDLENAME_ONCHANGE, SIGN_IN_ROLE_ONCHANGE, SIGN_UP_ROLE_ONCHANGE, CLEAR_LOGIN_STATE,
 } from '@/constants'
 
 
@@ -94,14 +94,14 @@ export const signUpFailed = createAction(SIGN_UP_FAILED, error => {
     }
 })
 
-export const signUpRequest = createAction(SIGN_UP, (email, password, role) => {
+export const signUpRequest = createAction(SIGN_UP, (user, role) => {
     return {
-        email,
-        password,
+        user,
         role,
     }
 })
 
+export const clearLoginState = createAction(CLEAR_LOGIN_STATE)
 export const signOutRequest = createAction(SIGN_OUT)
 export const signOutSuccess = createAction(SIGN_OUT_SUCCESS)
 export const signOutFailed = createAction(SIGN_OUT_FAILED)

@@ -1,6 +1,6 @@
 import instance from './instance'
 
-export const clientsPageAPI = {
+export const clientsAPI = {
     getClientPageById(token, id) {
         return instance.get(`client/${id}`,
             {
@@ -12,9 +12,9 @@ export const clientsPageAPI = {
     },
 
     getClients(token) {
-        return instance.get('client/getAll',
+        return instance.get('users/parent',
             {
-                withCredentials: true,
+                // withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
