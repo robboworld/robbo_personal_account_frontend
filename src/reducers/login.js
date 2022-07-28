@@ -1,27 +1,26 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    emailOnChange,
-    passwordOnChange,
-    roleOnChange,
+    emailOnChange, passwordOnChange,
     signInSucces, signInFailed,
     signUpSuccess, signUpFailed,
     signOutSuccess, signOutFailed,
     checkAuthSuccess, checkAuthFailed,
+    nicknameOnChange, lastnameOnChange,
+    firstnameOnChange, middlenameOnChange,
+    signInRoleOnChange, signUpRoleOnChange,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    roles: [
-        { value: 0, label: 'Ученик' },
-        { value: 1, label: 'Учитель' },
-        { value: 2, label: 'Родитель' },
-        { value: 3, label: 'Свободный слушатель' },
-        // { value: 'admin', label: ' Администратор' },
-    ],
     id: '',
     email: '',
     password: '',
-    role: {},
+    nickname: '',
+    lastname: '',
+    firstname: '',
+    middlename: '',
+    signInRole: {},
+    signUpRole: {},
     userRole: null,
     isAuth: false,
 }
@@ -33,8 +32,23 @@ export default handleActions({
     [passwordOnChange](state, action) {
         return { ...state, password: action.payload.password }
     },
-    [roleOnChange](state, action) {
-        return { ...state, role: action.payload.role }
+    [signInRoleOnChange](state, action) {
+        return { ...state, signInRole: action.payload.role }
+    },
+    [signUpRoleOnChange](state, action) {
+        return { ...state, signUpRole: action.payload.role }
+    },
+    [nicknameOnChange](state, action) {
+        return { ...state, nickname: action.payload.nickname }
+    },
+    [lastnameOnChange](state, action) {
+        return { ...state, lastname: action.payload.lastname }
+    },
+    [firstnameOnChange](state, action) {
+        return { ...state, firstname: action.payload.firstname }
+    },
+    [middlenameOnChange](state, action) {
+        return { ...state, middlename: action.payload.middlename }
     },
     [signInSucces](state, action) {
         return { ...state, isAuth: true }
@@ -63,11 +77,4 @@ export default handleActions({
 }, INITIAL_STATE)
 
 export const getLoginState = state => state
-export const getId = state => state.id
-export const getEmail = state => state.email
-export const getPassword = state => state.password
-export const getRoles = state => state.roles
-export const getRole = state => state.role
-export const getUserRole = state => state.userRole
-export const getToken = state => state.token
 export const getIsAuth = state => state.isAuth

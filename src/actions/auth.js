@@ -2,13 +2,13 @@ import { createAction } from 'redux-actions'
 import { toast } from 'react-toastify'
 
 import {
-    EMAIL_ONCHANGE,
-    PASSWORD_ONCHANGE,
-    ROLE_ONCHANGE,
+    EMAIL_ONCHANGE, PASSWORD_ONCHANGE,
     SIGN_IN_SUCCESS, SIGN_IN_FAILED, SIGN_IN,
     SIGN_UP_FAILED, SIGN_UP, SIGN_UP_SUCCESS,
     SIGN_OUT, SIGN_OUT_SUCCESS, SIGN_OUT_FAILED,
     CHECK_AUTH, CHECK_AUTH_SUCCESS, CHECK_AUTH_FAILED,
+    NICKNAME_ONCHANGE, LASTNAME_ONCHANGE, FIRSTNAME_ONCHANGE,
+    MIDDLENAME_ONCHANGE, SIGN_IN_ROLE_ONCHANGE, SIGN_UP_ROLE_ONCHANGE,
 } from '@/constants'
 
 
@@ -24,16 +24,47 @@ export const passwordOnChange = createAction(PASSWORD_ONCHANGE, password => {
     }
 })
 
-export const roleOnChange = createAction(ROLE_ONCHANGE, role => {
+export const signInRoleOnChange = createAction(SIGN_IN_ROLE_ONCHANGE, role => {
     return {
         role,
     }
 })
 
-export const signInRequest = createAction(SIGN_IN, (email, password) => {
+export const signUpRoleOnChange = createAction(SIGN_UP_ROLE_ONCHANGE, role => {
+    return {
+        role,
+    }
+})
+
+export const nicknameOnChange = createAction(NICKNAME_ONCHANGE, nickname => {
+    return {
+        nickname,
+    }
+})
+
+export const lastnameOnChange = createAction(LASTNAME_ONCHANGE, lastname => {
+    return {
+        lastname,
+    }
+})
+
+export const firstnameOnChange = createAction(FIRSTNAME_ONCHANGE, firstname => {
+    return {
+        firstname,
+    }
+})
+
+export const middlenameOnChange = createAction(MIDDLENAME_ONCHANGE, middlename => {
+    return {
+        middlename,
+    }
+})
+
+export const signInRequest = createAction(SIGN_IN, (email, password, role) => {
     return {
         email,
         password,
+        role,
     }
 })
 

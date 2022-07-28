@@ -24,6 +24,7 @@ import CustomSelect from '@/components/UI/Select/Select'
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
 import { useIsAuth } from '@/helpers'
+import { FREE_LISTENER, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN, userRole } from '@/constants'
 
 export default () => {
     useIsAuth()
@@ -31,19 +32,27 @@ export default () => {
     const switchIn = () => setSignIn(false)
     const switchUp = () => setSignIn(true)
 
-    const { emailOnChange, passwordOnChange, signInRequest, signUpRequest, roleOnChange } = useActions()
-    const { email, password, roles, role, isAuth } = useSelector(state => getLoginState(state.login))
+    const {
+        emailOnChange, passwordOnChange, signInRequest,
+        signUpRequest, nicknameOnChange,
+        lastnameOnChange, firstnameOnChange, middlenameOnChange,
+        signInRoleOnChange, signUpRoleOnChange,
+    } = useActions()
 
-    const emailHandle = email => {
-        emailOnChange(email)
-    }
-    const passwordHandle = password => {
-        passwordOnChange(password)
-    }
+    const {
+        email, password, signInRole,
+        signUpRole, isAuth, nickname,
+        lastname, firstname, middlename,
+    } = useSelector(state => getLoginState(state.login))
 
-    const onSelectChange = value => {
-        roleOnChange(value)
-    }
+    const roles = [
+        { value: STUDENT, label: userRole[STUDENT] },
+        { value: TEACHER, label: userRole[TEACHER] },
+        { value: PARENT, label: userRole[PARENT] },
+        { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
+        { value: UNIT_ADMIN, label: userRole[UNIT_ADMIN] },
+        { value: SUPER_ADMIN, label: userRole[SUPER_ADMIN] },
+    ]
 
     if (isAuth) {
         return <Redirect to='/' />
@@ -63,26 +72,46 @@ export default () => {
                                 <WelcomeText>Добро пожаловать!</WelcomeText>
                                 <InputContainer>
                                     <Input type='text' placeholder='Email'
-                                        value={email} handleInput={emailHandle} />
+                                        value={email} handleInput={email => emailOnChange(email)}
+                                        margin='0 0 10px 0'
+                                    />
                                     <Input type='password' placeholder='Password'
-                                        value={password} handleInput={passwordHandle} />
+                                        value={password} handleInput={password => passwordOnChange(password)}
+                                        margin='0 0 10px 0'
+                                    />
+                                    <Input type='text' placeholder='Никнейм'
+                                        value={nickname} handleInput={nickname => nicknameOnChange(nickname)}
+                                        margin='0 0 10px 0'
+                                    />
+                                    <Input type='text' placeholder='Фамилия'
+                                        value={lastname} handleInput={lastname => lastnameOnChange(lastname)}
+                                        margin='0 0 10px 0'
+                                    />
+                                    <Input type='text' placeholder='Имя'
+                                        value={firstname} handleInput={firstname => firstnameOnChange(firstname)}
+                                        margin='0 0 10px 0'
+                                    />
+                                    <Input type='text' placeholder='Отчество'
+                                        value={middlename} handleInput={middlename => middlenameOnChange(middlename)}
+                                        margin='0 0 10px 0'
+                                    />
                                 </InputContainer>
                                 <SelectContainer>
                                     <Text>Выберите роль</Text>
                                     <CustomSelect
-                                        options={roles}
-                                        onChange={onSelectChange}
-                                        value={role}
+                                        options={roles.slice(0, -2)}
+                                        onChange={role => signUpRoleOnChange(role)}
+                                        value={signUpRole}
                                     />
                                 </SelectContainer>
                                 <ButtonContainer>
                                     <Button
                                         content='Регистрация'
-                                        handleSubmit={() => { signUpRequest(email, password, role.value) }}
+                                        handleSubmit={() => { signUpRequest(email, password, signUpRole.value) }}
                                         padding='10px'
                                     />
                                 </ButtonContainer>
-                                <HorizontalRule />
+                                {/* <HorizontalRule /> */}
                             </MainContainer>
                         )
                         : (
@@ -94,14 +123,26 @@ export default () => {
                                 <WelcomeText>Добро пожаловать!</WelcomeText>
                                 <InputContainer>
                                     <Input type='text' placeholder='Email'
-                                        value={email} handleInput={emailHandle} />
+                                        value={email} handleInput={email => emailOnChange(email)}
+                                        margin='0 0 10px 0'
+                                    />
                                     <Input type='password' placeholder='Password'
-                                        value={password} handleInput={passwordHandle} />
+                                        value={password} handleInput={password => passwordOnChange(password)}
+                                        margin='0 0 10px 0'
+                                    />
                                 </InputContainer>
+                                <SelectContainer>
+                                    <Text>Выберите роль</Text>
+                                    <CustomSelect
+                                        options={roles}
+                                        onChange={role => signInRoleOnChange(role)}
+                                        value={signInRole}
+                                    />
+                                </SelectContainer>
                                 <ButtonContainer>
                                     <Button
                                         content='Войти'
-                                        handleSubmit={() => { signInRequest(email, password) }}
+                                        handleSubmit={() => { signInRequest(email, password, signInRole.value) }}
                                         padding='10px'
                                     />
                                 </ButtonContainer>

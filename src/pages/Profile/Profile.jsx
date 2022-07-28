@@ -8,23 +8,29 @@ import DigitalTail from './DigitalTail'
 import { PageLayout, Card } from '@/layouts'
 import SideBar from '@/components/SideBar'
 import { useIsAuth } from '@/helpers'
-import { getProfile } from '@/reducers/profile'
 import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
 import { Button, Input, Textarea, StyledSpan } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { getIsAuth } from '@/reducers/login'
+import { getProfileState } from '@/reducers/profile'
+import { userRole } from '@/constants'
 
 export default () => {
     useIsAuth()
     const isAuth = useSelector(state => getIsAuth(state.login))
+    const token = localStorage.getItem('token')
+    const { getProfileById } = useActions()
 
     if (!isAuth) {
         return <Redirect to='/login' />
     }
 
-    const { profileEmailOnChange,
+    const {
+        profileEmailOnChange,
         deleteProfile,
+        clearProfileState,
+        updateProfile,
         profileFirstnameOnChange,
         profileLastnameOnChange,
         profileMiddlenameOnChange,
@@ -39,23 +45,25 @@ export default () => {
     const [aboutMeEditMode, setAbouMeEditMode] = useState(false)
 
     useEffect(() => {
-        // getProfileById(token, projectPageId)
+        getProfileById(token)
         return () => {
-            // clearProfileState()
+            clearProfileState()
         }
     }, [])
 
     const {
+        loading, profile } = useSelector(({ profile }) => getProfileState(profile))
+
+    const {
         email,
-        joinedAt,
-        loading,
+        createdAt,
         role,
         firstname,
         lastname,
         middlename,
         nickname,
         aboutMe,
-    } = useSelector(state => getProfile(state.profile))
+    } = profile
 
     return (
         <PageLayout>
@@ -107,7 +115,7 @@ export default () => {
                                         >
                                             <Flex
                                                 width='100%'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 justify='space-between'
                                                 align='center'
                                             >
@@ -133,7 +141,10 @@ export default () => {
                                                                     padding='10px'
                                                                     background='green'
                                                                     margin='0 0 0 10px'
-                                                                    handleSubmit={() => { setEmailEditMode(false) }}
+                                                                    handleSubmit={() => {
+                                                                        setEmailEditMode(false)
+                                                                        updateProfile("", profile)
+                                                                    }}
                                                                 />
                                                             </Flex>
                                                         )
@@ -164,7 +175,7 @@ export default () => {
                                                 width='100%'
                                                 justify='space-between'
                                                 align='center'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                             >
                                                 {
                                                     lastnameEditMode
@@ -188,7 +199,10 @@ export default () => {
                                                                     padding='10px'
                                                                     background='green'
                                                                     margin='0 0 0 10px'
-                                                                    handleSubmit={() => { setLastnameEditMode(false) }}
+                                                                    handleSubmit={() => {
+                                                                        setLastnameEditMode(false)
+                                                                        updateProfile("", profile)
+                                                                    }}
                                                                 />
                                                             </Flex>
                                                         )
@@ -218,7 +232,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 align='center'
                                             >
                                                 {
@@ -235,7 +249,9 @@ export default () => {
                                                                     width='100%'
                                                                     padding='0.5rem'
                                                                     value={firstname}
-                                                                    handleInput={firstname => { profileFirstnameOnChange(firstname) }}
+                                                                    handleInput={firstname => {
+                                                                        profileFirstnameOnChange(firstname)
+                                                                    }}
                                                                 />
                                                                 <Button
                                                                     content='Готово'
@@ -243,7 +259,10 @@ export default () => {
                                                                     padding='10px'
                                                                     background='green'
                                                                     margin='0 0 0 10px'
-                                                                    handleSubmit={() => { setFirstnameEditMode(false) }}
+                                                                    handleSubmit={() => {
+                                                                        setFirstnameEditMode(false)
+                                                                        updateProfile("", profile)
+                                                                    }}
                                                                 />
                                                             </Flex>
                                                         )
@@ -273,7 +292,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 align='center'
                                             >
                                                 {
@@ -298,7 +317,10 @@ export default () => {
                                                                     padding='10px'
                                                                     background='green'
                                                                     margin='0 0 0 10px'
-                                                                    handleSubmit={() => { setMiddlenameEditMode(false) }}
+                                                                    handleSubmit={() => {
+                                                                        setMiddlenameEditMode(false)
+                                                                        updateProfile("", profile)
+                                                                    }}
                                                                 />
                                                             </Flex>
                                                         )
@@ -329,7 +351,7 @@ export default () => {
                                             <Flex
                                                 width='100%'
                                                 justify='space-between'
-                                                margin='0 0 12px 0'
+                                                margin='0 0 10px 0'
                                                 align='center'
                                             >
                                                 {
@@ -354,7 +376,10 @@ export default () => {
                                                                     padding='10px'
                                                                     background='green'
                                                                     margin='0 0 0 10px'
-                                                                    handleSubmit={() => { setNicknameEditMode(false) }}
+                                                                    handleSubmit={() => {
+                                                                        setNicknameEditMode(false)
+                                                                        updateProfile("", profile)
+                                                                    }}
                                                                 />
                                                             </Flex>
                                                         )
@@ -389,7 +414,7 @@ export default () => {
                                             >
                                                 <StyledSpan
                                                     size='1rem'
-                                                    content={joinedAt}
+                                                    content={createdAt}
                                                 />
                                             </Flex>
 
@@ -401,7 +426,7 @@ export default () => {
                                             >
                                                 <StyledSpan
                                                     size='1rem'
-                                                    content={role}
+                                                    content={userRole[role]}
                                                 />
                                             </Flex>
 
