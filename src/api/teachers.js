@@ -2,9 +2,9 @@ import instance from './instance'
 
 export const teachersAPI = {
     getTeachers(token) {
-        return instance.get('teachers/',
+        return instance.get('users/teachers/',
             {
-                withCredentials: true,
+                // withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

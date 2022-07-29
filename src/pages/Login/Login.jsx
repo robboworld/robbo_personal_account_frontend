@@ -3,29 +3,27 @@ import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
 import {
-    Card,
     MainContainer,
     WelcomeText,
     Text,
-    InputContainer,
     SelectContainer,
-    ButtonContainer,
-    HorizontalRule,
-    LoginForm,
-    SwitchInOut,
     SignIn,
     SignOut,
 } from './components'
 
 import { PageLayout } from '@/layouts'
-import Input from '@/components/UI/Input'
-import Button from '@/components/UI/Button'
-import CustomSelect from '@/components/UI/Select/Select'
+import { Select, Button } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
 import { useIsAuth } from '@/helpers'
-import { FREE_LISTENER, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN, userRole } from '@/constants'
+import {
+    FREE_LISTENER, PARENT, STUDENT,
+    SUPER_ADMIN, TEACHER, UNIT_ADMIN, userRole,
+} from '@/constants'
 import Loader from '@/components/Loader'
+import SignUpForm from '@/components/SignUpForm'
+import SignInForm from '@/components/SignInForm'
+import Flex from '@/components/Flex'
 
 export default () => {
     useIsAuth()
@@ -37,13 +35,9 @@ export default () => {
     }, [])
 
     const [signIn, setSignIn] = useState(false)
-    const switchIn = () => setSignIn(false)
-    const switchUp = () => setSignIn(true)
 
     const {
-        emailOnChange, passwordOnChange, signInRequest,
-        signUpRequest, nicknameOnChange,
-        lastnameOnChange, firstnameOnChange, middlenameOnChange,
+        signInRequest, signUpRequest,
         signInRoleOnChange, signUpRoleOnChange, clearLoginState,
     } = useActions()
 
@@ -53,7 +47,7 @@ export default () => {
         user,
     } = useSelector(state => getLoginState(state.login))
 
-    const { email, nickname, password, lastname, firstname, middlename } = user
+    const { email, password } = user
 
     const roles = [
         { value: STUDENT, label: userRole[STUDENT] },
@@ -70,104 +64,73 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <LoginForm>
+            <Flex
+                direction='column' align='center'
+                width='100%' height='100%'
+            >
+                <Flex direction='column' align='center'>
                     {loading ? (
                         <Loader />
-                    )
-                        : (
-                            signIn
-                                ? (
-                                    <MainContainer>
-                                        <SwitchInOut>
-                                            <SignIn signIn={signIn} onClick={switchIn}><h4>Войти</h4></SignIn>
-                                            <SignOut signIn={signIn} onClick={switchUp}><h4>Регистрация</h4></SignOut>
-                                        </SwitchInOut>
-                                        <WelcomeText>Добро пожаловать!</WelcomeText>
-                                        <InputContainer>
-                                            <Input type='text' placeholder='Email'
-                                                value={email} handleInput={email => emailOnChange(email)}
-                                                margin='0 0 10px 0'
-                                            />
-                                            <Input type='password' placeholder='Password'
-                                                value={password} handleInput={password => passwordOnChange(password)}
-                                                margin='0 0 10px 0'
-                                            />
-                                            <Input type='text' placeholder='Никнейм'
-                                                value={nickname} handleInput={nickname => nicknameOnChange(nickname)}
-                                                margin='0 0 10px 0'
-                                            />
-                                            <Input type='text' placeholder='Фамилия'
-                                                value={lastname} handleInput={lastname => lastnameOnChange(lastname)}
-                                                margin='0 0 10px 0'
-                                            />
-                                            <Input type='text' placeholder='Имя'
-                                                value={firstname} handleInput={firstname => firstnameOnChange(firstname)}
-                                                margin='0 0 10px 0'
-                                            />
-                                            <Input type='text' placeholder='Отчество'
-                                                value={middlename} handleInput={middlename => middlenameOnChange(middlename)}
-                                                margin='0 0 10px 0'
-                                            />
-                                        </InputContainer>
-                                        <SelectContainer>
-                                            <Text>Выберите роль</Text>
-                                            <CustomSelect
-                                                options={roles.slice(0, -2)}
-                                                onChange={role => signUpRoleOnChange(role)}
-                                                value={signUpRole}
-                                            />
-                                        </SelectContainer>
-                                        <ButtonContainer>
-                                            <Button
-                                                content='Регистрация'
-                                                handleSubmit={() => { signUpRequest(user, signUpRole.value) }}
-                                                padding='10px'
-                                            />
-                                        </ButtonContainer>
-                                        {/* <HorizontalRule /> */}
-                                    </MainContainer>
-                                )
-                                : (
-                                    <MainContainer>
-                                        <SwitchInOut>
-                                            <SignIn onClick={switchIn}><h4>Войти</h4></SignIn>
-                                            <SignOut onClick={switchUp}><h4>Регистрация</h4></SignOut>
-                                        </SwitchInOut>
-                                        <WelcomeText>Добро пожаловать!</WelcomeText>
-                                        <InputContainer>
-                                            <Input type='text' placeholder='Email'
-                                                value={email} handleInput={email => emailOnChange(email)}
-                                                margin='0 0 10px 0'
-                                            />
-                                            <Input type='password' placeholder='Password'
-                                                value={password} handleInput={password => passwordOnChange(password)}
-                                                margin='0 0 10px 0'
-                                            />
-                                        </InputContainer>
-                                        <SelectContainer>
-                                            <Text>Выберите роль</Text>
-                                            <CustomSelect
-                                                options={roles}
-                                                onChange={role => signInRoleOnChange(role)}
-                                                value={signInRole}
-                                            />
-                                        </SelectContainer>
-                                        <ButtonContainer>
-                                            <Button
-                                                content='Войти'
-                                                handleSubmit={() => { signInRequest(email, password, signInRole.value) }}
-                                                padding='10px'
-                                            />
-                                        </ButtonContainer>
-                                        <HorizontalRule />
-                                    </MainContainer>
-                                )
-                        )
-                    }
+                    ) : (
+                        signIn ? (
+                            <MainContainer>
+                                <Flex width='100%' justify='space-between'>
+                                    <SignIn signIn={signIn} onClick={() => setSignIn(false)}><h4>Войти</h4></SignIn>
+                                    <SignOut signIn={signIn} onClick={() => setSignIn(true)}><h4>Регистрация</h4></SignOut>
+                                </Flex>
+                                <WelcomeText>Добро пожаловать!</WelcomeText>
+                                <SignUpForm />
+                                <Text>Выберите роль</Text>
+                                <Select
+                                    options={roles.slice(0, -2)}
+                                    onChange={role => signUpRoleOnChange(role)}
+                                    value={signUpRole}
+                                    width='70%'
+                                />
+                                <Flex
+                                    justify='center' align='center'
+                                    width='100%' margin='1rem 0 2rem 0'
+                                >
+                                    <Button
+                                        content='Регистрация'
+                                        handleSubmit={() => { signUpRequest(user, signUpRole.value) }}
+                                        padding='10px'
+                                    />
+                                </Flex>
+                            </MainContainer>
+                        ) : (
+                            <MainContainer>
+                                <Flex width='100%' justify='space-between'>
+                                    <SignIn onClick={() => setSignIn(false)}><h4>Войти</h4></SignIn>
+                                    <SignOut onClick={() => setSignIn(true)}><h4>Регистрация</h4></SignOut>
+                                </Flex>
+                                <WelcomeText>Добро пожаловать!</WelcomeText>
+                                <SignInForm />
 
-                </LoginForm>
-            </Card>
+                                <Text>Выберите роль</Text>
+                                <Select
+                                    options={roles}
+                                    onChange={role => signInRoleOnChange(role)}
+                                    value={signInRole}
+                                    width='70%'
+                                />
+
+                                <Flex
+                                    justify='center' align='center'
+                                    width='100%' margin='1rem 0 2rem 0'
+                                >
+                                    <Button
+                                        content='Войти'
+                                        handleSubmit={() => { signInRequest(email, password, signInRole.value) }}
+                                        padding='10px'
+                                    />
+                                </Flex>
+                            </MainContainer>
+                        )
+                    )
+                    }
+                </Flex>
+            </Flex>
         </PageLayout >
     )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import { WelcomeText } from './components'
@@ -19,9 +19,16 @@ export default () => {
     // const isAuth = useSelector()
     // if (!isAuth)
 
+    const { getTeachers } = useActions()
     const { teachers } = useSelector(state => getTeachersState(state.teachers))
 
-    // const { } = useActions()
+    useEffect(() => {
+        getTeachers("")
+        return () => {
+            // clearTeachersState
+        }
+    }, [])
+
 
     return (
         <PageLayout>
@@ -45,7 +52,7 @@ export default () => {
                     justify=' center'>
                     <Flex direction='column'>
                         {
-                            teachers.map((teacher, index) => {
+                            teachers?.map((teacher, index) => {
                                 return (
                                     <ListItem
                                         key={index}

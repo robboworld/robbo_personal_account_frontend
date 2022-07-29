@@ -12,7 +12,7 @@ export const clientsAPI = {
     },
 
     getClients(token) {
-        return instance.get('users/parent',
+        return instance.get('users/parents',
             {
                 // withCredentials: true,
                 headers: {

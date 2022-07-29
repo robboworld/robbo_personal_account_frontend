@@ -1,7 +1,7 @@
-import { call, takeLatest } from 'redux-saga/effects'
+import { call, takeLatest, put } from 'redux-saga/effects'
 
 import { teachersAPI } from '@/api'
-import { getTeachers } from '@/actions/teachers'
+import { getTeachers, getTeachersFailed, getTeachersSuccess } from '@/actions/teachers'
 
 function* getTeachersSaga(action) {
     try {
@@ -9,9 +9,9 @@ function* getTeachersSaga(action) {
         const response = yield call(teachersAPI.getTeachers, token)
         console.log(response)
 
-        // yield put(getProfileByIdSuccess(response.data))
+        yield put(getTeachersSuccess(response.data))
     } catch (e) {
-        // yield put(getProfileByIdFailed(e.message))
+        yield put(getTeachersFailed(e.message))
     }
 }
 

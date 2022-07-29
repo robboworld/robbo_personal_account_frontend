@@ -1,38 +1,26 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
+
+import { clearTeachersState, getTeachers, getTeachersFailed, getTeachersSuccess } from "@/actions"
 
 const INITIAL_STATE = {
-    teachers: [
-        {
-            id: 1,
-            email: 'rupychman@mail.ru',
-            nickname: 'skinnykaen',
-            joinedAt: "10.05.2022",
-            avatar: null,
-            role: 'Педагог',
-            firstname: 'Ксения',
-            lastname: 'Клещенок',
-            middlename: 'Артуровна',
-        },
-        {
-            id: 2,
-            email: 'rupychman@mail.ru',
-            nickname: 'skinnykaen',
-            joinedAt: "10.05.2022",
-            avatar: null,
-            role: 'Педагог',
-            firstname: 'Евгений',
-            lastname: 'Сущевич',
-            middlename: 'Павлович',
-        },
-    ],
+    teachers: [],
     loading: false,
 }
 
 export default handleActions({
-
-    // [clearProjectPageState](state, action) {
-    //     return { ...state, loading: false, projectPage: {} }
-    // },
+    [getTeachers](state) {
+        return { ...state, loading: true }
+    },
+    [getTeachersSuccess](state, action) {
+        console.log(action)
+        return { ...state, teachers: action.payload.response, loading: false }
+    },
+    [getTeachersFailed](state, action) {
+        return { ...state, loading: false }
+    },
+    [clearTeachersState](state, action) {
+        return { ...state, loading: false, teachers: [] }
+    },
 }, INITIAL_STATE)
 
 export const getTeachersState = state => state

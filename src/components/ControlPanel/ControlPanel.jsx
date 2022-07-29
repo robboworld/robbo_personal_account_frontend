@@ -1,17 +1,11 @@
 import React from 'react'
-import Select from 'react-select'
-
 import { useSelector } from 'react-redux'
 
-import Button from '../UI/Button'
-
-import { SelectWrapper, CreateNew } from './componets'
-
 import Flex from '@/components/Flex'
-
 import { getNewProjectId } from '@/reducers/myProjects'
 import config from '@/config'
 import { useActions } from '@/helpers/useActions'
+import { Select, Button } from '@/components/UI'
 
 export default () => {
 
@@ -25,30 +19,9 @@ export default () => {
         { value: 'shared', label: ' Доступ' },
     ]
 
-    const customStyles = {
-        control: base => ({
-            ...base,
-            border: '1px solid grey',
-            boxShadow: 'none',
-        }),
-        option: (base, state) => ({
-            ...base,
-            height: '100%',
-            backgroundColor: state.isSelected ? 'green' : 'white',
-            '&:hover': {
-                backgroundColor: 'green',
-                color: 'white',
-            },
-        }),
-
-    }
 
 
     const token = localStorage.getItem('token')
-
-    const createNewProjectPageHandler = () => {
-        createProjectPage(token)
-    }
 
     if (newProjectId) {
         window.location.replace(config.scratchURL + '?#' + newProjectId)
@@ -57,19 +30,13 @@ export default () => {
     return (
         <Flex width='100%' margin='0 0 2rem 0'
             justify='space-between' align='center'>
-            <SelectWrapper>
-                <Select
-                    styles={customStyles}
-                    defaultValue={options[0]}
-                    options={options}
-                />
-            </SelectWrapper>
-            <CreateNew>
+            <Select width='300px' options={options} />
+            <Flex>
                 <Button content='Создать новый'
                     background='grey'
                     padding='0.5rem'
-                    handleSubmit={createNewProjectPageHandler} />
-            </CreateNew>
+                    handleSubmit={() => createProjectPage(token)} />
+            </Flex>
         </Flex>
     )
 }
