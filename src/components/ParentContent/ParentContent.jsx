@@ -1,5 +1,4 @@
 import React from "react"
-import { useSelector } from "react-redux"
 
 import {
     ListChildrens, SubTitle, Title,
@@ -7,7 +6,6 @@ import {
 
 import Flex from "@/components/Flex"
 import Button from "@/components/UI/Button"
-import { getClientPage } from "@/reducers/clientPage"
 import ListItem from "@/components/ListItem"
 
 export default ({ client }) => {
@@ -15,8 +13,7 @@ export default ({ client }) => {
     // const clientPage = useSelector(state => getClientPage(state.clientPage))
 
     return (
-        <Flex direction='column' width='100%'
-        >
+        <Flex direction='column' width='100%'>
             <Flex padding='0 1rem' direction='column'>
                 <Flex direction='column' align='center'>
                     <Title>{`${client.lastname} ${client.firstname} ${client.middlename}`}</Title>

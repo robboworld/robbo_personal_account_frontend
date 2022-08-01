@@ -3,7 +3,7 @@ import { call, put, takeLatest } from 'redux-saga/effects'
 import {
     addParentFailed, addParentSuccess,
     getClients, getClientsFailed,
-    getClientsSuccess, addParent,
+    getClientsSuccess, addParent, deleteParentSuccess, deleteParentFailed, deleteParentRequest,
 }
     from '@/actions'
 import { clientsAPI } from '@/api'
@@ -32,7 +32,20 @@ function* addParentSaga(action) {
     }
 }
 
+function* deleteParentSaga(action) {
+    try {
+        const { token, parentId, parentIndex } = action.payload
+        const response = yield call(clientsAPI.deleteParent, token, parentId)
+        console.log(response)
+
+        yield put(deleteParentSuccess(response.data, parentIndex))
+    } catch (e) {
+        yield put(deleteParentFailed)
+    }
+}
+
 export function* clientsSaga() {
     yield takeLatest(getClients, getClientsSaga)
     yield takeLatest(addParent, addParentSaga)
+    yield takeLatest(deleteParentRequest, deleteParentSaga)
 }

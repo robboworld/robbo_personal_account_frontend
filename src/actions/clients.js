@@ -4,7 +4,9 @@ import { toast } from 'react-toastify'
 import {
     GET_CLIENTS, GET_CLIENTS_SUCCESS, GET_CLIENTS_FAILED,
     GET_CLIENT_PAGE_BY_ID, GET_CLIENT_PAGE_BY_ID_SUCCESS, GET_CLIENT_PAGE_BY_ID_FAILED,
-    CLEAR_CLIENT_PAGE_STATE, CLEAR_CLIENTS_STATE, ADD_PARENT_REQUEST, ADD_PARENT_SUCCESS, ADD_PARENT_FAILED,
+    CLEAR_CLIENT_PAGE_STATE, CLEAR_CLIENTS_STATE, ADD_PARENT_REQUEST,
+    ADD_PARENT_SUCCESS, ADD_PARENT_FAILED, DELETE_PARENT_REQUEST,
+    DELETE_PARENT_SUCCESS, DELETE_PARENT_FAILED,
 } from '@/constants'
 
 export const getClients = createAction(GET_CLIENTS, token => {
@@ -63,6 +65,29 @@ export const addParentSuccess = createAction(ADD_PARENT_SUCCESS, (response, pare
 })
 
 export const addParentFailed = createAction(ADD_PARENT_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
+    }
+})
+
+export const deleteParentRequest = createAction(DELETE_PARENT_REQUEST, (token, parentId, parentIndex) => {
+    return {
+        token,
+        parentId,
+        parentIndex,
+    }
+})
+
+export const deleteParentSuccess = createAction(DELETE_PARENT_SUCCESS, (response, parentIndex) => {
+    toast.success("Родитель успешно удален!")
+    return {
+        response,
+        parentIndex,
+    }
+})
+
+export const deleteParentFailed = createAction(DELETE_PARENT_FAILED, err => {
     toast.error(err)
     return {
         err,

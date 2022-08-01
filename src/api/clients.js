@@ -30,4 +30,11 @@ export const clientsAPI = {
                 },
             })
     },
+
+    deleteParent(token, parentId) {
+        return instance.delete(`users/parent/${parentId}`,
+            {
+
+            })
+    },
 }
