@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { WelcomeText } from './components'
@@ -12,6 +12,7 @@ import { useActions } from '@/helpers/useActions'
 import { Button, ModalWindow } from '@/components/UI'
 import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
+import AddTeacher from '@/components/AddTeacher'
 
 
 export default () => {
@@ -29,21 +30,29 @@ export default () => {
         }
     }, [])
 
+    const [openAddTeacher, setOpenAddTeacher] = useState(false)
 
     return (
         <PageLayout>
             <Card>
                 <SideBar />
                 <WelcomeText>Педагоги</WelcomeText>
+                <ModalWindow
+                    open={openAddTeacher} setOpen={setOpenAddTeacher}
+                    width='35%' height='60%'
+                    content={() => (
+                        <AddTeacher />
+                    )}
+                />
                 <Flex
-                    padding='10px 0'
-                    justify='flex-end'
+                    padding='10px 0' justify='flex-end'
                 >
 
                     <Button
                         background='green'
                         content='Добавить педагога'
                         padding='10px'
+                        handleSubmit={() => { setOpenAddTeacher(true) }}
                     />
                 </Flex>
                 <Flex

@@ -5,21 +5,14 @@ import { Redirect } from 'react-router-dom'
 import {
     MainContainer,
     WelcomeText,
-    Text,
-    SelectContainer,
     SignIn,
     SignOut,
 } from './components'
 
 import { PageLayout } from '@/layouts'
-import { Select, Button } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
 import { useIsAuth } from '@/helpers'
-import {
-    FREE_LISTENER, PARENT, STUDENT,
-    SUPER_ADMIN, TEACHER, UNIT_ADMIN, userRole,
-} from '@/constants'
 import Loader from '@/components/Loader'
 import SignUpForm from '@/components/SignUpForm'
 import SignInForm from '@/components/SignInForm'
@@ -35,28 +28,9 @@ export default () => {
     }, [])
 
     const [signIn, setSignIn] = useState(false)
+    const { clearLoginState, signInRequest, signUpRequest } = useActions()
 
-    const {
-        signInRequest, signUpRequest,
-        signInRoleOnChange, signUpRoleOnChange, clearLoginState,
-    } = useActions()
-
-    const {
-        signInRole, loading,
-        signUpRole, isAuth,
-        user,
-    } = useSelector(state => getLoginState(state.login))
-
-    const { email, password } = user
-
-    const roles = [
-        { value: STUDENT, label: userRole[STUDENT] },
-        { value: TEACHER, label: userRole[TEACHER] },
-        { value: PARENT, label: userRole[PARENT] },
-        { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
-        { value: UNIT_ADMIN, label: userRole[UNIT_ADMIN] },
-        { value: SUPER_ADMIN, label: userRole[SUPER_ADMIN] },
-    ]
+    const { loading, isAuth } = useSelector(({ login }) => getLoginState(login))
 
     if (isAuth) {
         return <Redirect to='/' />
@@ -79,24 +53,15 @@ export default () => {
                                     <SignOut signIn={signIn} onClick={() => setSignIn(true)}><h4>Регистрация</h4></SignOut>
                                 </Flex>
                                 <WelcomeText>Добро пожаловать!</WelcomeText>
-                                <SignUpForm />
-                                <Text>Выберите роль</Text>
-                                <Select
-                                    options={roles.slice(0, -2)}
-                                    onChange={role => signUpRoleOnChange(role)}
-                                    value={signUpRole}
-                                    width='70%'
+                                <SignUpForm
+                                    buttonOption={{
+                                        content: 'Регистрация',
+                                        padding: '10px',
+                                    }}
+                                    needSelectRole
+                                    margin='0 0 10px 0'
+                                    handleSubmit={newUser => signUpRequest(newUser)}
                                 />
-                                <Flex
-                                    justify='center' align='center'
-                                    width='100%' margin='1rem 0 2rem 0'
-                                >
-                                    <Button
-                                        content='Регистрация'
-                                        handleSubmit={() => { signUpRequest(user, signUpRole.value) }}
-                                        padding='10px'
-                                    />
-                                </Flex>
                             </MainContainer>
                         ) : (
                             <MainContainer>
@@ -105,26 +70,15 @@ export default () => {
                                     <SignOut onClick={() => setSignIn(true)}><h4>Регистрация</h4></SignOut>
                                 </Flex>
                                 <WelcomeText>Добро пожаловать!</WelcomeText>
-                                <SignInForm />
-
-                                <Text>Выберите роль</Text>
-                                <Select
-                                    options={roles}
-                                    onChange={role => signInRoleOnChange(role)}
-                                    value={signInRole}
-                                    width='70%'
+                                <SignInForm
+                                    buttonOption={{
+                                        content: 'Войти',
+                                        padding: '10px',
+                                    }}
+                                    needSelectRole
+                                    margin='0 0 10px 0'
+                                    handleSubmit={newUser => signInRequest(newUser)}
                                 />
-
-                                <Flex
-                                    justify='center' align='center'
-                                    width='100%' margin='1rem 0 2rem 0'
-                                >
-                                    <Button
-                                        content='Войти'
-                                        handleSubmit={() => { signInRequest(email, password, signInRole.value) }}
-                                        padding='10px'
-                                    />
-                                </Flex>
                             </MainContainer>
                         )
                     )

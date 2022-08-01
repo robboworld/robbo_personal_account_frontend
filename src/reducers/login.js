@@ -1,60 +1,21 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    emailOnChange, passwordOnChange,
     signInSucces, signInFailed,
     signUpSuccess, signUpFailed,
     signOutSuccess, signOutFailed,
     checkAuthSuccess, checkAuthFailed,
-    nicknameOnChange, lastnameOnChange,
-    firstnameOnChange, middlenameOnChange,
-    signInRoleOnChange, signUpRoleOnChange,
     signInRequest, signUpRequest,
-    clearLoginState,
+    clearLoginState, signOutRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    user: {
-        id: '',
-        email: '',
-        password: '',
-        nickname: '',
-        lastname: '',
-        firstname: '',
-        middlename: '',
-    },
-    signInRole: {},
-    signUpRole: {},
     userRole: null,
     isAuth: false,
     loading: false,
 }
 
 export default handleActions({
-    [emailOnChange](state, action) {
-        return { ...state, user: { ...state.user, email: action.payload.email } }
-    },
-    [passwordOnChange](state, action) {
-        return { ...state, user: { ...state.user, password: action.payload.password } }
-    },
-    [signInRoleOnChange](state, action) {
-        return { ...state, signInRole: action.payload.role }
-    },
-    [signUpRoleOnChange](state, action) {
-        return { ...state, signUpRole: action.payload.role }
-    },
-    [nicknameOnChange](state, action) {
-        return { ...state, user: { ...state.user, nickname: action.payload.nickname } }
-    },
-    [lastnameOnChange](state, action) {
-        return { ...state, user: { ...state.user, lastname: action.payload.lastname } }
-    },
-    [firstnameOnChange](state, action) {
-        return { ...state, user: { ...state.user, firstname: action.payload.firstname } }
-    },
-    [middlenameOnChange](state, action) {
-        return { ...state, user: { ...state.user, middlename: action.payload.middlename } }
-    },
     [signInRequest](state, action) {
         return { ...state, loading: true }
     },
@@ -73,6 +34,9 @@ export default handleActions({
     [signUpFailed](state, action) {
         return { ...state, loading: false }
     },
+    [signOutRequest](state) {
+        return { ...state, loading: true }
+    },
     [signOutSuccess](state) {
         return { ...state, isAuth: false, loading: false }
     },
@@ -80,27 +44,14 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [checkAuthSuccess](state, action) {
-        return {
-            ...state, isAuth: true,
-            user: { ...state.user, id: action.payload.id }, userRole: action.payload.role,
-            loading: false,
-        }
+        console.log(action)
+        return { ...state, isAuth: true, loading: false, userRole: action.payload.role }
     },
     [checkAuthFailed](state, action) {
         return { ...state, isAuth: false, loading: false }
     },
     [clearLoginState](state) {
-        return {
-            ...state, user: {
-                id: '',
-                email: '',
-                password: '',
-                nickname: '',
-                lastname: '',
-                firstname: '',
-                middlename: '',
-            }, signInRole: {}, signUpRole: {}, loading: false,
-        }
+        return { ...state, loading: false }
     },
 }, INITIAL_STATE)
 

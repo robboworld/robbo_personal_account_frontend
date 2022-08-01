@@ -19,7 +19,7 @@ export default ({ client }) => {
         >
             <Flex padding='0 1rem' direction='column'>
                 <Flex direction='column' align='center'>
-                    <Title>{client.name}</Title>
+                    <Title>{`${client.lastname} ${client.firstname} ${client.middlename}`}</Title>
                     <Button
                         content='Добавить ребенка'
                         background='darkgreen'
