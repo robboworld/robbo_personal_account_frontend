@@ -5,8 +5,7 @@ import { Input, Select, Button } from '@/components/UI'
 import Flex from '@/components/Flex'
 import {
     FREE_LISTENER, PARENT,
-    STUDENT, SUPER_ADMIN,
-    TEACHER, UNIT_ADMIN,
+    STUDENT, TEACHER,
     userRole,
 } from '@/constants'
 
@@ -28,8 +27,6 @@ export default memo(({
         { value: TEACHER, label: userRole[TEACHER] },
         { value: PARENT, label: userRole[PARENT] },
         { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
-        { value: UNIT_ADMIN, label: userRole[UNIT_ADMIN] },
-        { value: SUPER_ADMIN, label: userRole[SUPER_ADMIN] },
     ]
 
     return (
@@ -66,7 +63,7 @@ export default memo(({
                 <React.Fragment>
                     <Text>Выберите роль</Text>
                     <Select
-                        options={roles.slice(0, -2)}
+                        options={roles}
                         onChange={role => setRole(role)}
                         value={role}
                         width='70%'

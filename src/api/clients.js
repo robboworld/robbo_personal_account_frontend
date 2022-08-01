@@ -1,16 +1,6 @@
 import instance from './instance'
 
 export const clientsAPI = {
-    getClientPageById(token, id) {
-        return instance.get(`client/${id}`,
-            {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            })
-    },
-
     getClients(token) {
         return instance.get('users/parents',
             {
@@ -20,5 +10,24 @@ export const clientsAPI = {
                 },
             },
         )
+    },
+
+    addParent(token, parent) {
+        const { email, password, nickname, firstname, lastname, middlename } = parent
+        return instance.post('users/parent',
+            {
+                email: email,
+                password: password,
+                nickname: nickname,
+                firstname: firstname,
+                lastname: lastname,
+                middlename: middlename,
+            },
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
     },
 }

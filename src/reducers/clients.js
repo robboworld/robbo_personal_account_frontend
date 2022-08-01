@@ -1,23 +1,13 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    getClientsSuccess, getClientsFailed,
-    clearClientsState, getClients, addNewParentEmailOnChange,
-
+    getClients, getClientsSuccess,
+    getClientsFailed, clearClientsState, addParent, addParentSuccess, addParentFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
     loading: false,
     parents: [],
-    newParent: {
-        id: '',
-        email: '',
-        password: '',
-        nickname: '',
-        lastname: '',
-        firstname: '',
-        middlename: '',
-    },
 }
 
 export default handleActions({
@@ -33,10 +23,16 @@ export default handleActions({
     [clearClientsState](state, action) {
         return { ...state }
     },
-    // [addNewParentEmailOnChange](state, action) {
-    //     return {...state, }
-    // }
+    [addParent](state) {
+        return { ...state, loading: true }
+    },
+    [addParentSuccess](state, action) {
+        const { parent } = action.payload
+        return { ...state, loading: false, parents: [...state.parents, { ...parent }] }
+    },
+    [addParentFailed](state, action) {
+        return { ...state, loading: false }
+    },
 }, INITIAL_STATE)
 
 export const getClientsState = state => state
-export const getNewParent = state => state.newParent

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { ListParents, WelcomeText } from './components'
@@ -17,18 +17,18 @@ import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
 
 
-export default () => {
+export default memo(() => {
     const { getClients } = useActions()
-
-    const token = localStorage.getItem('token')
 
     useEffect(() => {
         getClients(token)
         return () => {
             // clearstate
         }
-    }, [])
+        // eslint-disable-next-line no-use-before-define
+    }, [parents])
 
+    const token = localStorage.getItem('token')
     const { parents, loading } = useSelector(({ clients }) => getClientsState(clients))
 
     const [openAddClients, setOpenAddClients] = useState(false)
@@ -51,7 +51,8 @@ export default () => {
                                         <AddParent />
                                     )}
                                 />
-                                <Flex direction='row' justify='flex-end'
+                                <Flex
+                                    direction='row' justify='flex-end'
                                     align='flex-start'>
                                     <Button
                                         content='Добавить родителя'
@@ -91,4 +92,4 @@ export default () => {
             </Card>
         </PageLayout>
     )
-}
+})
