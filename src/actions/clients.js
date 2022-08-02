@@ -6,7 +6,7 @@ import {
     GET_CLIENT_PAGE_BY_ID, GET_CLIENT_PAGE_BY_ID_SUCCESS, GET_CLIENT_PAGE_BY_ID_FAILED,
     CLEAR_CLIENT_PAGE_STATE, CLEAR_CLIENTS_STATE, ADD_PARENT_REQUEST,
     ADD_PARENT_SUCCESS, ADD_PARENT_FAILED, DELETE_PARENT_REQUEST,
-    DELETE_PARENT_SUCCESS, DELETE_PARENT_FAILED,
+    DELETE_PARENT_SUCCESS, DELETE_PARENT_FAILED, CREATE_CHILDREN_REQUEST, CREATE_CHILDREN_SUCCESS, CREATE_CHILDREN_FAILED,
 } from '@/constants'
 
 export const getClients = createAction(GET_CLIENTS, token => {
@@ -89,6 +89,28 @@ export const deleteParentSuccess = createAction(DELETE_PARENT_SUCCESS, (response
 
 export const deleteParentFailed = createAction(DELETE_PARENT_FAILED, err => {
     toast.error(err)
+    return {
+        err,
+    }
+})
+
+export const createChildren = createAction(CREATE_CHILDREN_REQUEST, (token, child, parentId) => {
+    return {
+        token,
+        child,
+        parentId,
+    }
+})
+
+export const createChildreSuccess = createAction(CREATE_CHILDREN_SUCCESS, response => {
+    toast.success("Ребенок успешно создан!")
+    return {
+        response,
+    }
+})
+
+export const createChildrenFailed = createAction(CREATE_CHILDREN_FAILED, err => {
+    toast.error("Ошибка при создании ребенка!")
     return {
         err,
     }

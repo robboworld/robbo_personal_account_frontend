@@ -1,30 +1,32 @@
 import React, { memo } from 'react'
-
-import { Text } from './components'
+import styled from 'styled-components'
 
 import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
 
-export default memo(() => {
-    // const { addTeacher } = useActions()
-    // const token = localStorage.getItem('token')
-
+export default memo(({ parentId }) => {
+    const { createChildren } = useActions()
+    const token = localStorage.getItem('token')
     return (
         <Flex
             direction='column' width='100%'
             align='center'
         >
-            <Text>Добавление педагога</Text>
+            <Text>Создание ребенка</Text>
             <SignUpForm
                 margin='0 0 10px 0'
-                // handleSubmit={teacher => addParent(token, teacher)}
+                handleSubmit={child => createChildren(token, child, parentId.toString())}
                 buttonOption={{
-                    content: 'Добавить',
+                    content: 'Создать',
                     padding: '10px',
                 }}
             />
-
         </Flex>
     )
 })
+
+const Text = styled.p`
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+`

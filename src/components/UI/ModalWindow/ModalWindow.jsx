@@ -20,13 +20,13 @@ export default ({
             <ModalCard width={width} height={height}>
                 <Flex
                     direction='column' width='100%'
-                    justify='flex-end' align='flex-end'
-                    height='25%'
+                    justify='center' align='flex-end'
+                    height='15%'
                 >
                     <CloseModalButton onClick={() => setOpen(false)}>×</CloseModalButton>
                 </Flex>
 
-                <Flex height='90%' width='100%'>
+                <Flex height='70%' width='100%'>
                     {
                         content()
                     }

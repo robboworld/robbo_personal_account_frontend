@@ -23,7 +23,6 @@ export default () => {
         return () => {
             // clearstate
         }
-        // eslint-disable-next-line no-use-before-define
     }, [])
 
     const token = localStorage.getItem('token')
@@ -53,7 +52,7 @@ export default () => {
                             content='Добавить родителя'
                             background='darkgreen'
                             padding='0.5rem'
-                            handleSubmit={() => { setOpenAddClients(true) }}
+                            handleSubmit={() => setOpenAddClients(true)}
                         />
                     </Flex>
                     <ListParents>
@@ -64,8 +63,8 @@ export default () => {
                                         return (
                                             <ListItem
                                                 itemIndex={index}
-                                                handleDelete={parentIndex => { deleteParentRequest(token, parent.id, parentIndex) }}
-                                                label={`${parent.lastname} ${parent.firstname} ${parent.middlename}`}
+                                                handleDelete={parentIndex => { deleteParentRequest(token, parent.userHttp.id, parentIndex) }}
+                                                label={`${parent.userHttp.lastname} ${parent.userHttp.firstname} ${parent.userHttp.middlename}`}
                                                 key={index}
                                                 render={(open, setOpen) => (
                                                     <ModalWindow

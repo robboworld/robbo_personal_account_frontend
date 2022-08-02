@@ -25,7 +25,7 @@ export const Title = styled.h1`
 `
 
 export const CloseModalButton = styled.button`
-    font-size: 3rem;
+    font-size: 2rem;
     padding: 0 1rem;
     background: none;
     border: none;

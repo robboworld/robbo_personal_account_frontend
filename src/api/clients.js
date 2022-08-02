@@ -37,4 +37,28 @@ export const clientsAPI = {
 
             })
     },
+
+    createChildren(token, child, parentId) {
+        const { email, password, nickname, firstname, lastname, middlename } = child
+        return instance.post('users/student',
+            {
+                student: {
+                    userHttp: {
+                        email: email,
+                        password: password,
+                        nickname: nickname,
+                        firstname: firstname,
+                        lastname: lastname,
+                        middlename: middlename,
+                    },
+                },
+                parentId: parentId,
+            },
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
 }

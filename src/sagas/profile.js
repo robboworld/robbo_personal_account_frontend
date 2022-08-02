@@ -13,7 +13,7 @@ function* getProfileByIdSaga(action) {
         const response = yield call(profileAPI.getProfileById, token)
         console.log(response)
 
-        yield put(getProfileByIdSuccess(response.data))
+        yield put(getProfileByIdSuccess(response.data.userHttp))
     } catch (e) {
         yield put(getProfileByIdFailed(e.message))
     }

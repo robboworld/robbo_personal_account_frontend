@@ -2,7 +2,12 @@ import { handleActions } from 'redux-actions'
 
 import {
     getClients, getClientsSuccess,
-    getClientsFailed, clearClientsState, addParent, addParentSuccess, addParentFailed, deleteParentRequest, deleteParentSuccess, deleteParentFailed,
+    getClientsFailed, clearClientsState,
+    addParent, addParentSuccess,
+    addParentFailed, deleteParentRequest,
+    deleteParentSuccess, deleteParentFailed,
+    createChildren, createChildreSuccess,
+    createChildrenFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -31,7 +36,7 @@ export default handleActions({
         return {
             ...state,
             loading: false,
-            parents: [...state.parents, { id: action.payload.response.parentId, ...parent }],
+            parents: [...state.parents, { userHttp: { id: action.payload.response.parentId, ...parent }, children: [] }],
         }
     },
     [addParentFailed](state, action) {
@@ -46,6 +51,15 @@ export default handleActions({
         return { ...state, loading: false, parents: newParent }
     },
     [deleteParentFailed](state) {
+        return { ...state, loading: false }
+    },
+    [createChildren](state) {
+        return { ...state, loading: true }
+    },
+    [createChildreSuccess](state, action) {
+        return { ...state, loading: false }
+    },
+    [createChildrenFailed](state, action) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)
