@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions'
 
-import { clearTeachersState, deleteTeacher, deleteTeacherFailed, deleteTeacherSuccess, getTeachers, getTeachersFailed, getTeachersSuccess } from "@/actions"
+import { clearTeachersState, createTeacher, createTeacherFailed, createTeacherSuccess, deleteTeacher, deleteTeacherFailed, deleteTeacherSuccess, getTeachers, getTeachersFailed, getTeachersSuccess } from "@/actions"
 
 const INITIAL_STATE = {
     teachers: [],
@@ -25,13 +25,29 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [deleteTeacherSuccess](state, action) {
-        const { teachetIndex } = action.payload
+        const { teacherIndex } = action.payload
         const newTeachers = [...state.teachers]
-        newTeachers.splice(teachetIndex, 1)
+        newTeachers.splice(teacherIndex, 1)
         return { ...state, loading: false, teachers: newTeachers }
     },
     [deleteTeacherFailed](state, action) {
         return { ...state, loading: false }
+    },
+    [createTeacher](state) {
+        return { ...state, loading: true }
+    },
+    [createTeacherSuccess](state, action) {
+        const { response, teacher } = action.payload
+        return {
+            ...state,
+            loading: false,
+            teachers: [...state.teachers, { userHttp: { id: response.teacherId, ...teacher } }],
+        }
+    },
+    [createTeacherFailed](state, action) {
+        return {
+            ...state, loading: false,
+        }
     },
 }, INITIAL_STATE)
 

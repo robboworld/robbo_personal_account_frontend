@@ -20,4 +20,23 @@ export const teachersAPI = {
                 // },
             })
     },
+
+    createTeacher(token, teacher) {
+        const { email, password, nickname, firstname, lastname, middlename } = teacher
+        return instance.post('users/teacher',
+            {
+                email: email,
+                password: password,
+                nickname: nickname,
+                firstname: firstname,
+                lastname: lastname,
+                middlename: middlename,
+            },
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
 }

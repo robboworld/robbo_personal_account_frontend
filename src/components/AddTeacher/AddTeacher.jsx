@@ -7,8 +7,8 @@ import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
 
 export default memo(() => {
-    // const { addTeacher } = useActions()
-    // const token = localStorage.getItem('token')
+    const { createTeacher } = useActions()
+    const token = localStorage.getItem('token')
 
     return (
         <Flex
@@ -18,7 +18,7 @@ export default memo(() => {
             <Text>Добавление педагога</Text>
             <SignUpForm
                 margin='0 0 10px 0'
-                // handleSubmit={teacher => addParent(token, teacher)}
+                handleSubmit={teacher => createTeacher(token, teacher)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',
