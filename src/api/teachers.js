@@ -10,4 +10,14 @@ export const teachersAPI = {
                 },
             })
     },
+
+    deleteTeacher(token, teacherId) {
+        return instance.delete(`users/teacher/${teacherId}`,
+            {
+                // withCredentials: true,
+                //  headers: {
+                //     'Authorization': `Bearer ${token}`,
+                // },
+            })
+    },
 }

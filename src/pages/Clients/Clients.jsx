@@ -13,9 +13,11 @@ import { useActions } from '@/helpers/useActions'
 import Loader from '@/components/Loader'
 import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
+import { useIsAuth } from '@/helpers'
 
 
 export default () => {
+    useIsAuth()
     const { getClients, deleteParentRequest } = useActions()
 
     useEffect(() => {

@@ -1,7 +1,7 @@
 import { call, takeLatest, put } from 'redux-saga/effects'
 
 import { teachersAPI } from '@/api'
-import { getTeachers, getTeachersFailed, getTeachersSuccess } from '@/actions/teachers'
+import { deleteTeacher, deleteTeacherFailed, deleteTeacherSuccess, getTeachers, getTeachersFailed, getTeachersSuccess } from '@/actions/teachers'
 
 function* getTeachersSaga(action) {
     try {
@@ -15,7 +15,19 @@ function* getTeachersSaga(action) {
     }
 }
 
+function* deleteTeacherSaga(action) {
+    try {
+        const { token, teacherId, teacherIndex } = action.payload
+        const response = yield call(teachersAPI.deleteTeacher, token, teacherId)
+        console.log(response)
+
+        yield put(deleteTeacherSuccess(response.data, teacherIndex))
+    } catch (e) {
+        yield put(deleteTeacherFailed(e))
+    }
+}
 
 export function* teachersSaga() {
     yield takeLatest(getTeachers, getTeachersSaga)
+    yield takeLatest(deleteTeacher, deleteTeacherSaga)
 }

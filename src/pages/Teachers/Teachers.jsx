@@ -22,7 +22,7 @@ export default () => {
     // if (!isAuth)
 
     const token = localStorage.getItem('token')
-    const { getTeachers } = useActions()
+    const { getTeachers, deleteTeacher } = useActions()
     const { teachers, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
 
     useEffect(() => {
@@ -67,8 +67,10 @@ export default () => {
                                         teachers?.map((teacher, index) => {
                                             return (
                                                 <ListItem
+                                                    itemIndex={index}
                                                     key={index}
                                                     label={`${teacher.userHttp.lastname} ${teacher.userHttp.firstname} ${teacher.userHttp.middlename}`}
+                                                    handleDelete={teacherIndex => deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
                                                     render={(open, setOpen) => (
                                                         <ModalWindow
                                                             open={open} setOpen={setOpen}
