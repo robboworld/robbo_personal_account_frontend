@@ -6,7 +6,7 @@ import {
 } from "./components"
 
 import Flex from "@/components/Flex"
-import { Button, ModalWindow } from "@/components/UI"
+import { Button, ModalWindow, SearchInput } from "@/components/UI"
 import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
@@ -18,6 +18,7 @@ export default ({ client }) => {
     const { deleteChildRequest, getChildrenByParentId, clearChildrenState } = useActions()
     const token = localStorage.getItem('token')
     const [openAddChildren, setOpenAddChildren] = useState(false)
+    const [openSearchSection, setOpenSearchSection] = useState(false)
 
     const { children, childrenLoading } = useSelector(({ clients }) => getClientsState(clients))
 
@@ -51,6 +52,7 @@ export default ({ client }) => {
                             padding='0.5rem'
                             width='40%'
                             margin='0 1rem 0 0'
+                            handleSubmit={() => setOpenSearchSection(!openSearchSection)}
                         />
                         <Button
                             content='Создать ребенка'
@@ -60,6 +62,11 @@ export default ({ client }) => {
                             handleSubmit={() => setOpenAddChildren(true)}
                         />
                     </Flex>
+                    {openSearchSection &&
+                        <Flex width='100%' margin='1rem 0 0 0'>
+                            <SearchInput />
+                        </Flex>
+                    }
                 </Flex>
             </Flex>
             <SubTitle>Дети</SubTitle>
