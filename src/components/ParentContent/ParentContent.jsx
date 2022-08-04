@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
 
 import {
     ListChildrens, SubTitle, Title,
@@ -9,14 +10,28 @@ import { Button, ModalWindow } from "@/components/UI"
 import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
+import { getClientsState } from "@/reducers/clients"
+import Loader from "@/components/Loader"
+
 
 export default ({ client }) => {
-    const { deleteChildRequest } = useActions()
+    const { deleteChildRequest, getChildrenByParentId, clearChildrenState } = useActions()
     const token = localStorage.getItem('token')
     const [openAddChildren, setOpenAddChildren] = useState(false)
 
+    const { children, childrenLoading } = useSelector(({ clients }) => getClientsState(clients))
+
+    useEffect(() => {
+        getChildrenByParentId(token, client.userHttp.id)
+        return () => {
+            clearChildrenState()
+        }
+    }, [])
+
     return (
+
         <Flex direction='column' width='100%'>
+
             <Flex padding='0 1rem' direction='column'>
                 <Flex direction='column' align='center'
                     width='100%'
@@ -50,19 +65,22 @@ export default ({ client }) => {
             <SubTitle>Дети</SubTitle>
             <ListChildrens>
                 {
-                    client.children?.map(({ userHttp }, index) => {
-                        return (
-                            <ListItem
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                key={index}
-                                render={() => { }}
-                                handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
-                            />
+                    childrenLoading ? <Loader />
+                        : (
+                            children?.map(({ userHttp }, index) => {
+                                return (
+                                    <ListItem
+                                        itemIndex={index}
+                                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                        key={index}
+                                        render={() => { }}
+                                        handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                    />
+                                )
+                            })
                         )
-                    })
                 }
             </ListChildrens>
         </Flex >
     )
-
 } 

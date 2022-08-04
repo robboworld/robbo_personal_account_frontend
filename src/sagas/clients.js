@@ -3,7 +3,15 @@ import { call, put, takeLatest } from 'redux-saga/effects'
 import {
     addParentFailed, addParentSuccess,
     getClients, getClientsFailed,
-    getClientsSuccess, addParent, deleteParentSuccess, deleteParentFailed, deleteParentRequest, createChildreSuccess, createChildrenFailed, createChildren, deleteChildSuccess, deleteChildFailed, deleteChildRequest,
+    getClientsSuccess, addParent,
+    deleteParentSuccess, deleteParentFailed,
+    deleteParentRequest, createChildreSuccess,
+    createChildrenFailed, createChildren,
+    deleteChildSuccess, deleteChildFailed,
+    deleteChildRequest,
+    getChildrenByParentIdSuccess,
+    getChildrenByParentIdFailed,
+    getChildrenByParentId,
 }
     from '@/actions'
 import { clientsAPI } from '@/api'
@@ -50,7 +58,7 @@ function* createChildrenSaga(action) {
         const response = yield call(clientsAPI.createChildren, token, child, parentId)
         console.log(response)
 
-        yield put(createChildreSuccess(response.data))
+        yield put(createChildreSuccess(response.data, child))
     } catch (e) {
         yield put(createChildrenFailed(e))
     }
@@ -68,10 +76,23 @@ function* deleteChildSaga(action) {
     }
 }
 
+function* getChildrenByParentIdSaga(action) {
+    try {
+        const { token, parentId } = action.payload
+        const response = yield call(clientsAPI.getCildrenByParentId, token, parentId)
+        console.log(response)
+
+        yield put(getChildrenByParentIdSuccess(response.data))
+    } catch (e) {
+        yield put(getChildrenByParentIdFailed(e.message))
+    }
+}
+
 export function* clientsSaga() {
     yield takeLatest(getClients, getClientsSaga)
     yield takeLatest(addParent, addParentSaga)
     yield takeLatest(deleteParentRequest, deleteParentSaga)
     yield takeLatest(createChildren, createChildrenSaga)
     yield takeLatest(deleteChildRequest, deleteChildSaga)
+    yield takeLatest(getChildrenByParentId, getChildrenByParentIdSaga)
 }

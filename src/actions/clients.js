@@ -10,6 +10,10 @@ import {
     CREATE_CHILDREN_SUCCESS, CREATE_CHILDREN_FAILED, DELETE_CHILD_SUCCESS,
     DELETE_CHILD_FAILED,
     DELETE_CHILD_REQUEST,
+    GET_CHILDREN_BY_PARENT_ID,
+    GET_CHILDREN_BY_PARENT_ID_SUCCESS,
+    GET_CHILDREN_BY_PARENT_ID_FAILED,
+    CLEAR_CHILDREN_STATE,
 } from '@/constants'
 
 export const getClients = createAction(GET_CLIENTS, token => {
@@ -105,10 +109,11 @@ export const createChildren = createAction(CREATE_CHILDREN_REQUEST, (token, chil
     }
 })
 
-export const createChildreSuccess = createAction(CREATE_CHILDREN_SUCCESS, response => {
+export const createChildreSuccess = createAction(CREATE_CHILDREN_SUCCESS, (response, child) => {
     toast.success("Ребенок успешно создан!")
     return {
         response,
+        child,
     }
 })
 
@@ -142,5 +147,26 @@ export const deleteChildFailed = createAction(DELETE_CHILD_FAILED, err => {
     }
 })
 
+export const getChildrenByParentId = createAction(GET_CHILDREN_BY_PARENT_ID, (token, parentId) => {
+    return {
+        token,
+        parentId,
+    }
+})
+
+export const getChildrenByParentIdSuccess = createAction(GET_CHILDREN_BY_PARENT_ID_SUCCESS, response => {
+    return {
+        response,
+    }
+})
+
+export const getChildrenByParentIdFailed = createAction(GET_CHILDREN_BY_PARENT_ID_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
+    }
+})
+
 export const clearClientPageState = createAction(CLEAR_CLIENT_PAGE_STATE)
 export const clearClientsState = createAction(CLEAR_CLIENTS_STATE)
+export const clearChildrenState = createAction(CLEAR_CHILDREN_STATE)

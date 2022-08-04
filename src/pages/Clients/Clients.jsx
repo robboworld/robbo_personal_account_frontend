@@ -26,7 +26,7 @@ export default () => {
     }, [])
 
     const token = localStorage.getItem('token')
-    const { parents, loading } = useSelector(({ clients }) => getClientsState(clients))
+    const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
 
     const [openAddClients, setOpenAddClients] = useState(false)
 
@@ -57,7 +57,7 @@ export default () => {
                     </Flex>
                     <ListParents>
                         {
-                            loading ? <Loader />
+                            clientsLoading ? <Loader />
                                 : (
                                     parents?.map((parent, index) => {
                                         return (

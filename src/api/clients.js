@@ -68,4 +68,15 @@ export const clientsAPI = {
 
             })
     },
+
+    getCildrenByParentId(token, parentId) {
+        return instance.get(`users/students/${parentId}`,
+            {
+                // withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            },
+        )
+    },
 }

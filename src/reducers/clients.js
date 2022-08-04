@@ -11,68 +11,96 @@ import {
     deleteChildRequest,
     deleteChildSuccess,
     deleteChildFailed,
+    getChildrenByParentId,
+    getChildrenByParentIdSuccess,
+    getChildrenByParentIdFailed,
+    clearChildrenState,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    loading: false,
+    clientsLoading: false,
+    childrenLoading: false,
     parents: [],
+    children: [],
 }
 
 export default handleActions({
     [getClients](state, action) {
-        return { ...state, loading: true }
+        return { ...state, clientsLoading: true }
     },
     [getClientsSuccess](state, action) {
-        return { ...state, loading: false, parents: action.payload.clients }
+        return { ...state, clientsLoading: false, parents: action.payload.clients }
     },
     [getClientsFailed](state, action) {
-        return { ...state, loading: false }
+        return { ...state, clientsLoading: false }
     },
     [clearClientsState](state, action) {
         return { ...state }
     },
     [addParent](state) {
-        return { ...state, loading: true }
+        return { ...state, clientsLoading: true }
     },
     [addParentSuccess](state, action) {
-        const { parent } = action.payload
+        const { response, parent } = action.payload
         return {
             ...state,
-            loading: false,
-            parents: [...state.parents, { userHttp: { id: action.payload.response.parentId, ...parent }, children: [] }],
+            clientsLoading: false,
+            parents: [...state.parents, { userHttp: { id: response.parentId, ...parent }, children: [] }],
         }
     },
     [addParentFailed](state, action) {
-        return { ...state, loading: false }
+        return { ...state, clientsLoading: false }
     },
     [deleteParentRequest](state) {
-        return { ...state, loading: true }
+        return { ...state, clientsLoading: true }
     },
     [deleteParentSuccess](state, action) {
         const newParent = [...state.parents]
         newParent.splice(action.payload.parentIndex, 1)
-        return { ...state, loading: false, parents: newParent }
+        return { ...state, clientsLoading: false, parents: newParent }
     },
     [deleteParentFailed](state) {
-        return { ...state, loading: false }
+        return { ...state, clientsLoading: false }
     },
     [createChildren](state) {
-        return { ...state, loading: true }
+        return { ...state, childrenLoading: true }
     },
     [createChildreSuccess](state, action) {
-        return { ...state, loading: false }
+        const { response, child } = action.payload
+        return {
+            ...state,
+            childrenLoading: false,
+            children: [...state.children, { userHttp: { id: response.studentId, ...child } }],
+        }
     },
     [createChildrenFailed](state, action) {
-        return { ...state, loading: false }
+        return { ...state, childrenLoading: false }
     },
     [deleteChildRequest](state) {
-        return { ...state, loading: true }
+        return { ...state, childrenLoading: true }
     },
     [deleteChildSuccess](state, action) {
-        return { ...state, loading: false }
+        const { childIndex } = action.payload
+        const newChildren = [...state.children]
+        console.log(childIndex)
+        newChildren.splice(childIndex, 1)
+        return { ...state, childrenLoading: false, children: newChildren }
     },
     [deleteChildFailed](state, action) {
-        return { ...state, loading: false }
+        return { ...state, childrenLoading: false }
+    },
+    [getChildrenByParentId](state) {
+        return { ...state, childrenLoading: true }
+    },
+    [getChildrenByParentIdSuccess](state, action) {
+        const { response } = action.payload
+        return { ...state, childrenLoading: false, children: response }
+    },
+    [getChildrenByParentIdFailed](state, action) {
+        return { ...state, childrenLoading: false }
+    },
+    [clearChildrenState](state) {
+        return { ...state, children: [] }
     },
 }, INITIAL_STATE)
 
