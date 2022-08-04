@@ -8,9 +8,11 @@ import Flex from "@/components/Flex"
 import { Button, ModalWindow } from "@/components/UI"
 import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
+import { useActions } from "@/helpers/useActions"
 
 export default ({ client }) => {
-
+    const { deleteChildRequest } = useActions()
+    const token = localStorage.getItem('token')
     const [openAddChildren, setOpenAddChildren] = useState(false)
 
     return (
@@ -54,6 +56,7 @@ export default ({ client }) => {
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 key={index}
                                 render={() => { }}
+                                handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                             />
                         )
                     })

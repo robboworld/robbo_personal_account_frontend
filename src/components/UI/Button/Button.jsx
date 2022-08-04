@@ -10,7 +10,7 @@ export default function Button(
   }) {
   return (
     <StyledButton
-      onClick={() => { handleSubmit() }}
+      onClick={() => handleSubmit()}
       background={background}
       width={width}
       height={height}

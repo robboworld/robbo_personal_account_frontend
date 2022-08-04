@@ -8,6 +8,9 @@ import {
     deleteParentSuccess, deleteParentFailed,
     createChildren, createChildreSuccess,
     createChildrenFailed,
+    deleteChildRequest,
+    deleteChildSuccess,
+    deleteChildFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -60,6 +63,15 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [createChildrenFailed](state, action) {
+        return { ...state, loading: false }
+    },
+    [deleteChildRequest](state) {
+        return { ...state, loading: true }
+    },
+    [deleteChildSuccess](state, action) {
+        return { ...state, loading: false }
+    },
+    [deleteChildFailed](state, action) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)

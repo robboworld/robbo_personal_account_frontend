@@ -29,7 +29,7 @@ export default ({
                 )}
             />
             <Title onClick={() => { setContentOpen(true) }}> {label}</Title>
-            <DeleteButton onClick={() => {
+            <DeleteButton onClick={e => {
                 setConfirmOpen(true)
             }}>
                 ×

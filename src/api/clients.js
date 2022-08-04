@@ -61,4 +61,11 @@ export const clientsAPI = {
                 },
             })
     },
+
+    deleteChild(token, childId) {
+        return instance.delete(`users/student/${childId}`,
+            {
+
+            })
+    },
 }

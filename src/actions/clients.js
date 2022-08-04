@@ -6,7 +6,10 @@ import {
     GET_CLIENT_PAGE_BY_ID, GET_CLIENT_PAGE_BY_ID_SUCCESS, GET_CLIENT_PAGE_BY_ID_FAILED,
     CLEAR_CLIENT_PAGE_STATE, CLEAR_CLIENTS_STATE, ADD_PARENT_REQUEST,
     ADD_PARENT_SUCCESS, ADD_PARENT_FAILED, DELETE_PARENT_REQUEST,
-    DELETE_PARENT_SUCCESS, DELETE_PARENT_FAILED, CREATE_CHILDREN_REQUEST, CREATE_CHILDREN_SUCCESS, CREATE_CHILDREN_FAILED,
+    DELETE_PARENT_SUCCESS, DELETE_PARENT_FAILED, CREATE_CHILDREN_REQUEST,
+    CREATE_CHILDREN_SUCCESS, CREATE_CHILDREN_FAILED, DELETE_CHILD_SUCCESS,
+    DELETE_CHILD_FAILED,
+    DELETE_CHILD_REQUEST,
 } from '@/constants'
 
 export const getClients = createAction(GET_CLIENTS, token => {
@@ -111,6 +114,29 @@ export const createChildreSuccess = createAction(CREATE_CHILDREN_SUCCESS, respon
 
 export const createChildrenFailed = createAction(CREATE_CHILDREN_FAILED, err => {
     toast.error("Ошибка при создании ребенка!")
+    return {
+        err,
+    }
+})
+
+export const deleteChildRequest = createAction(DELETE_CHILD_REQUEST, (token, childId, childIndex) => {
+    return {
+        token,
+        childId,
+        childIndex,
+    }
+})
+
+export const deleteChildSuccess = createAction(DELETE_CHILD_SUCCESS, (response, childIndex) => {
+    toast.success("Ребенок успешно удален!")
+    return {
+        response,
+        childIndex,
+    }
+})
+
+export const deleteChildFailed = createAction(DELETE_CHILD_FAILED, err => {
+    toast.error(err)
     return {
         err,
     }

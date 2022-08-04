@@ -63,7 +63,7 @@ export default () => {
                                         return (
                                             <ListItem
                                                 itemIndex={index}
-                                                handleDelete={parentIndex => { deleteParentRequest(token, parent.userHttp.id, parentIndex) }}
+                                                handleDelete={parentIndex => deleteParentRequest(token, parent.userHttp.id, parentIndex)}
                                                 label={`${parent.userHttp.lastname} ${parent.userHttp.firstname} ${parent.userHttp.middlename}`}
                                                 key={index}
                                                 render={(open, setOpen) => (
