@@ -6,6 +6,7 @@ import { myCoursesSaga } from './myCourses'
 import { profileSaga } from './profile'
 import { teachersSaga } from './teachers'
 import { clientsSaga } from './clients'
+import { unitAdminsSaga } from './unitAdmins'
 
 export default function* rootSaga() {
   yield all([
@@ -15,5 +16,6 @@ export default function* rootSaga() {
     profileSaga(),
     teachersSaga(),
     clientsSaga(),
+    unitAdminsSaga(),
   ])
 }

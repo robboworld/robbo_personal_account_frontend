@@ -7,6 +7,7 @@ import {
   MY_COURSES_ROUTE,
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
+  UNIT_ADMINS_ROUTE,
 } from '@/constants'
 
 export const SidebarDataStudent = [
@@ -118,7 +119,7 @@ export const SidebarDataSuperAdmin = [
   },
   {
     title: 'Unit Админы',
-    path: '/',
+    path: UNIT_ADMINS_ROUTE,
     icon: <FaIcons.FaInfo />,
   },
   {

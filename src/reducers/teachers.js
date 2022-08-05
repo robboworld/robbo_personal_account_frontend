@@ -12,7 +12,6 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getTeachersSuccess](state, action) {
-        console.log(action)
         return { ...state, teachers: action.payload.response, loading: false }
     },
     [getTeachersFailed](state, action) {
