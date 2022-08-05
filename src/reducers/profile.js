@@ -3,8 +3,7 @@ import { handleActions } from 'redux-actions'
 import {
     clearProfileState, deleteProfile, deleteProfileFailed,
     deleteProfileSuccess, getProfileById, getProfileByIdFailed,
-    getProfileByIdSuccess, profileEmailOnChange, profileFirstnameOnChange,
-    profileLastnameOnChange, profileMiddlenameOnChange, profileNicknameOnChange, updateProfile, updateProfileFailed, updateProfileSuccess,
+    getProfileByIdSuccess, updateProfile, updateProfileFailed, updateProfileSuccess,
 } from '@/actions/profile'
 
 const INITIAL_STATE = {
@@ -13,21 +12,7 @@ const INITIAL_STATE = {
 }
 
 export default handleActions({
-    [profileEmailOnChange](state, action) {
-        return { ...state, profile: { ...state.profile, email: action.payload.email } }
-    },
-    [profileNicknameOnChange](state, action) {
-        return { ...state, profile: { ...state.profile, nickname: action.payload.nickname } }
-    },
-    [profileLastnameOnChange](state, action) {
-        return { ...state, profile: { ...state.profile, lastname: action.payload.lastname } }
-    },
-    [profileFirstnameOnChange](state, action) {
-        return { ...state, profile: { ...state.profile, firstname: action.payload.firstname } }
-    },
-    [profileMiddlenameOnChange](state, action) {
-        return { ...state, profile: { ...state.profile, middlename: action.payload.middlename } }
-    },
+
     [clearProfileState](state) {
         return { ...state, profile: {}, loading: false }
     },

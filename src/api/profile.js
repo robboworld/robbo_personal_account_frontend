@@ -23,7 +23,8 @@ export const profileAPI = {
     updateProfile(token, profile) {
         return instance.put(`users/${userRoleAPI[profile.role]}`,
             {
-                [userRoleAPI[profile.role]]: profile,
+                // [userRoleAPI[profile.role]]: profile
+                ...profile,
             },
             {
                 headers: {
