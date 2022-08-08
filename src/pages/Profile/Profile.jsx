@@ -14,7 +14,7 @@ import { Button, Textarea } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { getIsAuth } from '@/reducers/login'
 import { getProfileState } from '@/reducers/profile'
-import ProfileCard from '@/components/ProfileForm/ProfileCard'
+import ProfileCard from '@/components/ProfileCard/ProfileCard'
 
 export default () => {
     useIsAuth()

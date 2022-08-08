@@ -12,10 +12,17 @@ import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
 import { getClientsState } from "@/reducers/clients"
 import Loader from "@/components/Loader"
+import ProfileCard from "@/components/ProfileCard"
 
 
 export default ({ client }) => {
-    const { deleteChildRequest, getChildrenByParentId, clearChildrenState } = useActions()
+    const {
+        deleteChildRequest,
+        getChildrenByParentId,
+        clearChildrenState,
+        updateProfile,
+
+    } = useActions()
     const token = localStorage.getItem('token')
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
@@ -37,7 +44,9 @@ export default ({ client }) => {
                 <Flex direction='column' align='center'
                     width='100%'
                 >
-                    <Title>{`${client.userHttp.lastname} ${client.userHttp.firstname} ${client.userHttp.middlename}`}</Title>
+                    {/* <Title>{`${client.userHttp.lastname} ${client.userHttp.firstname} ${client.userHttp.middlename}`}</Title> */}
+                    <Title>Карточка родителя</Title>
+                    <ProfileCard updateHandle={() => { }} profile={client.userHttp} />
                     <ModalWindow
                         open={openAddChildren} setOpen={setOpenAddChildren}
                         width='35%' height='60%'

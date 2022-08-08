@@ -3,6 +3,7 @@ import React from 'react'
 import { Title, SubTitle } from './components'
 
 import Flex from '@/components/Flex'
+import ProfileCard from '@/components/ProfileCard'
 // import Button from '@/components/UI/Button'
 
 export default ({ unitAdmin }) => {
@@ -13,6 +14,7 @@ export default ({ unitAdmin }) => {
                 <Flex direction='column'
                     align='center'>
                     <Title>{`${unitAdmin.lastname} ${unitAdmin.firstname} ${unitAdmin.middlename}`}</Title>
+                    <ProfileCard profile={unitAdmin} />
                     {/* <Button
                         content='Назначить на курс'
                         background='darkgreen'

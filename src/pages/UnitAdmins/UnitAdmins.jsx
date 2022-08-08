@@ -74,7 +74,7 @@ export default () => {
                                                             open={open} setOpen={setOpen}
                                                             width='65%' height='80%'
                                                             content={() => (
-                                                                <UnitAdminContent teacher={unitAdmin.userHttp} />
+                                                                <UnitAdminContent unitAdmin={unitAdmin.userHttp} />
                                                             )}
                                                         />
                                                     )}

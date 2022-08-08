@@ -9,8 +9,9 @@ export default ({
     updateHandle,
     profile,
 }) => {
+    console.log(profile)
     return (
-        <Flex margin='0.5rem'>
+        <Flex margin='0.5rem' width='100%'>
             {/* <AvatarWrapper /> */}
             <Flex
                 direction='row'

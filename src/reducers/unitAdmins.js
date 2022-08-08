@@ -41,11 +41,7 @@ export default handleActions({
     [createUnitAdminSuccess](state, action) {
         console.log(action)
         const { response, unitAdmin } = action.payload
-        return {
-            ...state,
-            loading: false,
-            unitAdmins: [...state.unitAdmins, { userHttp: { id: response.unitAdminId, ...unitAdmin } }],
-        }
+        return { ...state, loading: false, unitAdmins: [...state.unitAdmins, { userHttp: { id: response.unitAdminId, ...unitAdmin } }] }
     },
     [createUnitAdminFailed](state) {
         return { ...state, loading: false }

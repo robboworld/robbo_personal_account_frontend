@@ -60,7 +60,7 @@ export default ({
             >
                 <StyledSpan
                     size='1rem'
-                    content={profile.createdAt}
+                    content={profile?.createdAt}
                 />
             </Flex>
 
@@ -72,7 +72,7 @@ export default ({
             >
                 <StyledSpan
                     size='1rem'
-                    content={userRole[profile.role]}
+                    content={userRole[profile?.role]}
                 />
             </Flex>
 

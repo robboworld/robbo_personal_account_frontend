@@ -4,6 +4,7 @@ import { Title, SubTitle } from './components'
 
 import Flex from '@/components/Flex'
 import Button from '@/components/UI/Button'
+import ProfileCard from '@/components/ProfileCard'
 
 export default ({ teacher }) => {
     return (
@@ -12,7 +13,8 @@ export default ({ teacher }) => {
             >
                 <Flex direction='column'
                     align='center'>
-                    <Title>{`${teacher.lastname} ${teacher.firstname} ${teacher.middlename}`}</Title>
+                    <Title>Карточка педагога</Title>
+                    <ProfileCard updateHandle={() => { }} profile={teacher} />
                     <Button
                         content='Назначить на курс'
                         background='darkgreen'
