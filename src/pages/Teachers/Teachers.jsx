@@ -52,7 +52,7 @@ export default () => {
                         background='green'
                         content='Добавить педагога'
                         padding='0.5rem'
-                        handleSubmit={() => { setOpenAddTeacher(true) }}
+                        handleSubmit={() => setOpenAddTeacher(true)}
                     />
                 </Flex>
                 {

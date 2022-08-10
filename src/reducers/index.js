@@ -10,6 +10,7 @@ import teachers from './teachers'
 import clients from './clients'
 import clientPage from './clientPage'
 import unitAdmins from './unitAdmins'
+import robboUnits from './robboUnits'
 
 export const rootReducer = combineReducers({
   login,
@@ -22,4 +23,5 @@ export const rootReducer = combineReducers({
   clients,
   clientPage,
   unitAdmins,
+  robboUnits,
 })

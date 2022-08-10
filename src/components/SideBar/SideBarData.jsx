@@ -8,6 +8,7 @@ import {
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
   UNIT_ADMINS_ROUTE,
+  ROBBO_UNITS_ROUTE,
 } from '@/constants'
 
 export const SidebarDataStudent = [
@@ -108,8 +109,8 @@ export const SidebarDataSuperAdmin = [
     icon: <FaIcons.FaBook />,
   },
   {
-    title: 'Группы (Robbo Units)',
-    path: '/',
+    title: 'Robbo Units',
+    path: ROBBO_UNITS_ROUTE,
     icon: <FaIcons.FaInfo />,
   },
   {
@@ -242,8 +243,8 @@ export const SidebarDataUnitAdmin = [
     icon: <FaIcons.FaUserAlt />,
   },
   {
-    title: 'Группы (Robbo Units)',
-    path: '/program',
+    title: 'Robbo Units',
+    path: ROBBO_UNITS_ROUTE,
     icon: <FaIcons.FaTasks />,
   },
   {
