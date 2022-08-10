@@ -14,6 +14,7 @@ export const ModalCard = styled.div`
     background-color: white;
     border-radius: 32px;
     box-sizing: border-box;
+    overflow: auto;
 `
 export const Title = styled.h1`
     display: flex;
@@ -25,8 +26,8 @@ export const Title = styled.h1`
 `
 
 export const CloseModalButton = styled.button`
-    font-size: 3rem;
-    padding: 1rem;
+    font-size: 2rem;
+    padding: 0 1rem;
     background: none;
     border: none;
     &:hover {

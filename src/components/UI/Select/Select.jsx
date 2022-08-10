@@ -21,14 +21,15 @@ const customStyles = {
 
 }
 
-export default function CustomSelect({ options, onChange, value }) {
-    return (<SelectWrapper>
-        <Select
-            styles={customStyles}
-            options={options}
-            onChange={onChange}
-            value={value}
-        />
-            </SelectWrapper>)
+export default function CustomSelect({ options, onChange, value, width }) {
+    return (
+        <SelectWrapper width={width}>
+            <Select
+                styles={customStyles}
+                options={options}
+                onChange={onChange}
+                value={value}
+            />
+        </SelectWrapper>)
 
 }

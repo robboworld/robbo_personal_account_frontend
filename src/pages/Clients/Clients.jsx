@@ -1,63 +1,91 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { ListParents, WelcomeText } from './components'
 
-import { getParents } from '@/reducers/clients'
-
+import { getClientsState } from '@/reducers/clients'
 import { PageLayout, Card } from '@/layouts'
 import SideBar from '@/components/SideBar'
 import Flex from '@/components/Flex'
-import Button from '@/components/UI/Button'
 import ListItem from '@/components/ListItem'
-import ParentPage from '@/components/ParentContent'
-import { ModalWindow } from '@/components/UI'
+import { ModalWindow, Button } from '@/components/UI'
+import { useActions } from '@/helpers/useActions'
+import Loader from '@/components/Loader'
+import ParentContent from '@/components/ParentContent'
+import AddParent from '@/components/AddParent/AddParent'
+import { useIsAuth } from '@/helpers'
+
 
 export default () => {
+    useIsAuth()
+    const { getClients, deleteParentRequest } = useActions()
 
-    const parents = useSelector(state => getParents(state.clients))
+    useEffect(() => {
+        getClients(token)
+        return () => {
+            // clearstate
+        }
+    }, [])
+
+    const token = localStorage.getItem('token')
+    const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
+
+    const [openAddClients, setOpenAddClients] = useState(false)
 
     return (
         <PageLayout>
             <Card>
                 <SideBar />
-                <WelcomeText>Клиенты</WelcomeText>
-                <Flex direction='row' justify='flex-end'
-                    align='flex-start'>
-                    {/* <Button
-                        content='Добавить клиента'
-                        background='darkgreen'
-                        margin='0 0.3rem 0 0 ' padding='0.5rem'
-                    /> */}
-                    <Button
-                        content='Добавить родителя'
-                        background='darkgreen'
-                        padding='0.5rem'
+                <Flex width='100%' height='100%'
+                    direction='column'
+                >
+                    <WelcomeText>Клиенты</WelcomeText>
+                    <ModalWindow
+                        open={openAddClients} setOpen={setOpenAddClients}
+                        width='35%' height='60%'
+                        content={() => (
+                            <AddParent />
+                        )}
                     />
+                    <Flex
+                        direction='row' justify='flex-end'
+                        align='flex-start'>
+                        <Button
+                            content='Добавить родителя'
+                            background='darkgreen'
+                            padding='0.5rem'
+                            handleSubmit={() => setOpenAddClients(true)}
+                        />
+                    </Flex>
+                    <ListParents>
+                        {
+                            clientsLoading ? <Loader />
+                                : (
+                                    parents?.map((parent, index) => {
+                                        return (
+                                            <ListItem
+                                                itemIndex={index}
+                                                handleDelete={parentIndex => deleteParentRequest(token, parent.userHttp.id, parentIndex)}
+                                                label={`${parent.userHttp.lastname} ${parent.userHttp.firstname} ${parent.userHttp.middlename}`}
+                                                key={index}
+                                                render={(open, setOpen) => (
+                                                    <ModalWindow
+                                                        open={open} setOpen={setOpen}
+                                                        width='65%' height='80%'
+                                                        content={() => (
+                                                            <ParentContent
+                                                                client={parent} open={open}
+                                                                setOpen={setOpen}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                            />
+                                        )
+                                    })
+                                )}
+                    </ListParents>
                 </Flex>
-                <ListParents>
-                    {
-                        parents?.map((parent, index) => {
-                            return (
-                                <ListItem
-                                    label={parent.name}
-                                    key={index}
-                                    render={(open, setOpen) => (
-                                        <ModalWindow
-                                            open={open} setOpen={setOpen}
-                                            width='65%' height='80%'
-                                            content={() => (
-                                                <ParentPage client={parent} open={open}
-                                                    setOpen={setOpen}
-                                                />
-                                            )}
-                                        />
-                                    )}
-                                />
-                            )
-                        })
-                    }
-                </ListParents>
             </Card>
         </PageLayout>
     )

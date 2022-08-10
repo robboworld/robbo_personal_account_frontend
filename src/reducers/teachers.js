@@ -1,38 +1,53 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
+
+import { clearTeachersState, createTeacher, createTeacherFailed, createTeacherSuccess, deleteTeacher, deleteTeacherFailed, deleteTeacherSuccess, getTeachers, getTeachersFailed, getTeachersSuccess } from "@/actions"
 
 const INITIAL_STATE = {
-    teachers: [
-        {
-            id: 1,
-            email: 'rupychman@mail.ru',
-            nickname: 'skinnykaen',
-            joinedAt: "10.05.2022",
-            avatar: null,
-            role: 'Педагог',
-            firstname: 'Ксения',
-            lastname: 'Клещенок',
-            middlename: 'Артуровна',
-        },
-        {
-            id: 2,
-            email: 'rupychman@mail.ru',
-            nickname: 'skinnykaen',
-            joinedAt: "10.05.2022",
-            avatar: null,
-            role: 'Педагог',
-            firstname: 'Евгений',
-            lastname: 'Сущевич',
-            middlename: 'Павлович',
-        },
-    ],
+    teachers: [],
     loading: false,
 }
 
 export default handleActions({
-
-    // [clearProjectPageState](state, action) {
-    //     return { ...state, loading: false, projectPage: {} }
-    // },
+    [getTeachers](state) {
+        return { ...state, loading: true }
+    },
+    [getTeachersSuccess](state, action) {
+        return { ...state, teachers: action.payload.response, loading: false }
+    },
+    [getTeachersFailed](state, action) {
+        return { ...state, loading: false }
+    },
+    [clearTeachersState](state, action) {
+        return { ...state, loading: false, teachers: [] }
+    },
+    [deleteTeacher](state) {
+        return { ...state, loading: true }
+    },
+    [deleteTeacherSuccess](state, action) {
+        const { teacherIndex } = action.payload
+        const newTeachers = [...state.teachers]
+        newTeachers.splice(teacherIndex, 1)
+        return { ...state, loading: false, teachers: newTeachers }
+    },
+    [deleteTeacherFailed](state, action) {
+        return { ...state, loading: false }
+    },
+    [createTeacher](state) {
+        return { ...state, loading: true }
+    },
+    [createTeacherSuccess](state, action) {
+        const { response, teacher } = action.payload
+        return {
+            ...state,
+            loading: false,
+            teachers: [...state.teachers, { userHttp: { id: response.teacherId, ...teacher } }],
+        }
+    },
+    [createTeacherFailed](state, action) {
+        return {
+            ...state, loading: false,
+        }
+    },
 }, INITIAL_STATE)
 
 export const getTeachersState = state => state

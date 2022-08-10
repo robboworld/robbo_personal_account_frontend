@@ -5,6 +5,7 @@ import {
   HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE,
   MY_PROJECTS_ROUTE, MY_COURSES_ROUTE, COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE, TEACHERS_PAGE_ROUTE, CLIENTS_ROUTE,
+  UNIT_ADMINS_ROUTE,
 } from '@/constants'
 
 import Loader from '@/components/Loader'
@@ -17,7 +18,8 @@ const MyCourses = lazy(() => import('@/pages/MyCourses'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
-const Clients = lazy(() => import('@/pages/Clients'))
+const ClientsPage = lazy(() => import('@/pages/Clients'))
+const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 
 
 export default () => (
@@ -56,10 +58,10 @@ export default () => (
       <Route
         exact
         path={CLIENTS_ROUTE}
-        component={Clients}
+        component={ClientsPage}
       />
-      
-       <Route
+
+      <Route
         exact
         path={TEACHERS_PAGE_ROUTE}
         component={TeachersPage}
@@ -68,6 +70,11 @@ export default () => (
         exact
         path={PROFILE_PAGE_ROUTE}
         component={ProfilePage}
+      />
+      <Route
+        exact
+        path={UNIT_ADMINS_ROUTE}
+        component={UnitAdminsPage}
       />
       <Redirect from='/' to='/home' />
     </Switch>

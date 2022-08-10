@@ -16,18 +16,17 @@ export default ({
 }) => {
     return (
 
-        <StyledModal
-            open={open}
-            onClose={() => setOpen(false)}
-        >
-            <ModalCard width={width} height={height} >
-                <Flex direction='column' width='100%'
+        <StyledModal open={open} onClose={() => setOpen(false)}>
+            <ModalCard width={width} height={height}>
+                <Flex
+                    direction='column' width='100%'
+                    justify='center' align='flex-end'
+                    height='15%'
                 >
-                    <Flex justify='flex-end' align='center'>
-                        <CloseModalButton onClick={() => setOpen(false)}>×</CloseModalButton>
-                    </Flex>
+                    <CloseModalButton onClick={() => setOpen(false)}>×</CloseModalButton>
                 </Flex>
-                <Flex height='90%' width='100%'>
+
+                <Flex height='70%' width='100%'>
                     {
                         content()
                     }

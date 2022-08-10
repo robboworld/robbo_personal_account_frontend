@@ -10,7 +10,7 @@ export const userRole = {
     1: 'учитель',
     2: 'родитель',
     3: 'свободный слушатель',
-    4: 'unit админ',
+    4: 'unit admin',
     5: 'super admin',
 }
 
@@ -18,7 +18,7 @@ export const userRoleAPI = {
     0: 'student',
     1: 'teacher',
     2: 'parent',
-    3: 'freelistener',
-    4: 'untAdmin',
+    3: 'freeListener',
+    4: 'unitAdmin',
     5: 'superAdmin',
 }

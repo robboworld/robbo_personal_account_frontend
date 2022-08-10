@@ -17,7 +17,6 @@ import {
     SidebarDataTeacher,
     SidebarDataUnitAdmin,
     SidebarDataFreeListener,
-
 } from './SideBarData.jsx'
 import MenuItem from './MenuItem'
 
@@ -28,7 +27,7 @@ export default () => {
     const [close, setClose] = useState(false)
     const showSidebar = () => setClose(!close)
     const { signOutRequest } = useActions()
-    const { userRole } = useSelector(state => getLoginState(state.login))
+    const { userRole } = useSelector(({ login }) => getLoginState(login))
 
     let SideBarData = []
     switch (userRole) {

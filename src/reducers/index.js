@@ -9,6 +9,7 @@ import profile from './profile'
 import teachers from './teachers'
 import clients from './clients'
 import clientPage from './clientPage'
+import unitAdmins from './unitAdmins'
 
 export const rootReducer = combineReducers({
   login,
@@ -20,4 +21,5 @@ export const rootReducer = combineReducers({
   teachers,
   clients,
   clientPage,
+  unitAdmins,
 })

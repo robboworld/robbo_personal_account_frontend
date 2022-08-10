@@ -20,7 +20,6 @@ export const SubTitle = styled.div`
 
 export const ListChildrens = styled.ul`
     width: 100%;
-    overflow-y: auto;
     padding: 0 2rem 2rem 2rem;
 `
 
