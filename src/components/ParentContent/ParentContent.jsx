@@ -20,14 +20,14 @@ export default ({ client }) => {
         deleteChildRequest,
         getChildrenByParentId,
         clearChildrenState,
-        updateProfile,
-
+        searchStudent,
+        createRelation,
     } = useActions()
     const token = localStorage.getItem('token')
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
-    const { children, childrenLoading } = useSelector(({ clients }) => getClientsState(clients))
+    const { children, childrenLoading, searchResult } = useSelector(({ clients }) => getClientsState(clients))
 
     useEffect(() => {
         getChildrenByParentId(token, client.userHttp.id)
@@ -72,8 +72,30 @@ export default ({ client }) => {
                         />
                     </Flex>
                     {openSearchSection &&
-                        <Flex width='100%' margin='1rem 0 0 0'>
-                            <SearchInput />
+                        <Flex
+                            width='100%' margin='1rem 0 0 0'
+                            direction='column'
+                        >
+                            <SearchInput
+                                searchHandle={input => { searchStudent(token, input) }}
+                            />
+                            <Flex direction='column'>
+                                {
+                                    searchResult ? (
+                                        searchResult?.map(({ userHttp }, index) => {
+                                            return (
+                                                <ListItem
+                                                    itemIndex={index}
+                                                    label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                                    key={index}
+                                                    render={() => { }}
+                                                    handleClick={() => createRelation(token, client.userHttp.id, userHttp.id)}
+                                                // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                                />
+                                            )
+                                        })
+                                    ) : "Ничего не найдено"}
+                            </Flex>
                         </Flex>
                     }
                 </Flex>

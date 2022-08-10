@@ -21,7 +21,7 @@ export default ({
                 content='Найти'
                 padding='1rem'
                 margin='0 0 0 1rem'
-            // handleSubmit={}
+                handleSubmit={() => searchHandle(searchInput)}
             />
         </Flex>
     )

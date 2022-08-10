@@ -12,6 +12,12 @@ import {
     getChildrenByParentIdSuccess,
     getChildrenByParentIdFailed,
     getChildrenByParentId,
+    searchStudentSuccess,
+    searchStudentFailed,
+    searchStudent,
+    createRelationSuccess,
+    createRelationFailed,
+    createRelation,
 }
     from '@/actions'
 import { clientsAPI } from '@/api'
@@ -88,6 +94,30 @@ function* getChildrenByParentIdSaga(action) {
     }
 }
 
+function* searchStudentSaga(action) {
+    try {
+        const { token, input } = action.payload
+        const response = yield call(clientsAPI.searchStudent, token, input)
+        console.log(response)
+
+        yield put(searchStudentSuccess(response.data))
+    } catch (e) {
+        yield put(searchStudentFailed(e))
+    }
+}
+
+function* createRelationSaga(action) {
+    try {
+        const { token, parentId, childId } = action.payload
+        const response = yield call(clientsAPI.createRelation, token, parentId, childId)
+        console.log(response)
+
+        yield put(createRelationSuccess(response.data))
+    } catch (e) {
+        yield put(createRelationFailed(e))
+    }
+}
+
 export function* clientsSaga() {
     yield takeLatest(getClients, getClientsSaga)
     yield takeLatest(addParent, addParentSaga)
@@ -95,4 +125,6 @@ export function* clientsSaga() {
     yield takeLatest(createChildren, createChildrenSaga)
     yield takeLatest(deleteChildRequest, deleteChildSaga)
     yield takeLatest(getChildrenByParentId, getChildrenByParentIdSaga)
+    yield takeLatest(searchStudent, searchStudentSaga)
+    yield takeLatest(createRelation, createRelationSaga)
 }

@@ -16,7 +16,7 @@ export default ({
     const [confirmOpen, setConfirmOpen] = useState(false)
 
     return (
-        <StyledListItem>
+        <StyledListItem onClick={handleClick}>
             <ModalWindow
                 open={confirmOpen} setOpen={setConfirmOpen}
                 width='35%' height='25%'

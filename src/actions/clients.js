@@ -14,6 +14,12 @@ import {
     GET_CHILDREN_BY_PARENT_ID_SUCCESS,
     GET_CHILDREN_BY_PARENT_ID_FAILED,
     CLEAR_CHILDREN_STATE,
+    SEARCH_STUDENT,
+    SEARCH_STUDENT_SUCCESS,
+    SEARCH_STUDENT_FAILED,
+    CREATE_RELATION,
+    CREATE_RELATION_SUCCESS,
+    CREATE_RELATION_FAILED,
 } from '@/constants'
 
 export const getClients = createAction(GET_CLIENTS, token => {
@@ -161,6 +167,48 @@ export const getChildrenByParentIdSuccess = createAction(GET_CHILDREN_BY_PARENT_
 })
 
 export const getChildrenByParentIdFailed = createAction(GET_CHILDREN_BY_PARENT_ID_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
+    }
+})
+
+export const searchStudent = createAction(SEARCH_STUDENT, (token, input) => {
+    return {
+        token,
+        input,
+    }
+})
+
+export const searchStudentSuccess = createAction(SEARCH_STUDENT_SUCCESS, response => {
+    return {
+        response,
+    }
+})
+
+export const searchStudentFailed = createAction(SEARCH_STUDENT_FAILED, err => {
+    toast.error("Не удалось найти ребенка!")
+    return {
+        err,
+    }
+})
+
+export const createRelation = createAction(CREATE_RELATION, (token, parentId, childId) => {
+    return {
+        token,
+        parentId,
+        childId,
+    }
+})
+
+export const createRelationSuccess = createAction(CREATE_RELATION_SUCCESS, response => {
+    toast.success("Ребенок успешно добавлен!")
+    return {
+        response,
+    }
+})
+
+export const createRelationFailed = createAction(CREATE_RELATION_FAILED, err => {
     toast.error(err)
     return {
         err,

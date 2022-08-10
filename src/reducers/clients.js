@@ -15,6 +15,12 @@ import {
     getChildrenByParentIdSuccess,
     getChildrenByParentIdFailed,
     clearChildrenState,
+    searchStudent,
+    searchStudentSuccess,
+    searchStudentFailed,
+    createRelation,
+    createRelationSuccess,
+    createRelationFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -22,6 +28,7 @@ const INITIAL_STATE = {
     childrenLoading: false,
     parents: [],
     children: [],
+    searchResult: [],
 }
 
 export default handleActions({
@@ -101,6 +108,24 @@ export default handleActions({
     },
     [clearChildrenState](state) {
         return { ...state, children: [] }
+    },
+    [searchStudent](state) {
+        return { ...state, loading: true }
+    },
+    [searchStudentSuccess](state, action) {
+        return { ...state, loading: false, searchResult: action.payload.response }
+    },
+    [searchStudentFailed](state, action) {
+        return { ...state, loading: false }
+    },
+    [createRelation](state) {
+        return { ...state, loading: true }
+    },
+    [createRelationSuccess](state, action) {
+        return { ...state, loading: false }
+    },
+    [createRelationFailed](state, action) {
+        return { ...state, loading: false }
     },
 }, INITIAL_STATE)
 

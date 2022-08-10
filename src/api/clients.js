@@ -79,4 +79,29 @@ export const clientsAPI = {
             },
         )
     },
+
+    searchStudent(token, searchInput) {
+        return instance.get(`users/student/search/${searchInput}`,
+            {
+                // withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            },
+        )
+    },
+
+    createRelation(token, parentId, childId) {
+        return instance.post(`users/relation`,
+            {
+                parentId,
+                childId,
+            },
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
 }

@@ -14,6 +14,7 @@ export const ModalCard = styled.div`
     background-color: white;
     border-radius: 32px;
     box-sizing: border-box;
+    overflow: auto;
 `
 export const Title = styled.h1`
     display: flex;
