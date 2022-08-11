@@ -22,7 +22,7 @@ export default memo(({
                 value={name} handleInput={name => setName(name)}
                 margin={margin}
             />
-            <Input type='password' placeholder='Город'
+            <Input type='text' placeholder='Город'
                 value={city} handleInput={city => setCity(city)}
                 margin={margin}
             />

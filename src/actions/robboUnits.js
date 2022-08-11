@@ -5,6 +5,7 @@ import {
     CREATE_ROBBO_UNIT, CREATE_ROBBO_UNIT_FAILED,
     CREATE_ROBBO_UNIT_SUCCESS, DELETE_ROBBO_UNIT,
     DELETE_ROBBO_UNIT_FAILED, DELETE_ROBBO_UNIT_SUCCESS,
+    GET_ALL_ROBBO_UNITS,
     GET_ALL_ROBBO_UNITS_FAILED, GET_ALL_ROBBO_UNITS_SUCCESS,
     GET_ROBBO_UNIT_BY_ID,
     GET_ROBBO_UNIT_BY_ID_FAILED,
@@ -12,7 +13,7 @@ import {
     UPDATE_ROBBO_UNIT, UPDATE_ROBBO_UNIT_FAILED, UPDATE_ROBBO_UNIT_SUCCESS,
 } from "@/constants"
 
-export const getRobboUnits = createAction(GET_ALL_ROBBO_UNITS_SUCCESS, token => {
+export const getRobboUnits = createAction(GET_ALL_ROBBO_UNITS, token => {
     return {
         token,
     }

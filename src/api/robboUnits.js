@@ -12,7 +12,7 @@ export const robboUnitsAPI = {
     },
 
     getRobboUnitById(token, robboUnitId) {
-        return instance.get(`robboUnit/${robboUnitId}`,
+        return instance.get(`robboUnits/${robboUnitId}`,
             {
                 // withCredentials: true,
                 headers: {
@@ -22,7 +22,7 @@ export const robboUnitsAPI = {
     },
 
     deleteRobboUnit(token, robboUnitId) {
-        return instance.delete(`robboUnit/${robboUnitId}`,
+        return instance.delete(`robboUnits/${robboUnitId}`,
             {
                 // withCredentials: true,
                 //  headers: {
@@ -33,7 +33,7 @@ export const robboUnitsAPI = {
 
     createRobboUnit(token, robboUnit) {
         const { name, city } = robboUnit
-        return instance.post('robboUnit',
+        return instance.post('robboUnits',
             {
                 name,
                 city,
@@ -46,7 +46,7 @@ export const robboUnitsAPI = {
             })
     },
     updateRobboUnit(token, robboUnit) {
-        return instance.put(`robboUnit`,
+        return instance.put(`robboUnits`,
             {
                 ...robboUnit,
             },

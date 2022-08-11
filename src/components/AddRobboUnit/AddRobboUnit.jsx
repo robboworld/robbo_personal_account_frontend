@@ -4,9 +4,10 @@ import { Text } from './components'
 
 import Flex from '@/components/Flex'
 import RobboUnitForm from '@/components/RobboUnitForm'
+import { useActions } from '@/helpers/useActions'
 
 export default memo(() => {
-    // const { addParent } = useActions()
+    const { createRobboUnit } = useActions()
     const token = localStorage.getItem('token')
     return (
         <Flex
@@ -16,7 +17,7 @@ export default memo(() => {
             <Text>Добавление Robbo Unit</Text>
             <RobboUnitForm
                 margin='0 0 10px 0'
-                // handleSubmit={}
+                handleSubmit={robboUnit => createRobboUnit(token, robboUnit)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',
