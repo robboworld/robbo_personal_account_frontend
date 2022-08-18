@@ -26,10 +26,6 @@ export const profileAPI = {
                 // [userRoleAPI[profile.role]]: profile
                 ...profile,
             },
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            })
+        )
     },
 }
