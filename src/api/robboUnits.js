@@ -4,7 +4,6 @@ export const robboUnitsAPI = {
     getRobboUnits(token) {
         return instance.get('robboUnits/',
             {
-                // withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -14,7 +13,6 @@ export const robboUnitsAPI = {
     getRobboUnitById(token, robboUnitId) {
         return instance.get(`robboUnits/${robboUnitId}`,
             {
-                // withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -24,10 +22,9 @@ export const robboUnitsAPI = {
     deleteRobboUnit(token, robboUnitId) {
         return instance.delete(`robboUnits/${robboUnitId}`,
             {
-                // withCredentials: true,
-                //  headers: {
-                //     'Authorization': `Bearer ${token}`,
-                // },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             })
     },
 

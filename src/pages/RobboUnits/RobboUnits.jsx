@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
 import { PageLayout, Card } from '@/layouts'
 import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
+import RobboUnit from "@/components/RobboUnit"
 import { Button, ModalWindow } from "@/components/UI"
 import AddRobboUnit from "@/components/AddRobboUnit"
 import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
 import Loader from "@/components/Loader"
 import ListItem from "@/components/ListItem"
+
 
 export default () => {
 
@@ -21,7 +22,6 @@ export default () => {
     const { getRobboUnits, deleteRobboUnitRequest } = useActions()
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
-    const history = useHistory()
 
     useEffect(() => {
         getRobboUnits(token)
@@ -66,9 +66,19 @@ export default () => {
                                                     itemIndex={index}
                                                     key={index}
                                                     label={robboUnit.name}
-                                                    render={() => { }}
-                                                    handleClick={() => history.push(`/robboUnits/${robboUnit.id}`)}
-                                                // handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
+                                                    render={(open, setOpen) => (
+                                                        <ModalWindow
+                                                            open={open} setOpen={setOpen}
+                                                            width='65%' height='80%'
+                                                            content={() => (
+                                                                <RobboUnit
+                                                                    robboUnitId={robboUnit.id}
+                                                                />
+                                                            )}
+                                                        />
+                                                    )}
+                                                    // handleClick={() => history.push(`/robboUnits/${robboUnit.id}`)}
+                                                    handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
                                                 />
                                             )
                                         })

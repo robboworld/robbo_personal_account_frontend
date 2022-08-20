@@ -104,4 +104,8 @@ export const clientsAPI = {
                 },
             })
     },
+
+    getStudentOfRobboGroup(robboGroupId) {
+        return instance.get(`users/student`)
+    },
 }

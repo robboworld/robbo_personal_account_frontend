@@ -28,8 +28,9 @@ export default ({
                     />
                 )}
             />
-            <Title onClick={() => { setContentOpen(true) }}> {label}</Title>
+            <Title onClick={() => setContentOpen(true)}> {label}</Title>
             <DeleteButton onClick={e => {
+                e.stopPropagation()
                 setConfirmOpen(true)
             }}>
                 ×

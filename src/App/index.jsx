@@ -21,7 +21,6 @@ const TeachersPage = lazy(() => import('@/pages/Teachers'))
 const ClientsPage = lazy(() => import('@/pages/Clients'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
-const RobboUnitPage = lazy(() => import('@/pages/RobboUnit'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const RobboGroup = lazy(() => import('@/pages/RobboGroup'))
 
@@ -84,11 +83,6 @@ export default () => (
         exact
         path={ROBBO_UNITS_ROUTE}
         component={RobboUnitsPage}
-      />
-      <Route
-        exact
-        path={ROBBO_UNIT_PAGE_ROUTE}
-        component={RobboUnitPage}
       />
       <Route
         exact

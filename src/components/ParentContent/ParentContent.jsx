@@ -44,7 +44,6 @@ export default ({ client }) => {
                 <Flex direction='column' align='center'
                     width='100%'
                 >
-                    {/* <Title>{`${client.userHttp.lastname} ${client.userHttp.firstname} ${client.userHttp.middlename}`}</Title> */}
                     <Title>Карточка родителя</Title>
                     <ProfileCard updateHandle={() => { }} profile={client.userHttp} />
                     <ModalWindow

@@ -56,10 +56,11 @@ export const createRobboUnitFailed = createAction(CREATE_ROBBO_UNIT_FAILED, err 
     }
 })
 
-export const deleteRobboUnitRequest = createAction(DELETE_ROBBO_UNIT, (token, robboUnitId) => {
+export const deleteRobboUnitRequest = createAction(DELETE_ROBBO_UNIT, (token, robboUnitId, robboUnitIndex) => {
     return {
         token,
         robboUnitId,
+        robboUnitIndex,
     }
 })
 
