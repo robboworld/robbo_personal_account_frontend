@@ -6,6 +6,9 @@ import {
     createRobboGroupRequest, createRobboGroupSuccess,
     getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSuccess,
     getRobboGroupsByRobboUnitIdFailed,
+    deleteRobboGroupRequest,
+    deleteRobboGroupSuccess,
+    deleteRobboGroupFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -42,6 +45,18 @@ export default handleActions({
         }
     },
     [getRobboGroupsByRobboUnitIdFailed](state) {
+        return { ...state, loading: false }
+    },
+    [deleteRobboGroupRequest](state) {
+        return { ...state, loading: true }
+    },
+    [deleteRobboGroupSuccess](state, action) {
+        const { robboGroupIndex } = action.payload
+        const newRobboGroups = [...state.robboGroups]
+        newRobboGroups.splice(robboGroupIndex, 1)
+        return { ...state, loading: false, robboGroups: newRobboGroups }
+    },
+    [deleteRobboGroupFailed](state, action) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)

@@ -75,7 +75,7 @@ export default () => {
                                                 <ListItem
                                                     itemIndex={index}
                                                     key={index}
-                                                    label={robboGroup.id}
+                                                    label={robboGroup.name}
                                                     render={(open, setOpen) => (
                                                         <ModalWindow
                                                             open={open} setOpen={setOpen}

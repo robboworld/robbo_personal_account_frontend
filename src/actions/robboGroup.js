@@ -66,10 +66,11 @@ export const createRobboGroupRequest = createAction(CREATE_ROBBO_GROUP, (token, 
     }
 })
 
-export const createRobboGroupSuccess = createAction(CREATE_ROBBO_GROUP_SUCCESS, response => {
+export const createRobboGroupSuccess = createAction(CREATE_ROBBO_GROUP_SUCCESS, (response, robboGroup) => {
     toast.success("Группа создана")
     return {
         response,
+        robboGroup,
     }
 })
 
@@ -89,9 +90,11 @@ export const deleteRobboGroupRequest = createAction(DELETE_ROBBO_GROUP, (token, 
     }
 })
 
-export const deleteRobboGroupSuccess = createAction(DELETE_ROBBO_GROUP_SUCCESS, response => {
+export const deleteRobboGroupSuccess = createAction(DELETE_ROBBO_GROUP_SUCCESS, (response, robboGroupIndex) => {
+    toast.success("Группа удалена")
     return {
         response,
+        robboGroupIndex,
     }
 })
 
