@@ -10,6 +10,8 @@ import {
     GET_ROBBO_UNIT_BY_ID,
     GET_ROBBO_UNIT_BY_ID_FAILED,
     GET_ROBBO_UNIT_BY_ID_SUCCESS,
+    GET_STUDENTS_OF_ROBBO_GROUP_REQUEST,
+    GET_STUDENTS_OF_ROBBO_GROUP_SUCCESS,
     UPDATE_ROBBO_UNIT, UPDATE_ROBBO_UNIT_FAILED, UPDATE_ROBBO_UNIT_SUCCESS,
 } from "@/constants"
 
@@ -111,6 +113,26 @@ export const getRobboUnitByIdSuccess = createAction(GET_ROBBO_UNIT_BY_ID_SUCCESS
 })
 
 export const getRobboUnitByIdFailed = createAction(GET_ROBBO_UNIT_BY_ID_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
+    }
+})
+
+export const getStudentsOfRobboGroup = createAction(GET_STUDENTS_OF_ROBBO_GROUP_REQUEST, robboGroupId => {
+    return {
+        robboGroupId,
+    }
+})
+
+export const getStudentsOfRobboGroupSuccess = createAction(GET_STUDENTS_OF_ROBBO_GROUP_SUCCESS, response => {
+    return {
+        response,
+    }
+})
+
+export const getStudentsOfRobboGroupFailed = createAction(GET_STUDENTS_OF_ROBBO_GROUP_SUCCESS, err => {
+    toast.error(err)
     return {
         err,
     }

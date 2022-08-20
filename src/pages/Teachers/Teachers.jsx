@@ -18,8 +18,6 @@ import Loader from '@/components/Loader'
 
 export default () => {
     useIsAuth()
-    // const isAuth = useSelector()
-    // if (!isAuth)
 
     const token = localStorage.getItem('token')
     const { getTeachers, deleteTeacher } = useActions()

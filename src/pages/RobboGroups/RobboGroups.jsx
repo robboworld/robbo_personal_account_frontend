@@ -1,30 +1,35 @@
 import React, { useEffect, useState } from "react"
+import { useHistory, useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
 
-import { WelcomeText } from "./components"
+import { WelcomeText } from "../UnitAdmins/components"
 
-import { PageLayout, Card } from '@/layouts'
+import { PageLayout, Card } from "@/layouts"
 import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
-import { Button, ModalWindow } from "@/components/UI"
-import AddRobboUnit from "@/components/AddRobboUnit"
-import { useActions } from "@/helpers/useActions"
-import { getRobboUnitsState } from "@/reducers/robboUnits"
+import { ModalWindow, Button } from "@/components/UI"
 import Loader from "@/components/Loader"
+import AddStudentGroup from "@/components/AddStudentGroup"
 import ListItem from "@/components/ListItem"
+import { useIsAuth } from "@/helpers"
+import { useActions } from "@/helpers/useActions"
+import { getRobboUnitState } from "@/reducers/robboUnit"
+
 
 export default () => {
-
-    const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
-    const token = localStorage.getItem('token')
-    const { getRobboUnits, deleteRobboUnitRequest } = useActions()
-    const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
-
+    useIsAuth()
+    const [openAddGroup, setOpenAddGroup] = useState(false)
+    const {
+        getRobboGroupsByRobboUnitIdRequest,
+        deleteRobboGroupRequest,
+    } = useActions()
     const history = useHistory()
+    const { robboUnitId } = useParams()
+    const { robboUnit, loading } = useSelector(({ robboUnit }) => getRobboUnitState(robboUnit))
+
 
     useEffect(() => {
-        getRobboUnits(token)
+        getRobboGroupsByRobboUnitIdRequest(robboUnitId)
         return () => {
             // clear
         }
@@ -34,21 +39,21 @@ export default () => {
         <PageLayout>
             <Card>
                 <SideBar />
-                <WelcomeText>Robbo Units</WelcomeText>
+                <WelcomeText>Группы</WelcomeText>
                 <ModalWindow
-                    open={openAddRobboUnit} setOpen={setOpenAddRobboUnit}
-                    width='35%'
+                    open={openAddGroup} setOpen={setOpenAddGroup}
+                    width='35%' height='60%'
                     content={() => (
-                        <AddRobboUnit />
+                        <AddStudentGroup />
                     )}
                 />
                 <Flex direction='row' justify='flex-end'
                     align='flex-start'>
                     <Button
                         background='green'
-                        content='Добавить Robbo Unit'
+                        content='Создать группу'
                         padding='0.5rem'
-                        handleSubmit={() => setOpenAddRobboUnit(true)}
+                        handleSubmit={() => setOpenAddGroup(true)}
                     />
                 </Flex>
                 {
@@ -60,15 +65,15 @@ export default () => {
                             >
                                 <Flex direction='column'>
                                     {
-                                        robboUnits?.map((robboUnit, index) => {
+                                        robboUnit.robboGroups?.map((robboGroup, index) => {
                                             return (
                                                 <ListItem
                                                     itemIndex={index}
                                                     key={index}
-                                                    label={robboUnit.name}
+                                                    label={robboGroup.id}
                                                     render={() => { }}
-                                                    handleClick={() => history.push(`/robboUnits/${robboUnit.id}`)}
-                                                // handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
+                                                    handleClick={() => history.push(`/robboUnits/${robboUnit.id}/groups/${robboGroup.id}`)}
+                                                    handleDelete={robboGroupIndex => deleteRobboGroupRequest(robboUnit.id, robboGroup.id, robboGroupIndex)}
                                                 />
                                             )
                                         })

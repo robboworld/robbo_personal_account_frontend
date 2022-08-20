@@ -7,15 +7,11 @@ import {
     deleteRobboUnitFailed,
     deleteRobboUnitRequest,
     deleteRobboUnitSuccess,
-    getRobboUnitById,
-    getRobboUnitByIdFailed,
-    getRobboUnitByIdSuccess,
-    getRobboUnits, getRobboUnitsFailed, getRobboUnitsSuccess, updateRobboUnit, updateRobboUnitFailed, updateRobboUnitSuccess,
+    getRobboUnits, getRobboUnitsFailed, getRobboUnitsSuccess,
 } from '@/actions'
 
 const INITIAL_STATE = {
     robboUnits: [],
-    robboUnit: {},
     loading: false,
 }
 
@@ -29,15 +25,7 @@ export default handleActions({
     [getRobboUnitsFailed](state, action) {
         return { ...state, loading: false }
     },
-    [getRobboUnitById](state) {
-        return { ...state, loading: true }
-    },
-    [getRobboUnitByIdSuccess](state, action) {
-        return { ...state, robboUnit: action.payload.response, loading: false }
-    },
-    [getRobboUnitByIdFailed](state, action) {
-        return { ...state, loading: false }
-    },
+
     // [clearTeachersState](state, action) {
     //     return { ...state, loading: false, robboUnits: [] }
     // },
@@ -61,22 +49,13 @@ export default handleActions({
         return {
             ...state,
             loading: false,
-            robboUnits: [...state.robboUnits, { id: response.Id, ...robboUnit }],
+            robboUnits: [...state.robboUnits, { id: response.robboUnitId, ...robboUnit }],
         }
     },
     [createRobboUnitFailed](state, action) {
         return {
             ...state, loading: false,
         }
-    },
-    [updateRobboUnit](state) {
-        return { ...state, loading: true }
-    },
-    [updateRobboUnitSuccess](state) {
-        return { ...state, loading: false }
-    },
-    [updateRobboUnitFailed](state) {
-        return { ...state, loading: false }
     },
 }, INITIAL_STATE)
 
