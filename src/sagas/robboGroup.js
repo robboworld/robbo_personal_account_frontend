@@ -9,12 +9,12 @@ import {
     getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
     getRobboGroupsByRobboUnitIdFailed, getRobboGroupsByRobboUnitIdRequest,
     getRobboGroupsByRobboUnitIdSuccess,
-    getStudentsOfRobboGroup,
 } from '@/actions'
 
 function* getRobboGroupByIdSaga(action) {
     try {
         const { token, robboUnitId, robboGroupId } = action.payload
+        console.log(action)
         const response = yield call(robboGroupAPI.getRobboGroupById, token, robboUnitId, robboGroupId)
         console.log(response)
 
@@ -61,22 +61,10 @@ function* getRobboGroupsByRobboUnitIdSaga(action) {
     }
 }
 
-// function* getStudentsOfRobboGroupSaga(action) {
-//     try {
-//         const { robboUnitId } = action.payload
-//         const response = yield call(robboGroupAPI., robboUnitId)
-//         console.log(response)
-
-//         yield put(getRobboGroupsByRobboUnitIdSuccess(response.data))
-//     } catch (e) {
-//         yield put(getRobboGroupsByRobboUnitIdFailed(e))
-//     }
-// }
 
 export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupByIdRequest, getRobboGroupByIdSaga)
     yield takeLatest(deleteRobboGroupRequest, deleteRobboGroupSaga)
     yield takeLatest(createRobboGroupRequest, createRobboGroupSaga)
     yield takeLatest(getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSaga)
-    // yield takeLatest(getStudentsOfRobboGroup, getStudentsOfRobboGroupSaga)
 }

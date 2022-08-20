@@ -16,6 +16,8 @@ import {
     GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID_FAILED,
     CREATE_ROBBO_GROUP_SUCCESS,
     CREATE_ROBBO_GROUP_FAILED,
+    GET_ROBBO_GROUP_BY_ID_SUCCESS,
+    GET_ROBBO_GROUP_BY_ID_FAILED,
 } from "@/constants"
 
 export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (token, robboUnitId, robboGroupId) => {
@@ -26,13 +28,13 @@ export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (tok
     }
 })
 
-export const getRobboGroupByIdSuccess = createAction(GET_ROBBO_GROUP_BY_ID, response => {
+export const getRobboGroupByIdSuccess = createAction(GET_ROBBO_GROUP_BY_ID_SUCCESS, response => {
     return {
         response,
     }
 })
 
-export const getRobboGroupByIdFailed = createAction(GET_ROBBO_GROUP_BY_ID, err => {
+export const getRobboGroupByIdFailed = createAction(GET_ROBBO_GROUP_BY_ID_FAILED, err => {
     toast.error(err)
     return {
         err,

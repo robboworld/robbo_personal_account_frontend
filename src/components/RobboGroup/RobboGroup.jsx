@@ -6,7 +6,6 @@ import { Title } from "./components"
 import Flex from '@/components/Flex'
 import ListItem from "@/components/ListItem"
 import { getClientsState } from "@/reducers/clients"
-import { getRobboGroupByIdRequest } from "@/actions"
 import { StyledSpan, Button, ModalWindow, SearchInput } from "@/components/UI"
 import { useIsAuth } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
@@ -16,16 +15,16 @@ import Loader from "@/components/Loader"
 
 export default ({ robboUnitId, robboGroupId }) => {
     useIsAuth()
-    const { searchStudent, addStudentToRobboGroupRequest } = useActions()
-
     const token = localStorage.getItem('token')
+    const { searchStudent, addStudentToRobboGroupRequest, getRobboGroupByIdRequest } = useActions()
     const [openAddStudent, setOpenAddStudent] = useState(false)
     const { searchResult } = useSelector(({ clients }) => getClientsState(clients))
-    const { loading } = useSelector(({ robboGroup }) => getRobboGroupState(robboGroup))
+    const { robboGroup, loading } = useSelector(({ robboGroup }) => getRobboGroupState(robboGroup))
+
     useEffect(() => {
-        getRobboGroupByIdRequest(robboUnitId)
+        getRobboGroupByIdRequest(token, robboUnitId, robboGroupId)
         return () => {
-            // clear robboUnit {}
+            // clear robboGroup {}
         }
     }, [])
 
@@ -39,7 +38,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                             padding='0.5rem'
                         >
                             <Flex justify='center' width='100%'>
-                                <Title>Группа {robboGroupId}</Title>
+                                <Title>Группа {robboGroup.name}</Title>
                             </Flex>
                             <ModalWindow
                                 open={openAddStudent} setOpen={setOpenAddStudent}
@@ -84,6 +83,20 @@ export default ({ robboUnitId, robboGroupId }) => {
                             </Flex>
                             <Flex direction='column'>
                                 <StyledSpan content='Список учеников' />
+                                {
+                                    robboGroup.students?.map(({ userHttp }, index) => {
+                                        return (
+                                            <ListItem
+                                                itemIndex={index}
+                                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                                key={index}
+                                                render={() => { }}
+                                            // handleClick={() => addStudentToRobboGroupRequest(robboGroupId, userHttp.id)}
+                                            // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                            />
+                                        )
+                                    })
+                                }
                             </Flex>
                         </Flex >
                     )
