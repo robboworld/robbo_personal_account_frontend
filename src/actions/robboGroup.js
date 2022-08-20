@@ -18,6 +18,7 @@ import {
     CREATE_ROBBO_GROUP_FAILED,
     GET_ROBBO_GROUP_BY_ID_SUCCESS,
     GET_ROBBO_GROUP_BY_ID_FAILED,
+    ADD_STUDENT_TO_ROBBO_GROUP_FAILED,
 } from "@/constants"
 
 export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (token, robboUnitId, robboGroupId) => {
@@ -107,21 +108,22 @@ export const deleteRobboGroupFailed = createAction(DELETE_ROBBO_GROUP_FAILED, er
     }
 })
 
-export const addStudentToRobboGroupRequest = createAction(ADD_STUDENT_TO_ROBBO_GROUP, (token, robboGroupId, studentId) => {
+export const addStudentToRobboGroupRequest = createAction(ADD_STUDENT_TO_ROBBO_GROUP, (token, robboGroup, studentId) => {
     return {
         token,
-        robboGroupId,
+        robboGroup,
         studentId,
     }
 })
 
 export const addStudentToRobboGroupSuccess = createAction(ADD_STUDENT_TO_ROBBO_GROUP_SUCCESS, response => {
+    toast.success("Ученик добавлен в группу")
     return {
         response,
     }
 })
 
-export const addStudentToRobboGroupFailed = createAction(ADD_STUDENT_TO_ROBBO_GROUP_SUCCESS, err => {
+export const addStudentToRobboGroupFailed = createAction(ADD_STUDENT_TO_ROBBO_GROUP_FAILED, err => {
     toast.error(err)
     return {
         err,

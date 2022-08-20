@@ -51,8 +51,11 @@ export const clientsAPI = {
                         lastname: lastname,
                         middlename: middlename,
                     },
+                    // robboUnitId: 'null',
+                    // robboGroupId: 'null',
                 },
                 parentId: parentId,
+
             },
             {
                 withCredentials: true,
@@ -103,9 +106,5 @@ export const clientsAPI = {
                     'Authorization': `Bearer ${token}`,
                 },
             })
-    },
-
-    getStudentOfRobboGroup(robboGroupId) {
-        return instance.get(`users/student`)
     },
 }

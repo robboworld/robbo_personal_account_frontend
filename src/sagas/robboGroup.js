@@ -2,6 +2,9 @@ import { call, takeLatest, put } from 'redux-saga/effects'
 
 import { robboGroupAPI } from '@/api'
 import {
+    addStudentToRobboGroupFailed,
+    addStudentToRobboGroupRequest,
+    addStudentToRobboGroupSuccess,
     createRobboGroupFailed,
     createRobboGroupRequest, createRobboGroupSuccess, deleteRobboGroupFailed, deleteRobboGroupRequest,
     deleteRobboGroupSuccess,
@@ -61,10 +64,23 @@ function* getRobboGroupsByRobboUnitIdSaga(action) {
     }
 }
 
+function* addStudentToRobboGroupSaga(action) {
+    try {
+        const { token, robboGroup, studentId } = action.payload
+        const response = yield call(robboGroupAPI.addStudentToRobboGroup, token, robboGroup, studentId)
+        console.log(response)
+
+        yield put(addStudentToRobboGroupSuccess(response.data))
+    } catch (e) {
+        yield put(addStudentToRobboGroupFailed(e))
+    }
+}
+
 
 export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupByIdRequest, getRobboGroupByIdSaga)
     yield takeLatest(deleteRobboGroupRequest, deleteRobboGroupSaga)
     yield takeLatest(createRobboGroupRequest, createRobboGroupSaga)
     yield takeLatest(getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSaga)
+    yield takeLatest(addStudentToRobboGroupRequest, addStudentToRobboGroupSaga)
 }

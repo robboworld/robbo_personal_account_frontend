@@ -62,7 +62,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                                                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                                                 key={index}
                                                                 render={() => { }}
-                                                                handleClick={() => addStudentToRobboGroupRequest(robboGroupId, userHttp.id)}
+                                                                handleClick={() => addStudentToRobboGroupRequest(token, robboGroup, userHttp.id)}
                                                             // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                                                             />
                                                         )
