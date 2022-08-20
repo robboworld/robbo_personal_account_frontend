@@ -14,10 +14,13 @@ import {
     GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID,
     GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID_SUCCESS,
     GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID_FAILED,
+    CREATE_ROBBO_GROUP_SUCCESS,
+    CREATE_ROBBO_GROUP_FAILED,
 } from "@/constants"
 
-export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (robboUnitId, robboGroupId) => {
+export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (token, robboUnitId, robboGroupId) => {
     return {
+        token,
         robboUnitId,
         robboGroupId,
     }
@@ -36,8 +39,9 @@ export const getRobboGroupByIdFailed = createAction(GET_ROBBO_GROUP_BY_ID, err =
     }
 })
 
-export const getRobboGroupsByRobboUnitIdRequest = createAction(GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID, robboUnitId => {
+export const getRobboGroupsByRobboUnitIdRequest = createAction(GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID, (token, robboUnitId) => {
     return {
+        token,
         robboUnitId,
     }
 })
@@ -54,27 +58,31 @@ export const getRobboGroupsByRobboUnitIdFailed = createAction(GET_ROBBO_GROUPS_B
     }
 })
 
-export const createRobboGroupRequest = createAction(CREATE_ROBBO_GROUP, robboUnitId => {
+export const createRobboGroupRequest = createAction(CREATE_ROBBO_GROUP, (token, robboUnitId, robboGroup) => {
     return {
+        token,
         robboUnitId,
+        robboGroup,
     }
 })
 
-export const createRobboGroupSuccess = createAction(CREATE_ROBBO_GROUP, response => {
+export const createRobboGroupSuccess = createAction(CREATE_ROBBO_GROUP_SUCCESS, response => {
+    toast.success("Группа создана")
     return {
         response,
     }
 })
 
-export const createRobboGroupFailed = createAction(CREATE_ROBBO_GROUP, err => {
+export const createRobboGroupFailed = createAction(CREATE_ROBBO_GROUP_FAILED, err => {
     toast.error(err)
     return {
         err,
     }
 })
 
-export const deleteRobboGroupRequest = createAction(DELETE_ROBBO_GROUP, (robboUnitId, robboGroupId, robboGroupIndex) => {
+export const deleteRobboGroupRequest = createAction(DELETE_ROBBO_GROUP, (token, robboUnitId, robboGroupId, robboGroupIndex) => {
     return {
+        token,
         robboUnitId,
         robboGroupId,
         robboGroupIndex,
@@ -94,8 +102,9 @@ export const deleteRobboGroupFailed = createAction(DELETE_ROBBO_GROUP_FAILED, er
     }
 })
 
-export const addStudentToRobboGroupRequest = createAction(ADD_STUDENT_TO_ROBBO_GROUP, (robboGroupId, studentId) => {
+export const addStudentToRobboGroupRequest = createAction(ADD_STUDENT_TO_ROBBO_GROUP, (token, robboGroupId, studentId) => {
     return {
+        token,
         robboGroupId,
         studentId,
     }
@@ -114,8 +123,9 @@ export const addStudentToRobboGroupFailed = createAction(ADD_STUDENT_TO_ROBBO_GR
     }
 })
 
-export const deleteStudentFromRobboGroupRequest = createAction(DELETE_STUDENT_FROM_ROBBO_GROUP, (robboGroupId, studentId) => {
+export const deleteStudentFromRobboGroupRequest = createAction(DELETE_STUDENT_FROM_ROBBO_GROUP, (token, robboGroupId, studentId) => {
     return {
+        token,
         robboGroupId,
         studentId,
     }

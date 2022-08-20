@@ -14,8 +14,8 @@ import {
 
 function* getRobboGroupByIdSaga(action) {
     try {
-        const { robboUnitId, robboGroupId } = action.payload
-        const response = yield call(robboGroupAPI.getRobboGroupById, robboUnitId, robboGroupId)
+        const { token, robboUnitId, robboGroupId } = action.payload
+        const response = yield call(robboGroupAPI.getRobboGroupById, token, robboUnitId, robboGroupId)
         console.log(response)
 
         yield put(getRobboGroupByIdSuccess(response.data))
@@ -26,8 +26,8 @@ function* getRobboGroupByIdSaga(action) {
 
 function* deleteRobboGroupSaga(action) {
     try {
-        const { robboUnitId, robboGroupId, robboGroupIndex } = action.payload
-        const response = yield call(robboGroupAPI.deleteRobboGroup, robboUnitId, robboGroupId)
+        const { token, robboUnitId, robboGroupId, robboGroupIndex } = action.payload
+        const response = yield call(robboGroupAPI.deleteRobboGroup, token, robboUnitId, robboGroupId)
         console.log(response)
 
         yield put(deleteRobboGroupSuccess(response.data, robboGroupIndex))
@@ -38,8 +38,9 @@ function* deleteRobboGroupSaga(action) {
 
 function* createRobboGroupSaga(action) {
     try {
-        const { robboUnitId, robboGroup } = action.payload
-        const response = yield call(robboGroupAPI.createRobboGroup, robboUnitId, robboGroup)
+        const { token, robboUnitId, robboGroup } = action.payload
+        console.log(action.payload)
+        const response = yield call(robboGroupAPI.createRobboGroup, token, robboUnitId, robboGroup)
         console.log(response)
 
         yield put(createRobboGroupSuccess(response.data, robboGroup))
@@ -50,8 +51,8 @@ function* createRobboGroupSaga(action) {
 
 function* getRobboGroupsByRobboUnitIdSaga(action) {
     try {
-        const { robboUnitId } = action.payload
-        const response = yield call(robboGroupAPI.getRobboGroupsByRobboUnitId, robboUnitId)
+        const { token, robboUnitId } = action.payload
+        const response = yield call(robboGroupAPI.getRobboGroupsByRobboUnitId, token, robboUnitId)
         console.log(response)
 
         yield put(getRobboGroupsByRobboUnitIdSuccess(response.data))

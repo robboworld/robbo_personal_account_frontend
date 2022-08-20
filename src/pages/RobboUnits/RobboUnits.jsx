@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
@@ -13,10 +14,13 @@ import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
 import Loader from "@/components/Loader"
 import ListItem from "@/components/ListItem"
+import { useIsAuth } from "@/helpers"
+
 
 
 export default () => {
-
+    useIsAuth()
+    const history = useHistory()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
     const { getRobboUnits, deleteRobboUnitRequest } = useActions()
@@ -42,14 +46,23 @@ export default () => {
                         <AddRobboUnit />
                     )}
                 />
-                <Flex direction='row' justify='flex-end'
+                <Flex direction='column' justify='flex-end'
                     align='flex-start'>
+                    <Button
+                        background='green'
+                        content='Программа'
+                        padding='0.5rem'
+                        margin='0.5rem'
+                        handleSubmit={() => history.push('/program')}
+                    />
                     <Button
                         background='green'
                         content='Добавить Robbo Unit'
                         padding='0.5rem'
+                        margin='0.5rem'
                         handleSubmit={() => setOpenAddRobboUnit(true)}
                     />
+
                 </Flex>
                 {
                     loading ? <Loader />
@@ -77,7 +90,6 @@ export default () => {
                                                             )}
                                                         />
                                                     )}
-                                                    // handleClick={() => history.push(`/robboUnits/${robboUnit.id}`)}
                                                     handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
                                                 />
                                             )

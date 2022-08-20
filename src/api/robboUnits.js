@@ -36,7 +36,6 @@ export const robboUnitsAPI = {
                 city,
             },
             {
-                withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

@@ -39,12 +39,20 @@ export default ({ robboUnitId }) => {
                             </Flex>
 
                             <RobboUnitCard robboUnit={robboUnit} />
-                            <Flex>
+                            <Flex direction='column' align='flex-start'>
                                 <Button
                                     content='Группы учеников'
                                     padding='1rem'
                                     background='green'
+                                    margin='0.5rem'
                                     handleSubmit={() => history.push(`/robboUnits/${robboUnit.id}/groups`)}
+                                />
+                                <Button
+                                    content='Настроить доступ'
+                                    padding='1rem'
+                                    background='green'
+                                    margin='0.5rem'
+                                // handleSubmit={() => history.push(`/robboUnits/${robboUnit.id}/groups`)}
                                 />
                             </Flex>
                         </Flex>

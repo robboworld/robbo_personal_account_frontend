@@ -4,10 +4,7 @@ import {
     getRobboUnitById,
     getRobboUnitByIdFailed,
     getRobboUnitByIdSuccess,
-    createRobboGroupFailed,
-    createRobboGroupRequest,
-    createRobboGroupSuccess,
-    updateRobboUnit, updateRobboUnitFailed, updateRobboUnitSuccess, getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSuccess, getRobboGroupsByRobboUnitIdFailed,
+    updateRobboUnit, updateRobboUnitFailed, updateRobboUnitSuccess,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -36,32 +33,6 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [updateRobboUnitFailed](state) {
-        return { ...state, loading: false }
-    },
-    [createRobboGroupRequest](state) {
-        return { ...state, loading: true }
-    },
-    [createRobboGroupSuccess](state, action) {
-        return { ...state, loading: false }
-    },
-    [createRobboGroupFailed](state) {
-        return { ...state, loading: false }
-    },
-    [getRobboGroupsByRobboUnitIdRequest](state) {
-        return { ...state, loading: true }
-    },
-    [getRobboGroupsByRobboUnitIdSuccess](state, action) {
-        const { response } = action.payload
-        console.log(response)
-        return {
-            ...state,
-            loading: false,
-            robboUnit: {
-                ...state.robboUnit, robboGroups: [...response],
-            },
-        }
-    },
-    [getRobboGroupsByRobboUnitIdFailed](state) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)

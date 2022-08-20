@@ -5,8 +5,9 @@ import Flex from "@/components/Flex"
 import RobboGroupForm from "@/components/RobboGroupForm"
 import { useActions } from "@/helpers/useActions"
 
-export default memo(() => {
+export default memo(({ robboUnitId }) => {
     const { createRobboGroupRequest } = useActions()
+    const token = localStorage.getItem('token')
     return (
         <Flex
             direction='column' width='100%'
@@ -15,7 +16,7 @@ export default memo(() => {
             <Text>Добавление Robbo Group</Text>
             <RobboGroupForm
                 margin='0 0 10px 0'
-                handleSubmit={robboUnitId => createRobboGroupRequest(robboUnitId)}
+                handleSubmit={robboGroup => createRobboGroupRequest(token, robboUnitId, robboGroup)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',
