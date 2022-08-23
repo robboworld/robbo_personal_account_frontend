@@ -4,12 +4,19 @@ import {
     createUnitAdmin, createUnitAdminFailed, createUnitAdminSuccess,
     deleteUnitAdmin, deleteUnitAdminFailed,
     deleteUnitAdminSuccess, getUnitAdmins,
+    getUnitAdminsByRobboUnitIdFailed,
+    getUnitAdminsByRobboUnitIdRequest,
+    getUnitAdminsByRobboUnitIdSuccess,
     getUnitAdminsFailed, getUnitAdminsSuccess,
+    searchUnitAdminsByEmailFailed, searchUnitAdminsByEmailRequest,
+    searchUnitAdminsByEmailSuccess, setNewUnitAdminForRobboUnitFailed,
+    setNewUnitAdminForRobboUnitRequest, setNewUnitAdminForRobboUnitSuccess,
 } from '@/actions'
 
 const INITIAL_STATE = {
     unitAdmins: [],
     loading: false,
+    searchResult: [],
 }
 
 export default handleActions({
@@ -41,9 +48,40 @@ export default handleActions({
     [createUnitAdminSuccess](state, action) {
         console.log(action)
         const { response, unitAdmin } = action.payload
-        return { ...state, loading: false, unitAdmins: [...state.unitAdmins, { userHttp: { id: response.unitAdminId, ...unitAdmin } }] }
+        return {
+            ...state,
+            loading: false,
+            unitAdmins: [...state.unitAdmins, { userHttp: { id: response.unitAdminId, ...unitAdmin } }],
+        }
     },
     [createUnitAdminFailed](state) {
+        return { ...state, loading: false }
+    },
+    [searchUnitAdminsByEmailRequest](state) {
+        return { ...state, loading: true }
+    },
+    [searchUnitAdminsByEmailSuccess](state, action) {
+        return { ...state, loading: false, searchResult: action.payload.response }
+    },
+    [searchUnitAdminsByEmailFailed](state) {
+        return { ...state, loading: false }
+    },
+    [getUnitAdminsByRobboUnitIdRequest](state) {
+        return { ...state, loading: true }
+    },
+    [getUnitAdminsByRobboUnitIdSuccess](state, action) {
+        return { ...state, unitAdmins: action.payload.response, loading: false }
+    },
+    [getUnitAdminsByRobboUnitIdFailed](state) {
+        return { ...state, loading: false }
+    },
+    [setNewUnitAdminForRobboUnitRequest](state) {
+        return { ...state, loading: true }
+    },
+    [setNewUnitAdminForRobboUnitSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [setNewUnitAdminForRobboUnitFailed](state) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)

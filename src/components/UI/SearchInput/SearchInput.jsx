@@ -13,7 +13,7 @@ export default ({
     return (
         <Flex width='100%' justify='center'>
             <Input
-                placeholder='Найти ребенка'
+                placeholder='Введите Email'
                 value={searchInput}
                 handleInput={input => setSearchInput(input)}
             />

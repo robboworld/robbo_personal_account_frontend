@@ -11,13 +11,42 @@ export const unitAdminsAPI = {
         )
     },
 
+    getUnitAdminsByRobboUnitId(token, robboUnitId) {
+        return instance.get(`users/unitAdmins/${robboUnitId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    },
+
+    searchUnitAdminsByEmail(token, email) {
+        return instance.get(`users/unitAdmin/search/${email}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
+
+    setNewUnitAdminForRobboUnit(token, unitAdminId, robboUnitId) {
+        return instance.post(`users/unitAdmin/setRelation`,
+            {
+                unitAdminId,
+                robboUnitId,
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
+
     deleteUnitAdmin(token, unitAdminId) {
         return instance.delete(`users/unitAdmin/${unitAdminId}`,
             {
-                // withCredentials: true,
-                //  headers: {
-                //     'Authorization': `Bearer ${token}`,
-                // },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             })
     },
 

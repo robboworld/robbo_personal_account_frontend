@@ -3,8 +3,14 @@ import { call, put, takeLatest } from 'redux-saga/effects'
 import {
     createUnitAdmin, createUnitAdminFailed, createUnitAdminSuccess,
     deleteUnitAdmin, deleteUnitAdminFailed,
-    deleteUnitAdminSuccess, getUnitAdmins, getUnitAdminsFailed,
+    deleteUnitAdminSuccess, getUnitAdmins, getUnitAdminsByRobboUnitIdFailed, getUnitAdminsByRobboUnitIdRequest, getUnitAdminsByRobboUnitIdSuccess, getUnitAdminsFailed,
     getUnitAdminsSuccess,
+    searchUnitAdminsByEmailFailed,
+    searchUnitAdminsByEmailRequest,
+    searchUnitAdminsByEmailSuccess,
+    setNewUnitAdminForRobboUnitFailed,
+    setNewUnitAdminForRobboUnitRequest,
+    setNewUnitAdminForRobboUnitSuccess,
 } from '@/actions'
 import { unitAdminsAPI } from '@/api'
 
@@ -44,9 +50,48 @@ function* deleteUnitAdminSaga(action) {
     }
 }
 
+function* searchUnitAdminsByEmailSaga(action) {
+    try {
+        const { token, email } = action.payload
+        const response = yield call(unitAdminsAPI.searchUnitAdminsByEmail, token, email)
+        console.log(response)
+
+        yield put(searchUnitAdminsByEmailSuccess(response.data))
+    } catch (e) {
+        yield put(searchUnitAdminsByEmailFailed(e))
+    }
+}
+
+function* setNewUnitAdminForRobboUnitSaga(action) {
+    try {
+        const { token, unitAdminId, robboUnitId } = action.payload
+        console.log(action)
+        const response = yield call(unitAdminsAPI.setNewUnitAdminForRobboUnit, token, unitAdminId, robboUnitId)
+        console.log(response)
+
+        yield put(setNewUnitAdminForRobboUnitSuccess(response))
+    } catch (e) {
+        yield put(setNewUnitAdminForRobboUnitFailed(e))
+    }
+}
+
+function* getUnitAdminsByRobboUnitIdSaga(action) {
+    try {
+        const { token, robboUnitId } = action.payload
+        const response = yield call(unitAdminsAPI.getUnitAdminsByRobboUnitId, token, robboUnitId)
+        console.log(response)
+
+        yield put(getUnitAdminsByRobboUnitIdSuccess(response.data))
+    } catch (e) {
+        yield put(getUnitAdminsByRobboUnitIdFailed(e))
+    }
+}
+
 export function* unitAdminsSaga() {
     yield takeLatest(createUnitAdmin, createUnitAdminSaga)
     yield takeLatest(getUnitAdmins, getUnitAdminsSaga)
     yield takeLatest(deleteUnitAdmin, deleteUnitAdminSaga)
-    // yield takeLatest(checkAuthRequest, checkAuthSaga)
+    yield takeLatest(searchUnitAdminsByEmailRequest, searchUnitAdminsByEmailSaga)
+    yield takeLatest(setNewUnitAdminForRobboUnitRequest, setNewUnitAdminForRobboUnitSaga)
+    yield takeLatest(getUnitAdminsByRobboUnitIdRequest, getUnitAdminsByRobboUnitIdSaga)
 }

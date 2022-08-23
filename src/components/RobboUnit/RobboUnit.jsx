@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useHistory } from "react-router-dom"
 import { useSelector } from "react-redux"
 
@@ -8,8 +8,9 @@ import { useActions } from "@/helpers/useActions"
 import RobboUnitCard from "@/components/RobboUnitCard"
 import Flex from '@/components/Flex'
 import { getRobboUnitState } from "@/reducers/robboUnit"
-import { Button } from "@/components/UI"
+import { Button, ModalWindow } from "@/components/UI"
 import Loader from "@/components/Loader"
+import RobboUnitAccessSetting from "@/components/RobboUnitAccessSetting"
 
 export default ({ robboUnitId }) => {
 
@@ -17,6 +18,7 @@ export default ({ robboUnitId }) => {
     const history = useHistory()
     const { getRobboUnitById } = useActions()
     const { robboUnit, loading } = useSelector(({ robboUnit }) => getRobboUnitState(robboUnit))
+    const [openAccessSetting, setOpenAccessSetting] = useState(false)
 
     useEffect(() => {
         getRobboUnitById(token, robboUnitId)
@@ -52,9 +54,16 @@ export default ({ robboUnitId }) => {
                                     padding='1rem'
                                     background='green'
                                     margin='0.5rem'
-                                // handleSubmit={() => history.push(`/robboUnits/${robboUnit.id}/groups`)}
+                                    handleSubmit={() => setOpenAccessSetting(true)}
                                 />
                             </Flex>
+                            <ModalWindow
+                                open={openAccessSetting} setOpen={setOpenAccessSetting}
+                                width='35%' height='60%'
+                                content={() => (
+                                    <RobboUnitAccessSetting />
+                                )}
+                            />
                         </Flex>
 
                     )
