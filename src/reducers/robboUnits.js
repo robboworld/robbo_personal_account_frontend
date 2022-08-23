@@ -7,7 +7,9 @@ import {
     deleteRobboUnitFailed,
     deleteRobboUnitRequest,
     deleteRobboUnitSuccess,
-    getRobboUnits, getRobboUnitsFailed, getRobboUnitsSuccess,
+    getRobboUnits, getRobboUnitsByUnitAdminIdFailed, getRobboUnitsByUnitAdminIdRequest,
+    getRobboUnitsByUnitAdminIdSuccess, getRobboUnitsFailed,
+    getRobboUnitsSuccess,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -25,7 +27,15 @@ export default handleActions({
     [getRobboUnitsFailed](state, action) {
         return { ...state, loading: false }
     },
-
+    [getRobboUnitsByUnitAdminIdRequest](state) {
+        return { ...state, loading: true }
+    },
+    [getRobboUnitsByUnitAdminIdSuccess](state, action) {
+        return { ...state, robboUnits: action.payload.response, loading: false }
+    },
+    [getRobboUnitsByUnitAdminIdFailed](state, action) {
+        return { ...state, loading: false }
+    },
     // [clearTeachersState](state, action) {
     //     return { ...state, loading: false, robboUnits: [] }
     // },

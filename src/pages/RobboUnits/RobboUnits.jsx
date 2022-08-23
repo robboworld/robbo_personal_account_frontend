@@ -15,6 +15,7 @@ import { getRobboUnitsState } from "@/reducers/robboUnits"
 import Loader from "@/components/Loader"
 import ListItem from "@/components/ListItem"
 import { useIsAuth } from "@/helpers"
+import { getLoginState } from "@/reducers/login"
 
 
 
@@ -23,12 +24,20 @@ export default () => {
     const history = useHistory()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
-    const { getRobboUnits, deleteRobboUnitRequest } = useActions()
+    const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest } = useActions()
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
-
+    const { userRole } = useSelector(({ login }) => getLoginState(login))
 
     useEffect(() => {
-        getRobboUnits(token)
+        switch (userRole) {
+            case 4:
+                getRobboUnitsByUnitAdminIdRequest(token)
+                break
+            case 5:
+                getRobboUnits(token)
+                break
+        }
+
         return () => {
             // clear
         }

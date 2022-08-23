@@ -17,6 +17,9 @@ import {
     updateRobboUnit,
     updateRobboUnitSuccess,
     updateRobboUnitFailed,
+    getRobboUnitsByUnitAdminIdSuccess,
+    getRobboUnitsByUnitAdminIdFailed,
+    getRobboUnitsByUnitAdminIdRequest,
 } from '@/actions'
 
 
@@ -29,6 +32,18 @@ function* getRobboUnitsSaga(action) {
         yield put(getRobboUnitsSuccess(response.data))
     } catch (e) {
         yield put(getRobboUnitsFailed(e.message))
+    }
+}
+
+function* getRobboUnitsByUnitAdminIdSaga(action) {
+    try {
+        const { token } = action.payload
+        const response = yield call(robboUnitsAPI.getRobboUnitsByUnitAdminId, token)
+        console.log(response)
+
+        yield put(getRobboUnitsByUnitAdminIdSuccess(response.data))
+    } catch (e) {
+        yield put(getRobboUnitsByUnitAdminIdFailed(e.message))
     }
 }
 
@@ -86,4 +101,5 @@ export function* robboUnitsSaga() {
     yield takeLatest(createRobboUnit, createRobboUnitSaga)
     yield takeLatest(getRobboUnitById, getRobboUnitByIdSaga)
     yield takeLatest(updateRobboUnit, updateRobboUnitSaga)
+    yield takeLatest(getRobboUnitsByUnitAdminIdRequest, getRobboUnitsByUnitAdminIdSaga)
 }

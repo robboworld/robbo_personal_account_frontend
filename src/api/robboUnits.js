@@ -19,6 +19,15 @@ export const robboUnitsAPI = {
             })
     },
 
+    getRobboUnitsByUnitAdminId(token) {
+        return instance.get(`robboUnits/unitAdmin`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
+
     deleteRobboUnit(token, robboUnitId) {
         return instance.delete(`robboUnits/${robboUnitId}`,
             {
@@ -41,6 +50,7 @@ export const robboUnitsAPI = {
                 },
             })
     },
+
     updateRobboUnit(token, robboUnit) {
         return instance.put(`robboUnits`,
             {
