@@ -4,6 +4,9 @@ import { toast } from 'react-toastify'
 import {
     CREATE_UNIT_ADMIN_FAILED, CREATE_UNIT_ADMIN_REQUEST,
     CREATE_UNIT_ADMIN_SUCCESS, DELETE_UNIT_ADMIN_FAILED,
+    DELETE_UNIT_ADMIN_FOR_ROBBO_UNIT_FAILED,
+    DELETE_UNIT_ADMIN_FOR_ROBBO_UNIT_REQUEST,
+    DELETE_UNIT_ADMIN_FOR_ROBBO_UNIT_SUCCESS,
     DELETE_UNIT_ADMIN_REQUEST, DELETE_UNIT_ADMIN_SUCCESS,
     GET_UNIT_ADMINS, GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID_FAILED,
     GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID_REQUEST,
@@ -134,6 +137,28 @@ export const setNewUnitAdminForRobboUnitSuccess = createAction(SET_NEW_UNIT_ADMI
 })
 
 export const setNewUnitAdminForRobboUnitFailed = createAction(SET_NEW_UNIT_ADMIN_FOR_ROBBO_UNIT_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
+    }
+})
+
+export const deleteUnitAdminForRobboUnitRequest = createAction(DELETE_UNIT_ADMIN_FOR_ROBBO_UNIT_REQUEST, (token, unitAdminId, robboUnitId) => {
+    return {
+        token,
+        unitAdminId,
+        robboUnitId,
+    }
+})
+
+export const deleteUnitAdminForRobboUnitSuccess = createAction(DELETE_UNIT_ADMIN_FOR_ROBBO_UNIT_SUCCESS, response => {
+    toast.error("Unit Админ успешно отстранен")
+    return {
+        response,
+    }
+})
+
+export const deleteUnitAdminForRobboUnitFailed = createAction(DELETE_UNIT_ADMIN_FOR_ROBBO_UNIT_FAILED, err => {
     toast.error(err)
     return {
         err,

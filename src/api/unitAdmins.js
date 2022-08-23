@@ -68,4 +68,17 @@ export const unitAdminsAPI = {
                 },
             })
     },
+
+    deleteUnitAdminForRobboUnit(token, unitAdminId, robboUnitId) {
+        return instance.post('users/unitAdmin/deleteRelation',
+            {
+                unitAdminId,
+                robboUnitId,
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
 }

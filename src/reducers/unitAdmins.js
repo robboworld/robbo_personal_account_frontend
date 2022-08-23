@@ -3,6 +3,9 @@ import { handleActions } from 'redux-actions'
 import {
     createUnitAdmin, createUnitAdminFailed, createUnitAdminSuccess,
     deleteUnitAdmin, deleteUnitAdminFailed,
+    deleteUnitAdminForRobboUnitFailed,
+    deleteUnitAdminForRobboUnitRequest,
+    deleteUnitAdminForRobboUnitSuccess,
     deleteUnitAdminSuccess, getUnitAdmins,
     getUnitAdminsByRobboUnitIdFailed,
     getUnitAdminsByRobboUnitIdRequest,
@@ -82,6 +85,15 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [setNewUnitAdminForRobboUnitFailed](state) {
+        return { ...state, loading: false }
+    },
+    [deleteUnitAdminForRobboUnitRequest](state) {
+        return { ...state, loading: true }
+    },
+    [deleteUnitAdminForRobboUnitSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [deleteUnitAdminForRobboUnitFailed](state) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)

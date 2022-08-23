@@ -3,6 +3,9 @@ import { call, put, takeLatest } from 'redux-saga/effects'
 import {
     createUnitAdmin, createUnitAdminFailed, createUnitAdminSuccess,
     deleteUnitAdmin, deleteUnitAdminFailed,
+    deleteUnitAdminForRobboUnitFailed,
+    deleteUnitAdminForRobboUnitRequest,
+    deleteUnitAdminForRobboUnitSuccess,
     deleteUnitAdminSuccess, getUnitAdmins, getUnitAdminsByRobboUnitIdFailed, getUnitAdminsByRobboUnitIdRequest, getUnitAdminsByRobboUnitIdSuccess, getUnitAdminsFailed,
     getUnitAdminsSuccess,
     searchUnitAdminsByEmailFailed,
@@ -87,6 +90,19 @@ function* getUnitAdminsByRobboUnitIdSaga(action) {
     }
 }
 
+function* deleteUnitAdminForRobboUnitSaga(action) {
+    try {
+        const { token, unitAdminId, robboUnitId } = action.payload
+        console.log(action)
+        const response = yield call(unitAdminsAPI.deleteUnitAdminForRobboUnit, token, unitAdminId, robboUnitId)
+        console.log(response)
+
+        yield put(deleteUnitAdminForRobboUnitSuccess(response))
+    } catch (e) {
+        yield put(deleteUnitAdminForRobboUnitFailed(e))
+    }
+}
+
 export function* unitAdminsSaga() {
     yield takeLatest(createUnitAdmin, createUnitAdminSaga)
     yield takeLatest(getUnitAdmins, getUnitAdminsSaga)
@@ -94,4 +110,5 @@ export function* unitAdminsSaga() {
     yield takeLatest(searchUnitAdminsByEmailRequest, searchUnitAdminsByEmailSaga)
     yield takeLatest(setNewUnitAdminForRobboUnitRequest, setNewUnitAdminForRobboUnitSaga)
     yield takeLatest(getUnitAdminsByRobboUnitIdRequest, getUnitAdminsByRobboUnitIdSaga)
+    yield takeLatest(deleteUnitAdminForRobboUnitRequest, deleteUnitAdminForRobboUnitSaga)
 }

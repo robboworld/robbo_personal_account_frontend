@@ -17,6 +17,7 @@ export default () => {
         getUnitAdminsByRobboUnitIdRequest,
         searchUnitAdminsByEmailRequest,
         setNewUnitAdminForRobboUnitRequest,
+        deleteUnitAdminForRobboUnitRequest,
     } = useActions()
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
@@ -95,8 +96,8 @@ export default () => {
                                         label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                         key={index}
                                         render={() => { }}
-                                    // handleClick={() => setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnit.id)}
-                                    // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                        // handleClick={() => setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnit.id)}
+                                        handleDelete={childIndex => deleteUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnit.id)}
                                     />
                                 )
                             })
