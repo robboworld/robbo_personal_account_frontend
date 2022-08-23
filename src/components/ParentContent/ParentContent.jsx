@@ -17,6 +17,7 @@ import ProfileCard from "@/components/ProfileCard"
 
 export default ({ client }) => {
     const {
+        updateProfile,
         deleteChildRequest,
         getChildrenByParentId,
         clearChildrenState,
@@ -45,7 +46,7 @@ export default ({ client }) => {
                     width='100%'
                 >
                     <Title>Карточка родителя</Title>
-                    <ProfileCard updateHandle={() => { }} profile={client.userHttp} />
+                    <ProfileCard updateHandle={updateProfile} profile={client.userHttp} />
                     <ModalWindow
                         open={openAddChildren} setOpen={setOpenAddChildren}
                         width='35%' height='60%'

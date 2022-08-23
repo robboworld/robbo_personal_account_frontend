@@ -30,10 +30,9 @@ export const projectPageAPI = {
                 projectPage: projectPage,
             },
             {
-                // withCredentials: true,
-                // headers: {
-                //     'Authorization': `Bearer ${token}`,
-                // },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             })
     },
 

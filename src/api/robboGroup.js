@@ -52,4 +52,16 @@ export const robboGroupAPI = {
                 },
             })
     },
+
+    deleteStudentFromRobboGroup(token, robboGroup, studentId) {
+        return instance.post(`users/student/${studentId}/robboGroup/${robboGroup.id}`,
+            {
+                robboUnitId: robboGroup.robboUnitId,
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
 }

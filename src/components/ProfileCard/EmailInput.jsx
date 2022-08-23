@@ -4,8 +4,8 @@ import Flex from '@/components/Flex'
 import { Button, Input, StyledSpan } from '@/components/UI'
 
 export default ({
-    token,
     profile,
+    token,
     updateHandle,
 }) => {
 

@@ -4,6 +4,9 @@ import {
     addStudentToRobboGroupFailed,
     addStudentToRobboGroupRequest,
     addStudentToRobboGroupSuccess,
+    deleteStudentFromRobboGroupFailed,
+    deleteStudentFromRobboGroupRequest,
+    deleteStudentFromRobboGroupSuccess,
     getRobboGroupByIdFailed,
     getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
 } from '@/actions'
@@ -37,7 +40,15 @@ export default handleActions({
     [addStudentToRobboGroupFailed](state) {
         return { ...state, loading: false }
     },
-
+    [deleteStudentFromRobboGroupRequest](state) {
+        return { ...state, loading: true }
+    },
+    [deleteStudentFromRobboGroupSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [deleteStudentFromRobboGroupFailed](state) {
+        return { ...state, loading: false }
+    },
 }, INITIAL_STATE)
 
 export const getRobboGroupState = state => state

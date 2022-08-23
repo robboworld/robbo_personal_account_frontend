@@ -5,6 +5,7 @@ import { Title } from "./components"
 
 import Flex from '@/components/Flex'
 import ListItem from "@/components/ListItem"
+import AddChildren from "@/components/AddChildren"
 import { getClientsState } from "@/reducers/clients"
 import { StyledSpan, Button, ModalWindow, SearchInput } from "@/components/UI"
 import { useIsAuth } from "@/helpers"
@@ -16,8 +17,14 @@ import Loader from "@/components/Loader"
 export default ({ robboUnitId, robboGroupId }) => {
     useIsAuth()
     const token = localStorage.getItem('token')
-    const { searchStudent, addStudentToRobboGroupRequest, getRobboGroupByIdRequest } = useActions()
+    const {
+        searchStudent,
+        addStudentToRobboGroupRequest,
+        getRobboGroupByIdRequest,
+        deleteStudentFromRobboGroupRequest,
+    } = useActions()
     const [openAddStudent, setOpenAddStudent] = useState(false)
+    const [openCreateChild, setOpenCreateChild] = useState(false)
     const { searchResult } = useSelector(({ clients }) => getClientsState(clients))
     const { robboGroup, loading } = useSelector(({ robboGroup }) => getRobboGroupState(robboGroup))
 
@@ -72,6 +79,13 @@ export default ({ robboUnitId, robboGroupId }) => {
                                     </Flex>
                                 )}
                             />
+                            <ModalWindow
+                                open={openCreateChild} setOpen={setOpenCreateChild}
+                                width='35%' height='60%'
+                                content={() => (
+                                    <AddChildren parentId='' />
+                                )}
+                            />
                             <Flex direction='row' justify='flex-end'
                                 align='flex-start'>
                                 <Button
@@ -80,7 +94,16 @@ export default ({ robboUnitId, robboGroupId }) => {
                                     padding='0.5rem'
                                     handleSubmit={() => setOpenAddStudent(true)}
                                 />
+                                <Button
+                                    content='Создать ребенка'
+                                    background='green'
+                                    padding='0.5rem'
+                                    margin='0 0 0 0.5rem'
+                                    width='20%'
+                                    handleSubmit={() => setOpenCreateChild(true)}
+                                />
                             </Flex>
+
                             <Flex direction='column'>
                                 <StyledSpan content='Список учеников' />
                                 {
@@ -91,7 +114,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                                 key={index}
                                                 render={() => { }}
-                                            // handleClick={() => addStudentToRobboGroupRequest(robboGroupId, userHttp.id)}
+                                                handleDelete={() => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
                                             // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                                             />
                                         )

@@ -8,6 +8,8 @@ import {
     createRobboGroupFailed,
     createRobboGroupRequest, createRobboGroupSuccess, deleteRobboGroupFailed, deleteRobboGroupRequest,
     deleteRobboGroupSuccess,
+    deleteStudentFromRobboGroupFailed,
+    deleteStudentFromRobboGroupRequest,
     getRobboGroupByIdFailed,
     getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
     getRobboGroupsByRobboUnitIdFailed, getRobboGroupsByRobboUnitIdRequest,
@@ -76,6 +78,18 @@ function* addStudentToRobboGroupSaga(action) {
     }
 }
 
+function* deleteStudentFromRobboGroupSaga(action) {
+    try {
+        const { token, robboGroup, studentId } = action.payload
+        const response = yield call(robboGroupAPI.deleteStudentFromRobboGroup, token, robboGroup, studentId)
+        console.log(response)
+
+        yield put(deleteStudentFromRobboGroupRequest(response.data))
+    } catch (e) {
+        yield put(deleteStudentFromRobboGroupFailed(e))
+    }
+}
+
 
 export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupByIdRequest, getRobboGroupByIdSaga)
@@ -83,4 +97,5 @@ export function* robboGroupSaga() {
     yield takeLatest(createRobboGroupRequest, createRobboGroupSaga)
     yield takeLatest(getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSaga)
     yield takeLatest(addStudentToRobboGroupRequest, addStudentToRobboGroupSaga)
+    yield takeLatest(deleteStudentFromRobboGroupRequest, deleteStudentFromRobboGroupSaga)
 }
