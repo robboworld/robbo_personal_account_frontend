@@ -1,11 +1,17 @@
-import { createAction } from "redux-actions"
+import { createAction } from 'redux-actions'
+import { toast } from 'react-toastify'
 
 import {
     GET_ALL_PROJECT_PAGES, GET_ALL_PROJECT_PAGES_FAILED, GET_ALL_PROJECT_PAGES_SUCCESS,
     GET_PROJECT_PAGE_BY_ID, GET_PROJECT_PAGE_BY_ID_FAILED, GET_PROJECT_PAGE_BY_ID_SUCCESS,
     UPDATE_PROJECT_PAGE, UPDATE_PROJECT_PAGE_FAILED, UPDATE_PROJECT_PAGE_SUCCESS,
-    CREATE_PROJECT_PAGE, CREATE_PROJECT_PAGE_FAILED, CREATE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE, DELETE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE_FAILED, ONCHANGE_PROJECT_PAGE_TITLE, ONCHANGE_PROJECT_PAGE_INSTRUCTION, ONCHANGE_PROJECT_PAGE_NOTES, ONSHARED_PROJECT,
-} from "@/constants"
+    CREATE_PROJECT_PAGE, CREATE_PROJECT_PAGE_FAILED, CREATE_PROJECT_PAGE_SUCCESS,
+    DELETE_PROJECT_PAGE, DELETE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE_FAILED,
+    ONCHANGE_PROJECT_PAGE_TITLE, ONCHANGE_PROJECT_PAGE_INSTRUCTION, ONCHANGE_PROJECT_PAGE_NOTES,
+    ONSHARED_PROJECT,
+    CLEAR_PROJECT_PAGE_STATE, CLEAR_MY_PROJECTS_STATE,
+} from '@/constants'
+
 
 export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, token => {
     return {
@@ -13,34 +19,37 @@ export const getAllProjectPages = createAction(GET_ALL_PROJECT_PAGES, token => {
     }
 })
 
-export const getAllProjectPagesSuccess = createAction(GET_ALL_PROJECT_PAGES_SUCCESS, () => {
+export const getAllProjectPagesSuccess = createAction(GET_ALL_PROJECT_PAGES_SUCCESS, response => {
     return {
-
+        response,
     }
 })
 
-export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILED, () => {
+export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILED, err => {
+    toast.error(err)
     return {
-
+        err,
     }
 })
 
 
-export const getProjectPageById = createAction(GET_PROJECT_PAGE_BY_ID, () => {
+export const getProjectPageById = createAction(GET_PROJECT_PAGE_BY_ID, (token, id) => {
     return {
-
+        token,
+        id,
     }
 })
 
-export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, () => {
+export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, response => {
     return {
-
+        response,
     }
 })
 
-export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, () => {
+export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, err => {
+    toast.error(err)
     return {
-
+        err,
     }
 })
 
@@ -56,9 +65,10 @@ export const createProjectPageSuccess = createAction(CREATE_PROJECT_PAGE_SUCCESS
     }
 })
 
-export const createProjectPageFailed = createAction(CREATE_PROJECT_PAGE_FAILED, () => {
+export const createProjectPageFailed = createAction(CREATE_PROJECT_PAGE_FAILED, err => {
+    toast.error(err)
     return {
-
+        err,
     }
 })
 
@@ -66,7 +76,7 @@ export const createProjectPageFailed = createAction(CREATE_PROJECT_PAGE_FAILED, 
 export const updateProjectPage = createAction(UPDATE_PROJECT_PAGE, (token, projectPage) => {
     return {
         token,
-        projectPage
+        projectPage,
     }
 })
 
@@ -76,51 +86,58 @@ export const updateProjectPageSuccess = createAction(UPDATE_PROJECT_PAGE_SUCCESS
     }
 })
 
-export const updateProjectPageFailed = createAction(UPDATE_PROJECT_PAGE_FAILED, (err) => {
+export const updateProjectPageFailed = createAction(UPDATE_PROJECT_PAGE_FAILED, err => {
+    toast.error(err)
     return {
-        err
+        err,
     }
 })
 
-export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (token, projectPageId) => {
+export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (token, projectPageId, projectPageIndex) => {
     return {
         token,
         projectPageId,
+        projectPageIndex,
     }
 })
 
-export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, response => {
+export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, projectPageIndex => {
+    toast.success("deleted successfully")
     return {
-        response,
+        projectPageIndex,
     }
 })
 
-export const deleteProjectPageFailed = createAction(DELETE_PROJECT_PAGE_FAILED, () => {
+export const deleteProjectPageFailed = createAction(DELETE_PROJECT_PAGE_FAILED, err => {
+    toast.error(err)
     return {
-
+        err,
     }
 })
 
-export const onChangeProjectPageTitle = createAction(ONCHANGE_PROJECT_PAGE_TITLE, (title) => {
+export const onChangeProjectPageTitle = createAction(ONCHANGE_PROJECT_PAGE_TITLE, title => {
     return {
-        title
+        title,
     }
 })
 
-export const onChangeProjectPageInstruction = createAction(ONCHANGE_PROJECT_PAGE_INSTRUCTION, (instruction) => {
+export const onChangeProjectPageInstruction = createAction(ONCHANGE_PROJECT_PAGE_INSTRUCTION, instruction => {
     return {
-        instruction
+        instruction,
     }
 })
 
-export const onChangeProjectPageNotes = createAction(ONCHANGE_PROJECT_PAGE_NOTES, (notes) => {
+export const onChangeProjectPageNotes = createAction(ONCHANGE_PROJECT_PAGE_NOTES, notes => {
     return {
-        notes
+        notes,
     }
 })
 
-export const onSharedProject = createAction(ONSHARED_PROJECT, (isShared) => {
+export const onSharedProject = createAction(ONSHARED_PROJECT, isShared => {
     return {
-        isShared
+        isShared,
     }
 })
+
+export const clearProjectPageState = createAction(CLEAR_PROJECT_PAGE_STATE)
+export const clearMyProjectsState = createAction(CLEAR_MY_PROJECTS_STATE)

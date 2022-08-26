@@ -1,4 +1,5 @@
 const path = require('path')
+
 const {
   CleanWebpackPlugin,
 } = require('clean-webpack-plugin')
@@ -65,6 +66,7 @@ module.exports = {
     extensions: ['*', '.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@mui/styled-engine': '@mui/styled-engine-sc',
     },
   },
 }

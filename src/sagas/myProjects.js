@@ -1,4 +1,5 @@
-import { call, put, take, takeLatest } from 'redux-saga/effects'
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+
 import { projectPageAPI } from '@/api'
 import {
     createProjectPage, createProjectPageFailed, createProjectPageSuccess,
@@ -24,7 +25,8 @@ function* getAllProjectPagesSaga(action) {
 function* getProjectPageByIdSaga(action) {
     try {
 
-        const response = yield call(projectPageAPI.getProjectPageById)
+        const { token, id } = action.payload
+        const response = yield call(projectPageAPI.getProjectPageById, token, id)
         console.log(response)
 
         yield put(getProjectPageByIdSuccess(response))
@@ -57,11 +59,11 @@ function* updateProjectPageSaga(action) {
 
 function* deleteProjectPageSaga(action) {
     try {
-        const { token, projectPageId } = action.payload
+        const { token, projectPageId, projectPageIndex } = action.payload
         const response = yield call(projectPageAPI.deleteProjectPage, token, projectPageId)
         console.log(response)
 
-        yield put(deleteProjectPageSuccess(response))
+        yield put(deleteProjectPageSuccess(projectPageIndex))
     } catch (e) {
         yield put(deleteProjectPageFailed(e.message))
     }
@@ -70,7 +72,7 @@ function* deleteProjectPageSaga(action) {
 export function* myProjectsSaga() {
     yield takeLatest(getAllProjectPages, getAllProjectPagesSaga)
     yield takeLatest(getProjectPageById, getProjectPageByIdSaga)
-    yield takeLatest(createProjectPage, createProjectPageSaga)
+    yield takeEvery(createProjectPage, createProjectPageSaga)
     yield takeLatest(updateProjectPage, updateProjectPageSaga)
     yield takeLatest(deleteProjectPage, deleteProjectPageSaga)
 }

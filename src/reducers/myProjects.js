@@ -1,50 +1,57 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
 import {
+    clearMyProjectsState,
+    createProjectPage,
     createProjectPageFailed, createProjectPageSuccess,
+    deleteProjectPage,
     deleteProjectPageFailed, deleteProjectPageSuccess,
+    getAllProjectPages,
     getAllProjectPagesFailed, getAllProjectPagesSuccess,
-} from "@/actions"
+} from '@/actions'
 
 const INITIAL_STATE = {
     newProjectId: '',
-    projectPages: [
-        {
-            id: '1',
-            title: 'Untitled-1',
-            date: '2022.06.15',
-            linkScratch: 'http://0.0.0.0:8601/',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-        {
-            id: '2',
-            title: 'Untitled-2',
-            date: '2022.06.15',
-            linkScratch: 'http://0.0.0.0:8601/',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-    ],
+    loading: false,
+    projectPages: [],
 }
 
 export default handleActions({
+    [getAllProjectPages](state, action) {
+        return { ...state, loading: true }
+    },
     [getAllProjectPagesSuccess](state, action) {
-        return { ...state }
+        console.log(action)
+        return { ...state, loading: false, projectPages: action.payload.response.data.projectPages }
     },
     [getAllProjectPagesFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
+    },
+    [createProjectPage](state) {
+        return { ...state, loading: true }
     },
     [createProjectPageSuccess](state, action) {
-        return { ...state }
+        return { ...state, newProjectId: action.payload.response.data.projectId, loading: false }
     },
     [createProjectPageFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: true }
+    },
+    [deleteProjectPage](state, action) {
+        return { ...state, loading: true }
     },
     [deleteProjectPageSuccess](state, action) {
-        return { ...state }
+        const newProjectPages = [...state.projectPages]
+        newProjectPages.splice(action.payload.projectPageIndex, 1)
+        return { ...state, loading: false, projectPages: newProjectPages }
     },
     [deleteProjectPageFailed](state, action) {
-        return { ...state }
+        return { ...state, loading: false }
+    },
+    [clearMyProjectsState](state, action) {
+        return { ...state, newProjectId: '', loading: false, projectPages: [] }
     },
 }, INITIAL_STATE)
 
 export const getProjectPages = state => state.projectPages
+export const getNewProjectId = state => state.newProjectId
+export const getMyProjectsLoading = state => state.loading

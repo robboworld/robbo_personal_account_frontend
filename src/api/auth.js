@@ -1,30 +1,53 @@
-import * as axios from "axios"
-
-import instance from "./instance"
+import instance from './instance'
 
 export const authAPI = {
-    signUp(email, password) {
+    signUp(user) {
+        const { email, password, nickname, lastname, firstname, middlename, role } = user
         return instance.post('auth/sign-up',
             {
                 email: email,
                 password: password,
+                role: role.value,
+                nickname: nickname,
+                lastname: lastname,
+                firstname: firstname,
+                middlename: middlename,
+            },
+            {
+                withCredentials: true,
             })
     },
 
-    signIn(email, password) {
+    signIn(email, password, role) {
         return instance.post('auth/sign-in',
             {
                 email: email,
                 password: password,
+                role: role.value,
             },
-        )
+            {
+                withCredentials: true,
+            })
     },
 
     signOut() {
-        return instance.post('auth/sign-out')
+        return instance.post('auth/sign-out', {}, {
+            withCredentials: true,
+        })
     },
 
     refresh() {
-        return instance.get('auth/refresh', { withCredentials: true })
+        return instance.get('auth/refresh', {
+            withCredentials: true,
+        })
+    },
+
+    checkAuth(token) {
+        return instance.get('auth/check-auth', {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
     },
 }

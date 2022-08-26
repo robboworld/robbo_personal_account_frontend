@@ -1,17 +1,25 @@
-import React from "react"
-import { StyledInput } from "./components"
+import React from 'react'
 
-export default function Input({ type, placeholder, value, handleInput, onBlur, height, width, padding, margin, fontSize }) {
-    return <StyledInput
-        onBlur={onBlur}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={e => { handleInput(e.target.value) }}
-        width={width}
-        height={height}
-        padding={padding}
-        margin={margin}
-        fontSize={fontSize}
-    />
-}
+import { StyledInput } from './components'
+
+export default
+    (
+        { type, placeholder, value,
+            handleInput, onBlur, height,
+            width, padding, margin,
+            fontSize,
+        },
+    ) => {
+        return <StyledInput
+            onBlur={onBlur}
+            type={type}
+            placeholder={placeholder}
+            value={value}
+            onChange={e => { handleInput(e.target.value) }}
+            width={width}
+            height={height}
+            padding={padding}
+            margin={margin}
+            fontSize={fontSize}
+        />
+    }

@@ -1,7 +1,6 @@
-import React, { useState } from "react"
-import { useDispatch } from "react-redux"
-import * as FaIcons from "react-icons/fa"
-import { Redirect } from "react-router-dom"
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import * as FaIcons from 'react-icons/fa'
 
 import {
     SideBar,
@@ -9,40 +8,75 @@ import {
     MenuIconOpen,
     MenuIconClose,
     SidebarMenu,
-    // MenuItems,
-    MenuItemLinks,
-} from "./components"
+} from './components'
 
-import { signOutRequest } from "@/actions"
-import { SidebarData } from "./SideBarData"
+import {
+    SidebarDataSuperAdmin,
+    SidebarDataStudent,
+    SidebarDataParent,
+    SidebarDataTeacher,
+    SidebarDataUnitAdmin,
+    SidebarDataFreeListener,
+} from './SideBarData.jsx'
 import MenuItem from './MenuItem'
 
-export default ({ }) => {
+import { useActions } from '@/helpers/useActions'
+import { getLoginState } from '@/reducers/login'
+
+export default () => {
     const [close, setClose] = useState(false)
     const showSidebar = () => setClose(!close)
-    const dispatch = useDispatch()
+    const { signOutRequest } = useActions()
+    const { userRole } = useSelector(({ login }) => getLoginState(login))
+
+    let SideBarData = []
+    switch (userRole) {
+        case 0: {
+            SideBarData = SidebarDataStudent
+            break
+        }
+        case 1: {
+            SideBarData = SidebarDataTeacher
+            break
+        }
+        case 2: {
+            SideBarData = SidebarDataParent
+            break
+        }
+        case 3: {
+            SideBarData = SidebarDataFreeListener
+            break
+        }
+        case 4: {
+            SideBarData = SidebarDataUnitAdmin
+            break
+        }
+        case 5: {
+            SideBarData = SidebarDataSuperAdmin
+            break
+        }
+    }
 
     const signOutHandler = path => {
         if (path === '/login') {
-            dispatch(signOutRequest())
-            return <Redirect to="/login" />
+            signOutRequest()
         }
     }
 
     return (
         <SideBar>
             <Navbar>
-                <MenuIconOpen to="#" onClick={showSidebar}>
+                <MenuIconOpen to='#' onClick={showSidebar}>
                     <FaIcons.FaBars />
                 </MenuIconOpen>
             </Navbar>
 
             <SidebarMenu close={close}>
-                <MenuIconClose to="#" onClick={showSidebar}>
+                <MenuIconClose to='#' onClick={showSidebar}>
                     <FaIcons.FaTimes />
                 </MenuIconClose>
 
-                {SidebarData.map((item, index) => {
+                {SideBarData.map((item, index) => {
                     return (
                         <MenuItem
                             key={index}

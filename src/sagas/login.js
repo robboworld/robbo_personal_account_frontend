@@ -1,4 +1,5 @@
-import { call, put, take, takeLatest } from 'redux-saga/effects'
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+
 import { authAPI } from '@/api'
 import {
     signInSucces, signInFailed, signUpSuccess,
@@ -9,49 +10,51 @@ import {
 
 function* signInSaga(action) {
     try {
-        const { email } = action.payload
-        const { password } = action.payload
-        const response = yield call(authAPI.signIn, email, password)
+        const { email, password, role } = action.payload
+        const response = yield call(authAPI.signIn, email, password, role)
         console.log(response)
         localStorage.setItem('token', response.data.accessToken)
+        console.log(response.headers)
         yield put(signInSucces(response))
     } catch (e) {
+        console.log(e.response)
         yield put(signInFailed(e.message))
     }
 }
 
 function* signUpSaga(action) {
     try {
-        const { email } = action.payload
-        const { password } = action.payload
-        const response = yield call(authAPI.signUp, email, password)
+        const { user, role } = action.payload
+        const response = yield call(authAPI.signUp, user, role)
         console.log(response)
         localStorage.setItem('token', response.data.accessToken)
         yield put(signUpSuccess(response))
     } catch (e) {
-        yield put(signUpFailed(e.message))
+        console.log(e.response)
+        yield put(signUpFailed(e.response.data))
     }
 }
 
 function* signOutSaga(action) {
     try {
-        const response = yield call(authAPI.signOut)
         localStorage.removeItem('token')
+        const response = yield call(authAPI.signOut)
+        console.log(response)
         yield put(signOutSuccess())
     } catch (e) {
-        alert(e)
+        console.log(e.response)
         yield put(signOutFailed(e.message))
     }
 }
 
 function* checkAuthSaga(action) {
     try {
-        const response = yield call(authAPI.refresh)
+        const { token } = action.payload.token
+        const response = yield call(authAPI.checkAuth, token)
         console.log(response)
-        localStorage.setItem('token', response.data.accessToken)
-        yield put(checkAuthSuccess())
+        yield put(checkAuthSuccess(response))
     } catch (e) {
-        alert(e)
+        console.log(e.response)
         yield put(checkAuthFailed(e?.message))
     }
 }
@@ -59,6 +62,6 @@ function* checkAuthSaga(action) {
 export function* loginSaga() {
     yield takeLatest(signInRequest, signInSaga)
     yield takeLatest(signUpRequest, signUpSaga)
-    yield takeLatest(signOutRequest, signOutSaga)
+    yield takeEvery(signOutRequest, signOutSaga)
     yield takeLatest(checkAuthRequest, checkAuthSaga)
 }

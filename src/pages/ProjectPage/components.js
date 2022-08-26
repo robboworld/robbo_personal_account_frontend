@@ -31,17 +31,23 @@ export const Title = styled.div`
 
 export const Instructions = styled.div`
   min-height: 20%;
-  padding: 2rem;
   border: 1px dashed grey;
   border-radius: 0.5rem;
   width: 100%;
+  height: 15vh;
   margin: 1rem 0;
+  padding: 1rem;
+  overflow: auto;
+  font-size: 1vw;
 `
 export const Notes = styled.div`
-  min-height: 20%;
-  padding: 2rem;
-  border: 1px dashed grey;
-  border-radius: 0.5rem;
-  width: 100%;
-  margin: 1rem 0;
+min-height: 20%;
+border: 1px dashed grey;
+border-radius: 0.5rem;
+width: 100%;
+height: 15vh;
+margin: 1rem 0;
+padding: 1rem;
+overflow: auto;
+font-size: 1vw;
 `

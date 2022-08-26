@@ -1,4 +1,5 @@
-import React from "react"
+import React from 'react'
+
 import { MenuItems, MenuItemLinks } from './components'
 
 export default ({ signOutHandler, index, item }) => {

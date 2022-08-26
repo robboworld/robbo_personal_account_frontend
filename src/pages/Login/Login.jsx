@@ -1,133 +1,90 @@
-import React, { useState, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
-import { PageLayout } from "@/layouts"
 import {
-    Card,
     MainContainer,
     WelcomeText,
-    InputContainer,
-    ButtonContainer,
-    LoginWith,
-    HorizontalRule,
-    ForgotPassword,
-    LoginForm,
-    SwitchInOut,
     SignIn,
     SignOut,
-    ErrorAlert,
-    SuccessAlert,
-} from "./components"
+} from './components'
 
-import { emailOnChange, passwordOnChange, signInRequest, signUpRequest } from "@/actions"
-import {
-    getEmail, getPassword, getToken,
-    getSignInError, getSignUpError,
-    getSuccessInResponse, getSuccessUpResponse,
-    getIsAuth,
-} from "@/reducers/login"
-
-import Input from "@/components/UI/Input"
-import Button from "@/components/UI/Button"
+import { PageLayout } from '@/layouts'
+import { useActions } from '@/helpers/useActions'
+import { getLoginState } from '@/reducers/login'
+import { useIsAuth } from '@/helpers'
+import Loader from '@/components/Loader'
+import SignUpForm from '@/components/SignUpForm'
+import SignInForm from '@/components/SignInForm'
+import Flex from '@/components/Flex'
 
 export default () => {
+    useIsAuth()
+
+    useEffect(() => {
+        return () => {
+            clearLoginState()
+        }
+    }, [])
+
     const [signIn, setSignIn] = useState(false)
-    const switchIn = () => setSignIn(false)
-    const switchUp = () => setSignIn(true)
+    const { clearLoginState, signInRequest, signUpRequest } = useActions()
 
-    const dispatch = useDispatch()
-    const email = useSelector(state => getEmail(state.login))
-    const password = useSelector(state => getPassword(state.login))
-    const token = useSelector(state => getToken(state.login))
-    const signInError = useSelector(state => getSignInError(state.login))
-    const signUpError = useSelector(state => getSignUpError(state.login))
-    const isAuth = useSelector(state => getIsAuth(state.login))
-    const successInResponse = useSelector(state => getSuccessInResponse(state.login))
-    const successUpResponse = useSelector(state => getSuccessUpResponse(state.login))
-
-
-    const emailHandle = email => {
-        dispatch(emailOnChange(email))
-    }
-    const passwordHandle = password => {
-        dispatch(passwordOnChange(password))
-    }
-    const signInSubmit = () => {
-        dispatch(signInRequest(email, password))
-    }
-    const signUpSubmit = () => {
-        dispatch(signUpRequest(email, password))
-    }
+    const { loading, isAuth } = useSelector(({ login }) => getLoginState(login))
 
     if (isAuth) {
-        return <Redirect to="/" />
+        return <Redirect to='/' />
     }
 
     return (
         <PageLayout>
-            <Card>
-                <LoginForm>
-                    {signIn
-                        ? <MainContainer>
-                            <SwitchInOut>
-                                <SignIn signIn={signIn} onClick={switchIn}><h4>Войти</h4></SignIn>
-                                <SignOut signIn={signIn} onClick={switchUp}><h4>Регистрация</h4></SignOut>
-                            </SwitchInOut>
-                            <WelcomeText>Добро пожаловать!</WelcomeText>
-                            <InputContainer>
-                                <Input type="text" placeholder="Email"
-value={email} handleInput={emailHandle} />
-                                <Input type="password" placeholder="Password"
-value={password} handleInput={passwordHandle} />
-                            </InputContainer>
-                            <ButtonContainer>
-                                <Button content="Регистрация" handleSubmit={signUpSubmit} />
-                            </ButtonContainer>
-                            {/* <LoginWith>OR LOGIN WITH</LoginWith> */}
-                            <HorizontalRule />
-                            {/* <ForgotPassword>Forgot Password ?</ForgotPassword> */}
-                            {signUpError &&
-                                <ErrorAlert>
-                                    <span>Произошла ошибка: {signUpError}</span>
-                                </ErrorAlert>
-                            }
-                            {
-                                successUpResponse &&
-                                <SuccessAlert><span>Успешно!</span></SuccessAlert>
-                            }
-                          </MainContainer>
-                        :                        <MainContainer>
-                            <SwitchInOut>
-                                <SignIn onClick={switchIn}><h4>Войти</h4></SignIn>
-                                <SignOut onClick={switchUp}><h4>Регистрация</h4></SignOut>
-                            </SwitchInOut>
-                            <WelcomeText>Добро пожаловать!</WelcomeText>
-                            <InputContainer>
-                                <Input type="text" placeholder="Email"
-value={email} handleInput={emailHandle} />
-                                <Input type="password" placeholder="Password"
-value={password} handleInput={passwordHandle} />
-                            </InputContainer>
-                            <ButtonContainer>
-                                <Button content="Войти" handleSubmit={signInSubmit} />
-                            </ButtonContainer>
-                            {/* <LoginWith>OR LOGIN WITH</LoginWith> */}
-                            <HorizontalRule />
-                            {/* <ForgotPassword>Forgot Password ?</ForgotPassword> */}
-                            {signInError &&
-                                <ErrorAlert>
-                                    <span>Произошла ошибка: {signInError}</span>
-                                </ErrorAlert>
-                            }
-                            {
-                                successInResponse &&
-                                <SuccessAlert><span>Успешно!</span></SuccessAlert>
-                            }
-                                                 </MainContainer>
+            <Flex
+                direction='column' align='center'
+                width='100%' height='100%'
+            >
+                <Flex direction='column' align='center'>
+                    {loading ? (
+                        <Loader />
+                    ) : (
+                        signIn ? (
+                            <MainContainer>
+                                <Flex width='100%' justify='space-between'>
+                                    <SignIn signIn={signIn} onClick={() => setSignIn(false)}><h4>Войти</h4></SignIn>
+                                    <SignOut signIn={signIn} onClick={() => setSignIn(true)}><h4>Регистрация</h4></SignOut>
+                                </Flex>
+                                <WelcomeText>Добро пожаловать!</WelcomeText>
+                                <SignUpForm
+                                    buttonOption={{
+                                        content: 'Регистрация',
+                                        padding: '10px',
+                                    }}
+                                    needSelectRole
+                                    margin='0 0 10px 0'
+                                    handleSubmit={newUser => signUpRequest(newUser)}
+                                />
+                            </MainContainer>
+                        ) : (
+                            <MainContainer>
+                                <Flex width='100%' justify='space-between'>
+                                    <SignIn onClick={() => setSignIn(false)}><h4>Войти</h4></SignIn>
+                                    <SignOut onClick={() => setSignIn(true)}><h4>Регистрация</h4></SignOut>
+                                </Flex>
+                                <WelcomeText>Добро пожаловать!</WelcomeText>
+                                <SignInForm
+                                    buttonOption={{
+                                        content: 'Войти',
+                                        padding: '10px',
+                                    }}
+                                    needSelectRole
+                                    margin='0 0 10px 0'
+                                    handleSubmit={newUser => signInRequest(newUser)}
+                                />
+                            </MainContainer>
+                        )
+                    )
                     }
-                </LoginForm>
-            </Card>
+                </Flex>
+            </Flex>
         </PageLayout >
     )
 }
