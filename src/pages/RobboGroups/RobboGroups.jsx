@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { Redirect, useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
 
 
@@ -17,6 +17,7 @@ import ListItem from "@/components/ListItem"
 import { useIsAuth } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
+import { getLoginState } from "@/reducers/login"
 
 
 
@@ -31,7 +32,11 @@ export default () => {
 
     const { robboUnitId } = useParams()
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
+    const { userRole } = useSelector(({ login }) => getLoginState(login))
 
+    if (userRole !== 5 || userRole !== 4) {
+        return <Redirect to='/home' />
+    }
 
     useEffect(() => {
         getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)

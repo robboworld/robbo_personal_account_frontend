@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 import { WelcomeText } from './components'
 
@@ -14,6 +15,8 @@ import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
 import Loader from '@/components/Loader'
+import { getLoginState } from '@/reducers/login'
+
 
 
 export default () => {
@@ -22,6 +25,11 @@ export default () => {
     const token = localStorage.getItem('token')
     const { getTeachers, deleteTeacher } = useActions()
     const { teachers, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
+    const { userRole } = useSelector(({ login }) => getLoginState(login))
+
+    if (userRole !== 5 || userRole !== 4) {
+        return <Redirect to='/home' />
+    }
 
     useEffect(() => {
         getTeachers(token)

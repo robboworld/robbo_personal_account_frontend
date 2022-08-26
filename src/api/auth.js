@@ -12,6 +12,9 @@ export const authAPI = {
                 lastname: lastname,
                 firstname: firstname,
                 middlename: middlename,
+            },
+            {
+                withCredentials: true,
             })
     },
 
@@ -22,11 +25,15 @@ export const authAPI = {
                 password: password,
                 role: role.value,
             },
-        )
+            {
+                withCredentials: true,
+            })
     },
 
     signOut() {
-        return instance.post('auth/sign-out')
+        return instance.post('auth/sign-out', {}, {
+            withCredentials: true,
+        })
     },
 
     refresh() {

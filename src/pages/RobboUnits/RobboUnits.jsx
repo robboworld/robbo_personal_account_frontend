@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
+import { Redirect, useHistory } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
@@ -27,6 +27,10 @@ export default () => {
     const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest } = useActions()
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
     const { userRole } = useSelector(({ login }) => getLoginState(login))
+
+    if (userRole !== 5 || userRole !== 4) {
+        return <Redirect to='/home' />
+    }
 
     useEffect(() => {
         switch (userRole) {
