@@ -7,6 +7,8 @@ import { profileSaga } from './profile'
 import { teachersSaga } from './teachers'
 import { clientsSaga } from './clients'
 import { unitAdminsSaga } from './unitAdmins'
+import { robboUnitsSaga } from './robboUnits'
+import { robboGroupSaga } from './robboGroup'
 
 export default function* rootSaga() {
   yield all([
@@ -17,5 +19,7 @@ export default function* rootSaga() {
     teachersSaga(),
     clientsSaga(),
     unitAdminsSaga(),
+    robboUnitsSaga(),
+    robboGroupSaga(),
   ])
 }

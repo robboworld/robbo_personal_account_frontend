@@ -5,7 +5,7 @@ import {
   HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE,
   MY_PROJECTS_ROUTE, MY_COURSES_ROUTE, COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE, TEACHERS_PAGE_ROUTE, CLIENTS_ROUTE,
-  UNIT_ADMINS_ROUTE,
+  UNIT_ADMINS_ROUTE, ROBBO_UNITS_ROUTE, ROBBO_UNIT_STUDENT_GROUPS_PAGE, ROBBO_GROUP_PAGE_ROUTE,
 } from '@/constants'
 
 import Loader from '@/components/Loader'
@@ -20,6 +20,8 @@ const ProfilePage = lazy(() => import('@/pages/Profile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
 const ClientsPage = lazy(() => import('@/pages/Clients'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
+const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
+const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 
 
 export default () => (
@@ -75,6 +77,16 @@ export default () => (
         exact
         path={UNIT_ADMINS_ROUTE}
         component={UnitAdminsPage}
+      />
+      <Route
+        exact
+        path={ROBBO_UNITS_ROUTE}
+        component={RobboUnitsPage}
+      />
+      <Route
+        exact
+        path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
+        component={RobboGroups}
       />
       <Redirect from='/' to='/home' />
     </Switch>

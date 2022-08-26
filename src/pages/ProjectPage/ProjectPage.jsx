@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
 import { ProjectStage, UnsharedMessage, Title, Instructions, Notes } from './components'
 
@@ -13,6 +14,7 @@ import config from '@/config'
 import Textarea from '@/components/UI/TextArea'
 import Loader from '@/components/Loader'
 import { useActions } from '@/helpers/useActions'
+
 
 
 export default props => {
@@ -30,8 +32,7 @@ export default props => {
     const [instructionsEditMode, setInstructionsEditMode] = useState(false)
     const [notesEditMode, setNotesEditMode] = useState(false)
 
-    // TO DO useParams
-    const { projectPageId } = props.match.params
+    const { projectPageId } = useParams()
     const token = localStorage.getItem('token')
 
     useEffect(() => {

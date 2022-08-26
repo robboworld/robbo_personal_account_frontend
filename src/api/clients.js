@@ -51,8 +51,11 @@ export const clientsAPI = {
                         lastname: lastname,
                         middlename: middlename,
                     },
+                    // robboUnitId: 'null',
+                    // robboGroupId: 'null',
                 },
                 parentId: parentId,
+
             },
             {
                 withCredentials: true,

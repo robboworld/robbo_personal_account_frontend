@@ -27,14 +27,18 @@ export default ({
                     padding='10px'
                     width='30%'
                     margin='0 10px 0 0'
-                    handleSubmit={() => { yesHandle() }}
+                    handleSubmit={() => {
+                        yesHandle()
+                    }}
                 />
                 <Button
                     background='darkred'
                     content='Отмена'
                     padding='10px'
                     width='30%'
-                    handleSubmit={() => { canselHandle() }}
+                    handleSubmit={() => {
+                        canselHandle()
+                    }}
                 />
             </Flex>
         </Flex>

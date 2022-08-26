@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 import { ListParents, WelcomeText } from './components'
 
@@ -14,7 +15,7 @@ import Loader from '@/components/Loader'
 import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
 import { useIsAuth } from '@/helpers'
-
+import { getLoginState } from '@/reducers/login'
 
 export default () => {
     useIsAuth()
@@ -28,9 +29,13 @@ export default () => {
     }, [])
 
     const token = localStorage.getItem('token')
+    const { userRole } = useSelector(({ login }) => getLoginState(login))
     const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
-
     const [openAddClients, setOpenAddClients] = useState(false)
+
+    if (userRole !== 5) {
+        return <Redirect to='/home' />
+    }
 
     return (
         <PageLayout>

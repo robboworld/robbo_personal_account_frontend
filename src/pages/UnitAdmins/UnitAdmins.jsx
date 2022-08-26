@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
+import { Redirect } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
@@ -15,6 +16,7 @@ import Loader from "@/components/Loader"
 import { useIsAuth } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import UnitAdminContent from "@/components/UnitAdminContent"
+import { getLoginState } from "@/reducers/login"
 
 export default () => {
 
@@ -23,6 +25,11 @@ export default () => {
     const token = localStorage.getItem('token')
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
+    const { userRole } = useSelector(({ login }) => getLoginState(login))
+
+    if (userRole !== 5) {
+        return <Redirect to='/home' />
+    }
     const { deleteUnitAdmin, getUnitAdmins } = useActions()
 
     useEffect(() => {
