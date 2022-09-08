@@ -1,0 +1,11 @@
+version: '1'
+services:
+  web:
+    build: .
+    command: yarn run --port 8080
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0

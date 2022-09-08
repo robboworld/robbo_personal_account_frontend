@@ -34,9 +34,9 @@ export default () => {
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
     const { userRole } = useSelector(({ login }) => getLoginState(login))
 
-    if (userRole !== 5 || userRole !== 4) {
-        return <Redirect to='/home' />
-    }
+    // if (userRole !== 5 || userRole !== 4) {
+    //     return <Redirect to='/home' />
+    // }
 
     useEffect(() => {
         getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)

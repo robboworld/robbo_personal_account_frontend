@@ -49,8 +49,18 @@ export default () => {
                         signIn ? (
                             <MainContainer>
                                 <Flex width='100%' justify='space-between'>
-                                    <SignIn signIn={signIn} onClick={() => setSignIn(false)}><h4>Войти</h4></SignIn>
-                                    <SignOut signIn={signIn} onClick={() => setSignIn(true)}><h4>Регистрация</h4></SignOut>
+                                    <SignIn
+                                        signIn={signIn} onClick={() => setSignIn(false)}
+                                        data-cy='sign-in'
+                                    >
+                                        <h4>Войти</h4>
+                                    </SignIn>
+                                    <SignOut
+                                        signIn={signIn} onClick={() => setSignIn(true)}
+                                        data-cy='sign-up'
+                                    >
+                                        <h4>Регистрация</h4>
+                                    </SignOut>
                                 </Flex>
                                 <WelcomeText>Добро пожаловать!</WelcomeText>
                                 <SignUpForm

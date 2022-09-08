@@ -23,7 +23,7 @@ const customStyles = {
 
 export default function CustomSelect({ options, onChange, value, width }) {
     return (
-        <SelectWrapper width={width}>
+        <SelectWrapper width={width} data-cy='select'>
             <Select
                 styles={customStyles}
                 options={options}

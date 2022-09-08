@@ -12,9 +12,7 @@ import { useIsAuth } from '@/helpers'
 
 export default () => {
   useIsAuth()
-
-  const isAuth = useSelector(state => getIsAuth(state.login))
-
+  const isAuth = useSelector(({ login }) => getIsAuth(login))
   if (!isAuth) {
     return <Redirect to='/login' />
   }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import { Redirect } from "react-router-dom"
 
 import { Title } from "./components"
 
@@ -11,11 +12,16 @@ import { StyledSpan, Button, ModalWindow, SearchInput } from "@/components/UI"
 import { useIsAuth } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupState } from "@/reducers/robboGroup"
+import { getIsAuth } from "@/reducers/login"
 import Loader from "@/components/Loader"
 
 
 export default ({ robboUnitId, robboGroupId }) => {
     useIsAuth()
+    const isAuth = useSelector(({ login }) => getIsAuth(login))
+    if (!isAuth) {
+        return <Redirect to='/login' />
+    }
     const token = localStorage.getItem('token')
     const {
         searchStudent,

@@ -26,11 +26,12 @@ export default () => {
     const token = localStorage.getItem('token')
     const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest } = useActions()
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
+    const { userRole, isAuth } = useSelector(({ login }) => getLoginState(login))
 
-    if (userRole !== 5 || userRole !== 4) {
-        return <Redirect to='/home' />
-    }
+    // if (isAuth) {
+    //     console.log(isAuth)
+    //     return <Redirect to='/home' />
+    // }
 
     useEffect(() => {
         switch (userRole) {

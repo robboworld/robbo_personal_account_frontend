@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 import { Title, Avatar, Description } from './components'
 
@@ -8,6 +9,7 @@ import SideBar from '@/components/SideBar'
 import Flex from '@/components/Flex'
 import Button from '@/components/UI/Button'
 import Loader from '@/components/Loader'
+import { getIsAuth } from '@/reducers/login'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { useIsAuth } from '@/helpers/useIsAuth'
 import { useActions } from '@/helpers/useActions'
@@ -18,7 +20,10 @@ export default props => {
 
     const { getCoursePageById, clearCoursePageState } = useActions()
     useIsAuth()
-
+    const isAuth = useSelector(({ login }) => getIsAuth(login))
+    if (!isAuth) {
+        return <Redirect to='/login' />
+    }
     const token = localStorage.getItem('token')
     // TO DO useParams
     const { coursePageId } = props.match.params

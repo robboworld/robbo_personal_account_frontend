@@ -15,10 +15,14 @@ import Loader from '@/components/Loader'
 import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
 import { useIsAuth } from '@/helpers'
-import { getLoginState } from '@/reducers/login'
+import { getLoginState, getIsAuth } from '@/reducers/login'
 
 export default () => {
     useIsAuth()
+    const isAuth = useSelector(({ login }) => getIsAuth(login))
+    if (!isAuth) {
+        return <Redirect to='/login' />
+    }
     const { getClients, deleteParentRequest } = useActions()
 
     useEffect(() => {
