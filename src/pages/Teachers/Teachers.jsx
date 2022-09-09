@@ -7,7 +7,7 @@ import { WelcomeText } from './components'
 import SideBar from "@/components/SideBar"
 import { Card, PageLayout } from "@/layouts"
 import Flex from '@/components/Flex'
-import { useIsAuth } from '@/helpers'
+import { useUserIdentity, checkAccess } from '@/helpers'
 import { getTeachersState } from '@/reducers/teachers'
 import { useActions } from '@/helpers/useActions'
 import { Button, ModalWindow } from '@/components/UI'
@@ -15,28 +15,27 @@ import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
 import Loader from '@/components/Loader'
-import { getLoginState } from '@/reducers/login'
-
+import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 
 
 export default () => {
-    useIsAuth()
+    const { userRole, isAuth } = useUserIdentity()
+    if (!checkAccess(userRole, [SUPER_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
 
     const token = localStorage.getItem('token')
     const { getTeachers, deleteTeacher } = useActions()
     const { teachers, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
-    if (userRole !== 5 || userRole !== 4) {
-        return <Redirect to='/home' />
-    }
 
     useEffect(() => {
         getTeachers(token)
         return () => {
             // clearTeachersState
         }
-    }, [])
+    }, [getTeachers, token])
 
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
 
@@ -75,7 +74,11 @@ export default () => {
                                                 <ListItem
                                                     itemIndex={index}
                                                     key={index}
-                                                    label={`${teacher.userHttp.lastname} ${teacher.userHttp.firstname} ${teacher.userHttp.middlename}`}
+                                                    label={`
+                                                        ${teacher.userHttp.lastname}
+                                                        ${teacher.userHttp.firstname} 
+                                                        ${teacher.userHttp.middlename}
+                                                    `}
                                                     handleDelete={teacherIndex => deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
                                                     render={(open, setOpen) => (
                                                         <ModalWindow

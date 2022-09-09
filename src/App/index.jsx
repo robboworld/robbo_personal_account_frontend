@@ -5,7 +5,7 @@ import {
   HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PROJECT_PAGE_ROUTE,
   MY_PROJECTS_ROUTE, MY_COURSES_ROUTE, COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE, TEACHERS_PAGE_ROUTE, CLIENTS_ROUTE,
-  UNIT_ADMINS_ROUTE, ROBBO_UNITS_ROUTE, ROBBO_UNIT_STUDENT_GROUPS_PAGE, ROBBO_GROUP_PAGE_ROUTE,
+  UNIT_ADMINS_ROUTE, ROBBO_UNITS_ROUTE, ROBBO_UNIT_STUDENT_GROUPS_PAGE,
 } from '@/constants'
 
 import Loader from '@/components/Loader'
@@ -88,7 +88,7 @@ export default () => (
         path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
         component={RobboGroups}
       />
-      <Redirect from='/' to='/home' />
+      <Redirect from='/' to={HOME_PAGE_ROUTE} />
     </Switch>
   </Suspense>
 )

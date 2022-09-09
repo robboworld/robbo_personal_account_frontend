@@ -1,30 +1,39 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, memo } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
-import { Headind, AvatarWrapper, AboutMe } from './components'
+import { Headind, AboutMe } from './components'
 import DigitalTail from './DigitalTail'
 
 import { PageLayout, Card } from '@/layouts'
 import SideBar from '@/components/SideBar'
-import { useIsAuth } from '@/helpers'
+import { checkAccess, useUserIdentity } from '@/helpers'
 import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
 import { Button, Textarea } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
-import { getIsAuth } from '@/reducers/login'
 import { getProfileState } from '@/reducers/profile'
 import ProfileCard from '@/components/ProfileCard/ProfileCard'
+import { FREE_LISTENER, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN } from '@/constants'
 
-export default () => {
-    useIsAuth()
-    const isAuth = useSelector(state => getIsAuth(state.login))
+export default memo(() => {
+    const { userRole, isAuth } = useUserIdentity()
+    if (!checkAccess(userRole,
+        [
+            STUDENT,
+            PARENT,
+            TEACHER,
+            UNIT_ADMIN,
+            SUPER_ADMIN,
+            FREE_LISTENER,
+        ])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
+
     const token = localStorage.getItem('token')
     const { getProfileById } = useActions()
-
-    if (!isAuth) {
-        return <Redirect to='/login' />
-    }
 
     const {
         deleteProfile,
@@ -40,13 +49,10 @@ export default () => {
         return () => {
             clearProfileState()
         }
-    }, [])
+    }, [clearProfileState, getProfileById, token])
 
     const { loading, profile } = useSelector(({ profile }) => getProfileState(profile))
-
-    const {
-        aboutMe,
-    } = profile
+    const { aboutMe } = profile
 
     return (
         <PageLayout>
@@ -119,4 +125,4 @@ export default () => {
             </Card >
         </PageLayout >
     )
-}
+})

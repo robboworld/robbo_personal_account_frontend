@@ -18,7 +18,7 @@ function* signInSaga(action) {
         yield put(signInSucces(response))
     } catch (e) {
         console.log(e.response)
-        yield put(signInFailed(e.message))
+        yield put(signInFailed(e.response.data))
     }
 }
 
@@ -59,7 +59,7 @@ function* checkAuthSaga(action) {
     }
 }
 
-export function* loginSaga() {
+export function* loginWather() {
     yield takeLatest(signInRequest, signInSaga)
     yield takeLatest(signUpRequest, signUpSaga)
     yield takeEvery(signOutRequest, signOutSaga)

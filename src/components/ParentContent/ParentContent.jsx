@@ -35,7 +35,7 @@ export default ({ client }) => {
         return () => {
             clearChildrenState()
         }
-    }, [])
+    }, [clearChildrenState, client.userHttp.id, getChildrenByParentId, token])
 
     return (
 

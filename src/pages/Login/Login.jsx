@@ -12,28 +12,24 @@ import {
 import { PageLayout } from '@/layouts'
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
-import { useIsAuth } from '@/helpers'
+import { useUserIdentity } from '@/helpers'
 import Loader from '@/components/Loader'
 import SignUpForm from '@/components/SignUpForm'
 import SignInForm from '@/components/SignInForm'
 import Flex from '@/components/Flex'
+import { HOME_PAGE_ROUTE } from '@/constants'
 
 export default () => {
-    useIsAuth()
-
-    useEffect(() => {
-        return () => {
-            clearLoginState()
-        }
-    }, [])
+    // eslint-disable-next-line no-unused-vars
+    const { userRole, isAuth } = useUserIdentity()
 
     const [signIn, setSignIn] = useState(false)
-    const { clearLoginState, signInRequest, signUpRequest } = useActions()
+    const { signInRequest, signUpRequest } = useActions()
 
-    const { loading, isAuth } = useSelector(({ login }) => getLoginState(login))
+    const { loading } = useSelector(({ login }) => getLoginState(login))
 
     if (isAuth) {
-        return <Redirect to='/' />
+        return <Redirect to={HOME_PAGE_ROUTE} />
     }
 
     return (

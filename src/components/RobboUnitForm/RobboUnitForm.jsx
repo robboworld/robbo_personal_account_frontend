@@ -1,5 +1,4 @@
 import React, { memo, useState } from 'react'
-import styled from 'styled-components'
 
 import { Input, Button } from '@/components/UI'
 import Flex from '@/components/Flex'
@@ -43,7 +42,3 @@ export default memo(({
         </Flex>
     )
 })
-
-const Text = styled.p`
-    font-size: 16px;
-`

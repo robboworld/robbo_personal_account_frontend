@@ -6,10 +6,10 @@ import { getIsAuth } from "@/reducers/login"
 
 import Flex from "@/components/Flex"
 import { StyledSpan } from "@/components/UI"
-import { useIsAuth } from "@/helpers"
+import { useUserIdentity } from "@/helpers"
 
 export default ({ robboUnit }) => {
-    useIsAuth()
+    useUserIdentity()
     const isAuth = useSelector(({ login }) => getIsAuth(login))
     if (!isAuth) {
         return <Redirect to='/login' />

@@ -29,7 +29,7 @@ export default () => {
         return () => {
             // clear robboGroup {}
         }
-    }, [])
+    }, [getUnitAdminsByRobboUnitIdRequest, robboUnit.id, token])
 
     return (
         <Flex width='100%' direction='column'>

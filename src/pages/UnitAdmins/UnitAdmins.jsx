@@ -13,23 +13,22 @@ import AddUnitAdmin from "@/components/AddUnitAdmin"
 
 import { getUnitAdminsState } from "@/reducers/unitAdmins"
 import Loader from "@/components/Loader"
-import { useIsAuth } from "@/helpers"
+import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import UnitAdminContent from "@/components/UnitAdminContent"
-import { getLoginState } from "@/reducers/login"
+import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from "@/constants"
 
 export default () => {
-
-    useIsAuth()
+    const { userRole, isAuth } = useUserIdentity()
+    if (!checkAccess(userRole, [SUPER_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
 
     const token = localStorage.getItem('token')
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
-    if (userRole !== 5) {
-        return <Redirect to='/home' />
-    }
     const { deleteUnitAdmin, getUnitAdmins } = useActions()
 
     useEffect(() => {
@@ -37,7 +36,7 @@ export default () => {
         return () => {
             // clearTeachersState
         }
-    }, [])
+    }, [getUnitAdmins, token])
 
     return (
         <PageLayout>
@@ -74,7 +73,11 @@ export default () => {
                                                 <ListItem
                                                     itemIndex={index}
                                                     key={index}
-                                                    label={`${unitAdmin.userHttp.lastname} ${unitAdmin.userHttp.firstname} ${unitAdmin.userHttp.middlename}`}
+                                                    label={`
+                                                        ${unitAdmin.userHttp.lastname}
+                                                        ${unitAdmin.userHttp.firstname}
+                                                        ${unitAdmin.userHttp.middlename}
+                                                    `}
                                                     handleDelete={unitAdminIndex => deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
                                                     render={(open, setOpen) => (
                                                         <ModalWindow
