@@ -44,7 +44,7 @@ export default () => {
         return () => {
             // clear
         }
-    }, [getRobboUnits, getRobboUnitsByUnitAdminIdRequest, token, userRole])
+    }, [])
 
     return (
         <PageLayout>

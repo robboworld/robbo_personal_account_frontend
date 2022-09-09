@@ -49,7 +49,7 @@ export default memo(() => {
         return () => {
             clearProfileState()
         }
-    }, [clearProfileState, getProfileById, token])
+    }, [])
 
     const { loading, profile } = useSelector(({ profile }) => getProfileState(profile))
     const { aboutMe } = profile

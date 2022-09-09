@@ -35,7 +35,7 @@ export default () => {
         return () => {
             // clearTeachersState
         }
-    }, [getTeachers, token])
+    }, [])
 
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
 

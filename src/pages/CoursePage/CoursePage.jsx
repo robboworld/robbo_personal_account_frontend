@@ -38,7 +38,7 @@ export default () => {
         return () => {
             clearCoursePageState()
         }
-    }, [clearCoursePageState, coursePageId, getCoursePageById, token])
+    }, [])
 
     const loading = useSelector(state => getCoursePageLoading(state.coursePage))
     const coursePage = useSelector(state => getCoursePage(state.coursePage))

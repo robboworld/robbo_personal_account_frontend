@@ -47,7 +47,7 @@ export default props => {
         return () => {
             clearProjectPageState()
         }
-    }, [clearProjectPageState, getProjectPageById, projectPageId, token])
+    }, [])
 
     const projectPage = useSelector(({ projectPage }) => getProjectPage(projectPage))
     const loading = useSelector(({ projectPage }) => getProjectPageLoading(projectPage))

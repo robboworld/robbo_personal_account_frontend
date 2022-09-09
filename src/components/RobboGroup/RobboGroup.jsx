@@ -41,7 +41,7 @@ export default ({ robboUnitId, robboGroupId }) => {
         return () => {
             // clear robboGroup {}
         }
-    }, [getRobboGroupByIdRequest, robboGroupId, robboUnitId, token])
+    }, [])
 
     return (
         <Flex width='100%'>

@@ -32,7 +32,7 @@ export default () => {
         return () => {
             clearAllCoursePagesState()
         }
-    }, [clearAllCoursePagesState, getAllCoursePages, token])
+    }, [])
 
     const coursePages = useSelector(({ myCourses }) => getCoursePages(myCourses))
     const loading = useSelector(({ myCourses }) => getCoursePagesLoading(myCourses))

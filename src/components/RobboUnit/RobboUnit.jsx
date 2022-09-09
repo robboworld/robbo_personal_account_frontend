@@ -25,7 +25,7 @@ export default ({ robboUnitId }) => {
         return () => {
             // clear robboUnit {}
         }
-    }, [getRobboUnitById, robboUnitId, token])
+    }, [])
 
     return (
         <Flex width='100%'>

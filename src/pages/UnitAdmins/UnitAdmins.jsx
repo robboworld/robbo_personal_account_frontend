@@ -36,7 +36,7 @@ export default () => {
         return () => {
             // clearTeachersState
         }
-    }, [getUnitAdmins, token])
+    }, [])
 
     return (
         <PageLayout>

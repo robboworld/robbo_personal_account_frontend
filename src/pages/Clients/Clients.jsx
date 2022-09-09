@@ -18,10 +18,11 @@ import { checkAccess, useUserIdentity } from '@/helpers'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN } from '@/constants'
 
 export default () => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole, [SUPER_ADMIN])) {
+    const { userRole, isAuth, loading } = useUserIdentity()
+    if (!loading && !checkAccess(userRole, [SUPER_ADMIN])) {
+        console.log(loading, userRole)
         return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
+    } else if (!isAuth && !loading) {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
@@ -33,7 +34,7 @@ export default () => {
         return () => {
             // clearstate
         }
-    }, [getClients, token])
+    }, [])
 
     const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
     const [openAddClients, setOpenAddClients] = useState(false)

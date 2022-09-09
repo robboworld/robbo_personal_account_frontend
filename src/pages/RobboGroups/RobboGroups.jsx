@@ -42,7 +42,7 @@ export default () => {
         return () => {
             // clear
         }
-    }, [getRobboGroupsByRobboUnitIdRequest, robboUnitId, token])
+    }, [])
 
     return (
         <PageLayout>

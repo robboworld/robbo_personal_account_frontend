@@ -47,6 +47,7 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [checkAuthSuccess](state, action) {
+        console.log(1)
         return { ...state, isAuth: true, loading: false, userRole: action.payload.role }
     },
     [checkAuthFailed](state, action) {
@@ -58,4 +59,3 @@ export default handleActions({
 }, INITIAL_STATE)
 
 export const getLoginState = state => state
-export const getIsAuth = state => state.isAuth

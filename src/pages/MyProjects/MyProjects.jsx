@@ -32,7 +32,7 @@ export default () => {
         return () => {
             clearMyProjectsState()
         }
-    }, [clearMyProjectsState, getAllProjectPages, token])
+    }, [])
 
     const projectPages = useSelector(state => getProjectPages(state.myProjects))
     const loading = useSelector(state => getMyProjectsLoading(state.myProjects))
