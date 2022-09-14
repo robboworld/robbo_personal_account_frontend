@@ -16,7 +16,7 @@ export default ({
 }) => {
     return (
 
-        <StyledModal open={open} onClose={() => setOpen(false)}>
+        <StyledModal show={open} onClose={() => setOpen(false)}>
             <ModalCard width={width} height={height}>
                 <Flex
                     direction='column' width='100%'

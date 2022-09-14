@@ -2,6 +2,7 @@ import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { ApolloProvider } from '@apollo/client'
 
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
@@ -14,16 +15,19 @@ import Application from '@/App'
 import { store } from '@/store'
 import theme from '@/theme'
 import GlobalStyles from '@/globalStyles'
-
+import { graphQLClient } from '@/graphQL'
 
 if (typeof window !== 'undefined') {
   injectStyle()
 }
 
+
+
 const container = document.getElementById('root')
 const root = createRoot(container)
 root.render(
-  <StrictMode>
+  // <StrictMode>
+  <ApolloProvider client={graphQLClient}>
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
@@ -45,6 +49,7 @@ root.render(
         pauseOnHover
       />
     </Provider>
-  </StrictMode>
+  </ApolloProvider>
+  // </StrictMode>
   ,
 )

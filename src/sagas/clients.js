@@ -21,14 +21,17 @@ import {
 }
     from '@/actions'
 import { clientsAPI } from '@/api'
+import { getAllUsers } from '@/graphQL'
 
 function* getClientsSaga(action) {
     try {
         const { token } = action.payload
-        const response = yield call(clientsAPI.getClients, token)
-        console.log(response)
+        const result = yield call(getAllUsers)
+        console.log(result)
+        // const response = yield call(clientsAPI.getClients, token)
+        // console.log(response)
 
-        yield put(getClientsSuccess(response.data))
+        yield put(getClientsSuccess(result.data.GetAllParents))
     } catch (e) {
         yield put(getClientsFailed(e.message))
     }

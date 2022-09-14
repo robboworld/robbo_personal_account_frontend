@@ -47,7 +47,6 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [checkAuthSuccess](state, action) {
-        console.log(1)
         return { ...state, isAuth: true, loading: false, userRole: action.payload.role }
     },
     [checkAuthFailed](state, action) {
