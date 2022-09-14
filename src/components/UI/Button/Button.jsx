@@ -16,6 +16,7 @@ export default function Button(
       height={height}
       padding={padding}
       margin={margin}
+      data-cy='button'
     >
       {content}
     </StyledButton>

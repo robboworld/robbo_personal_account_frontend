@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { Redirect, useParams } from 'react-router-dom'
 
 import { Title, Avatar, Description } from './components'
 
@@ -9,19 +10,27 @@ import Flex from '@/components/Flex'
 import Button from '@/components/UI/Button'
 import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
-import { useIsAuth } from '@/helpers/useIsAuth'
+import { checkAccess, useUserIdentity, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
-import { courseDescriptionParser } from '@/helpers/courseDescriptionParser'
+import {
+    HOME_PAGE_ROUTE,
+    LOGIN_PAGE_ROUTE,
+    EDX_TEST_COURSES_ADDRESS,
+    STUDENT,
+    SUPER_ADMIN,
+} from '@/constants'
 
-export default props => {
-    const EDX_TEST_COURSES_ADDRESS = 'https://edx-test.ru/courses/'
-
-    const { getCoursePageById, clearCoursePageState } = useActions()
-    useIsAuth()
+export default () => {
+    const { userRole, isAuth } = useUserIdentity()
+    if (!checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
 
     const token = localStorage.getItem('token')
-    // TO DO useParams
-    const { coursePageId } = props.match.params
+    const { coursePageId } = useParams()
+    const { getCoursePageById, clearCoursePageState } = useActions()
 
     useEffect(() => {
         getCoursePageById(token, coursePageId)

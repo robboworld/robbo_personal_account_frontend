@@ -21,5 +21,6 @@ export default
             padding={padding}
             margin={margin}
             fontSize={fontSize}
+            data-cy='input'
         />
     }

@@ -6,7 +6,7 @@ import {
     signOutSuccess, signOutFailed,
     checkAuthSuccess, checkAuthFailed,
     signInRequest, signUpRequest,
-    clearLoginState, signOutRequest,
+    clearLoginState, signOutRequest, checkAuthRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -43,7 +43,11 @@ export default handleActions({
     [signOutFailed](state) {
         return { ...state, loading: false }
     },
+    [checkAuthRequest](state) {
+        return { ...state, loading: true }
+    },
     [checkAuthSuccess](state, action) {
+        console.log(1)
         return { ...state, isAuth: true, loading: false, userRole: action.payload.role }
     },
     [checkAuthFailed](state, action) {
@@ -55,4 +59,3 @@ export default handleActions({
 }, INITIAL_STATE)
 
 export const getLoginState = state => state
-export const getIsAuth = state => state.isAuth

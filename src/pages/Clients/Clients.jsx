@@ -14,12 +14,20 @@ import { useActions } from '@/helpers/useActions'
 import Loader from '@/components/Loader'
 import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
-import { useIsAuth } from '@/helpers'
-import { getLoginState } from '@/reducers/login'
+import { checkAccess, useUserIdentity } from '@/helpers'
+import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN } from '@/constants'
 
 export default () => {
-    useIsAuth()
+    const { userRole, isAuth, loading } = useUserIdentity()
+    if (!loading && !checkAccess(userRole, [SUPER_ADMIN])) {
+        console.log(loading, userRole)
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth && !loading) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
+
     const { getClients, deleteParentRequest } = useActions()
+    const token = localStorage.getItem('token')
 
     useEffect(() => {
         getClients(token)
@@ -28,14 +36,8 @@ export default () => {
         }
     }, [])
 
-    const token = localStorage.getItem('token')
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
     const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
     const [openAddClients, setOpenAddClients] = useState(false)
-
-    if (userRole !== 5) {
-        return <Redirect to='/home' />
-    }
 
     return (
         <PageLayout>
@@ -71,7 +73,11 @@ export default () => {
                                             <ListItem
                                                 itemIndex={index}
                                                 handleDelete={parentIndex => deleteParentRequest(token, parent.userHttp.id, parentIndex)}
-                                                label={`${parent.userHttp.lastname} ${parent.userHttp.firstname} ${parent.userHttp.middlename}`}
+                                                label={`
+                                                            ${parent.userHttp.lastname}
+                                                            ${parent.userHttp.firstname}
+                                                            ${parent.userHttp.middlename}
+                                                            `}
                                                 key={index}
                                                 render={(open, setOpen) => (
                                                     <ModalWindow

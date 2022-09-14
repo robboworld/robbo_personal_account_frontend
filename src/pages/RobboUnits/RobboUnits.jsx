@@ -14,30 +14,29 @@ import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
 import Loader from "@/components/Loader"
 import ListItem from "@/components/ListItem"
-import { useIsAuth } from "@/helpers"
-import { getLoginState } from "@/reducers/login"
-
-
+import { useUserIdentity, checkAccess } from "@/helpers"
+import { HOME_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN, LOGIN_PAGE_ROUTE } from "@/constants"
 
 export default () => {
-    useIsAuth()
+    const { userRole, isAuth } = useUserIdentity()
+    if (!checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
+
     const history = useHistory()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
     const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest } = useActions()
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
-    if (userRole !== 5 || userRole !== 4) {
-        return <Redirect to='/home' />
-    }
 
     useEffect(() => {
         switch (userRole) {
-            case 4:
+            case UNIT_ADMIN:
                 getRobboUnitsByUnitAdminIdRequest(token)
                 break
-            case 5:
+            case SUPER_ADMIN:
                 getRobboUnits(token)
                 break
         }

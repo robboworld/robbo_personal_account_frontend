@@ -2,11 +2,8 @@ import React from "react"
 
 import Flex from "@/components/Flex"
 import { StyledSpan } from "@/components/UI"
-import { useIsAuth } from "@/helpers"
 
 export default ({ robboUnit }) => {
-    useIsAuth()
-    console.log(robboUnit)
     return (
         <Flex direction='column' margin='1rem'>
             <Flex>

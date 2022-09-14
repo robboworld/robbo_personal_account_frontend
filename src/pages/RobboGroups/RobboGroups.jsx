@@ -14,15 +14,19 @@ import Loader from "@/components/Loader"
 import AddStudentGroup from "@/components/AddStudentGroup"
 import RobboGroup from "@/components/RobboGroup"
 import ListItem from "@/components/ListItem"
-import { useIsAuth } from "@/helpers"
+import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
-import { getLoginState } from "@/reducers/login"
-
+import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN } from "@/constants"
 
 
 export default () => {
-    useIsAuth()
+    const { userRole, isAuth } = useUserIdentity()
+    if (!checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
     const token = localStorage.getItem('token')
     const [openAddGroup, setOpenAddGroup] = useState(false)
     const {
@@ -32,11 +36,6 @@ export default () => {
 
     const { robboUnitId } = useParams()
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
-    if (userRole !== 5 || userRole !== 4) {
-        return <Redirect to='/home' />
-    }
 
     useEffect(() => {
         getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)

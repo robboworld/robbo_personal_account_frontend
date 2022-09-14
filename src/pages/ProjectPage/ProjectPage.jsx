@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, Redirect } from 'react-router-dom'
 
 import { ProjectStage, UnsharedMessage, Title, Instructions, Notes } from './components'
 
@@ -14,10 +14,17 @@ import config from '@/config'
 import Textarea from '@/components/UI/TextArea'
 import Loader from '@/components/Loader'
 import { useActions } from '@/helpers/useActions'
-
-
+import { checkAccess, useUserIdentity } from '@/helpers'
+import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 
 export default props => {
+    const { userRole, isAuth } = useUserIdentity()
+    if (!checkAccess(userRole, [STUDENT])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
+
     const {
         getProjectPageById,
         clearProjectPageState,
@@ -42,8 +49,8 @@ export default props => {
         }
     }, [])
 
-    const projectPage = useSelector(state => getProjectPage(state.projectPage))
-    const loading = useSelector(state => getProjectPageLoading(state.projectPage))
+    const projectPage = useSelector(({ projectPage }) => getProjectPage(projectPage))
+    const loading = useSelector(({ projectPage }) => getProjectPageLoading(projectPage))
 
     const onChangeTitleHandler = title => {
         onChangeProjectPageTitle(title)

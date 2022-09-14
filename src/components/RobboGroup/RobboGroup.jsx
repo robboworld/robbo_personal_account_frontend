@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import { Redirect } from "react-router-dom"
 
 import { Title } from "./components"
 
@@ -8,20 +9,27 @@ import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
 import { getClientsState } from "@/reducers/clients"
 import { StyledSpan, Button, ModalWindow, SearchInput } from "@/components/UI"
-import { useIsAuth } from "@/helpers"
+import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupState } from "@/reducers/robboGroup"
 import Loader from "@/components/Loader"
+import { SUPER_ADMIN, UNIT_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from "@/constants"
 
 
 export default ({ robboUnitId, robboGroupId }) => {
-    useIsAuth()
+    const { userRole, isAuth } = useUserIdentity()
+
+    if (!checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
+
     const token = localStorage.getItem('token')
     const {
         searchStudent,
         addStudentToRobboGroupRequest,
         getRobboGroupByIdRequest,
-        deleteStudentFromRobboGroupRequest,
     } = useActions()
     const [openAddStudent, setOpenAddStudent] = useState(false)
     const [openCreateChild, setOpenCreateChild] = useState(false)
@@ -114,7 +122,9 @@ export default ({ robboUnitId, robboGroupId }) => {
                                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                                 key={index}
                                                 render={() => { }}
-                                                handleDelete={() => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
+                                                handleDelete={
+                                                    () => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)
+                                                }
                                             // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                                             />
                                         )
