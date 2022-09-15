@@ -14,7 +14,7 @@ import {
 
 const INITIAL_STATE = {
     projectPage: {},
-    loading: false,
+    loading: true,
 }
 
 export default handleActions({

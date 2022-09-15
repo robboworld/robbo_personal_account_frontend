@@ -14,8 +14,7 @@ import { getClientsState } from "@/reducers/clients"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 
-
-export default ({ client }) => {
+export default ({ clientId }) => {
     const {
         updateProfile,
         deleteChildRequest,
@@ -23,20 +22,27 @@ export default ({ client }) => {
         clearChildrenState,
         searchStudent,
         createRelation,
+        getClientPageById,
     } = useActions()
     const token = localStorage.getItem('token')
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
-    const { children, childrenLoading, searchResult } = useSelector(({ clients }) => getClientsState(clients))
+    useEffect(() => {
+        getClientPageById(token, clientId)
+        return () => {
+
+        }
+    }, [])
 
     useEffect(() => {
-        getChildrenByParentId(token, client.userHttp.id)
+        getChildrenByParentId(token, clientId)
         return () => {
             clearChildrenState()
         }
     }, [])
 
+    const { children, childrenLoading, searchResult, client, clientLoading } = useSelector(({ clients }) => getClientsState(clients))
     return (
 
         <Flex direction='column' width='100%'>
@@ -46,12 +52,18 @@ export default ({ client }) => {
                     width='100%'
                 >
                     <Title>Карточка родителя</Title>
-                    <ProfileCard updateHandle={updateProfile} profile={client.userHttp} />
+                    {
+                        clientLoading ? <Loader />
+                            : (
+                                <ProfileCard updateHandle={updateProfile} profile={client?.userHttp} />
+                            )
+                    }
+
                     <ModalWindow
                         open={openAddChildren} setOpen={setOpenAddChildren}
                         width='35%' height='60%'
                         content={() => (
-                            <AddChildren parentId={client.userHttp.id} />
+                            <AddChildren parentId={clientId} />
                         )}
                     />
                     <Flex width='100%' justify='flex-end'>

@@ -1,14 +1,8 @@
 import styled from 'styled-components'
+import { Modal } from '@mui/material'
 
-export const StyledModal = styled.div`
-    display: ${({ show }) => (show ? 'flex' : 'none')};
-
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    left: 0;
-    background: rgba(0,0,0,0.5);
+export const StyledModal = styled(Modal)`
+    display: flex;
     align-items: center;
     justify-content: center;
 `

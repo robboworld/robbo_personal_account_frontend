@@ -18,12 +18,7 @@ import { useUserIdentity, checkAccess } from "@/helpers"
 import { HOME_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN, LOGIN_PAGE_ROUTE } from "@/constants"
 
 export default () => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
-    }
+    const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     const history = useHistory()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
@@ -32,19 +27,26 @@ export default () => {
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
-        switch (userRole) {
-            case UNIT_ADMIN:
-                getRobboUnitsByUnitAdminIdRequest(token)
-                break
-            case SUPER_ADMIN:
-                getRobboUnits(token)
-                break
-        }
+        if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
+            switch (userRole) {
+                case UNIT_ADMIN:
+                    getRobboUnitsByUnitAdminIdRequest(token)
+                    break
+                case SUPER_ADMIN:
+                    getRobboUnits(token)
+                    break
+            }
 
         return () => {
             // clear
         }
-    }, [])
+    }, [loginLoading])
+
+    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth && !loginLoading) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
 
     return (
         <PageLayout>

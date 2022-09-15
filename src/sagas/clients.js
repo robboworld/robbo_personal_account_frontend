@@ -18,15 +18,18 @@ import {
     createRelationSuccess,
     createRelationFailed,
     createRelation,
+    getClientPageById,
+    getClientPageByIdSuccess,
+    getClientPageByIdFailed,
 }
     from '@/actions'
 import { clientsAPI } from '@/api'
-import { getAllUsers } from '@/graphQL'
+import { usersGraphQL } from '@/graphQL'
 
 function* getClientsSaga(action) {
     try {
         const { token } = action.payload
-        const result = yield call(getAllUsers)
+        const result = yield call(usersGraphQL.getAllParents)
         console.log(result)
         // const response = yield call(clientsAPI.getClients, token)
         // console.log(response)
@@ -34,6 +37,21 @@ function* getClientsSaga(action) {
         yield put(getClientsSuccess(result.data.GetAllParents))
     } catch (e) {
         yield put(getClientsFailed(e.message))
+    }
+}
+
+function* getClientPageByIdSaga(action) {
+    try {
+        const { token, id } = action.payload
+        console.log(id)
+        const result = yield call(usersGraphQL.getParentById, { parentId: id })
+        console.log(result)
+        // const response = yield call(clientsAPI.getClients, token)
+        // console.log(response)
+
+        yield put(getClientPageByIdSuccess(result.data.GetParentById))
+    } catch (e) {
+        yield put(getClientPageByIdFailed(e.message))
     }
 }
 
@@ -130,4 +148,5 @@ export function* clientsSaga() {
     yield takeLatest(getChildrenByParentId, getChildrenByParentIdSaga)
     yield takeLatest(searchStudent, searchStudentSaga)
     yield takeLatest(createRelation, createRelationSaga)
+    yield takeLatest(getClientPageById, getClientPageByIdSaga)
 }

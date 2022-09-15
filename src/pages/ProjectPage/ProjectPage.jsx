@@ -18,12 +18,7 @@ import { checkAccess, useUserIdentity } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 
 export default props => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole, [STUDENT])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
-    }
+    const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     const {
         getProjectPageById,
@@ -43,11 +38,12 @@ export default props => {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        getProjectPageById(token, projectPageId)
+        if (!loginLoading && checkAccess(userRole, [STUDENT]))
+            getProjectPageById(token, projectPageId)
         return () => {
             clearProjectPageState()
         }
-    }, [])
+    }, [loginLoading])
 
     const projectPage = useSelector(({ projectPage }) => getProjectPage(projectPage))
     const loading = useSelector(({ projectPage }) => getProjectPageLoading(projectPage))
@@ -90,11 +86,17 @@ export default props => {
         window.location.replace(config.scratchURL + `?#${projectPageId}`)
     }
 
+    if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth && !loginLoading) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
+
     return (
         <PageLayout>
             <Card>
                 <SideBar />
-                {loading
+                {loading || loginLoading
                     ? <Loader />
                     : (
                         <Flex direction='column' align='flex-start'

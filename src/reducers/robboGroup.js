@@ -13,7 +13,7 @@ import {
 
 const INITIAL_STATE = {
     robboGroup: {},
-    loading: false,
+    loading: true,
 }
 
 export default handleActions({

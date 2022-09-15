@@ -21,14 +21,19 @@ import {
     createRelation,
     createRelationSuccess,
     createRelationFailed,
+    getClientPageById,
+    getClientPageByIdSuccess,
+    getClientPageByIdFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    clientsLoading: false,
-    childrenLoading: false,
+    clientsLoading: true,
+    childrenLoading: true,
     parents: [],
     children: [],
     searchResult: [],
+    client: {},
+    clientLoading: true,
 }
 
 export default handleActions({
@@ -126,6 +131,16 @@ export default handleActions({
     },
     [createRelationFailed](state, action) {
         return { ...state, loading: false }
+    },
+    [getClientPageById](state) {
+        return { ...state, clientLoading: true }
+    },
+    [getClientPageByIdSuccess](state, action) {
+        console.log(action)
+        return { ...state, client: action.payload.client, clientLoading: false }
+    },
+    [getClientPageByIdFailed](state, action) {
+        return { ...state, clientLoading: false }
     },
 }, INITIAL_STATE)
 

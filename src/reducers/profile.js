@@ -8,7 +8,7 @@ import {
 
 const INITIAL_STATE = {
     profile: {},
-    loading: false,
+    loading: true,
 }
 
 export default handleActions({

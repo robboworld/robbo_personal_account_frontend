@@ -18,46 +18,55 @@ import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
 import { checkAccess, useUserIdentity } from '@/helpers'
 
 export default () => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole, [STUDENT])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
-    }
+    const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     const { getAllProjectPages, clearMyProjectsState } = useActions()
     const token = localStorage.getItem('token')
+
     useEffect(() => {
-        getAllProjectPages(token)
+        if (!loginLoading && checkAccess(userRole, [STUDENT]))
+            getAllProjectPages(token)
         return () => {
             clearMyProjectsState()
         }
-    }, [])
+    }, [loginLoading])
 
     const projectPages = useSelector(state => getProjectPages(state.myProjects))
     const loading = useSelector(state => getMyProjectsLoading(state.myProjects))
+
+    if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth && !loginLoading) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
 
     return (
         <PageLayout>
             <Card>
                 <SideBar />
-                <Flex direction='column' align='center' >
-                    <WelcomeText>Мои проекты</WelcomeText>
-                    <ControlPanel />
+                {
+                    loginLoading ? <Loader />
+                        : (
+                            <Flex direction='column' align='center' >
+                                <WelcomeText>Мои проекты</WelcomeText>
+                                <ControlPanel />
 
-                    {loading
-                        ? <Loader />
-                        : projectPages?.map((projectPage, index) => {
-                            return (
-                                <ProjectPageItem
-                                    projectPage={projectPage}
-                                    projectPageIndex={index}
-                                    key={index}
-                                />
-                            )
-                        })
-                    }
-                </Flex>
+                                {loading
+                                    ? <Loader />
+                                    : projectPages?.map((projectPage, index) => {
+                                        return (
+                                            <ProjectPageItem
+                                                projectPage={projectPage}
+                                                projectPageIndex={index}
+                                                key={index}
+                                            />
+                                        )
+                                    })
+                                }
+                            </Flex>
+                        )
+                }
+
             </Card>
         </PageLayout>
     )

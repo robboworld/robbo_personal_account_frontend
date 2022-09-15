@@ -12,7 +12,7 @@ import {
 
 const INITIAL_STATE = {
     newProjectId: '',
-    loading: false,
+    loading: true,
     projectPages: [],
 }
 

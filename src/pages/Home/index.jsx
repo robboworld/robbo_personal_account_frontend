@@ -10,10 +10,9 @@ import { useUserIdentity } from '@/helpers'
 import { LOGIN_PAGE_ROUTE } from '@/constants'
 
 export default memo(() => {
-  // eslint-disable-next-line no-unused-vars
-  const { userRole, isAuth } = useUserIdentity()
+  const { isAuth, loginLoading } = useUserIdentity()
 
-  if (!isAuth) {
+  if (!isAuth && !loginLoading) {
     return <Redirect to={LOGIN_PAGE_ROUTE} />
   }
 
