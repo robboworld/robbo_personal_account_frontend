@@ -24,12 +24,13 @@ import {
 }
     from '@/actions'
 import { clientsAPI } from '@/api'
-import { usersGraphQL } from '@/graphQL'
+import { usersQueryGraphQL } from '@/graphQL'
+import { usersMutationGraphQL } from '@/graphQL/mutation'
 
 function* getClientsSaga(action) {
     try {
         const { token } = action.payload
-        const result = yield call(usersGraphQL.getAllParents)
+        const result = yield call(usersQueryGraphQL.getAllParents)
         console.log(result)
         // const response = yield call(clientsAPI.getClients, token)
         // console.log(response)
@@ -44,7 +45,7 @@ function* getClientPageByIdSaga(action) {
     try {
         const { token, id } = action.payload
         console.log(id)
-        const result = yield call(usersGraphQL.getParentById, { parentId: id })
+        const result = yield call(usersQueryGraphQL.getParentById, { parentId: id })
         console.log(result)
         // const response = yield call(clientsAPI.getClients, token)
         // console.log(response)
@@ -82,10 +83,13 @@ function* deleteParentSaga(action) {
 function* createChildrenSaga(action) {
     try {
         const { token, child, parentId } = action.payload
-        const response = yield call(clientsAPI.createChildren, token, child, parentId)
-        console.log(response)
+        // const response = yield call(clientsAPI.createChildren, token, child, parentId)
+        // console.log(response)
+        const { email, password, nickname, firstname, lastname, middlename } = child
+        const input = { email, password, nickname, firstname, lastname, middlename, parentId }
+        const result = yield call(usersMutationGraphQL.createStudent, { input })
 
-        yield put(createChildreSuccess(response.data, child))
+        yield put(createChildreSuccess(result.data.CreateStudent, child))
     } catch (e) {
         yield put(createChildrenFailed(e))
     }
@@ -106,10 +110,11 @@ function* deleteChildSaga(action) {
 function* getChildrenByParentIdSaga(action) {
     try {
         const { token, parentId } = action.payload
-        const response = yield call(clientsAPI.getCildrenByParentId, token, parentId)
-        console.log(response)
+        // const response = yield call(clientsAPI.getCildrenByParentId, token, parentId)
+        const result = yield call(usersQueryGraphQL.getStudentsByParentId, { parentId: parentId })
+        console.log(result)
 
-        yield put(getChildrenByParentIdSuccess(response.data))
+        yield put(getChildrenByParentIdSuccess(result.data.GetStudentsByParentId))
     } catch (e) {
         yield put(getChildrenByParentIdFailed(e.message))
     }
