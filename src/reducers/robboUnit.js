@@ -9,7 +9,7 @@ import {
 
 const INITIAL_STATE = {
     robboUnit: {},
-    loading: false,
+    loading: true,
 }
 
 export default handleActions({

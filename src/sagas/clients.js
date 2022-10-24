@@ -18,19 +18,41 @@ import {
     createRelationSuccess,
     createRelationFailed,
     createRelation,
+    getClientPageById,
+    getClientPageByIdSuccess,
+    getClientPageByIdFailed,
 }
     from '@/actions'
 import { clientsAPI } from '@/api'
+import { usersQueryGraphQL } from '@/graphQL'
+import { usersMutationGraphQL } from '@/graphQL/mutation'
 
 function* getClientsSaga(action) {
     try {
         const { token } = action.payload
-        const response = yield call(clientsAPI.getClients, token)
-        console.log(response)
+        const result = yield call(usersQueryGraphQL.getAllParents)
+        console.log(result)
+        // const response = yield call(clientsAPI.getClients, token)
+        // console.log(response)
 
-        yield put(getClientsSuccess(response.data))
+        yield put(getClientsSuccess(result.data.GetAllParents))
     } catch (e) {
         yield put(getClientsFailed(e.message))
+    }
+}
+
+function* getClientPageByIdSaga(action) {
+    try {
+        const { token, id } = action.payload
+        console.log(id)
+        const result = yield call(usersQueryGraphQL.getParentById, { parentId: id })
+        console.log(result)
+        // const response = yield call(clientsAPI.getClients, token)
+        // console.log(response)
+
+        yield put(getClientPageByIdSuccess(result.data.GetParentById))
+    } catch (e) {
+        yield put(getClientPageByIdFailed(e.message))
     }
 }
 
@@ -61,10 +83,13 @@ function* deleteParentSaga(action) {
 function* createChildrenSaga(action) {
     try {
         const { token, child, parentId } = action.payload
-        const response = yield call(clientsAPI.createChildren, token, child, parentId)
-        console.log(response)
+        // const response = yield call(clientsAPI.createChildren, token, child, parentId)
+        // console.log(response)
+        const { email, password, nickname, firstname, lastname, middlename } = child
+        const input = { email, password, nickname, firstname, lastname, middlename, parentId }
+        const result = yield call(usersMutationGraphQL.createStudent, { input })
 
-        yield put(createChildreSuccess(response.data, child))
+        yield put(createChildreSuccess(result.data.CreateStudent, child))
     } catch (e) {
         yield put(createChildrenFailed(e))
     }
@@ -85,10 +110,11 @@ function* deleteChildSaga(action) {
 function* getChildrenByParentIdSaga(action) {
     try {
         const { token, parentId } = action.payload
-        const response = yield call(clientsAPI.getCildrenByParentId, token, parentId)
-        console.log(response)
+        // const response = yield call(clientsAPI.getCildrenByParentId, token, parentId)
+        const result = yield call(usersQueryGraphQL.getStudentsByParentId, { parentId: parentId })
+        console.log(result)
 
-        yield put(getChildrenByParentIdSuccess(response.data))
+        yield put(getChildrenByParentIdSuccess(result.data.GetStudentsByParentId))
     } catch (e) {
         yield put(getChildrenByParentIdFailed(e.message))
     }
@@ -127,4 +153,5 @@ export function* clientsSaga() {
     yield takeLatest(getChildrenByParentId, getChildrenByParentIdSaga)
     yield takeLatest(searchStudent, searchStudentSaga)
     yield takeLatest(createRelation, createRelationSaga)
+    yield takeLatest(getClientPageById, getClientPageByIdSaga)
 }

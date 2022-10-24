@@ -9,8 +9,8 @@ export function useUserIdentity() {
     const { checkAuthRequest } = useActions()
     useEffect(() => {
         const accessToken = localStorage.getItem('token')
-        if (accessToken) checkAuthRequest(accessToken)
+        // if (accessToken)
+        checkAuthRequest(accessToken)
     }, [])
-    console.log(2)
     return useSelector(({ login }) => getLoginState(login))
 }

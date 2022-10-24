@@ -19,12 +19,7 @@ import UnitAdminContent from "@/components/UnitAdminContent"
 import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from "@/constants"
 
 export default () => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole, [SUPER_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
-    }
+    const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     const token = localStorage.getItem('token')
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
@@ -32,11 +27,18 @@ export default () => {
     const { deleteUnitAdmin, getUnitAdmins } = useActions()
 
     useEffect(() => {
-        getUnitAdmins(token)
+        if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
+            getUnitAdmins(token)
         return () => {
             // clearTeachersState
         }
-    }, [])
+    }, [loginLoading])
+
+    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth && !loginLoading) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
 
     return (
         <PageLayout>

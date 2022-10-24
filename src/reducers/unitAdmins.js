@@ -18,7 +18,7 @@ import {
 
 const INITIAL_STATE = {
     unitAdmins: [],
-    loading: false,
+    loading: true,
     searchResult: [],
 }
 

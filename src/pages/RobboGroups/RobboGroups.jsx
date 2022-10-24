@@ -21,12 +21,8 @@ import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN } from "@/co
 
 
 export default () => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
-    }
+    const { userRole, isAuth, loginLoading } = useUserIdentity()
+
     const token = localStorage.getItem('token')
     const [openAddGroup, setOpenAddGroup] = useState(false)
     const {
@@ -35,75 +31,91 @@ export default () => {
     } = useActions()
 
     const { robboUnitId } = useParams()
-    const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
 
     useEffect(() => {
-        getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
+        if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
+            getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
         return () => {
             // clear
         }
-    }, [])
+    }, [loginLoading])
+
+    const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
+
+    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth && !loginLoading) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
 
     return (
         <PageLayout>
             <Card>
                 <SideBar />
-                <WelcomeText>Группы</WelcomeText>
-                <ModalWindow
-                    open={openAddGroup} setOpen={setOpenAddGroup}
-                    width='35%' height='60%'
-                    content={() => (
-                        <AddStudentGroup robboUnitId={robboUnitId} />
-                    )}
-                />
-                <Flex direction='row' justify='flex-end'
-                    align='flex-start'>
-                    <Button
-                        background='green'
-                        content='Создать группу'
-                        padding='0.5rem'
-                        handleSubmit={() => setOpenAddGroup(true)}
-                    />
-                </Flex>
                 {
-                    loading ? <Loader />
+                    loginLoading ? <Loader />
                         : (
-                            <Flex
-                                widht='100%' direction='column'
-                                justify=' center'
-                            >
-                                <Flex direction='column'>
-                                    {
-                                        robboGroups?.map((robboGroup, index) => {
-                                            return (
-                                                <ListItem
-                                                    itemIndex={index}
-                                                    key={index}
-                                                    label={robboGroup.name}
-                                                    render={(open, setOpen) => (
-                                                        <ModalWindow
-                                                            open={open} setOpen={setOpen}
-                                                            width='65%' height='80%'
-                                                            content={() => (
-                                                                <RobboGroup
-                                                                    robboUnitId={robboUnitId}
-                                                                    robboGroupId={robboGroup.id}
-                                                                />
-                                                            )}
-                                                        />
-                                                    )}
-                                                    // handleClick={() => history.push(`/robboUnits/${robboUnit.id}/groups/${robboGroup.id}`)}
-                                                    handleDelete={robboGroupIndex =>
-                                                        deleteRobboGroupRequest(token, robboUnitId, robboGroup.id, robboGroupIndex)
-                                                    }
-                                                />
-                                            )
-                                        })
-                                    }
+                            <div>
+                                <WelcomeText>Группы</WelcomeText>
+                                <ModalWindow
+                                    open={openAddGroup} setOpen={setOpenAddGroup}
+                                    width='35%' height='60%'
+                                    content={() => (
+                                        <AddStudentGroup robboUnitId={robboUnitId} />
+                                    )}
+                                />
+                                <Flex direction='row' justify='flex-end'
+                                    align='flex-start'>
+                                    <Button
+                                        background='green'
+                                        content='Создать группу'
+                                        padding='0.5rem'
+                                        handleSubmit={() => setOpenAddGroup(true)}
+                                    />
                                 </Flex>
-                            </Flex>
+                                {
+                                    loading ? <Loader />
+                                        : (
+                                            <Flex
+                                                widht='100%' direction='column'
+                                                justify=' center'
+                                            >
+                                                <Flex direction='column'>
+                                                    {
+                                                        robboGroups?.map((robboGroup, index) => {
+                                                            return (
+                                                                <ListItem
+                                                                    itemIndex={index}
+                                                                    key={index}
+                                                                    label={robboGroup.name}
+                                                                    render={(open, setOpen) => (
+                                                                        <ModalWindow
+                                                                            open={open} setOpen={setOpen}
+                                                                            width='65%' height='80%'
+                                                                            content={() => (
+                                                                                <RobboGroup
+                                                                                    robboUnitId={robboUnitId}
+                                                                                    robboGroupId={robboGroup.id}
+                                                                                />
+                                                                            )}
+                                                                        />
+                                                                    )}
+                                                                    // handleClick={() => history.push(`/robboUnits/${robboUnit.id}/groups/${robboGroup.id}`)}
+                                                                    handleDelete={robboGroupIndex =>
+                                                                        deleteRobboGroupRequest(token, robboUnitId, robboGroup.id, robboGroupIndex)
+                                                                    }
+                                                                />
+                                                            )
+                                                        })
+                                                    }
+                                                </Flex>
+                                            </Flex>
+                                        )
+                                }
+                            </div>
                         )
                 }
+
             </Card>
         </PageLayout>
     )

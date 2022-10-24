@@ -4,7 +4,7 @@ import { clearTeachersState, createTeacher, createTeacherFailed, createTeacherSu
 
 const INITIAL_STATE = {
     teachers: [],
-    loading: false,
+    loading: true,
 }
 
 export default handleActions({

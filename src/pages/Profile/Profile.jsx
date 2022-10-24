@@ -17,8 +17,8 @@ import ProfileCard from '@/components/ProfileCard/ProfileCard'
 import { FREE_LISTENER, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN } from '@/constants'
 
 export default memo(() => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole,
+    const { userRole, isAuth, loginLoading } = useUserIdentity()
+    if (!loginLoading && !checkAccess(userRole,
         [
             STUDENT,
             PARENT,
@@ -28,7 +28,7 @@ export default memo(() => {
             FREE_LISTENER,
         ])) {
         return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
+    } else if (!isAuth && !loginLoading) {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
@@ -45,11 +45,19 @@ export default memo(() => {
     const [aboutMeEditMode, setAbouMeEditMode] = useState(false)
 
     useEffect(() => {
-        getProfileById(token)
+        if (!loginLoading && checkAccess(userRole, [
+            STUDENT,
+            PARENT,
+            TEACHER,
+            UNIT_ADMIN,
+            SUPER_ADMIN,
+            FREE_LISTENER,
+        ]))
+            getProfileById(token)
         return () => {
             clearProfileState()
         }
-    }, [])
+    }, [loginLoading])
 
     const { loading, profile } = useSelector(({ profile }) => getProfileState(profile))
     const { aboutMe } = profile
@@ -60,7 +68,7 @@ export default memo(() => {
                 <Headind>Profile</Headind>
                 <SideBar />
                 {
-                    loading
+                    loading || loginLoading
                         ? <Loader />
                         : (
                             <Flex direction='column'>

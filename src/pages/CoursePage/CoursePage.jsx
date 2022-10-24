@@ -21,24 +21,19 @@ import {
 } from '@/constants'
 
 export default () => {
-    const { userRole, isAuth } = useUserIdentity()
-    if (!checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
-    }
+    const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     const token = localStorage.getItem('token')
     const { coursePageId } = useParams()
     const { getCoursePageById, clearCoursePageState } = useActions()
 
     useEffect(() => {
-        getCoursePageById(token, coursePageId)
-
+        if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
+            getCoursePageById(token, coursePageId)
         return () => {
             clearCoursePageState()
         }
-    }, [])
+    }, [loginLoading])
 
     const loading = useSelector(state => getCoursePageLoading(state.coursePage))
     const coursePage = useSelector(state => getCoursePage(state.coursePage))
@@ -47,55 +42,61 @@ export default () => {
         window.open(EDX_TEST_COURSES_ADDRESS + coursePage.course_id + '/about')
     }
 
+    if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
+        return <Redirect to={HOME_PAGE_ROUTE} />
+    } else if (!isAuth && !loginLoading) {
+        return <Redirect to={LOGIN_PAGE_ROUTE} />
+    }
+
+
     return (
         <PageLayout>
             <Card>
+                <SideBar />
                 {
-                    loading
+                    // TODO check correct work
+                    loading || loginLoading
                         ? <Loader />
                         : (
-                            <div>
-                                <SideBar />
-                                <Flex padding='2rem' direction='column'>
-                                    <Title>{coursePage.name}</Title>
-                                    <Flex direction='row'>
-                                        <Flex direction='column' margin='0 1rem 0 0'
-                                            style={{ maxWidth: '250px' }}>
-                                            <Avatar src={coursePage.media.image.large} />
-                                            <Button
-                                                content='Открыть курс'
-                                                background='darkgreen'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                                handleSubmit={openCourseButtonHandler}
-                                            />
-                                            <Button
-                                                content='Прогресс'
-                                                background='darkgrey'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                            />
-                                            <Button
-                                                content='Внешние источники'
-                                                background='darkgrey'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                            />
-                                            <Button
-                                                content='Связь с преподавателем'
-                                                background='darkgrey'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                            />
-                                        </Flex>
+                            <Flex padding='2rem' direction='column'>
+                                <Title>{coursePage.name}</Title>
+                                <Flex direction='row'>
+                                    <Flex direction='column' margin='0 1rem 0 0'
+                                        style={{ maxWidth: '250px' }}>
+                                        <Avatar src={coursePage.media.image.large} />
+                                        <Button
+                                            content='Открыть курс'
+                                            background='darkgreen'
+                                            margin='1rem 0 0 0' padding='0.5rem'
+                                            handleSubmit={openCourseButtonHandler}
+                                        />
+                                        <Button
+                                            content='Прогресс'
+                                            background='darkgrey'
+                                            margin='1rem 0 0 0' padding='0.5rem'
+                                        />
+                                        <Button
+                                            content='Внешние источники'
+                                            background='darkgrey'
+                                            margin='1rem 0 0 0' padding='0.5rem'
+                                        />
+                                        <Button
+                                            content='Связь с преподавателем'
+                                            background='darkgrey'
+                                            margin='1rem 0 0 0' padding='0.5rem'
+                                        />
+                                    </Flex>
+                                    <Flex direction='column'>
                                         <Flex direction='column'>
-                                            <Flex direction='column'>
-                                                <h4>Описание курса</h4>
-                                                <Description>
-                                                    {courseDescriptionParser(coursePage)}
-                                                </Description>
+                                            <h4>Описание курса</h4>
+                                            <Description>
+                                                {courseDescriptionParser(coursePage)}
+                                            </Description>
 
-                                            </Flex>
                                         </Flex>
                                     </Flex>
                                 </Flex>
-                            </div>
+                            </Flex>
                         )
 
                 }

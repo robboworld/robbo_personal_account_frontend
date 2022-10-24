@@ -14,7 +14,7 @@ import {
 
 const INITIAL_STATE = {
     robboUnits: [],
-    loading: false,
+    loading: true,
 }
 
 export default handleActions({
