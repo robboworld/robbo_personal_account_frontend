@@ -1,4 +1,5 @@
 import React from 'react'
+import Draggable from 'react-draggable'
 
 import {
     StyledModal, ModalCard,
@@ -15,27 +16,30 @@ export default ({
     setOpen,
 }) => {
     return (
+        <Draggable>
+            <StyledModal
+                width={width} height={height}
+                open={open} onClose={() => setOpen(false)}
+                hideBackdrop
+            // BackdropProps={{ style: { backgroundColor: "transparent" } }}
+            >
+                <ModalCard width={width} height={height}>
+                    <Flex
+                        direction='column' width='100%'
+                        justify='center' align='flex-end'
+                        height='15%'
+                    >
+                        <CloseModalButton onClick={() => setOpen(false)}>×</CloseModalButton>
+                    </Flex>
 
-        <StyledModal
-            open={open} onClose={() => setOpen(false)}
-        >
-            <ModalCard width={width} height={height}>
-                <Flex
-                    direction='column' width='100%'
-                    justify='center' align='flex-end'
-                    height='15%'
-                >
-                    <CloseModalButton onClick={() => setOpen(false)}>×</CloseModalButton>
-                </Flex>
+                    <Flex height='70%' width='100%'>
+                        {
+                            content()
+                        }
+                    </Flex>
+                </ModalCard>
 
-                <Flex height='70%' width='100%'>
-                    {
-                        content()
-                    }
-                </Flex>
-            </ModalCard>
-
-        </StyledModal>
-
+            </StyledModal>
+        </Draggable>
     )
 }

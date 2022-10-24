@@ -5,14 +5,16 @@ export const StyledModal = styled(Modal)`
     display: flex;
     align-items: center;
     justify-content: center;
+    width: ${({ width }) => width || 'auto'};
+    height: ${({ height }) => height || 'auto'};
 `
 export const ModalCard = styled.div`
     display: flex;
     flex-direction: column;
     width: ${({ width }) => width || 'auto'};
     height: ${({ height }) => height || 'auto'};
-    background-color: white;
-    border-radius: 32px;
+    background-color: #F0FFFF;
+    border-radius: 0.5rem;
     box-sizing: border-box;
     overflow: auto;
 `
