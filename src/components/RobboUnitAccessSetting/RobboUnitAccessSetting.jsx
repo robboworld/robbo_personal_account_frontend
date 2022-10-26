@@ -57,6 +57,7 @@ export default () => {
                     >
                         <SearchInput
                             searchHandle={input => { searchUnitAdminsByEmailRequest(token, input) }}
+                            placeholder='Введите Email'
                         />
                         <Flex direction='column'>
                             {loading ? <Loader />

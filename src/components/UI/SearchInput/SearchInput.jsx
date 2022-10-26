@@ -6,6 +6,7 @@ import { Input, Button } from "@/components/UI"
 
 export default ({
     searchHandle,
+    placeholder,
 }) => {
 
     const [searchInput, setSearchInput] = useState('')
@@ -13,7 +14,7 @@ export default ({
     return (
         <Flex width='100%' justify='center'>
             <Input
-                placeholder='Введите Email'
+                placeholder={placeholder}
                 value={searchInput}
                 handleInput={input => setSearchInput(input)}
             />

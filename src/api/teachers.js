@@ -39,4 +39,34 @@ export const teachersAPI = {
                 },
             })
     },
+
+    setTeacherForRobboGroup(token, teacherId, robboGroupId) {
+        return instance.post(`/robboUnits/${0}/robboGroup/setTeacher`,
+            {
+                teacherId,
+                robboGroupId,
+            },
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            },
+        )
+    },
+
+    deleteTeacherForRobboGroup(token, teacherId, robboGroupId) {
+        return instance.delete(`/robboUnits/${0}/robboGroup/deleteTeacher`,
+            {
+                teacherId,
+                robboGroupId,
+            },
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            },
+        )
+    },
 }

@@ -59,6 +59,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                                     >
                                         <SearchInput
                                             searchHandle={input => { searchStudent(token, input) }}
+                                            placeholder='Введите Email'
                                         />
                                         <Flex direction='column' padding='0.5rem'>
                                             {

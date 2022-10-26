@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify'
 import { injectStyle } from 'react-toastify/dist/inject-style'
 
 import ErrorBoundary from '@/pages/ErrorBoundary'
-import Application from '@/App'
+import Application from '@/app'
 import { store } from '@/store'
 import theme from '@/theme'
 import GlobalStyles from '@/globalStyles'

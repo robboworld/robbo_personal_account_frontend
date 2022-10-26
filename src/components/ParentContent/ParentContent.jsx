@@ -90,6 +90,7 @@ export default ({ clientId }) => {
                         >
                             <SearchInput
                                 searchHandle={input => { searchStudent(token, input) }}
+                                placeholder='Введите Email'
                             />
                             <Flex direction='column'>
                                 {

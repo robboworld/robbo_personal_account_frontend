@@ -9,10 +9,14 @@ import {
     deleteRobboGroupRequest,
     deleteRobboGroupSuccess,
     deleteRobboGroupFailed,
+    searchRobboGroupsByTitleRequest,
+    searchRobboGroupsByTitleFailed,
+    searchRobboGroupsByTitleSuccess,
 } from '@/actions'
 
 const INITIAL_STATE = {
     robboGroups: [],
+    searchResult: [],
     loading: true,
 }
 
@@ -57,6 +61,15 @@ export default handleActions({
         return { ...state, loading: false, robboGroups: newRobboGroups }
     },
     [deleteRobboGroupFailed](state, action) {
+        return { ...state, loading: false }
+    },
+    [searchRobboGroupsByTitleRequest](state) {
+        return { ...state, loading: true }
+    },
+    [searchRobboGroupsByTitleSuccess](state, action) {
+        return { ...state, loading: false, searchResult: action.payload.response }
+    },
+    [searchRobboGroupsByTitleFailed](state) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)
