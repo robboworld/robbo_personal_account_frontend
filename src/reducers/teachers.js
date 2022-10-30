@@ -1,9 +1,10 @@
 import { handleActions } from 'redux-actions'
 
-import { clearTeachersState, createTeacher, createTeacherFailed, createTeacherSuccess, deleteTeacher, deleteTeacherFailed, deleteTeacherForRobboGroupFailed, deleteTeacherForRobboGroupRequest, deleteTeacherForRobboGroupSuccess, deleteTeacherSuccess, getTeachers, getTeachersFailed, getTeachersSuccess, setTeacherForRobboGroupFailed, setTeacherForRobboGroupRequest, setTeacherForRobboGroupSuccess } from "@/actions"
+import { clearTeachersState, createTeacher, createTeacherFailed, createTeacherSuccess, deleteTeacher, deleteTeacherFailed, deleteTeacherForRobboGroupFailed, deleteTeacherForRobboGroupRequest, deleteTeacherForRobboGroupSuccess, deleteTeacherSuccess, getRobboGroupsByTeacherId, getRobboGroupsByTeacherIdFailed, getRobboGroupsByTeacherIdSuccess, getTeachers, getTeachersFailed, getTeachersSuccess, setTeacherForRobboGroupFailed, setTeacherForRobboGroupRequest, setTeacherForRobboGroupSuccess } from "@/actions"
 
 const INITIAL_STATE = {
     teachers: [],
+    teacherRobboGroups: [],
     loading: true,
 }
 
@@ -77,6 +78,15 @@ export default handleActions({
         return {
             ...state, loading: false,
         }
+    },
+    [getRobboGroupsByTeacherId](state) {
+        return { ...state, loading: true }
+    },
+    [getRobboGroupsByTeacherIdSuccess](state, action) {
+        return { ...state, loading: false, teacherRobboGroups: action.payload.response }
+    },
+    [getRobboGroupsByTeacherIdFailed](state) {
+        return { ...state, loading: false }
     },
 }, INITIAL_STATE)
 

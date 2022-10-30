@@ -1,15 +1,23 @@
 import React, { useEffect } from "react"
 
-import { Text } from './components'
+import { useSelector } from "react-redux"
+
+import Loader from "../Loader"
+
+import ListItem from "../ListItem"
+
+import { ListRobboGroups, Text } from './components'
 
 import Flex from '@/components/Flex'
 import { useActions } from "@/helpers"
 
+import { getTeachersState } from "@/reducers/teachers"
+
 export default ({ teacherId }) => {
     const { getRobboGroupsByTeacherId } = useActions()
-    const token = localStorage.getItem('token')
+    const { teacherRobboGroups, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
     useEffect(() => {
-        // getRobboGroupsByTeacherId(token)
+        getRobboGroupsByTeacherId()
     }, [])
 
 
@@ -19,6 +27,23 @@ export default ({ teacherId }) => {
             align='center'
         >
             <Text>Назначенные группы</Text>
+            <ListRobboGroups>
+                {
+                    loading ? <Loader />
+                        : (
+                            teacherRobboGroups?.map((robboGroup, index) => {
+                                return (
+                                    <ListItem itemIndex={index}
+                                        label={robboGroup.name}
+                                        key={index}
+                                        render={() => { }}
+                                    />
+                                )
+                            })
+                        )
+
+                }
+            </ListRobboGroups>
         </Flex>
     )
 }

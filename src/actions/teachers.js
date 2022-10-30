@@ -75,11 +75,7 @@ export const createTeacherFailed = createAction(CREATE_TEACHER_FAILED, err => {
 
 export const clearTeachersState = createAction(CLEAR_TEACHERS_STATE)
 
-export const getRobboGroupsByTeacherId = createAction(GET_ROBBO_GROUPS_BY_TEACHER_ID, token => {
-    return {
-        token,
-    }
-})
+export const getRobboGroupsByTeacherId = createAction(GET_ROBBO_GROUPS_BY_TEACHER_ID)
 
 export const getRobboGroupsByTeacherIdSuccess = createAction(GET_ROBBO_GROUPS_BY_TEACHER_ID_SUCCESS, response => {
     return {
