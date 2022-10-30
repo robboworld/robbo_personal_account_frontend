@@ -31,6 +31,23 @@ export const robboGroupsQueryGraphQL = {
                         }
                     }
                 `,
+                variables: id,
+            },
+        )
+    },
+
+    getRobboGroupsByTeacherId(teacherId) {
+        return graphQLClient.query(
+            {
+                query: gql`
+                    query GetRobboGroupsByTeacherId($teacherId: String!) {
+                        GetRobboGroupsByTeacherId(teacherId: $teacherId) {
+                            id
+                            name
+                        }
+                    }
+                `,
+                variables: teacherId,
             },
         )
     },
