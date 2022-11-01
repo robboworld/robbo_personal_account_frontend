@@ -103,7 +103,7 @@ export default ({ clientId }) => {
                                                     key={index}
                                                     render={() => { }}
                                                     handleClick={() => createRelation(token, client.userHttp.id, userHttp.id)}
-                                                // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                                    handleDelete={false}
                                                 />
                                             )
                                         })

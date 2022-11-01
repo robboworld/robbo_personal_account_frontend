@@ -72,7 +72,7 @@ export default () => {
                                                     key={index}
                                                     render={() => { }}
                                                     handleClick={() => setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnit.id)}
-                                                // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                                    handleDelete={false}
                                                 />
                                             )
                                         })

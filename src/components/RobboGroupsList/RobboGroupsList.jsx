@@ -37,6 +37,7 @@ export default ({ teacherId }) => {
                                         label={robboGroup.name}
                                         key={index}
                                         render={() => { }}
+                                        handleDelete={false}
                                     />
                                 )
                             })

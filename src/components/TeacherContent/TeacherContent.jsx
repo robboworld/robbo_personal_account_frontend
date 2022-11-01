@@ -65,7 +65,7 @@ export default ({ teacher }) => {
                                                 key={index}
                                                 render={() => { }}
                                                 handleClick={() => setTeacherForRobboGroupRequest(token, teacher.id, robboGroup.id)}
-                                            // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                                handleDelete={false}
                                             />
                                         )
                                     })

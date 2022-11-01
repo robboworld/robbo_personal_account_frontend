@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
+import { MdGroup } from 'react-icons/md'
+import { FaBook } from 'react-icons/fa'
 
 import { WelcomeText } from './components'
 
@@ -91,6 +93,16 @@ export default () => {
                                                             )}
                                                         />
                                                     )}
+                                                    additionalIcons={[
+                                                        {
+                                                            iconLabel: 'Robbo groups',
+                                                            icon: <MdGroup />,
+                                                        },
+                                                        {
+                                                            iconLabel: 'Курсы',
+                                                            icon: <FaBook />,
+                                                        },
+                                                    ]}
                                                 />
                                             )
                                         })
