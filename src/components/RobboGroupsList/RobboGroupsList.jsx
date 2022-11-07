@@ -11,13 +11,17 @@ import { ListRobboGroups, Text } from './components'
 import Flex from '@/components/Flex'
 import { useActions } from "@/helpers"
 
-import { getTeachersState } from "@/reducers/teachers"
+import { getRobboGroupsState } from "@/reducers/robboGroups"
 
 export default ({ teacherId }) => {
-    const { getRobboGroupsByTeacherId } = useActions()
-    const { teacherRobboGroups, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
+    const { getRobboGroupsByAccessToken, getRobboGroupsByTeacherId } = useActions()
+    const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
     useEffect(() => {
-        getRobboGroupsByTeacherId()
+        if (teacherId) {
+            getRobboGroupsByTeacherId(teacherId)
+        } else {
+            getRobboGroupsByAccessToken()
+        }
     }, [])
 
 
@@ -31,7 +35,7 @@ export default ({ teacherId }) => {
                 {
                     loading ? <Loader />
                         : (
-                            teacherRobboGroups?.map((robboGroup, index) => {
+                            robboGroups?.map((robboGroup, index) => {
                                 return (
                                     <ListItem itemIndex={index}
                                         label={robboGroup.name}

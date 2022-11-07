@@ -28,6 +28,9 @@ import {
     SEARCH_ROBBO_GROUP_BY_TITLE,
     SEARCH_ROBBO_GROUP_BY_TITLE_SUCCESS,
     SEARCH_ROBBO_GROUP_BY_TITLE_FAILED,
+    GET_ROBBO_GROUPS_BY_ACCESS_TOKEN,
+    GET_ROBBO_GROUPS_BY_ACCESS_TOKEN_SUCCESS,
+    GET_ROBBO_GROUPS_BY_ACCESS_TOKEN_FAILED,
 } from "@/constants"
 
 export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (token, robboUnitId, robboGroupId) => {
@@ -223,3 +226,19 @@ export const searchRobboGroupsByTitleFailed = createAction(SEARCH_ROBBO_GROUP_BY
         err,
     }
 })
+
+export const getRobboGroupsByAccessToken = createAction(GET_ROBBO_GROUPS_BY_ACCESS_TOKEN)
+
+export const getRobboGroupsByAccessTokenSuccess = createAction(GET_ROBBO_GROUPS_BY_ACCESS_TOKEN_SUCCESS, response => {
+    return {
+        response,
+    }
+})
+
+export const getRobboGroupsByAccessTokenFailed = createAction(GET_ROBBO_GROUPS_BY_ACCESS_TOKEN_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
+    }
+})
+

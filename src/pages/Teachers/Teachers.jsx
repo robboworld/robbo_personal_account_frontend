@@ -18,6 +18,7 @@ import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
 import Loader from '@/components/Loader'
 import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
+import RobboGroupsList from '@/components/RobboGroupsList'
 
 
 export default () => {
@@ -97,10 +98,21 @@ export default () => {
                                                         {
                                                             iconLabel: 'Robbo groups',
                                                             icon: <MdGroup />,
+                                                            renderContent: (open, setOpen) => (
+                                                                <ModalWindow
+                                                                    open={open}
+                                                                    setOpen={setOpen}
+                                                                    width='100%' height='100%'
+                                                                    content={() => (
+                                                                        <RobboGroupsList teacherId={teacher.userHttp.id} />
+                                                                    )}
+                                                                />
+                                                            ),
                                                         },
                                                         {
                                                             iconLabel: 'Курсы',
                                                             icon: <FaBook />,
+                                                            renderContent: () => { },
                                                         },
                                                     ]}
                                                 />

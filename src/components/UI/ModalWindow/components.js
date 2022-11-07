@@ -5,17 +5,32 @@ export const StyledModal = styled(Modal)`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: ${({ width }) => width || 'auto'};
-    height: ${({ height }) => height || 'auto'};
+    box-sizing: border-box;
+    width: ${({ width }) => width || '100%'};
+    height: ${({ height }) => height || '100%'};
+    // position: absolute;
+    // top: ${({ height }) => {
+        //     if (height) {
+        //         return Number(height.slice(0, -1)) / 2 + '% !important'
+        //     } else {
+        //         return '100% !important'
+        //     }
+        // }};
+        // left: ${({ width }) => {
+        //     if (width) {
+        //         return Number(width.slice(0, -1)) / 2 + '% !important'
+        //     } else {
+        //         return '100% !important'
+        //     }
+    }};
 `
 export const ModalCard = styled.div`
     display: flex;
     flex-direction: column;
-    width: ${({ width }) => width || 'auto'};
-    height: ${({ height }) => height || 'auto'};
-    background-color: #F0FFFF;
+    // width: ${({ width }) => width || 'auto'};
+    // height: ${({ height }) => height || 'auto'};
+    background-color: #FAFAD2;
     border-radius: 0.5rem;
-    box-sizing: border-box;
     overflow: auto;
 `
 export const Title = styled.h1`

@@ -29,7 +29,7 @@ export default () => {
                 <WelcomeText>Обучение</WelcomeText>
                 <ModalWindow
                     open={openRobboGroupList} setOpen={setOpenRobboGroupList}
-                    width='55%'
+                    width='100%' height='100%'
                     content={() => (
                         <RobboGroupsList />
                     )}

@@ -2,16 +2,15 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    createRobboGroupFailed,
-    createRobboGroupRequest, createRobboGroupSuccess,
-    getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSuccess,
-    getRobboGroupsByRobboUnitIdFailed,
-    deleteRobboGroupRequest,
-    deleteRobboGroupSuccess,
-    deleteRobboGroupFailed,
-    searchRobboGroupsByTitleRequest,
-    searchRobboGroupsByTitleFailed,
-    searchRobboGroupsByTitleSuccess,
+    createRobboGroupFailed, createRobboGroupRequest,
+    createRobboGroupSuccess, getRobboGroupsByRobboUnitIdRequest,
+    getRobboGroupsByRobboUnitIdSuccess, getRobboGroupsByRobboUnitIdFailed,
+    deleteRobboGroupRequest, deleteRobboGroupSuccess,
+    deleteRobboGroupFailed, searchRobboGroupsByTitleRequest,
+    searchRobboGroupsByTitleFailed, searchRobboGroupsByTitleSuccess,
+    getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenSuccess,
+    getRobboGroupsByAccessTokenFailed, getRobboGroupsByTeacherId,
+    getRobboGroupsByTeacherIdFailed, getRobboGroupsByTeacherIdSuccess,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -70,6 +69,24 @@ export default handleActions({
         return { ...state, loading: false, searchResult: action.payload.response }
     },
     [searchRobboGroupsByTitleFailed](state) {
+        return { ...state, loading: false }
+    },
+    [getRobboGroupsByAccessToken](state) {
+        return { ...state, loading: true }
+    },
+    [getRobboGroupsByAccessTokenSuccess](state, action) {
+        return { ...state, loading: false, robboGroups: action.payload.response }
+    },
+    [getRobboGroupsByAccessTokenFailed](state) {
+        return { ...state, loading: false }
+    },
+    [getRobboGroupsByTeacherId](state) {
+        return { ...state, loading: true }
+    },
+    [getRobboGroupsByTeacherIdSuccess](state, action) {
+        return { ...state, loading: false, robboGroups: action.payload.response }
+    },
+    [getRobboGroupsByTeacherIdFailed](state) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)

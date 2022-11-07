@@ -87,7 +87,7 @@ export default () => {
                                                             render={(open, setOpen) => (
                                                                 <ModalWindow
                                                                     open={open} setOpen={setOpen}
-                                                                    width='65%' height='80%'
+                                                                    width='50%' height='50%'
                                                                     content={() => (
                                                                         <ParentContent
                                                                             clientId={parent.userHttp.id}

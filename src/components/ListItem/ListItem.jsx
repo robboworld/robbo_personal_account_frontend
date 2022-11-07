@@ -16,12 +16,13 @@ const ListItem = ({
 }) => {
     const [contentOpen, setContentOpen] = useState(false)
     const [confirmOpen, setConfirmOpen] = useState(false)
+    const [additionalContentOpen, setAdditionalContentOpen] = useState(false)
 
     return (
         <StyledListItem onClick={handleClick}>
             <ModalWindow
                 open={confirmOpen} setOpen={setConfirmOpen}
-                width='35%' height='25%'
+                width='40%' height='40%'
                 content={() => (
                     <ConfirmModal
                         yesHandle={() => handleDelete(itemIndex)}
@@ -35,15 +36,21 @@ const ListItem = ({
             <IconsWrapper>
                 {
                     additionalIcons?.map((additionalIcon, index) => (
-                        <IconDiv tabIndex={index} key={index}>
+                        <IconDiv
+                            tabIndex={index} key={index}
+                            onClick={() => setAdditionalContentOpen(!additionalContentOpen)}
+                        >
                             <IconSVG>
                                 {additionalIcon.icon}
                             </IconSVG>
                             {additionalIcon.iconLabel}
+                            {
+                                additionalIcon?.renderContent(additionalContentOpen, setAdditionalContentOpen)
+                            }
                         </IconDiv>
-
                     ))
                 }
+
             </IconsWrapper>
 
             {

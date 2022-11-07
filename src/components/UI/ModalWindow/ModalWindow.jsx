@@ -23,7 +23,7 @@ export default ({
                 hideBackdrop
             // BackdropProps={{ style: { backgroundColor: "transparent" } }}
             >
-                <ModalCard width={width} height={height}>
+                <ModalCard>
                     <Flex
                         direction='column' width='100%'
                         justify='center' align='flex-end'
