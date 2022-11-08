@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { PropTypes } from "prop-types"
+import { PropTypes } from 'prop-types'
 
 import { StyledListItem, DeleteButton, Title, IconsWrapper, IconDiv, IconSVG } from './components'
 
-// import { ModalWindow } from '@/components/UI'
 import ConfirmModal from '@/components/ConfirmModal'
-import Modal2 from '@/components/UI/Modal2'
+import { DragResize } from '@/components/UI'
 
 const ListItem = ({
     itemIndex,
@@ -21,10 +20,11 @@ const ListItem = ({
 
     return (
         <StyledListItem onClick={handleClick}>
-            <Modal2
+            <DragResize
                 open={confirmOpen} setOpen={setConfirmOpen}
                 width='40%' height='40%'
                 content={() => (
+                    // refactor confirm modal from lib
                     <ConfirmModal
                         yesHandle={() => handleDelete(itemIndex)}
                         canselHandle={() => setConfirmOpen(false)}

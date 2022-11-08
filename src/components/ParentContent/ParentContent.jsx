@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { gql, useQuery } from "@apollo/client"
 
@@ -7,14 +7,13 @@ import {
 } from "./components"
 
 import Flex from "@/components/Flex"
-import { Button, ModalWindow, SearchInput } from "@/components/UI"
+import { Button, SearchInput, DragResize } from "@/components/UI"
 import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
 import { getClientsState } from "@/reducers/clients"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
-import Modal2 from "@/components/UI/Modal2"
 
 const GET_PARENT_BY_ID = gql`
 query GetParentById($parentId: String!){
@@ -41,18 +40,12 @@ export default ({ clientId }) => {
         clearChildrenState,
         searchStudent,
         createRelation,
-        getClientPageById,
     } = useActions()
     const token = localStorage.getItem('token')
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
-    // useEffect(() => {
-    //     getClientPageById(token, clientId)
-    //     return () => {
-    //     }
-    // }, [])
-
+    // refactor useQuery
     useEffect(() => {
         getChildrenByParentId(token, clientId)
         return () => {
@@ -64,8 +57,7 @@ export default ({ clientId }) => {
         variables: { parentId: clientId },
     })
 
-    console.log(data)
-
+    // refactor 
     const { children, childrenLoading, searchResult, client, clientLoading } = useSelector(({ clients }) => getClientsState(clients))
     return (
 
@@ -83,7 +75,7 @@ export default ({ clientId }) => {
                             )
                     }
 
-                    <Modal2
+                    <DragResize
                         open={openAddChildren} setOpen={setOpenAddChildren}
                         width='35%' height='60%'
                         content={() => (

@@ -12,7 +12,7 @@ import Flex from '@/components/Flex'
 import { useUserIdentity, checkAccess } from '@/helpers'
 import { getTeachersState } from '@/reducers/teachers'
 import { useActions } from '@/helpers/useActions'
-import { Button, ModalWindow } from '@/components/UI'
+import { Button, DragResize } from '@/components/UI'
 import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
@@ -49,7 +49,8 @@ export default () => {
             <Card>
                 <SideBar />
                 <WelcomeText>Педагоги</WelcomeText>
-                <ModalWindow
+                <DragResize
+                    // refactor all add to modal
                     open={openAddTeacher} setOpen={setOpenAddTeacher}
                     width='35%' height='60%'
                     content={() => (
@@ -86,20 +87,22 @@ export default () => {
                                                     `}
                                                     handleDelete={teacherIndex => deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
                                                     render={(open, setOpen) => (
-                                                        <ModalWindow
+                                                        <DragResize
                                                             open={open} setOpen={setOpen}
                                                             width='65%' height='80%'
                                                             content={() => (
+                                                                // refactor
                                                                 <TeacherContent teacher={teacher.userHttp} />
                                                             )}
                                                         />
                                                     )}
+                                                    // refactor remove?
                                                     additionalIcons={[
                                                         {
                                                             iconLabel: 'Robbo groups',
                                                             icon: <MdGroup />,
                                                             renderContent: (open, setOpen) => (
-                                                                <ModalWindow
+                                                                <DragResize
                                                                     open={open}
                                                                     setOpen={setOpen}
                                                                     width='100%' height='100%'

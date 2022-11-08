@@ -9,14 +9,13 @@ import { PageLayout, Card } from '@/layouts'
 import SideBar from '@/components/SideBar'
 import Flex from '@/components/Flex'
 import ListItem from '@/components/ListItem'
-import { Button } from '@/components/UI'
+import { Button, DragResize } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import Loader from '@/components/Loader'
 import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN } from '@/constants'
-import Modal2 from '@/components/UI/Modal2'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -56,7 +55,7 @@ export default () => {
                             >
                                 <WelcomeText>Клиенты</WelcomeText>
 
-                                <Modal2
+                                <DragResize
                                     open={openAddClients}
                                     setOpen={setOpenAddClients}
                                     content={() => (
@@ -89,7 +88,7 @@ export default () => {
                                                                 `}
                                                             key={index}
                                                             render={(open, setOpen) => (
-                                                                <Modal2
+                                                                <DragResize
                                                                     open={open} setOpen={setOpen}
                                                                     // width='50%' height='50%'
                                                                     content={() => (

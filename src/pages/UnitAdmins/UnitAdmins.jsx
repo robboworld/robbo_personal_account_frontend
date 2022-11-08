@@ -6,7 +6,7 @@ import { WelcomeText } from "./components"
 
 import { PageLayout, Card } from "@/layouts"
 import SideBar from "@/components/SideBar"
-import { ModalWindow, Button } from '@/components/UI'
+import { DragResize, Button } from '@/components/UI'
 import ListItem from '@/components/ListItem'
 import Flex from '@/components/Flex'
 import AddUnitAdmin from "@/components/AddUnitAdmin"
@@ -45,9 +45,9 @@ export default () => {
             <Card>
                 <SideBar />
                 <WelcomeText>Unit Админы</WelcomeText>
-                <ModalWindow
+                <DragResize
                     open={openAddUnitAdmin} setOpen={setOpenAddUnitAdmin}
-                    width='35%' height='60%'
+                    // refactor to modal
                     content={() => (
                         <AddUnitAdmin />
                     )}
@@ -82,10 +82,11 @@ export default () => {
                                                     `}
                                                     handleDelete={unitAdminIndex => deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
                                                     render={(open, setOpen) => (
-                                                        <ModalWindow
+                                                        <DragResize
                                                             open={open} setOpen={setOpen}
                                                             width='65%' height='80%'
                                                             content={() => (
+                                                                // refactor useQuery
                                                                 <UnitAdminContent unitAdmin={unitAdmin.userHttp} />
                                                             )}
                                                         />

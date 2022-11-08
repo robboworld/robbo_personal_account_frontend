@@ -8,7 +8,7 @@ import { useActions } from "@/helpers/useActions"
 import RobboUnitCard from "@/components/RobboUnitCard"
 import Flex from '@/components/Flex'
 import { getRobboUnitState } from "@/reducers/robboUnit"
-import { Button, ModalWindow } from "@/components/UI"
+import { Button, DragResize } from "@/components/UI"
 import Loader from "@/components/Loader"
 import RobboUnitAccessSetting from "@/components/RobboUnitAccessSetting"
 
@@ -57,9 +57,8 @@ export default ({ robboUnitId }) => {
                                     handleSubmit={() => setOpenAccessSetting(true)}
                                 />
                             </Flex>
-                            <ModalWindow
+                            <DragResize
                                 open={openAccessSetting} setOpen={setOpenAccessSetting}
-                                width='35%' height='60%'
                                 content={() => (
                                     <RobboUnitAccessSetting />
                                 )}

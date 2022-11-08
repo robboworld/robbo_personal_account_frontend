@@ -8,7 +8,7 @@ import { PageLayout, Card } from '@/layouts'
 import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import RobboUnit from "@/components/RobboUnit"
-import { Button, ModalWindow } from "@/components/UI"
+import { Button, DragResize } from "@/components/UI"
 import AddRobboUnit from "@/components/AddRobboUnit"
 import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
@@ -53,9 +53,8 @@ export default () => {
             <Card>
                 <SideBar />
                 <WelcomeText>Robbo Units</WelcomeText>
-                <ModalWindow
+                <DragResize
                     open={openAddRobboUnit} setOpen={setOpenAddRobboUnit}
-                    width='35%'
                     content={() => (
                         <AddRobboUnit />
                     )}
@@ -94,10 +93,10 @@ export default () => {
                                                     key={index}
                                                     label={robboUnit.name}
                                                     render={(open, setOpen) => (
-                                                        <ModalWindow
+                                                        <DragResize
                                                             open={open} setOpen={setOpen}
-                                                            width='65%' height='80%'
                                                             content={() => (
+                                                                // refactor useQuery
                                                                 <RobboUnit
                                                                     robboUnitId={robboUnit.id}
                                                                 />

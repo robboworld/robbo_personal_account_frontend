@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom"
 import { WelcomeText } from "./components"
 
 import { PageLayout, Card } from '@/layouts'
-import { Button, ModalWindow } from "@/components/UI"
+import { Button, DragResize } from "@/components/UI"
 import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import { useUserIdentity, checkAccess } from "@/helpers"
@@ -27,9 +27,8 @@ export default () => {
             <Card>
                 <SideBar />
                 <WelcomeText>Обучение</WelcomeText>
-                <ModalWindow
+                <DragResize
                     open={openRobboGroupList} setOpen={setOpenRobboGroupList}
-                    width='100%' height='100%'
                     content={() => (
                         <RobboGroupsList />
                     )}

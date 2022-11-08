@@ -1,20 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import usePortal from 'react-useportal'
 import Draggable from 'react-draggable'
+import { PropTypes } from 'prop-types'
 
-import {
-    ModalContent, ModalWindow,
-    CloseModalButton,
-} from './components'
-import ReactPortal from './ReactPortal.jsx'
+import { ModalContent, ModalWindow, CloseModalButton } from './components'
 
 import Flex from '@/components/Flex'
 
-const Modal2 = ({
+const DragResize = ({
     open,
     setOpen,
-    width,
-    height,
     content,
 }) => {
 
@@ -25,7 +20,7 @@ const Modal2 = ({
         yRate: 150,
     })
 
-    const onDrag = (e, data) => {
+    const onDrag = (event, data) => {
         setCurrentPosition({ xRate: data.lastX, yRate: data.lastY })
     }
 
@@ -42,8 +37,8 @@ const Modal2 = ({
         }
     }, [])
 
-    if (!open) return null
     return (
+        open &&
         <Portal>
             <Draggable
                 defaultPosition={{ x: 50, y: 50 }}
@@ -77,4 +72,10 @@ const Modal2 = ({
     )
 }
 
-export default Modal2
+DragResize.propTypes = {
+    open: PropTypes.bool,
+    setOpen: PropTypes.func,
+    content: PropTypes.func,
+}
+
+export default DragResize
