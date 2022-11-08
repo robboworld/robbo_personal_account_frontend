@@ -25,6 +25,7 @@ if (typeof window !== 'undefined') {
 
 const container = document.getElementById('root')
 const root = createRoot(container)
+
 root.render(
   // <StrictMode>
   <ApolloProvider client={graphQLClient}>

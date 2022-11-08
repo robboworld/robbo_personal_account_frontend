@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { useSelector } from "react-redux"
+import { gql, useQuery } from "@apollo/client"
 
 import {
     ListChildrens, SubTitle, Title,
@@ -13,6 +14,24 @@ import { useActions } from "@/helpers/useActions"
 import { getClientsState } from "@/reducers/clients"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
+import Modal2 from "@/components/UI/Modal2"
+
+const GET_PARENT_BY_ID = gql`
+query GetParentById($parentId: String!){
+    GetParentById(parentId: $parentId) {
+        userHttp{
+            id
+            lastname
+            firstname
+            middlename
+            nickname
+            email
+            createdAt
+            role
+        }
+    }
+}
+`
 
 export default ({ clientId }) => {
     const {
@@ -28,12 +47,11 @@ export default ({ clientId }) => {
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
-    useEffect(() => {
-        getClientPageById(token, clientId)
-        return () => {
-
-        }
-    }, [])
+    // useEffect(() => {
+    //     getClientPageById(token, clientId)
+    //     return () => {
+    //     }
+    // }, [])
 
     useEffect(() => {
         getChildrenByParentId(token, clientId)
@@ -41,6 +59,12 @@ export default ({ clientId }) => {
             clearChildrenState()
         }
     }, [])
+
+    const { loading, error, data } = useQuery(GET_PARENT_BY_ID, {
+        variables: { parentId: clientId },
+    })
+
+    console.log(data)
 
     const { children, childrenLoading, searchResult, client, clientLoading } = useSelector(({ clients }) => getClientsState(clients))
     return (
@@ -53,13 +77,13 @@ export default ({ clientId }) => {
                 >
                     <Title>Карточка родителя</Title>
                     {
-                        clientLoading ? <Loader />
+                        loading ? <Loader />
                             : (
-                                <ProfileCard updateHandle={updateProfile} profile={client?.userHttp} />
+                                <ProfileCard updateHandle={updateProfile} profile={data.GetParentById?.userHttp} />
                             )
                     }
 
-                    <ModalWindow
+                    <Modal2
                         open={openAddChildren} setOpen={setOpenAddChildren}
                         width='35%' height='60%'
                         content={() => (

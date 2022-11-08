@@ -1,31 +1,26 @@
 import styled from 'styled-components'
 
 export const ModalWindow = styled.div`
+  position: fixed;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
- 
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
   z-index: 999;
-  background-color: #FAFAD2;
-  width: fit-content;
-  height: fit-content;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  resize: both;
-  overflow: scroll;
+  top: 50%;
+  left: 50%;
 `
 
 export const ModalContent = styled.div`
-    padding: 1rem;
-    // width: ${({ width }) => width || 'auto'};
-    // height: ${({ height }) => height || 'auto'};
-    width: 100%;
-    height:  100%;
-    // overflow: auto;
+display: inline-block;
+vertical-align: middle;
+    // flex-direction: column;
+    width: ${({ width }) => width || 'auto'};
+    height: ${({ height }) => height || 'auto'};
+    background-color: #FAFAD2;
+    overflow: auto;
 `
 export const Title = styled.h1`
     display: flex;

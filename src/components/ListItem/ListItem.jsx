@@ -3,8 +3,9 @@ import { PropTypes } from "prop-types"
 
 import { StyledListItem, DeleteButton, Title, IconsWrapper, IconDiv, IconSVG } from './components'
 
-import { ModalWindow } from '@/components/UI'
+// import { ModalWindow } from '@/components/UI'
 import ConfirmModal from '@/components/ConfirmModal'
+import Modal2 from '@/components/UI/Modal2'
 
 const ListItem = ({
     itemIndex,
@@ -20,7 +21,7 @@ const ListItem = ({
 
     return (
         <StyledListItem onClick={handleClick}>
-            <ModalWindow
+            <Modal2
                 open={confirmOpen} setOpen={setConfirmOpen}
                 width='40%' height='40%'
                 content={() => (

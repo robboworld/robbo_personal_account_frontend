@@ -9,13 +9,14 @@ import { PageLayout, Card } from '@/layouts'
 import SideBar from '@/components/SideBar'
 import Flex from '@/components/Flex'
 import ListItem from '@/components/ListItem'
-import { ModalWindow, Button } from '@/components/UI'
+import { Button } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import Loader from '@/components/Loader'
 import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN } from '@/constants'
+import Modal2 from '@/components/UI/Modal2'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -39,9 +40,11 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
+
+    const [isOpen, setIsOpen] = useState(false)
+
     return (
         <PageLayout>
-
             <Card>
                 <SideBar />
                 {
@@ -52,9 +55,10 @@ export default () => {
                                 direction='column'
                             >
                                 <WelcomeText>Клиенты</WelcomeText>
-                                <ModalWindow
-                                    open={openAddClients} setOpen={setOpenAddClients}
-                                    width='35%' height='60%'
+
+                                <Modal2
+                                    open={openAddClients}
+                                    setOpen={setOpenAddClients}
                                     content={() => (
                                         <AddParent />
                                     )}
@@ -85,9 +89,9 @@ export default () => {
                                                                 `}
                                                             key={index}
                                                             render={(open, setOpen) => (
-                                                                <ModalWindow
+                                                                <Modal2
                                                                     open={open} setOpen={setOpen}
-                                                                    width='50%' height='50%'
+                                                                    // width='50%' height='50%'
                                                                     content={() => (
                                                                         <ParentContent
                                                                             clientId={parent.userHttp.id}
