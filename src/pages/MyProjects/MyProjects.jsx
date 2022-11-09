@@ -7,7 +7,6 @@ import { WelcomeText } from './components'
 import ProjectPageItem from './MyProjectsItem'
 
 import PageLayout from '@/components/PageLayout'
-import SideBar from '@/components/SideBar'
 
 import { getMyProjectsLoading, getProjectPages } from '@/reducers/myProjects'
 import Flex from '@/components/Flex'

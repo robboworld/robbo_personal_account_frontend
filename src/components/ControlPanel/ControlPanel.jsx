@@ -1,11 +1,12 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Select } from 'antd'
 
 import Flex from '@/components/Flex'
 import { getNewProjectId } from '@/reducers/myProjects'
 import config from '@/config'
 import { useActions } from '@/helpers/useActions'
-import { Select, Button } from '@/components/UI'
+import { Button } from '@/components/UI'
 
 export default () => {
 
@@ -18,8 +19,6 @@ export default () => {
         { value: 'alphabet-reverse', label: 'Я-А' },
         { value: 'shared', label: ' Доступ' },
     ]
-
-
 
     const token = localStorage.getItem('token')
 

@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { MdGroup } from 'react-icons/md'
 import { FaBook } from 'react-icons/fa'
+import { Modal } from 'antd'
 
 import { WelcomeText } from './components'
 
-import SideBar from "@/components/SideBar"
 import PageLayout from '@/components/PageLayout'
 import Flex from '@/components/Flex'
 import { useUserIdentity, checkAccess } from '@/helpers'
@@ -47,14 +47,16 @@ export default () => {
     return (
         <PageLayout>
             <WelcomeText>Педагоги</WelcomeText>
-            <DragResize
-                // refactor all add to modal
-                open={openAddTeacher} setOpen={setOpenAddTeacher}
-                width='35%' height='60%'
-                content={() => (
-                    <AddTeacher />
-                )}
-            />
+            <Modal
+                title='Заполните данные педагога'
+                open={openAddTeacher}
+                footer={[]}
+                onCancel={() => setOpenAddTeacher(false)}
+            >
+                <AddTeacher />
+            </Modal>
+
+
             <Flex direction='row' justify='flex-end'
                 align='flex-start'>
                 <Button
@@ -87,35 +89,34 @@ export default () => {
                                                 render={(open, setOpen) => (
                                                     <DragResize
                                                         open={open} setOpen={setOpen}
-                                                        width='65%' height='80%'
                                                         content={() => (
                                                             // refactor
                                                             <TeacherContent teacher={teacher.userHttp} />
                                                         )}
                                                     />
                                                 )}
-                                                // refactor remove?
-                                                additionalIcons={[
-                                                    {
-                                                        iconLabel: 'Robbo groups',
-                                                        icon: <MdGroup />,
-                                                        renderContent: (open, setOpen) => (
-                                                            <DragResize
-                                                                open={open}
-                                                                setOpen={setOpen}
-                                                                width='100%' height='100%'
-                                                                content={() => (
-                                                                    <RobboGroupsList teacherId={teacher.userHttp.id} />
-                                                                )}
-                                                            />
-                                                        ),
-                                                    },
-                                                    {
-                                                        iconLabel: 'Курсы',
-                                                        icon: <FaBook />,
-                                                        renderContent: () => { },
-                                                    },
-                                                ]}
+                                            // refactor remove?
+                                            // additionalIcons={[
+                                            //     {
+                                            //         iconLabel: 'Robbo groups',
+                                            //         icon: <MdGroup />,
+                                            //         renderContent: (open, setOpen) => (
+                                            //             <DragResize
+                                            //                 open={open}
+                                            //                 setOpen={setOpen}
+                                            //                 width='100%' height='100%'
+                                            //                 content={() => (
+                                            //                     <RobboGroupsList teacherId={teacher.userHttp.id} />
+                                            //                 )}
+                                            //             />
+                                            //         ),
+                                            //     },
+                                            //     {
+                                            //         iconLabel: 'Курсы',
+                                            //         icon: <FaBook />,
+                                            //         renderContent: () => { },
+                                            //     },
+                                            // ]}
                                             />
                                         )
                                     })

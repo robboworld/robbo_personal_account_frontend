@@ -113,7 +113,6 @@ export const SidebarDataSuperAdmin = [
     key: '1',
     label: 'Профиль',
     pathname: '/profile',
-    title: 'profile',
     icon: <UserOutlined />,
   },
   {

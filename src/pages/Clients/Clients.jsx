@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
+import { Modal } from 'antd'
 
 import { ListParents, WelcomeText } from './components'
 
@@ -38,9 +39,6 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
-
-    const [isOpen, setIsOpen] = useState(false)
-
     return (
         <PageLayout>
             {
@@ -52,13 +50,15 @@ export default () => {
                         >
                             <WelcomeText>Клиенты</WelcomeText>
 
-                            <DragResize
+                            <Modal
+                                title='Заполните данные клиента'
+                                centered
                                 open={openAddClients}
-                                setOpen={setOpenAddClients}
-                                content={() => (
-                                    <AddParent />
-                                )}
-                            />
+                                onCancel={() => setOpenAddClients(false)}
+                                footer={[]}
+                            >
+                                <AddParent />
+                            </Modal>
                             <Flex
                                 direction='row' justify='flex-end'
                                 align='flex-start'>
@@ -87,7 +87,6 @@ export default () => {
                                                         render={(open, setOpen) => (
                                                             <DragResize
                                                                 open={open} setOpen={setOpen}
-                                                                // width='50%' height='50%'
                                                                 content={() => (
                                                                     <ParentContent
                                                                         clientId={parent.userHttp.id}

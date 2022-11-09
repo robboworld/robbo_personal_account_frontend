@@ -50,7 +50,10 @@ export default () => {
     }
 
     const onMenuClick = ({ item, key, keyPath, selectedKeys, domEvent }) => {
-        if (item.props.path === '/login') signOutRequest()
+        if (item.props.pathname === '/login') {
+            signOutRequest()
+            history.push(item.props.pathname)
+        }
         else {
             history.push(item.props.pathname)
         }

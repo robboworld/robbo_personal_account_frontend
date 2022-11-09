@@ -1,7 +1,8 @@
 import React, { memo, useState } from 'react'
 import styled from 'styled-components'
+import { Select } from 'antd'
 
-import { Input, Select, Button } from '@/components/UI'
+import { Input, Button } from '@/components/UI'
 import Flex from '@/components/Flex'
 import {
     FREE_LISTENER, PARENT, STUDENT,
@@ -45,9 +46,9 @@ export default memo(({
                     <Text>Выберите роль</Text>
                     <Select
                         options={roles}
-                        onChange={role => setRole(role)}
+                        onChange={value => setRole(roles[value])}
                         value={role}
-                        width='70%'
+                        style={{ width: '70%' }}
                     />
                 </React.Fragment>
             }
