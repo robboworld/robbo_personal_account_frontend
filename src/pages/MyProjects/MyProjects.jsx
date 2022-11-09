@@ -6,7 +6,7 @@ import { WelcomeText } from './components'
 
 import ProjectPageItem from './MyProjectsItem'
 
-import { PageLayout, Card } from '@/layouts'
+import PageLayout from '@/components/PageLayout'
 import SideBar from '@/components/SideBar'
 
 import { getMyProjectsLoading, getProjectPages } from '@/reducers/myProjects'
@@ -42,32 +42,28 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                {
-                    loginLoading ? <Loader />
-                        : (
-                            <Flex direction='column' align='center' >
-                                <WelcomeText>Мои проекты</WelcomeText>
-                                <ControlPanel />
+            {
+                loginLoading ? <Loader />
+                    : (
+                        <Flex direction='column' align='center' >
+                            <WelcomeText>Мои проекты</WelcomeText>
+                            <ControlPanel />
 
-                                {loading
-                                    ? <Loader />
-                                    : projectPages?.map((projectPage, index) => {
-                                        return (
-                                            <ProjectPageItem
-                                                projectPage={projectPage}
-                                                projectPageIndex={index}
-                                                key={index}
-                                            />
-                                        )
-                                    })
-                                }
-                            </Flex>
-                        )
-                }
-
-            </Card>
+                            {loading
+                                ? <Loader />
+                                : projectPages?.map((projectPage, index) => {
+                                    return (
+                                        <ProjectPageItem
+                                            projectPage={projectPage}
+                                            projectPageIndex={index}
+                                            key={index}
+                                        />
+                                    )
+                                })
+                            }
+                        </Flex>
+                    )
+            }
         </PageLayout>
     )
 }

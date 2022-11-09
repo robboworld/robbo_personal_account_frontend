@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useRef, useEffect } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 import {
@@ -24,8 +24,6 @@ const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const Study = lazy(() => import('@/pages/Study'))
-
-
 
 export default () => (
   <Suspense fallback={<Loader />}>

@@ -5,8 +5,7 @@ import { Redirect } from 'react-router-dom'
 import { ListParents, WelcomeText } from './components'
 
 import { getClientsState } from '@/reducers/clients'
-import { PageLayout, Card } from '@/layouts'
-import SideBar from '@/components/SideBar'
+import PageLayout from '@/components/PageLayout'
 import Flex from '@/components/Flex'
 import ListItem from '@/components/ListItem'
 import { Button, DragResize } from '@/components/UI'
@@ -44,73 +43,68 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                {
-                    loginLoading ? <Loader />
-                        : (
+            {
+                loginLoading ? <Loader />
+                    : (
 
-                            <Flex width='100%' height='100%'
-                                direction='column'
-                            >
-                                <WelcomeText>Клиенты</WelcomeText>
+                        <Flex width='100%' height='100%'
+                            direction='column'
+                        >
+                            <WelcomeText>Клиенты</WelcomeText>
 
-                                <DragResize
-                                    open={openAddClients}
-                                    setOpen={setOpenAddClients}
-                                    content={() => (
-                                        <AddParent />
-                                    )}
+                            <DragResize
+                                open={openAddClients}
+                                setOpen={setOpenAddClients}
+                                content={() => (
+                                    <AddParent />
+                                )}
+                            />
+                            <Flex
+                                direction='row' justify='flex-end'
+                                align='flex-start'>
+                                <Button
+                                    content='Добавить родителя'
+                                    background='darkgreen'
+                                    padding='0.5rem'
+                                    handleSubmit={() => setOpenAddClients(true)}
                                 />
-                                <Flex
-                                    direction='row' justify='flex-end'
-                                    align='flex-start'>
-                                    <Button
-                                        content='Добавить родителя'
-                                        background='darkgreen'
-                                        padding='0.5rem'
-                                        handleSubmit={() => setOpenAddClients(true)}
-                                    />
-                                </Flex>
-                                <ListParents>
-                                    {
-                                        clientsLoading ? <Loader />
-                                            : (
-                                                parents?.map((parent, index) => {
-                                                    return (
-                                                        <ListItem
-                                                            itemIndex={index}
-                                                            handleDelete={parentIndex => deleteParentRequest(token, parent.userHttp.id, parentIndex)}
-                                                            label={`
+                            </Flex>
+                            <ListParents>
+                                {
+                                    clientsLoading ? <Loader />
+                                        : (
+                                            parents?.map((parent, index) => {
+                                                return (
+                                                    <ListItem
+                                                        itemIndex={index}
+                                                        handleDelete={parentIndex => deleteParentRequest(token, parent.userHttp.id, parentIndex)}
+                                                        label={`
                                                                 ${parent.userHttp.lastname}
                                                                 ${parent.userHttp.firstname}
                                                                 ${parent.userHttp.middlename}
                                                                 `}
-                                                            key={index}
-                                                            render={(open, setOpen) => (
-                                                                <DragResize
-                                                                    open={open} setOpen={setOpen}
-                                                                    // width='50%' height='50%'
-                                                                    content={() => (
-                                                                        <ParentContent
-                                                                            clientId={parent.userHttp.id}
-                                                                            open={open}
-                                                                            setOpen={setOpen}
-                                                                        />
-                                                                    )}
-                                                                />
-                                                            )}
-                                                        />
-                                                    )
-                                                })
-                                            )}
-                                </ListParents>
-                            </Flex>
-                        )
-                }
-            </Card>
-
-
+                                                        key={index}
+                                                        render={(open, setOpen) => (
+                                                            <DragResize
+                                                                open={open} setOpen={setOpen}
+                                                                // width='50%' height='50%'
+                                                                content={() => (
+                                                                    <ParentContent
+                                                                        clientId={parent.userHttp.id}
+                                                                        open={open}
+                                                                        setOpen={setOpen}
+                                                                    />
+                                                                )}
+                                                            />
+                                                        )}
+                                                    />
+                                                )
+                                            })
+                                        )}
+                            </ListParents>
+                        </Flex>
+                    )
+            }
         </PageLayout>
     )
 }

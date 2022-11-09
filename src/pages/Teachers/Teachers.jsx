@@ -7,7 +7,7 @@ import { FaBook } from 'react-icons/fa'
 import { WelcomeText } from './components'
 
 import SideBar from "@/components/SideBar"
-import { Card, PageLayout } from "@/layouts"
+import PageLayout from '@/components/PageLayout'
 import Flex from '@/components/Flex'
 import { useUserIdentity, checkAccess } from '@/helpers'
 import { getTeachersState } from '@/reducers/teachers'
@@ -46,87 +46,84 @@ export default () => {
     }
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <WelcomeText>Педагоги</WelcomeText>
-                <DragResize
-                    // refactor all add to modal
-                    open={openAddTeacher} setOpen={setOpenAddTeacher}
-                    width='35%' height='60%'
-                    content={() => (
-                        <AddTeacher />
-                    )}
+            <WelcomeText>Педагоги</WelcomeText>
+            <DragResize
+                // refactor all add to modal
+                open={openAddTeacher} setOpen={setOpenAddTeacher}
+                width='35%' height='60%'
+                content={() => (
+                    <AddTeacher />
+                )}
+            />
+            <Flex direction='row' justify='flex-end'
+                align='flex-start'>
+                <Button
+                    background='green'
+                    content='Добавить педагога'
+                    padding='0.5rem'
+                    handleSubmit={() => setOpenAddTeacher(true)}
                 />
-                <Flex direction='row' justify='flex-end'
-                    align='flex-start'>
-                    <Button
-                        background='green'
-                        content='Добавить педагога'
-                        padding='0.5rem'
-                        handleSubmit={() => setOpenAddTeacher(true)}
-                    />
-                </Flex>
-                {
-                    loading ? <Loader />
-                        : (
-                            <Flex
-                                widht='100%' direction='column'
-                                justify=' center'
-                            >
-                                <Flex direction='column'>
-                                    {
-                                        teachers?.map((teacher, index) => {
-                                            return (
-                                                <ListItem
-                                                    itemIndex={index}
-                                                    key={index}
-                                                    label={`
+            </Flex>
+            {
+                loading ? <Loader />
+                    : (
+                        <Flex
+                            widht='100%' direction='column'
+                            justify=' center'
+                        >
+                            <Flex direction='column'>
+                                {
+                                    teachers?.map((teacher, index) => {
+                                        return (
+                                            <ListItem
+                                                itemIndex={index}
+                                                key={index}
+                                                label={`
                                                         ${teacher.userHttp.lastname}
                                                         ${teacher.userHttp.firstname} 
                                                         ${teacher.userHttp.middlename}
                                                     `}
-                                                    handleDelete={teacherIndex => deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
-                                                    render={(open, setOpen) => (
-                                                        <DragResize
-                                                            open={open} setOpen={setOpen}
-                                                            width='65%' height='80%'
-                                                            content={() => (
-                                                                // refactor
-                                                                <TeacherContent teacher={teacher.userHttp} />
-                                                            )}
-                                                        />
-                                                    )}
-                                                    // refactor remove?
-                                                    additionalIcons={[
-                                                        {
-                                                            iconLabel: 'Robbo groups',
-                                                            icon: <MdGroup />,
-                                                            renderContent: (open, setOpen) => (
-                                                                <DragResize
-                                                                    open={open}
-                                                                    setOpen={setOpen}
-                                                                    width='100%' height='100%'
-                                                                    content={() => (
-                                                                        <RobboGroupsList teacherId={teacher.userHttp.id} />
-                                                                    )}
-                                                                />
-                                                            ),
-                                                        },
-                                                        {
-                                                            iconLabel: 'Курсы',
-                                                            icon: <FaBook />,
-                                                            renderContent: () => { },
-                                                        },
-                                                    ]}
-                                                />
-                                            )
-                                        })
-                                    }
-                                </Flex>
+                                                handleDelete={teacherIndex => deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
+                                                render={(open, setOpen) => (
+                                                    <DragResize
+                                                        open={open} setOpen={setOpen}
+                                                        width='65%' height='80%'
+                                                        content={() => (
+                                                            // refactor
+                                                            <TeacherContent teacher={teacher.userHttp} />
+                                                        )}
+                                                    />
+                                                )}
+                                                // refactor remove?
+                                                additionalIcons={[
+                                                    {
+                                                        iconLabel: 'Robbo groups',
+                                                        icon: <MdGroup />,
+                                                        renderContent: (open, setOpen) => (
+                                                            <DragResize
+                                                                open={open}
+                                                                setOpen={setOpen}
+                                                                width='100%' height='100%'
+                                                                content={() => (
+                                                                    <RobboGroupsList teacherId={teacher.userHttp.id} />
+                                                                )}
+                                                            />
+                                                        ),
+                                                    },
+                                                    {
+                                                        iconLabel: 'Курсы',
+                                                        icon: <FaBook />,
+                                                        renderContent: () => { },
+                                                    },
+                                                ]}
+                                            />
+                                        )
+                                    })
+                                }
                             </Flex>
-                        )
-                }
-            </Card>
+                        </Flex>
+                    )
+            }
         </PageLayout >
 
     )

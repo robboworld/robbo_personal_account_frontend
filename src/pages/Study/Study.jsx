@@ -3,7 +3,7 @@ import { Redirect } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
-import { PageLayout, Card } from '@/layouts'
+import PageLayout from '@/components/PageLayout'
 import { Button, DragResize } from "@/components/UI"
 import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
@@ -24,41 +24,38 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <WelcomeText>Обучение</WelcomeText>
-                <DragResize
-                    open={openRobboGroupList} setOpen={setOpenRobboGroupList}
-                    content={() => (
-                        <RobboGroupsList />
-                    )}
+            <WelcomeText>Обучение</WelcomeText>
+            <DragResize
+                open={openRobboGroupList} setOpen={setOpenRobboGroupList}
+                content={() => (
+                    <RobboGroupsList />
+                )}
+            />
+            <Flex direction='column' margin='0 1rem 0 0'
+                style={{ maxWidth: '250px' }}>
+                <Button
+                    content='Расписание'
+                    background='darkgreen'
+                    margin='1rem 0 0 0' padding='0.5rem'
+                // handleSubmit={}
                 />
-                <Flex direction='column' margin='0 1rem 0 0'
-                    style={{ maxWidth: '250px' }}>
-                    <Button
-                        content='Расписание'
-                        background='darkgreen'
-                        margin='1rem 0 0 0' padding='0.5rem'
-                    // handleSubmit={}
-                    />
-                    <Button
-                        content='Группы'
-                        background='darkgreen'
-                        margin='1rem 0 0 0' padding='0.5rem'
-                        handleSubmit={() => setOpenRobboGroupList(!openRobboGroupList)}
-                    />
-                    <Button
-                        content='Индивидуальные ученики'
-                        background='darkgreen'
-                        margin='1rem 0 0 0' padding='0.5rem'
-                    />
-                    <Button
-                        content='Курсы'
-                        background='darkgreen'
-                        margin='1rem 0 0 0' padding='0.5rem'
-                    />
-                </Flex>
-            </Card>
+                <Button
+                    content='Группы'
+                    background='darkgreen'
+                    margin='1rem 0 0 0' padding='0.5rem'
+                    handleSubmit={() => setOpenRobboGroupList(!openRobboGroupList)}
+                />
+                <Button
+                    content='Индивидуальные ученики'
+                    background='darkgreen'
+                    margin='1rem 0 0 0' padding='0.5rem'
+                />
+                <Button
+                    content='Курсы'
+                    background='darkgreen'
+                    margin='1rem 0 0 0' padding='0.5rem'
+                />
+            </Flex>
         </PageLayout>
     )
 }

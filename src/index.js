@@ -1,4 +1,5 @@
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
+import 'antd/dist/antd.css'
 
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

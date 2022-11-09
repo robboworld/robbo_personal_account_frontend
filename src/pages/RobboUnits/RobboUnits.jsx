@@ -4,7 +4,7 @@ import { Redirect, useHistory } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
-import { PageLayout, Card } from '@/layouts'
+import PageLayout from '@/components/PageLayout'
 import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import RobboUnit from "@/components/RobboUnit"
@@ -50,69 +50,66 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <WelcomeText>Robbo Units</WelcomeText>
-                <DragResize
-                    open={openAddRobboUnit} setOpen={setOpenAddRobboUnit}
-                    content={() => (
-                        <AddRobboUnit />
-                    )}
+            <WelcomeText>Robbo Units</WelcomeText>
+            <DragResize
+                open={openAddRobboUnit} setOpen={setOpenAddRobboUnit}
+                content={() => (
+                    <AddRobboUnit />
+                )}
+            />
+            <Flex direction='column' justify='flex-end'
+                align='flex-start'>
+                <Button
+                    background='green'
+                    content='Программа'
+                    padding='0.5rem'
+                    margin='0.5rem'
+                    handleSubmit={() => history.push('/program')}
                 />
-                <Flex direction='column' justify='flex-end'
-                    align='flex-start'>
-                    <Button
-                        background='green'
-                        content='Программа'
-                        padding='0.5rem'
-                        margin='0.5rem'
-                        handleSubmit={() => history.push('/program')}
-                    />
-                    <Button
-                        background='green'
-                        content='Добавить Robbo Unit'
-                        padding='0.5rem'
-                        margin='0.5rem'
-                        handleSubmit={() => setOpenAddRobboUnit(true)}
-                    />
+                <Button
+                    background='green'
+                    content='Добавить Robbo Unit'
+                    padding='0.5rem'
+                    margin='0.5rem'
+                    handleSubmit={() => setOpenAddRobboUnit(true)}
+                />
 
-                </Flex>
-                {
-                    loading ? <Loader />
-                        : (
-                            <Flex
-                                widht='100%' direction='column'
-                                justify=' center'
-                            >
-                                <Flex direction='column'>
-                                    {
-                                        robboUnits?.map((robboUnit, index) => {
-                                            return (
-                                                <ListItem
-                                                    itemIndex={index}
-                                                    key={index}
-                                                    label={robboUnit.name}
-                                                    render={(open, setOpen) => (
-                                                        <DragResize
-                                                            open={open} setOpen={setOpen}
-                                                            content={() => (
-                                                                // refactor useQuery
-                                                                <RobboUnit
-                                                                    robboUnitId={robboUnit.id}
-                                                                />
-                                                            )}
-                                                        />
-                                                    )}
-                                                    handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
-                                                />
-                                            )
-                                        })
-                                    }
-                                </Flex>
+            </Flex>
+            {
+                loading ? <Loader />
+                    : (
+                        <Flex
+                            widht='100%' direction='column'
+                            justify=' center'
+                        >
+                            <Flex direction='column'>
+                                {
+                                    robboUnits?.map((robboUnit, index) => {
+                                        return (
+                                            <ListItem
+                                                itemIndex={index}
+                                                key={index}
+                                                label={robboUnit.name}
+                                                render={(open, setOpen) => (
+                                                    <DragResize
+                                                        open={open} setOpen={setOpen}
+                                                        content={() => (
+                                                            // refactor useQuery
+                                                            <RobboUnit
+                                                                robboUnitId={robboUnit.id}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                                handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
+                                            />
+                                        )
+                                    })
+                                }
                             </Flex>
-                        )
-                }
-            </Card>
+                        </Flex>
+                    )
+            }
         </PageLayout>
     )
 }

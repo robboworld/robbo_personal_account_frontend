@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { PropTypes } from 'prop-types'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { Modal } from 'antd'
 
 import { StyledListItem, DeleteButton, Title, IconsWrapper, IconDiv, IconSVG } from './components'
 
-import ConfirmModal from '@/components/ConfirmModal'
-import { DragResize } from '@/components/UI'
+const { confirm } = Modal
 
 const ListItem = ({
     itemIndex,
@@ -15,23 +16,26 @@ const ListItem = ({
     additionalIcons,
 }) => {
     const [contentOpen, setContentOpen] = useState(false)
-    const [confirmOpen, setConfirmOpen] = useState(false)
     const [additionalContentOpen, setAdditionalContentOpen] = useState(false)
+
+    const showDeleteConfirm = () => {
+        confirm({
+            title: 'Вы точно хотите удалить?',
+            icon: <ExclamationCircleOutlined />,
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Отмена',
+            onOk() {
+                handleDelete(itemIndex)
+            },
+            onCancel() {
+                console.log('Cancel')
+            },
+        })
+    }
 
     return (
         <StyledListItem onClick={handleClick}>
-            <DragResize
-                open={confirmOpen} setOpen={setConfirmOpen}
-                width='40%' height='40%'
-                content={() => (
-                    // refactor confirm modal from lib
-                    <ConfirmModal
-                        yesHandle={() => handleDelete(itemIndex)}
-                        canselHandle={() => setConfirmOpen(false)}
-                        message='Вы точно хотите удалить?'
-                    />
-                )}
-            />
             <Title onClick={() => setContentOpen(true)}> {label}</Title>
 
             <IconsWrapper>
@@ -56,10 +60,7 @@ const ListItem = ({
 
             {
                 handleDelete &&
-                <DeleteButton onClick={e => {
-                    e.stopPropagation()
-                    setConfirmOpen(true)
-                }}>
+                <DeleteButton onClick={showDeleteConfirm}>
                     ×
                 </DeleteButton>
             }

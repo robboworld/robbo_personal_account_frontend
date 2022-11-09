@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom'
 import { Headind, AboutMe } from './components'
 import DigitalTail from './DigitalTail'
 
-import { PageLayout, Card } from '@/layouts'
+import PageLayout from '@/components/PageLayout'
 import SideBar from '@/components/SideBar'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import Loader from '@/components/Loader'
@@ -64,23 +64,21 @@ export default memo(() => {
 
     return (
         <PageLayout>
-            <Card>
-                <Headind>Profile</Headind>
-                <SideBar />
-                {
-                    loading || loginLoading
-                        ? <Loader />
-                        : (
-                            <Flex direction='column'>
-                                <Flex margin='0.5rem' justify='flex-end'>
-                                    <ProfileCard updateHandle={updateProfile} profile={profile} />
-                                </Flex>
-                                <Flex
-                                    width='100%'
-                                    align='flex-start'
-                                >
-                                    <DigitalTail />
-                                    {/* <Flex direction='column' width='100%'
+            <Headind>Profile</Headind>
+            {
+                loading || loginLoading
+                    ? <Loader />
+                    : (
+                        <Flex direction='column'>
+                            <Flex margin='0.5rem' justify='flex-end'>
+                                <ProfileCard updateHandle={updateProfile} profile={profile} />
+                            </Flex>
+                            <Flex
+                                width='100%'
+                                align='flex-start'
+                            >
+                                <DigitalTail />
+                                {/* <Flex direction='column' width='100%'
                                         height='100%' align='center'
                                         margin='0 10px 0 0'>
                                         <h4>Цифровой след</h4>
@@ -88,49 +86,48 @@ export default memo(() => {
                                             {aboutMe}
                                         </AboutMe>
                                     </Flex> */}
-                                    <Flex direction='column' width='100%'
-                                        height='100%' align='center'>
-                                        <h4>Обо мне</h4>
-                                        {
-                                            aboutMeEditMode
-                                                ? (
-                                                    <Textarea
-                                                        onBlur={() => { setAbouMeEditMode(true) }}
-                                                        handleInput={aboutMe => { }}
-                                                        value={aboutMe}
-                                                        width='100%'
-                                                        height='15vh'
-                                                        padding='2rem'
-                                                        placeholder=''
-                                                        fontSize='1vw'
-                                                        margin='1rem 0'
-                                                    />)
-                                                : (
-                                                    <AboutMe onClick={() => { setAbouMeEditMode(true) }}>
-                                                        {aboutMe}
-                                                    </AboutMe>
-                                                )
-                                        }
+                                <Flex direction='column' width='100%'
+                                    height='100%' align='center'>
+                                    <h4>Обо мне</h4>
+                                    {
+                                        aboutMeEditMode
+                                            ? (
+                                                <Textarea
+                                                    onBlur={() => { setAbouMeEditMode(true) }}
+                                                    handleInput={aboutMe => { }}
+                                                    value={aboutMe}
+                                                    width='100%'
+                                                    height='15vh'
+                                                    padding='2rem'
+                                                    placeholder=''
+                                                    fontSize='1vw'
+                                                    margin='1rem 0'
+                                                />)
+                                            : (
+                                                <AboutMe onClick={() => { setAbouMeEditMode(true) }}>
+                                                    {aboutMe}
+                                                </AboutMe>
+                                            )
+                                    }
 
-                                    </Flex>
                                 </Flex>
-
-                                <Flex
-                                    width='100%'
-                                    justify='center'>
-                                    <Button
-                                        width='10%'
-                                        content='Удалить аккаунт'
-                                        padding='10px'
-                                        background='grey'
-                                        handleSubmit={() => { deleteProfile() }}
-                                    />
-                                </Flex>
-
                             </Flex>
-                        )
-                }
-            </Card >
+
+                            <Flex
+                                width='100%'
+                                justify='center'>
+                                <Button
+                                    width='10%'
+                                    content='Удалить аккаунт'
+                                    padding='10px'
+                                    background='grey'
+                                    handleSubmit={() => { deleteProfile() }}
+                                />
+                            </Flex>
+
+                        </Flex>
+                    )
+            }
         </PageLayout >
     )
 })

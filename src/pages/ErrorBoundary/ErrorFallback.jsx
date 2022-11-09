@@ -1,8 +1,8 @@
 import React from "react"
 
-import { Title, Code } from "./components"
+import { Title, Code } from './components'
 
-import { PageLayout, Card } from "@/layouts"
+import PageLayout from '@/components/PageLayout'
 
 import Flex from "@/components/Flex"
 
@@ -10,17 +10,15 @@ import Flex from "@/components/Flex"
 export default () => {
     return (
         <PageLayout>
-            <Card>
-                <Flex
-                    justify='center'
-                    align='center'
-                    height='100%'
-                    direction='column'
-                >
-                    <Code>🤖</Code>
-                    <Title>Что-то пошло не так</Title>
-                </Flex>
-            </Card>
+            <Flex
+                justify='center'
+                align='center'
+                height='100%'
+                direction='column'
+            >
+                <Code>🤖</Code>
+                <Title>Что-то пошло не так</Title>
+            </Flex>
         </PageLayout >
     )
 }

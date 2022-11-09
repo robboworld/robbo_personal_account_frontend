@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
-import { PageLayout, Card } from "@/layouts"
+import PageLayout from '@/components/PageLayout'
 import SideBar from "@/components/SideBar"
 import { DragResize, Button } from '@/components/UI'
 import ListItem from '@/components/ListItem'
@@ -42,64 +42,61 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <WelcomeText>Unit Админы</WelcomeText>
-                <DragResize
-                    open={openAddUnitAdmin} setOpen={setOpenAddUnitAdmin}
-                    // refactor to modal
-                    content={() => (
-                        <AddUnitAdmin />
-                    )}
+            <WelcomeText>Unit Админы</WelcomeText>
+            <DragResize
+                open={openAddUnitAdmin} setOpen={setOpenAddUnitAdmin}
+                // refactor to modal
+                content={() => (
+                    <AddUnitAdmin />
+                )}
+            />
+            <Flex direction='row' justify='flex-end'
+                align='flex-start'>
+                <Button
+                    background='green'
+                    content='Добавить Unit Админа'
+                    padding='0.5rem'
+                    handleSubmit={() => { setOpenAddUnitAdmin(true) }}
                 />
-                <Flex direction='row' justify='flex-end'
-                    align='flex-start'>
-                    <Button
-                        background='green'
-                        content='Добавить Unit Админа'
-                        padding='0.5rem'
-                        handleSubmit={() => { setOpenAddUnitAdmin(true) }}
-                    />
-                </Flex>
-                {
-                    loading ? <Loader />
-                        : (
-                            <Flex
-                                widht='100%' direction='column'
-                                justify=' center'
-                            >
-                                <Flex direction='column'>
-                                    {
-                                        unitAdmins?.map((unitAdmin, index) => {
-                                            return (
-                                                <ListItem
-                                                    itemIndex={index}
-                                                    key={index}
-                                                    label={`
+            </Flex>
+            {
+                loading ? <Loader />
+                    : (
+                        <Flex
+                            widht='100%' direction='column'
+                            justify=' center'
+                        >
+                            <Flex direction='column'>
+                                {
+                                    unitAdmins?.map((unitAdmin, index) => {
+                                        return (
+                                            <ListItem
+                                                itemIndex={index}
+                                                key={index}
+                                                label={`
                                                         ${unitAdmin.userHttp.lastname}
                                                         ${unitAdmin.userHttp.firstname}
                                                         ${unitAdmin.userHttp.middlename}
                                                     `}
-                                                    handleDelete={unitAdminIndex => deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
-                                                    render={(open, setOpen) => (
-                                                        <DragResize
-                                                            open={open} setOpen={setOpen}
-                                                            width='65%' height='80%'
-                                                            content={() => (
-                                                                // refactor useQuery
-                                                                <UnitAdminContent unitAdmin={unitAdmin.userHttp} />
-                                                            )}
-                                                        />
-                                                    )}
-                                                />
-                                            )
-                                        })
-                                    }
-                                </Flex>
+                                                handleDelete={unitAdminIndex => deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
+                                                render={(open, setOpen) => (
+                                                    <DragResize
+                                                        open={open} setOpen={setOpen}
+                                                        width='65%' height='80%'
+                                                        content={() => (
+                                                            // refactor useQuery
+                                                            <UnitAdminContent unitAdmin={unitAdmin.userHttp} />
+                                                        )}
+                                                    />
+                                                )}
+                                            />
+                                        )
+                                    })
+                                }
                             </Flex>
-                        )
-                }
-            </Card>
+                        </Flex>
+                    )
+            }
         </PageLayout>
     )
 }
