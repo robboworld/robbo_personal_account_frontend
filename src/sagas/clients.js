@@ -83,13 +83,13 @@ function* deleteParentSaga(action) {
 function* createChildrenSaga(action) {
     try {
         const { token, child, parentId } = action.payload
-        // const response = yield call(clientsAPI.createChildren, token, child, parentId)
-        // console.log(response)
-        const { email, password, nickname, firstname, lastname, middlename } = child
-        const input = { email, password, nickname, firstname, lastname, middlename, parentId }
-        const result = yield call(usersMutationGraphQL.createStudent, { input })
+        const response = yield call(clientsAPI.createChildren, token, child, parentId)
+        console.log(response)
+        // const { email, password, nickname, firstname, lastname, middlename } = child
+        // const input = { email, password, nickname, firstname, lastname, middlename, parentId }
+        // const result = yield call(usersMutationGraphQL.createStudent, { input })
 
-        yield put(createChildreSuccess(result.data.CreateStudent, child))
+        yield put(createChildreSuccess(response.data, child))
     } catch (e) {
         yield put(createChildrenFailed(e))
     }

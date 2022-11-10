@@ -36,7 +36,6 @@ const ProfileCard = ({
                         createdAt: profile.createdAt,
                         role: profile.role,
                     })
-                    // console.log(values)
                 }}
                 {...layout}
                 form={form}

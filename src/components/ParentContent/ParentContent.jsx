@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { gql, useQuery } from "@apollo/client"
+import { Tabs } from 'antd'
 
-import {
-    ListChildrens, SubTitle, Title,
-} from "./components"
+import ChildrenTab from "./ChildrenTab"
 
 import Flex from "@/components/Flex"
-import { Button, SearchInput, DragResize } from "@/components/UI"
 import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
@@ -59,6 +57,7 @@ export default ({ clientId }) => {
 
     // refactor 
     const { children, childrenLoading, searchResult, client, clientLoading } = useSelector(({ clients }) => getClientsState(clients))
+
     return (
 
         <Flex direction='column' width='100%'>
@@ -67,15 +66,24 @@ export default ({ clientId }) => {
                 <Flex direction='column' align='center'
                     width='100%'
                 >
-                    <Title>Карточка родителя</Title>
-                    {
-                        loading ? <Loader />
-                            : (
-                                <ProfileCard updateHandle={updateProfile} profile={data.GetParentById?.userHttp} />
-                            )
-                    }
+                    Карточка родителя
+                    <Tabs
+                        defaultActiveKey='1'
+                        items={[
+                            {
+                                label: 'Профиль',
+                                key: '1',
+                                children: loading ? <Loader /> : <ProfileCard updateHandle={updateProfile} profile={data.GetParentById?.userHttp} />,
+                            },
+                            {
+                                label: 'Дети',
+                                key: '2',
+                                children: <ChildrenTab clientId={clientId} />,
+                            },
+                        ]}
+                    />
 
-                    <DragResize
+                    {/* <DragResize
                         open={openAddChildren} setOpen={setOpenAddChildren}
                         width='35%' height='60%'
                         content={() => (
@@ -126,10 +134,10 @@ export default ({ clientId }) => {
                                     ) : "Ничего не найдено"}
                             </Flex>
                         </Flex>
-                    }
+                    } */}
                 </Flex>
             </Flex>
-            <SubTitle>Дети</SubTitle>
+            {/* <SubTitle>Дети</SubTitle>
             <ListChildrens>
                 {
                     childrenLoading ? <Loader />
@@ -147,7 +155,7 @@ export default ({ clientId }) => {
                             })
                         )
                 }
-            </ListChildrens>
+            </ListChildrens> */}
         </Flex >
     )
 } 

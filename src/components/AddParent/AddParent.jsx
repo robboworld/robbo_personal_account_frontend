@@ -12,7 +12,6 @@ export default memo(() => {
             direction='column' width='100%'
             align='center'
         >
-            {/* <Text>Добавление родителя</Text> */}
             <SignUpForm
                 margin='0 0 10px 0'
                 handleSubmit={parent => addParent(token, parent)}
