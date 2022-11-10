@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Layout } from 'antd'
-import styled from 'styled-components'
 
 import {
     MenuFoldOutlined,
@@ -9,7 +8,7 @@ import {
 
 import SideBar from '@/components/SideBar'
 
-const { Header, Footer, Sider, Content } = Layout
+const { Header, Sider, Content } = Layout
 
 const PageLayout = ({ children }) => {
     const [collapsed, setCollapsed] = useState(false)
@@ -32,11 +31,9 @@ const PageLayout = ({ children }) => {
                 </Header>
                 <Content style={{ padding: '0 1rem' }}>
                     {
-                        React.Children.map(children, child =>
-                            <React.Fragment>{child}</React.Fragment>)
+                        children
                     }
                 </Content>
-                {/* <Footer>Footer</Footer> */}
             </Layout>
         </Layout >
     )
