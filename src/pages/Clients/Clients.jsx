@@ -88,11 +88,7 @@ export default () => {
                                                             <DragResize
                                                                 open={open} setOpen={setOpen}
                                                                 content={() => (
-                                                                    <ParentContent
-                                                                        clientId={parent.userHttp.id}
-                                                                        open={open}
-                                                                        setOpen={setOpen}
-                                                                    />
+                                                                    <ParentContent clientId={parent.userHttp.id} />
                                                                 )}
                                                             />
                                                         )}

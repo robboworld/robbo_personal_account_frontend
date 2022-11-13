@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { Space, Button, Modal, List, Input, Card } from 'antd'
+import React, { useState } from 'react'
+import { Space, Button, Modal, List, Input } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
-import { gql, useQuery, useLazyQuery, useApolloClient } from "@apollo/client"
-
-import { race } from 'redux-saga/effects'
+import { gql, useQuery, useApolloClient } from "@apollo/client"
 
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
@@ -45,27 +43,11 @@ const ChildrenTab = ({ clientId }) => {
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchStudents, setSearchResult] = useState([])
-    const [students, setStudents] = useState([])
-
 
     const getStudentsResult = useQuery(GET_STUDENT_BY_PARENT_ID, {
         variables: { parentId: clientId },
         notifyOnNetworkStatusChange: true,
     })
-
-    // const [searchStudents, searchRequest] = useLazyQuery(SEARCH_STUDENTS_BY_EMAIL, {
-    //     variables: { email },
-    //     notifyOnNetworkStatusChange: true,
-    // })
-
-    const GetStudentsByParentId = async clientId => {
-        const result = await client.query({
-            query: GET_STUDENT_BY_PARENT_ID,
-            variables: { parentId: clientId },
-        })
-        setStudents(result.data.GetStudentsByParentId)
-        console.log(result)
-    }
 
     const SearchStudents = async value => {
         const result = await client.query({
@@ -78,7 +60,6 @@ const ChildrenTab = ({ clientId }) => {
     }
 
     return (
-        // <React.Fragment>
         <Space direction='vertical' style={{ margin: '0.5rem' }}>
             {
                 getStudentsResult.loading
@@ -117,7 +98,7 @@ const ChildrenTab = ({ clientId }) => {
                 openSearchSection &&
                 <React.Fragment>
                     <Search placeholder='Введите Email' onSearch={SearchStudents}
-enterButton />
+                        enterButton />
                     < List
                         bordered
                         dataSource={searchStudents}

@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import React from "react"
 import { gql, useQuery } from "@apollo/client"
 import { Tabs } from 'antd'
 
 import ChildrenTab from "./ChildrenTab"
 
 import Flex from "@/components/Flex"
-import ListItem from "@/components/ListItem"
-import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
-import { getClientsState } from "@/reducers/clients"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 
@@ -33,35 +29,15 @@ query GetParentById($parentId: String!){
 export default ({ clientId }) => {
     const {
         updateProfile,
-        deleteChildRequest,
-        getChildrenByParentId,
-        clearChildrenState,
-        searchStudent,
-        createRelation,
     } = useActions()
-    const token = localStorage.getItem('token')
-    const [openAddChildren, setOpenAddChildren] = useState(false)
-    const [openSearchSection, setOpenSearchSection] = useState(false)
-
-    // refactor useQuery
-    useEffect(() => {
-        getChildrenByParentId(token, clientId)
-        return () => {
-            clearChildrenState()
-        }
-    }, [])
 
     const { loading, error, data } = useQuery(GET_PARENT_BY_ID, {
         variables: { parentId: clientId },
     })
 
-    // refactor 
-    const { children, childrenLoading, searchResult, client, clientLoading } = useSelector(({ clients }) => getClientsState(clients))
-
     return (
 
         <Flex direction='column' width='100%'>
-
             <Flex padding='0 1rem' direction='column'>
                 <Flex direction='column' align='center'
                     width='100%'

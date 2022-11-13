@@ -176,7 +176,7 @@ export const usersQueryGraphQL = {
             {
                 query: gql`
                     query GetTeacherById($teacherId: String!){
-                        GetStudentById(teacherId: $teacherId){
+                        GetTeacherById(teacherId: $teacherId){
                             userHttp{
                                 id
                                 lastname

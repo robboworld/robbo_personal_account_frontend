@@ -56,13 +56,9 @@ export const teachersAPI = {
     },
 
     deleteTeacherForRobboGroup(token, teacherId, robboGroupId) {
-        return instance.delete(`/robboUnits/${0}/robboGroup/deleteTeacher`,
+        return instance.delete(`/robboUnits/${0}/robboGroup/${robboGroupId}/deleteTeacher/${teacherId}`,
             {
-                teacherId,
-                robboGroupId,
-            },
-            {
-                withCredentials: true,
+                // withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

@@ -90,33 +90,10 @@ export default () => {
                                                     <DragResize
                                                         open={open} setOpen={setOpen}
                                                         content={() => (
-                                                            // refactor
-                                                            <TeacherContent teacher={teacher.userHttp} />
+                                                            <TeacherContent teacherId={teacher.userHttp.id} />
                                                         )}
                                                     />
                                                 )}
-                                            // refactor remove?
-                                            // additionalIcons={[
-                                            //     {
-                                            //         iconLabel: 'Robbo groups',
-                                            //         icon: <MdGroup />,
-                                            //         renderContent: (open, setOpen) => (
-                                            //             <DragResize
-                                            //                 open={open}
-                                            //                 setOpen={setOpen}
-                                            //                 width='100%' height='100%'
-                                            //                 content={() => (
-                                            //                     <RobboGroupsList teacherId={teacher.userHttp.id} />
-                                            //                 )}
-                                            //             />
-                                            //         ),
-                                            //     },
-                                            //     {
-                                            //         iconLabel: 'Курсы',
-                                            //         icon: <FaBook />,
-                                            //         renderContent: () => { },
-                                            //     },
-                                            // ]}
                                             />
                                         )
                                     })
