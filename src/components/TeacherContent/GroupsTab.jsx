@@ -77,7 +77,7 @@ const GroupsTab = ({ teacherId }) => {
                 <React.Fragment>
                     <Search placeholder='Введите название группы' onSearch={SearchGroups}
                         enterButton />
-                    < List
+                    <List
                         bordered
                         dataSource={searchGroups}
                         renderItem={(robboGroup, index) => (

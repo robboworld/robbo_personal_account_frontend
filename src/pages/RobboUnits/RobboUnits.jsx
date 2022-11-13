@@ -5,7 +5,6 @@ import { Redirect, useHistory } from "react-router-dom"
 import { WelcomeText } from "./components"
 
 import PageLayout from '@/components/PageLayout'
-import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import RobboUnit from "@/components/RobboUnit"
 import { Button, DragResize } from "@/components/UI"

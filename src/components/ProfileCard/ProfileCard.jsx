@@ -1,6 +1,6 @@
 import React from 'react'
 import { PropTypes } from 'prop-types'
-import { Button, Select, Form, Input } from 'antd'
+import { Button, Form, Input } from 'antd'
 
 import Flex from '@/components/Flex'
 import { userRole } from '@/constants'

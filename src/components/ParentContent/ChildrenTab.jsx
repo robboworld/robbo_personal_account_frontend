@@ -38,6 +38,7 @@ const ChildrenTab = ({ clientId }) => {
     const token = localStorage.getItem('token')
     const client = useApolloClient()
     const {
+        createRelation,
         deleteChildRequest,
     } = useActions()
     const [openAddChildren, setOpenAddChildren] = useState(false)
@@ -54,8 +55,6 @@ const ChildrenTab = ({ clientId }) => {
             query: SEARCH_STUDENTS_BY_EMAIL,
             variables: { email: value },
         })
-        console.log("search")
-        console.log(result)
         setSearchResult(result.data.SearchStudentsByEmail)
     }
 
@@ -108,6 +107,7 @@ const ChildrenTab = ({ clientId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                handleClick={() => createRelation(token, clientId, userHttp.id)}
                             // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                             />
                         )}
