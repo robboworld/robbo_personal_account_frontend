@@ -1,17 +1,15 @@
 import React, { useEffect } from "react"
-
 import { useSelector } from "react-redux"
+import { List, Space } from "antd"
 
-import Loader from "../Loader"
+import { Text } from './components'
 
-import ListItem from "../ListItem"
-
-import { ListRobboGroups, Text } from './components'
-
-import Flex from '@/components/Flex'
+import Loader from "@/components//Loader"
+import ListItem from "@/components//ListItem"
 import { useActions } from "@/helpers"
 
 import { getRobboGroupsState } from "@/reducers/robboGroups"
+
 
 export default ({ teacherId }) => {
     const { getRobboGroupsByAccessToken, getRobboGroupsByTeacherId } = useActions()
@@ -26,29 +24,23 @@ export default ({ teacherId }) => {
 
 
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
+        <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             <Text>Назначенные группы</Text>
-            <ListRobboGroups>
-                {
-                    loading ? <Loader />
-                        : (
-                            robboGroups?.map((robboGroup, index) => {
-                                return (
-                                    <ListItem itemIndex={index}
-                                        label={robboGroup.name}
-                                        key={index}
-                                        render={() => { }}
-                                        handleDelete={false}
-                                    />
-                                )
-                            })
-                        )
-
-                }
-            </ListRobboGroups>
-        </Flex>
+            {
+                loading ? <Loader />
+                    : <List
+                        bordered
+                        dataSource={robboGroups}
+                        renderItem={(robboGroup, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                key={index}
+                                label={robboGroup.name}
+                                render={() => { }}
+                            />
+                        )}
+                    />
+            }
+        </Space>
     )
 }

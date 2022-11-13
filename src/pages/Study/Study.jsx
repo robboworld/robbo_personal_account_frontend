@@ -1,15 +1,15 @@
 import React, { useState } from "react"
 import { Redirect } from "react-router-dom"
+import { Tabs } from "antd"
 
 import { WelcomeText } from "./components"
 
 import PageLayout from '@/components/PageLayout'
-import { Button, DragResize } from "@/components/UI"
-import SideBar from "@/components/SideBar"
-import Flex from "@/components/Flex"
+import { DragResize } from "@/components/UI"
 import { useUserIdentity, checkAccess } from "@/helpers"
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, TEACHER } from "@/constants"
 import RobboGroupsList from "@/components/RobboGroupsList"
+
 
 export default () => {
 
@@ -31,31 +31,31 @@ export default () => {
                     <RobboGroupsList />
                 )}
             />
-            <Flex direction='column' margin='0 1rem 0 0'
-                style={{ maxWidth: '250px' }}>
-                <Button
-                    content='Расписание'
-                    background='darkgreen'
-                    margin='1rem 0 0 0' padding='0.5rem'
-                // handleSubmit={}
-                />
-                <Button
-                    content='Группы'
-                    background='darkgreen'
-                    margin='1rem 0 0 0' padding='0.5rem'
-                    handleSubmit={() => setOpenRobboGroupList(!openRobboGroupList)}
-                />
-                <Button
-                    content='Индивидуальные ученики'
-                    background='darkgreen'
-                    margin='1rem 0 0 0' padding='0.5rem'
-                />
-                <Button
-                    content='Курсы'
-                    background='darkgreen'
-                    margin='1rem 0 0 0' padding='0.5rem'
-                />
-            </Flex>
+            <Tabs
+                defaultActiveKey='2'
+                items={[
+                    {
+                        label: 'Расписание',
+                        key: '1',
+                        children: 'Расписание',
+                    },
+                    {
+                        label: 'Группы',
+                        key: '2',
+                        children: <RobboGroupsList />,
+                    },
+                    {
+                        label: 'Индивидуальные ученики',
+                        key: '3',
+                        children: 'Индивидуальные ученики',
+                    },
+                    {
+                        label: 'Курсы',
+                        key: '4',
+                        children: 'Курсы',
+                    },
+                ]}
+            />
         </PageLayout>
     )
 }

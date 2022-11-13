@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { MdGroup } from 'react-icons/md'
-import { FaBook } from 'react-icons/fa'
 import { Modal } from 'antd'
 
 import { WelcomeText } from './components'
@@ -18,8 +16,6 @@ import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
 import Loader from '@/components/Loader'
 import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
-import RobboGroupsList from '@/components/RobboGroupsList'
-
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
