@@ -12,7 +12,6 @@ export default () => {
     if (isAuth) {
         return <Redirect to={HOME_PAGE_ROUTE} />
     }
-
     return (
         <React.Fragment>
             {
