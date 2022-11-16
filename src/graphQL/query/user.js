@@ -2,6 +2,38 @@ import { gql } from "@apollo/client"
 
 import { graphQLClient } from "@/graphQL"
 
+export const userGQL = {
+    GET_STUDENTS_PY_PARENT_ID: gql`
+        query GetStudentsByParentId($parentId: String!){
+            GetStudentsByParentId(parentId: $parentId){
+                userHttp{
+                    id
+                    lastname
+                    firstname
+                    middlename
+                }
+            }
+        }
+    `,
+
+    GET_STUDENT_BY_ID: gql`
+        query GetStudentById($studentId: String!){
+            GetStudentById(studentId: $studentId){
+                userHttp{
+                    id
+                    lastname
+                    firstname
+                    middlename
+                    nickname
+                    email
+                    createdAt
+                    role
+                }
+            }
+        }
+    `,
+}
+
 export const usersQueryGraphQL = {
     getAllParents() {
         return graphQLClient.query(
@@ -63,18 +95,7 @@ export const usersQueryGraphQL = {
     getStudentsByParentId(parentId) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query GetStudentsByParentId($parentId: String!){
-                        GetStudentsByParentId(parentId: $parentId){
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                            }
-                        }
-                    }
-                `,
+                query: userGQL.GET_STUDENTS_PY_PARENT_ID,
                 variables: parentId,
             },
         )
@@ -107,22 +128,7 @@ export const usersQueryGraphQL = {
     getStudentById(studentId) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query GetStudentById($studentId: String!){
-                        GetStudentById(studentId: $studentId){
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                                nickname
-                                email
-                                createdAt
-                                role
-                            }
-                        }
-                    }
-                `,
+                query: userGQL.GET_STUDENT_BY_ID,
                 variables: studentId,
             },
         )

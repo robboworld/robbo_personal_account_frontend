@@ -19,6 +19,9 @@ const ProfileCard = ({
     }
     const [form] = Form.useForm()
     const token = localStorage.getItem('token')
+
+    const isFormDisable = updateHandle === undefined
+
     return (
         <Flex margin='0.5rem' width='100%'>
             <Form
@@ -46,6 +49,7 @@ const ProfileCard = ({
                     lastname: profile.lastname,
                     middlename: profile.middlename,
                 }}
+                disabled={isFormDisable}
             >
                 <Form.Item
                     name='email' label='Email'
