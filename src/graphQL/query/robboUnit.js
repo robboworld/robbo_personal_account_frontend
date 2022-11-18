@@ -29,9 +29,24 @@ export const robboUnitGQL = {
         }
     `,
 
-    // GET_ROBBO_UNIT_BY_ID: gql`
-    //     query G
-    // `,
+    GET_ROBBO_UNIT_BY_ID: gql`
+        query GetRobboUnitById($id: String!){
+            GetRobboUnitById(id: $id){
+                id
+                name
+                city
+                lastModified
+            }
+        }
+    `,
+
+    GET_ALL_ROBBO_UNITS: gql`
+        query {
+            GetAllRobboUnits{
+                name
+            }
+        }
+    `,
 }
 
 export const robboUnitQueryGraphQL = {
