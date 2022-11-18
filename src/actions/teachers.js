@@ -1,11 +1,11 @@
 import { createAction } from 'redux-actions'
 import { toast } from 'react-toastify'
 
-import { CREATE_TEACHER, DELETE_TEACHER, GET_TEACHERS } from '@/constants/sagas/teachers'
+import { CREATE_TEACHER, DELETE_TEACHER, GET_ROBBO_GROUPS_BY_TEACHER_ID, GET_TEACHERS } from '@/constants/sagas/teachers'
 import {
     CLEAR_TEACHERS_STATE, CREATE_TEACHER_FAILED,
     CREATE_TEACHER_SUCCESS, DELETE_TEACHER_FAILED,
-    DELETE_TEACHER_SUCCESS, GET_TEACHERS_FAILED,
+    DELETE_TEACHER_SUCCESS, GET_ROBBO_GROUPS_BY_TEACHER_ID_FAILED, GET_ROBBO_GROUPS_BY_TEACHER_ID_SUCCESS, GET_TEACHERS_FAILED,
     GET_TEACHERS_SUCCESS,
 } from '@/constants'
 
@@ -74,3 +74,22 @@ export const createTeacherFailed = createAction(CREATE_TEACHER_FAILED, err => {
 })
 
 export const clearTeachersState = createAction(CLEAR_TEACHERS_STATE)
+
+export const getRobboGroupsByTeacherId = createAction(GET_ROBBO_GROUPS_BY_TEACHER_ID, teacherId => {
+    return {
+        teacherId,
+    }
+})
+
+export const getRobboGroupsByTeacherIdSuccess = createAction(GET_ROBBO_GROUPS_BY_TEACHER_ID_SUCCESS, response => {
+    return {
+        response,
+    }
+})
+
+export const getRobboGroupsByTeacherIdFailed = createAction(GET_ROBBO_GROUPS_BY_TEACHER_ID_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
+    }
+})

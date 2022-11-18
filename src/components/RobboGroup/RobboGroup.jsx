@@ -7,7 +7,7 @@ import Flex from '@/components/Flex'
 import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
 import { getClientsState } from "@/reducers/clients"
-import { StyledSpan, Button, ModalWindow, SearchInput } from "@/components/UI"
+import { StyledSpan, Button, DragResize, SearchInput } from "@/components/UI"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupState } from "@/reducers/robboGroup"
 import Loader from "@/components/Loader"
@@ -23,6 +23,7 @@ export default ({ robboUnitId, robboGroupId }) => {
     const [openAddStudent, setOpenAddStudent] = useState(false)
     const [openCreateChild, setOpenCreateChild] = useState(false)
 
+    // refactor useQuery
     useEffect(() => {
         getRobboGroupByIdRequest(token, robboUnitId, robboGroupId)
         return () => {
@@ -32,9 +33,6 @@ export default ({ robboUnitId, robboGroupId }) => {
 
     const { searchResult } = useSelector(({ clients }) => getClientsState(clients))
     const { robboGroup, loading } = useSelector(({ robboGroup }) => getRobboGroupState(robboGroup))
-
-
-
 
     return (
         <Flex width='100%'>
@@ -48,7 +46,8 @@ export default ({ robboUnitId, robboGroupId }) => {
                             <Flex justify='center' width='100%'>
                                 <Title>Группа {robboGroup.name}</Title>
                             </Flex>
-                            <ModalWindow
+                            {/* refactor modal from lib */}
+                            <DragResize
                                 open={openAddStudent} setOpen={setOpenAddStudent}
                                 width='35%'
                                 height='30%'
@@ -59,6 +58,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                                     >
                                         <SearchInput
                                             searchHandle={input => { searchStudent(token, input) }}
+                                            placeholder='Введите Email'
                                         />
                                         <Flex direction='column' padding='0.5rem'>
                                             {
@@ -71,7 +71,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                                                                 key={index}
                                                                 render={() => { }}
                                                                 handleClick={() => addStudentToRobboGroupRequest(token, robboGroup, userHttp.id)}
-                                                            // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                                                handleDelete={false}
                                                             />
                                                         )
                                                     })
@@ -80,9 +80,8 @@ export default ({ robboUnitId, robboGroupId }) => {
                                     </Flex>
                                 )}
                             />
-                            <ModalWindow
+                            <DragResize
                                 open={openCreateChild} setOpen={setOpenCreateChild}
-                                width='35%' height='60%'
                                 content={() => (
                                     <AddChildren parentId='' />
                                 )}

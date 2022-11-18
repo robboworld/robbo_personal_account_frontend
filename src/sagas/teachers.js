@@ -6,8 +6,11 @@ import {
     createTeacherSuccess, deleteTeacher,
     deleteTeacherFailed, deleteTeacherSuccess,
     getTeachers, getTeachersFailed,
-    getTeachersSuccess,
-} from '@/actions/teachers'
+    getTeachersSuccess, deleteTeacherForRobboGroupFailed,
+    deleteTeacherForRobboGroupRequest, deleteTeacherForRobboGroupSuccess,
+    setTeacherForRobboGroupFailed, setTeacherForRobboGroupRequest,
+    setTeacherForRobboGroupSuccess,
+} from '@/actions'
 
 function* getTeachersSaga(action) {
     try {
@@ -45,8 +48,34 @@ function* createTeacherSaga(action) {
     }
 }
 
+function* setTeacherForRobboGroupSaga(action) {
+    try {
+        const { token, teacherId, robboGroupId } = action.payload
+        const response = yield call(teachersAPI.setTeacherForRobboGroup, token, teacherId, robboGroupId)
+        console.log(response)
+
+        yield put(setTeacherForRobboGroupSuccess(response.data))
+    } catch (e) {
+        yield put(setTeacherForRobboGroupFailed(e))
+    }
+}
+
+function* deleteTeacherForRobboGroupSaga(action) {
+    try {
+        const { token, teacherId, robboGroupId } = action.payload
+        const response = yield call(teachersAPI.deleteTeacherForRobboGroup, token, teacherId, robboGroupId)
+        console.log(response)
+
+        yield put(deleteTeacherForRobboGroupSuccess(response.data))
+    } catch (e) {
+        yield put(deleteTeacherForRobboGroupFailed(e))
+    }
+}
+
 export function* teachersSaga() {
     yield takeLatest(getTeachers, getTeachersSaga)
     yield takeLatest(deleteTeacher, deleteTeacherSaga)
     yield takeLatest(createTeacher, createTeacherSaga)
+    yield takeLatest(setTeacherForRobboGroupRequest, setTeacherForRobboGroupSaga)
+    yield takeLatest(deleteTeacherForRobboGroupRequest, deleteTeacherForRobboGroupSaga)
 }

@@ -6,7 +6,7 @@ export default function Button(
     content, handleSubmit,
     background, width,
     height, padding,
-    margin,
+    margin, fontSize,
   }) {
   return (
     <StyledButton
@@ -16,6 +16,7 @@ export default function Button(
       height={height}
       padding={padding}
       margin={margin}
+      fontSize={fontSize}
       data-cy='button'
     >
       {content}
@@ -31,6 +32,7 @@ const StyledButton = styled.button`
   margin: ${({ margin }) => margin || 'none'};
   width: ${({ width }) => width || 'auto'};
   height: ${({ height }) => height || '3rem'};
+  font-size: ${({ fontSize }) => fontSize || 'auto'};
   border: none;
   color: white;
   border-radius: 2rem;

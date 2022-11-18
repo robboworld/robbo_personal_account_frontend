@@ -1,52 +1,113 @@
-import React from "react"
-
-import ProfileForm from './ProfileForm'
+import React from 'react'
+import { PropTypes } from 'prop-types'
+import { Button, Form, Input } from 'antd'
 
 import Flex from '@/components/Flex'
-import { StyledSpan } from '@/components/UI'
+import { userRole } from '@/constants'
 
-export default ({
+const ProfileCard = ({
     updateHandle,
     profile,
 }) => {
+    const layout = {
+        labelCol: {
+            span: 8,
+        },
+        wrapperCol: {
+            span: 16,
+        },
+    }
+    const [form] = Form.useForm()
+    const token = localStorage.getItem('token')
     return (
         <Flex margin='0.5rem' width='100%'>
-            {/* <AvatarWrapper /> */}
-            <Flex
-                direction='row'
-                align='flex-start'
-                margin='0.5rem'
-                width='100%'
+            <Form
+                name='normal_profile'
+                className='profile-form'
+                onFinish={({ email, nickname, middlename, firstname, lastname }) => {
+                    updateHandle(token, {
+                        id: profile.id,
+                        email,
+                        middlename,
+                        firstname,
+                        lastname,
+                        nickname,
+                        password: profile.password,
+                        createdAt: profile.createdAt,
+                        role: profile.role,
+                    })
+                }}
+                {...layout}
+                form={form}
+                initialValues={{
+                    email: profile.email,
+                    nickname: profile.nickname,
+                    firstname: profile.firstname,
+                    lastname: profile.lastname,
+                    middlename: profile.middlename,
+                }}
             >
-                <Flex
-                    width='30%'
-                    direction='column'
-                    align='flex-start'
-                    margin='0 20px 0 0'
-                    style={{ 'borderRight': 'solid' }}
+                <Form.Item
+                    name='email' label='Email'
                 >
-                    <StyledSpan size='1rem' height='2.8rem'
-                        content='Email' />
-                    <StyledSpan size='1rem' height='2.8rem'
-                        content='Фамилия'
-                    />
-                    <StyledSpan size='1rem' height='2.8rem'
-                        content='Имя'
-                    />
-                    <StyledSpan size='1rem' height='2.8rem'
-                        content='Отчество'
-                    />
-                    <StyledSpan size='1rem' height='2.8rem'
-                        content='Никнейм'
-                    />
-                    <StyledSpan size='1rem' height='2.8rem'
-                        content='Аккаунт создан'
-                    />
-                </Flex>
-
-                <ProfileForm updateHandle={updateHandle} profile={profile} />
-
-            </Flex>
-        </Flex>
+                    <Input placeholder={profile.email} size='large' />
+                </Form.Item>
+                <Form.Item
+                    name='nickname' label='Nickname'
+                >
+                    <Input placeholder={profile.nickname} size='large' />
+                </Form.Item>
+                <Form.Item
+                    name='firstname' label='Имя'
+                >
+                    <Input
+                        placeholder={profile.firstname} size='large' />
+                </Form.Item>
+                <Form.Item
+                    name='lastname' label='Фамилия'
+                >
+                    <Input placeholder={profile.lastname} size='large' />
+                </Form.Item>
+                <Form.Item
+                    name='middlename' label='Отчество'
+                >
+                    <Input placeholder={profile.middlename} size='large' />
+                </Form.Item>
+                <Form.Item label='Роль'>
+                    {
+                        userRole[profile.role]
+                    }
+                </Form.Item>
+                <Form.Item label='Создан'>
+                    {
+                        profile.createdAt
+                    }
+                </Form.Item>
+                <Form.Item >
+                    <Button
+                        type='primary' htmlType='submit'
+                        className='login-form-button'
+                    >
+                        Сохранить
+                    </Button>
+                </Form.Item>
+            </Form>
+        </Flex >
     )
 }
+
+ProfileCard.propTypes = {
+    profile: PropTypes.shape({
+        id: PropTypes.string,
+        email: PropTypes.string,
+        nickname: PropTypes.string,
+        lastname: PropTypes.string,
+        firstname: PropTypes.string,
+        middlename: PropTypes.string,
+        role: PropTypes.number,
+        createdAt: PropTypes.string,
+    }),
+    updateHandle: PropTypes.func,
+}
+
+export default ProfileCard

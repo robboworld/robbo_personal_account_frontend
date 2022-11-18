@@ -12,9 +12,19 @@ import {
     deleteStudentFromRobboGroupRequest,
     getRobboGroupByIdFailed,
     getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
+    getRobboGroupsByAccessToken,
+    getRobboGroupsByAccessTokenFailed,
+    getRobboGroupsByAccessTokenSuccess,
     getRobboGroupsByRobboUnitIdFailed, getRobboGroupsByRobboUnitIdRequest,
     getRobboGroupsByRobboUnitIdSuccess,
+    getRobboGroupsByTeacherId,
+    getRobboGroupsByTeacherIdFailed,
+    getRobboGroupsByTeacherIdSuccess,
+    searchRobboGroupsByTitleFailed,
+    searchRobboGroupsByTitleRequest,
+    searchRobboGroupsByTitleSuccess,
 } from '@/actions'
+import { robboGroupsQueryGraphQL } from '@/graphQL/query'
 
 function* getRobboGroupByIdSaga(action) {
     try {
@@ -90,6 +100,39 @@ function* deleteStudentFromRobboGroupSaga(action) {
     }
 }
 
+function* searchRobboGroupsByTitleSaga(action) {
+    try {
+        const { token, title } = action.payload
+        const response = yield call(robboGroupsQueryGraphQL.searchRobboGroupsByName, { name: title })
+        console.log(response)
+
+        yield put(searchRobboGroupsByTitleSuccess(response.data.SearchGroupsByName))
+    } catch (e) {
+        yield put(searchRobboGroupsByTitleFailed(e))
+    }
+}
+
+function* getRobboGroupsByTeacherIdSaga(action) {
+    try {
+        const { teacherId } = action.payload
+        const response = yield call(robboGroupsQueryGraphQL.getRobboGroupsByTeacherId, { teacherId })
+
+        yield put(getRobboGroupsByTeacherIdSuccess(response.data.GetRobboGroupsByTeacherId))
+    } catch (e) {
+        yield put(getRobboGroupsByTeacherIdFailed(e))
+    }
+}
+
+function* getRobboGroupsByAccessTokenSaga() {
+    try {
+        const response = yield call(robboGroupsQueryGraphQL.getRobboGroupsByAccessToken)
+        console.log(response)
+
+        yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken))
+    } catch (e) {
+        yield put(getRobboGroupsByAccessTokenFailed(e))
+    }
+}
 
 export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupByIdRequest, getRobboGroupByIdSaga)
@@ -98,4 +141,7 @@ export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSaga)
     yield takeLatest(addStudentToRobboGroupRequest, addStudentToRobboGroupSaga)
     yield takeLatest(deleteStudentFromRobboGroupRequest, deleteStudentFromRobboGroupSaga)
+    yield takeLatest(searchRobboGroupsByTitleRequest, searchRobboGroupsByTitleSaga)
+    yield takeLatest(getRobboGroupsByTeacherId, getRobboGroupsByTeacherIdSaga)
+    yield takeLatest(getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenSaga)
 }

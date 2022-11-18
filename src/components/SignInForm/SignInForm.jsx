@@ -1,21 +1,18 @@
-import React, { memo, useState } from 'react'
-import styled from 'styled-components'
+import React, { memo, useState, useEffect } from 'react'
+import { Button, Select, Form, Input } from 'antd'
+import { PropTypes } from 'prop-types'
 
-import { Input, Select, Button } from '@/components/UI'
-import Flex from '@/components/Flex'
+import { LockOutlined, MailOutlined } from '@ant-design/icons'
+
 import {
     FREE_LISTENER, PARENT, STUDENT,
     TEACHER, UNIT_ADMIN, SUPER_ADMIN, userRole,
 } from '@/constants'
 
-export default memo(({
-    margin, handleSubmit,
-    needSelectRole, buttonOption,
+const SignInForm = memo(({
+    handleSubmit,
+    needSelectRole,
 }) => {
-
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [role, setRole] = useState({})
 
     const roles = [
         { value: STUDENT, label: userRole[STUDENT] },
@@ -26,50 +23,92 @@ export default memo(({
         { value: SUPER_ADMIN, label: userRole[SUPER_ADMIN] },
     ]
 
-    return (
-        <Flex
-            direction='column' justify='space-around'
-            align='center' width='100%'
-        >
-            <Input type='text' placeholder='Email'
-                value={email} handleInput={email => setEmail(email)}
-                margin={margin}
-            />
-            <Input type='password' placeholder='Password'
-                value={password} handleInput={password => setPassword(password)}
-                margin={margin}
-            />
-            {
-                needSelectRole &&
-                <React.Fragment>
-                    <Text>Выберите роль</Text>
-                    <Select
-                        options={roles}
-                        onChange={role => setRole(role)}
-                        value={role}
-                        width='70%'
-                    />
-                </React.Fragment>
-            }
+    const [form] = Form.useForm()
+    const [, forceUpdate] = useState({})
 
-            <Flex
-                justify='center' align='center'
-                width='100%' margin='1rem 0 2rem 0'
+    useEffect(() => {
+        forceUpdate({})
+    }, [])
+
+    return (
+        <Form
+            name='normal_login'
+            className='login-form'
+            onFinish={({ email, password, role }) => {
+                return handleSubmit({ email, password, role })
+            }}
+            form={form}
+        >
+            <Form.Item
+                name='email'
+                rules={[
+                    {
+                        required: true,
+                        message: 'Пожалуйста, введите ваш Email!',
+                    },
+                ]}
             >
-                <Button
-                    content={buttonOption.content}
-                    handleSubmit={
-                        () => handleSubmit({
-                            email, password,
-                            role,
-                        })}
-                    padding={buttonOption.padding}
+                <Input
+                    prefix={<MailOutlined className='site-form-item-icon' />} placeholder='Email'
+                    size='large'
                 />
-            </Flex>
-        </Flex>
+            </Form.Item>
+            <Form.Item
+                name='password'
+                rules={[
+                    {
+                        required: true,
+                        message: 'Пожалуйста, введите ваш Пароль!',
+                    },
+                ]}
+            >
+                <Input
+                    prefix={<LockOutlined className='site-form-item-icon' />}
+                    type='password'
+                    placeholder='Пароль'
+                    size='large'
+                />
+            </Form.Item>
+
+            <Form.Item
+                label='Выберите роль' name='role'
+                rules={[
+                    {
+                        required: true,
+                        message: 'Пожалуйста, введите вашу роль!',
+                    },
+                ]}
+            >
+                <Select
+                    options={roles}
+                    size='large'
+                />
+            </Form.Item>
+
+            <Form.Item shouldUpdate>
+                {
+                    () => (
+                        <Button
+                            type='primary' htmlType='submit'
+                            className='login-form-button'
+                            disabled={
+                                !form.isFieldsTouched(true) ||
+                                !!form.getFieldsError().filter(({ errors }) => errors.length).length
+                            }
+                        >
+                            Войти
+                        </Button>
+                    )
+                }
+
+            </Form.Item>
+        </Form >
     )
 })
 
-const Text = styled.p`
-            font-size: 16px;
-            `
+SignInForm.propTypes = {
+    handleSubmit: PropTypes.func.isRequired,
+    needSelectRole: PropTypes.bool,
+}
+
+export default SignInForm

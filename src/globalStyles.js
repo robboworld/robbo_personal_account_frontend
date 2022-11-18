@@ -32,5 +32,6 @@ export default createGlobalStyle`
   #root {
     display: flex;
     background: linear-gradient(to bottom, #008000, #f0fff0);
+    box-sizing: border-box;
   }
 `

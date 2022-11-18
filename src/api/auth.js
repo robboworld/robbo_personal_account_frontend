@@ -7,7 +7,7 @@ export const authAPI = {
             {
                 email: email,
                 password: password,
-                role: role.value,
+                role: role,
                 nickname: nickname,
                 lastname: lastname,
                 firstname: firstname,
@@ -23,7 +23,7 @@ export const authAPI = {
             {
                 email: email,
                 password: password,
-                role: role.value,
+                role: role,
             },
             {
                 withCredentials: true,

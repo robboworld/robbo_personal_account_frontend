@@ -1,14 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
-import * as FaIcons from 'react-icons/fa'
-
-import {
-    SideBar,
-    Navbar,
-    MenuIconOpen,
-    MenuIconClose,
-    SidebarMenu,
-} from './components'
+import { Menu } from 'antd'
+import { useHistory } from 'react-router-dom'
 
 import {
     SidebarDataSuperAdmin,
@@ -18,14 +11,13 @@ import {
     SidebarDataUnitAdmin,
     SidebarDataFreeListener,
 } from './SideBarData.jsx'
-import MenuItem from './MenuItem'
 
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
 
+
 export default () => {
-    const [close, setClose] = useState(false)
-    const showSidebar = () => setClose(!close)
+    const history = useHistory()
     const { signOutRequest } = useActions()
     const { userRole } = useSelector(({ login }) => getLoginState(login))
 
@@ -57,35 +49,23 @@ export default () => {
         }
     }
 
-    const signOutHandler = path => {
-        if (path === '/login') {
+    const onMenuClick = ({ item, key, keyPath, selectedKeys, domEvent }) => {
+        if (item.props.pathname === '/login') {
             signOutRequest()
+            history.push(item.props.pathname)
         }
+        else {
+            history.push(item.props.pathname)
+        }
+
     }
 
     return (
-        <SideBar>
-            <Navbar>
-                <MenuIconOpen to='#' onClick={showSidebar}>
-                    <FaIcons.FaBars />
-                </MenuIconOpen>
-            </Navbar>
-
-            <SidebarMenu close={close}>
-                <MenuIconClose to='#' onClick={showSidebar}>
-                    <FaIcons.FaTimes />
-                </MenuIconClose>
-
-                {SideBarData.map((item, index) => {
-                    return (
-                        <MenuItem
-                            key={index}
-                            item={item}
-                            index={index}
-                            signOutHandler={signOutHandler} />
-                    )
-                })}
-            </SidebarMenu>
-        </SideBar>
+        <Menu
+            theme='light'
+            mode='inline'
+            onClick={onMenuClick}
+            items={SideBarData}
+        />
     )
 }

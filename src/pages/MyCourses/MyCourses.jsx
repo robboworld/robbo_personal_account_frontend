@@ -6,8 +6,7 @@ import { WelcomeText } from './components'
 
 import CoursePageItem from './MyCoursesItem'
 
-import { PageLayout, Card } from '@/layouts'
-import SideBar from '@/components/SideBar'
+import PageLayout from '@/components/PageLayout'
 import Loader from '@/components/Loader'
 import { getCoursePages, getCoursePagesLoading } from '@/reducers/myCourses'
 
@@ -41,30 +40,26 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                {
-                    loginLoading ? <Loader />
-                        : (
-                            <Flex direction='column' align='center'>
-                                <WelcomeText>Мои Курсы</WelcomeText>
-                                {
-                                    loading
-                                        ? <Loader />
-                                        : coursePages?.map((coursePage, index) => {
-                                            return (
-                                                <CoursePageItem
-                                                    coursePage={coursePage}
-                                                    key={index}
-                                                />
-                                            )
-                                        })
-                                }
-                            </Flex>
-                        )
-                }
-
-            </Card>
+            {
+                loginLoading ? <Loader />
+                    : (
+                        <Flex direction='column' align='center'>
+                            <WelcomeText>Мои Курсы</WelcomeText>
+                            {
+                                loading
+                                    ? <Loader />
+                                    : coursePages?.map((coursePage, index) => {
+                                        return (
+                                            <CoursePageItem
+                                                coursePage={coursePage}
+                                                key={index}
+                                            />
+                                        )
+                                    })
+                            }
+                        </Flex>
+                    )
+            }
         </PageLayout>
     )
 }

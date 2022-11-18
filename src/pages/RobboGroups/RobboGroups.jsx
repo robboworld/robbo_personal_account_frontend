@@ -6,10 +6,10 @@ import { useSelector } from "react-redux"
 
 import { WelcomeText } from "./components"
 
-import { PageLayout, Card } from "@/layouts"
+import PageLayout from '@/components/PageLayout'
 import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
-import { ModalWindow, Button } from "@/components/UI"
+import { DragResize, Button } from "@/components/UI"
 import Loader from "@/components/Loader"
 import AddStudentGroup from "@/components/AddStudentGroup"
 import RobboGroup from "@/components/RobboGroup"
@@ -50,73 +50,69 @@ export default () => {
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                {
-                    loginLoading ? <Loader />
-                        : (
-                            <div>
-                                <WelcomeText>Группы</WelcomeText>
-                                <ModalWindow
-                                    open={openAddGroup} setOpen={setOpenAddGroup}
-                                    width='35%' height='60%'
-                                    content={() => (
-                                        <AddStudentGroup robboUnitId={robboUnitId} />
-                                    )}
+            {
+                loginLoading ? <Loader />
+                    : (
+                        <div>
+                            <WelcomeText>Группы</WelcomeText>
+                            <DragResize
+                                open={openAddGroup} setOpen={setOpenAddGroup}
+                                content={() => (
+                                    <AddStudentGroup robboUnitId={robboUnitId} />
+                                )}
+                            />
+                            <Flex direction='row' justify='flex-end'
+                                align='flex-start'>
+                                <Button
+                                    background='green'
+                                    content='Создать группу'
+                                    padding='0.5rem'
+                                    handleSubmit={() => setOpenAddGroup(true)}
                                 />
-                                <Flex direction='row' justify='flex-end'
-                                    align='flex-start'>
-                                    <Button
-                                        background='green'
-                                        content='Создать группу'
-                                        padding='0.5rem'
-                                        handleSubmit={() => setOpenAddGroup(true)}
-                                    />
-                                </Flex>
-                                {
-                                    loading ? <Loader />
-                                        : (
-                                            <Flex
-                                                widht='100%' direction='column'
-                                                justify=' center'
-                                            >
-                                                <Flex direction='column'>
-                                                    {
-                                                        robboGroups?.map((robboGroup, index) => {
-                                                            return (
-                                                                <ListItem
-                                                                    itemIndex={index}
-                                                                    key={index}
-                                                                    label={robboGroup.name}
-                                                                    render={(open, setOpen) => (
-                                                                        <ModalWindow
-                                                                            open={open} setOpen={setOpen}
-                                                                            width='65%' height='80%'
-                                                                            content={() => (
-                                                                                <RobboGroup
-                                                                                    robboUnitId={robboUnitId}
-                                                                                    robboGroupId={robboGroup.id}
-                                                                                />
-                                                                            )}
-                                                                        />
-                                                                    )}
-                                                                    // handleClick={() => history.push(`/robboUnits/${robboUnit.id}/groups/${robboGroup.id}`)}
-                                                                    handleDelete={robboGroupIndex =>
-                                                                        deleteRobboGroupRequest(token, robboUnitId, robboGroup.id, robboGroupIndex)
-                                                                    }
-                                                                />
-                                                            )
-                                                        })
-                                                    }
-                                                </Flex>
+                            </Flex>
+                            {
+                                loading ? <Loader />
+                                    : (
+                                        <Flex
+                                            widht='100%' direction='column'
+                                            justify=' center'
+                                        >
+                                            <Flex direction='column'>
+                                                {
+                                                    robboGroups?.map((robboGroup, index) => {
+                                                        return (
+                                                            <ListItem
+                                                                itemIndex={index}
+                                                                key={index}
+                                                                label={robboGroup.name}
+                                                                render={(open, setOpen) => (
+                                                                    <DragResize
+                                                                        open={open} setOpen={setOpen}
+                                                                        width='65%' height='80%'
+                                                                        content={() => (
+                                                                            // refactor in robboGroup useQuery
+                                                                            <RobboGroup
+                                                                                robboUnitId={robboUnitId}
+                                                                                robboGroupId={robboGroup.id}
+                                                                            />
+                                                                        )}
+                                                                    />
+                                                                )}
+                                                                // handleClick={() => history.push(`/robboUnits/${robboUnit.id}/groups/${robboGroup.id}`)}
+                                                                handleDelete={robboGroupIndex =>
+                                                                    deleteRobboGroupRequest(token, robboUnitId, robboGroup.id, robboGroupIndex)
+                                                                }
+                                                            />
+                                                        )
+                                                    })
+                                                }
                                             </Flex>
-                                        )
-                                }
-                            </div>
-                        )
-                }
-
-            </Card>
+                                        </Flex>
+                                    )
+                            }
+                        </div>
+                    )
+            }
         </PageLayout>
     )
 }
