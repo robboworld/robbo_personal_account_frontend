@@ -88,7 +88,6 @@ export default () => {
                                                                 render={(open, setOpen) => (
                                                                     <DragResize
                                                                         open={open} setOpen={setOpen}
-                                                                        width='65%' height='80%'
                                                                         content={() => (
                                                                             // refactor in robboGroup useQuery
                                                                             <RobboGroup

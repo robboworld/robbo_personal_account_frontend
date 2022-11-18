@@ -1,24 +1,20 @@
 import React, { useState } from "react"
-
+import { useQuery } from "@apollo/client"
 import { Tabs } from 'antd'
 
 import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 
-import { usersQueryGraphQL } from '@/graphQL'
+import { userGQL } from '@/graphQL'
+
 
 export default ({ childrenId }) => {
 
-    const [childrenState, setChildrenState] = useState({
-        loading: true,
-        data: null,
-        error: null,
+    const { loading, error, data } = useQuery(userGQL.GET_STUDENT_BY_ID, {
+        variables: { studentId: childrenId },
+        notifyOnNetworkStatusChange: true,
     })
-
-    usersQueryGraphQL.getStudentById({ studentId: childrenId })
-        .then(result => setChildrenState({ loading: result.loading, data: result.data }))
-
 
     return (
 
@@ -35,7 +31,7 @@ export default ({ childrenId }) => {
                             {
                                 label: 'Профиль',
                                 key: '1',
-                                children: childrenState.loading ? <Loader /> : <ProfileCard profile={childrenState.data.GetStudentById?.userHttp} />,
+                                children: loading ? <Loader /> : <ProfileCard profile={data.GetStudentById?.userHttp} />,
                             },
                         ]}
                     />

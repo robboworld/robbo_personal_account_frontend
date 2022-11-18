@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { List } from 'antd'
+import { useQuery } from '@apollo/client'
 
 import ChildrenContent from './ChildrenContent'
 
@@ -7,31 +8,27 @@ import Flex from '@/components/Flex'
 import ListItem from '@/components/ListItem'
 import Loader from '@/components/Loader'
 import { DragResize } from '@/components/UI'
+import { userGQL } from '@/graphQL'
 
-import { usersQueryGraphQL } from '@/graphQL'
 
 const ListChildren = ({ profile, isUserAParent }) => {
 
-    const [childrenState, setChildrenState] = useState({
-        loading: true,
-        data: null,
-        error: null,
+    const { loading, error, data } = useQuery(userGQL.GET_STUDENTS_PY_PARENT_ID, {
+        variables: { parentId: profile.id },
+        notifyOnNetworkStatusChange: true,
     })
-
-    usersQueryGraphQL.getStudentsByParentId({ parentId: profile.id })
-        .then(result => setChildrenState({ loading: result.loading, data: result.data }))
 
     if (isUserAParent) {
         return (
             <React.Fragment>
                 {
-                    childrenState.loading
+                    loading
                         ? <Loader />
                         : (
                             <Flex direction='column' width='100%'>
                                 <h3>Дети</h3>
                                 <List
-                                    dataSource={childrenState.data.GetStudentsByParentId}
+                                    dataSource={data.GetStudentsByParentId}
                                     renderItem={({ userHttp }, index) => (
                                         <ListItem
                                             itemIndex={index}
@@ -40,8 +37,7 @@ const ListChildren = ({ profile, isUserAParent }) => {
                                                 <DragResize
                                                     open={open} setOpen={setOpen}
                                                     content={() => (
-                                                        <ChildrenContent childrenId={userHttp.id} open={open}
-                                                            setOpen={setOpen} />
+                                                        <ChildrenContent childrenId={userHttp.id} />
                                                     )}
                                                 />
                                             )}
