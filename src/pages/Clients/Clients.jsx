@@ -49,7 +49,6 @@ export default () => {
                             direction='column'
                         >
                             <WelcomeText>Клиенты</WelcomeText>
-
                             <Modal
                                 title='Заполните данные клиента'
                                 centered

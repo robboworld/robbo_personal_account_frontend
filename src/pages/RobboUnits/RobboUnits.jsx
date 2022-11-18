@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { Redirect, useHistory } from "react-router-dom"
+import { Modal } from "antd"
 
 import { WelcomeText } from "./components"
 
@@ -15,6 +16,7 @@ import Loader from "@/components/Loader"
 import ListItem from "@/components/ListItem"
 import { useUserIdentity, checkAccess } from "@/helpers"
 import { HOME_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN, LOGIN_PAGE_ROUTE } from "@/constants"
+
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -50,12 +52,20 @@ export default () => {
     return (
         <PageLayout>
             <WelcomeText>Robbo Units</WelcomeText>
-            <DragResize
+            {/* <DragResize
                 open={openAddRobboUnit} setOpen={setOpenAddRobboUnit}
                 content={() => (
                     <AddRobboUnit />
                 )}
-            />
+            /> */}
+            <Modal
+                centered
+                open={openAddRobboUnit}
+                onCancel={() => setOpenAddRobboUnit(false)}
+                footer={[]}
+            >
+                <AddRobboUnit />
+            </Modal>
             <Flex direction='column' justify='flex-end'
                 align='flex-start'>
                 <Button
@@ -93,7 +103,6 @@ export default () => {
                                                     <DragResize
                                                         open={open} setOpen={setOpen}
                                                         content={() => (
-                                                            // refactor useQuery
                                                             <RobboUnit
                                                                 robboUnitId={robboUnit.id}
                                                             />
