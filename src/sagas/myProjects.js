@@ -7,7 +7,10 @@ import {
     getAllProjectPages, getAllProjectPagesFailed, getAllProjectPagesSuccess,
     getProjectPageById, getProjectPageByIdFailed, getProjectPageByIdSuccess,
     updateProjectPage, updateProjectPageFailed, updateProjectPageSuccess,
+    getProjectPagesByAccessToken, getProjectPageByAccessTokenSuccess,
+    getProjectPageByAccessTokenFailed,
 } from '@/actions'
+import { projectPageQueryGraphQL } from '@/graphQL'
 
 
 function* getAllProjectPagesSaga(action) {
@@ -69,10 +72,21 @@ function* deleteProjectPageSaga(action) {
     }
 }
 
+function* getProjectPagesByAccessTokenSaga(action) {
+    try {
+        const result = yield call(projectPageQueryGraphQL.getProjectPagesByAccessToken)
+        console.log(result)
+        yield put(getProjectPageByAccessTokenSuccess(result.data.GetAllProjectPagesByAccessToken))
+    } catch (e) {
+        yield put(getProjectPageByAccessTokenFailed(e.message))
+    }
+}
+
 export function* myProjectsSaga() {
     yield takeLatest(getAllProjectPages, getAllProjectPagesSaga)
     yield takeLatest(getProjectPageById, getProjectPageByIdSaga)
     yield takeEvery(createProjectPage, createProjectPageSaga)
     yield takeLatest(updateProjectPage, updateProjectPageSaga)
     yield takeLatest(deleteProjectPage, deleteProjectPageSaga)
+    yield takeLatest(getProjectPagesByAccessToken, getProjectPagesByAccessTokenSaga)
 }

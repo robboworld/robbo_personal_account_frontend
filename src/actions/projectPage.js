@@ -9,7 +9,7 @@ import {
     DELETE_PROJECT_PAGE, DELETE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE_FAILED,
     ONCHANGE_PROJECT_PAGE_TITLE, ONCHANGE_PROJECT_PAGE_INSTRUCTION, ONCHANGE_PROJECT_PAGE_NOTES,
     ONSHARED_PROJECT,
-    CLEAR_PROJECT_PAGE_STATE, CLEAR_MY_PROJECTS_STATE,
+    CLEAR_PROJECT_PAGE_STATE, CLEAR_MY_PROJECTS_STATE, GET_PROJECT_PAGE_BY_ACCESS_TOKEN, GET_PROJECT_PAGE_BY_ACCESS_TOKEN_SUCCESS, GET_PROJECT_PAGE_BY_ACCESS_TOKEN_FAILED,
 } from '@/constants'
 
 
@@ -136,6 +136,21 @@ export const onChangeProjectPageNotes = createAction(ONCHANGE_PROJECT_PAGE_NOTES
 export const onSharedProject = createAction(ONSHARED_PROJECT, isShared => {
     return {
         isShared,
+    }
+})
+
+export const getProjectPagesByAccessToken = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN)
+
+export const getProjectPageByAccessTokenSuccess = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN_SUCCESS, response => {
+    return {
+        response,
+    }
+})
+
+export const getProjectPageByAccessTokenFailed = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
     }
 })
 
