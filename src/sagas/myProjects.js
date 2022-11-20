@@ -29,10 +29,10 @@ function* getProjectPageByIdSaga(action) {
     try {
 
         const { token, id } = action.payload
-        const response = yield call(projectPageAPI.getProjectPageById, token, id)
+        const response = yield call(projectPageQueryGraphQL.getProjectPageById, { projectPageID: id })
         console.log(response)
 
-        yield put(getProjectPageByIdSuccess(response))
+        yield put(getProjectPageByIdSuccess(response.data.GetProjectPageById))
     } catch (e) {
         yield put(getProjectPageByIdFailed(e.message))
     }
