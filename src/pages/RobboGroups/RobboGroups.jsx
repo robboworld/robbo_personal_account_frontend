@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react"
 import { Redirect, useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
-
-
+import { Modal } from "antd"
 
 import { WelcomeText } from "./components"
 
 import PageLayout from '@/components/PageLayout'
-import SideBar from "@/components/SideBar"
 import Flex from "@/components/Flex"
 import { DragResize, Button } from "@/components/UI"
 import Loader from "@/components/Loader"
@@ -18,7 +16,6 @@ import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN } from "@/constants"
-
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -55,12 +52,14 @@ export default () => {
                     : (
                         <div>
                             <WelcomeText>Группы</WelcomeText>
-                            <DragResize
-                                open={openAddGroup} setOpen={setOpenAddGroup}
-                                content={() => (
-                                    <AddStudentGroup robboUnitId={robboUnitId} />
-                                )}
-                            />
+                            <Modal
+                                centered
+                                open={openAddGroup}
+                                onCancel={() => setOpenAddGroup(false)}
+                                footer={[]}
+                            >
+                                <AddStudentGroup robboUnitId={robboUnitId} />
+                            </Modal>
                             <Flex direction='row' justify='flex-end'
                                 align='flex-start'>
                                 <Button
@@ -77,6 +76,7 @@ export default () => {
                                             widht='100%' direction='column'
                                             justify=' center'
                                         >
+                                            {/* TODO refactor list from antd */}
                                             <Flex direction='column'>
                                                 {
                                                     robboGroups?.map((robboGroup, index) => {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-
-import { Title } from "./components"
+import { Tabs } from "antd"
 
 import Flex from '@/components/Flex'
 import ListItem from "@/components/ListItem"
@@ -43,11 +42,28 @@ export default ({ robboUnitId, robboGroupId }) => {
                             direction='column' width='100%'
                             padding='0.5rem'
                         >
-                            <Flex justify='center' width='100%'>
-                                <Title>Группа {robboGroup.name}</Title>
-                            </Flex>
-                            {/* refactor modal from lib */}
-                            <DragResize
+                            Группа {robboGroup.name}
+                            <Tabs
+                                defaultActiveKey='1'
+                                items={[
+                                    {
+                                        label: 'Карточка',
+                                        key: '1',
+                                        children: loading ? <Loader /> : "Карточка",
+                                    },
+                                    {
+                                        label: 'Ученики',
+                                        key: '2',
+                                        children: "Ученики",
+                                    },
+                                    {
+                                        label: 'Педагоги',
+                                        key: '3',
+                                        children: "Педагоги",
+                                    },
+                                ]}
+                            />
+                            {/* <DragResize
                                 open={openAddStudent} setOpen={setOpenAddStudent}
                                 width='35%'
                                 height='30%'
@@ -79,8 +95,8 @@ export default ({ robboUnitId, robboGroupId }) => {
                                         </Flex>
                                     </Flex>
                                 )}
-                            />
-                            <DragResize
+                            /> */}
+                            {/* <DragResize
                                 open={openCreateChild} setOpen={setOpenCreateChild}
                                 content={() => (
                                     <AddChildren parentId='' />
@@ -122,7 +138,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                                         )
                                     })
                                 }
-                            </Flex>
+                            </Flex> */}
                         </Flex >
                     )
             }
