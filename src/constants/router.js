@@ -1,6 +1,7 @@
 export const HOME_PAGE_ROUTE = '/home'
 export const LOGIN_PAGE_ROUTE = '/login'
 export const PROFILE_PAGE_ROUTE = '/profile'
+export const PEEK_PROFILE_PAGE = '/peekprofile'
 export const PROJECT_PAGE_ROUTE = '/projects/:projectPageId'
 export const MY_PROJECTS_ROUTE = '/myprojects'
 export const MY_COURSES_ROUTE = '/mycourses'
