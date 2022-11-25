@@ -2,32 +2,14 @@ import React, { useState } from 'react'
 import { Space, Button, List, Input } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
-import { gql, useQuery, useApolloClient } from "@apollo/client"
+import { useQuery, useApolloClient } from "@apollo/client"
 
 import ListItem from '@/components/ListItem'
 import { useActions } from '@/helpers'
+import { robboGroupGQL } from '@/graphQL'
 
 
 const { Search } = Input
-
-const GET_ROBBO_GROUPS_BY_TEACHER_ID = gql`
-query GetRobboGroupsByTeacherId($teacherId: String!) {
-    GetRobboGroupsByTeacherId(teacherId: $teacherId){
-        id
-        robboUnitId
-        name
-    }
-}
-`
-
-const SEARCH_GROUPS_BY_NAME = gql`
-query SearchGroupsByName($name: String!) {
-    SearchGroupsByName(name: $name) {
-        id
-        name
-    }
-}
-`
 
 const GroupsTab = ({ teacherId }) => {
     const token = localStorage.getItem('token')
@@ -37,14 +19,14 @@ const GroupsTab = ({ teacherId }) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchGroups, setSearchResult] = useState([])
 
-    const getRobboGroupsResult = useQuery(GET_ROBBO_GROUPS_BY_TEACHER_ID, {
+    const getRobboGroupsResult = useQuery(robboGroupGQL.GET_ROBBO_GROUPS_BY_TEACHER_ID, {
         variables: { teacherId },
         notifyOnNetworkStatusChange: true,
     })
 
     const SearchGroups = async value => {
         const result = await client.query({
-            query: SEARCH_GROUPS_BY_NAME,
+            query: robboGroupGQL.SEARCH_GROUPS_BY_NAME,
             variables: { name: value },
         })
         setSearchResult(result.data.SearchGroupsByName)

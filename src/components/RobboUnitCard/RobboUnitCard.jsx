@@ -26,7 +26,8 @@ export default ({ robboUnit }) => {
                 city: robboUnit.city,
             }}
             onFinish={({ name, city }) => {
-                // updateRobboUnit(token, { name, city })
+                // console.log({ ...robboUnit, name, city })
+                updateRobboUnit(token, { ...robboUnit, name, city })
             }}
         >
             <Form.Item
