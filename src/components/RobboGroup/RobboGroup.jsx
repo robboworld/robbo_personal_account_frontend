@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import { useHistory } from 'react-router-dom'
 import { Tabs } from "antd"
+
 
 import RobboGroupStudentsTab from "./RobboGroupStudentsTab"
 
@@ -12,6 +14,7 @@ import { StyledSpan, Button, DragResize, SearchInput } from "@/components/UI"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupState } from "@/reducers/robboGroup"
 import Loader from "@/components/Loader"
+import { PEEK_PROFILE_PAGE } from "@/constants"
 
 export default ({ robboUnitId, robboGroupId }) => {
 
@@ -34,6 +37,12 @@ export default ({ robboUnitId, robboGroupId }) => {
 
     const { searchResult } = useSelector(({ clients }) => getClientsState(clients))
     const { robboGroup, loading } = useSelector(({ robboGroup }) => getRobboGroupState(robboGroup))
+
+    const history = useHistory()
+
+    const openProfileStudent = userId => {
+        history.push(PEEK_PROFILE_PAGE, { studentId: userId })
+    }
 
     return (
         <Flex width='100%'>
@@ -135,6 +144,9 @@ export default ({ robboUnitId, robboGroupId }) => {
                                                 handleDelete={
                                                     () => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)
                                                 }
+                                                handleClick={() => {
+                                                    openProfileStudent(userHttp.id)
+                                                }}
                                             // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                                             />
                                         )

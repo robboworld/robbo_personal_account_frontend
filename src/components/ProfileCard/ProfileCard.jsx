@@ -87,14 +87,17 @@ const ProfileCard = ({
                         profile.createdAt
                     }
                 </Form.Item>
-                <Form.Item >
-                    <Button
-                        type='primary' htmlType='submit'
-                        className='login-form-button'
-                    >
-                        Сохранить
-                    </Button>
-                </Form.Item>
+                {
+                    !isFormDisable                    &&
+                    <Form.Item >
+                        <Button
+                            type='primary' htmlType='submit'
+                            className='login-form-button'
+                        >
+                            Сохранить
+                        </Button>
+                    </Form.Item>
+                }
             </Form>
         </Flex >
     )
