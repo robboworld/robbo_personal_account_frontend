@@ -3,7 +3,7 @@ import { Button, Form, Input } from 'antd'
 
 import { useActions } from "@/helpers"
 
-export default ({ robboUnit }) => {
+export default ({ robboGroupCard }) => {
     const layout = {
         labelCol: {
             span: 8,
@@ -14,30 +14,24 @@ export default ({ robboUnit }) => {
     }
     const [form] = Form.useForm()
     const token = localStorage.getItem('token')
-    const { updateRobboUnit } = useActions()
+    const { updateRobboGroup } = useActions()
     return (
         <Form
-            name='normal_robbo_unit_card'
-            className='robbo-unit-form'
+            name='normal_robbo_group_card'
+            className='robbo-group-form'
             {...layout}
             form={form}
             initialValues={{
-                name: robboUnit.name,
-                city: robboUnit.city,
+                name: robboGroupCard.name,
             }}
-            onFinish={({ name, city }) => {
-                updateRobboUnit(token, { ...robboUnit, name, city })
+            onFinish={({ name }) => {
+                // updateRobboGroup(token, { ...robboGroupCard, name })
             }}
         >
             <Form.Item
                 name='name' label='Название'
             >
-                <Input placeholder={robboUnit.name} size='large' />
-            </Form.Item>
-            <Form.Item
-                name='city' label='Город'
-            >
-                <Input placeholder={robboUnit.city} size='large' />
+                <Input placeholder={robboGroupCard.name} size='large' />
             </Form.Item>
             <Form.Item >
                 <Button

@@ -52,12 +52,6 @@ export default () => {
     return (
         <PageLayout>
             <WelcomeText>Robbo Units</WelcomeText>
-            {/* <DragResize
-                open={openAddRobboUnit} setOpen={setOpenAddRobboUnit}
-                content={() => (
-                    <AddRobboUnit />
-                )}
-            /> */}
             <Modal
                 centered
                 open={openAddRobboUnit}
@@ -91,6 +85,7 @@ export default () => {
                             widht='100%' direction='column'
                             justify=' center'
                         >
+                            {/* TODO refactor list from antd */}
                             <Flex direction='column'>
                                 {
                                     robboUnits?.map((robboUnit, index) => {

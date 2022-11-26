@@ -32,6 +32,19 @@ export const userGQL = {
             }
         }
     `,
+
+    GET_STUDENTS_BY_ROBBO_GROUP_ID: gql`
+        query GetStudentsByRobboGroup($robboGroupId: String!){
+            GetStudentsByRobboGroup(robboGroupId: $robboGroupId){
+                userHttp{
+                    id
+                    lastname
+                    firstname
+                    middlename                   
+                }
+            }
+        }
+    `,
 }
 
 export const usersQueryGraphQL = {
@@ -225,12 +238,12 @@ export const usersQueryGraphQL = {
         )
     },
 
-    searchStudentsByEmail(email) {
+    searchStudentsByEmail(email, parentId) {
         return graphQLClient.query(
             {
                 query: gql`
-                    query SearchStudentsByEmail($email: String!) {
-                        SearchStudentsByEmail(email: $email) {
+                    query SearchStudentsByEmail($email: String!, $parentId: String!) {
+                        SearchStudentsByEmail(email: $email, parentId: $parentId) {
                             userHttp{
                                 id
                                 lastname
@@ -240,6 +253,10 @@ export const usersQueryGraphQL = {
                         }
                     }
                 `,
+                variables: {
+                    email,
+                    parentId,
+                },
             },
         )
     },
@@ -259,6 +276,15 @@ export const usersQueryGraphQL = {
                         }
                     }
                 `,
+            },
+        )
+    },
+
+    getStudentsByRobboGroupId(robboGroupId) {
+        return graphQLClient.query(
+            {
+                query: userGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID,
+                variables: robboGroupId,
             },
         )
     },
