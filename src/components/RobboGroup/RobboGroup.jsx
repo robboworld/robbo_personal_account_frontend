@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { Tabs } from "antd"
 
+import RobboGroupStudentsTab from "./RobboGroupStudentsTab"
+
 import Flex from '@/components/Flex'
 import ListItem from "@/components/ListItem"
 import AddChildren from "@/components/AddChildren"
@@ -54,7 +56,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                                     {
                                         label: 'Ученики',
                                         key: '2',
-                                        children: "Ученики",
+                                        children: loading ? <Loader /> : <RobboGroupStudentsTab robboGroupId={robboGroup.id} robboUnitId={robboGroup.robboUnitId} />,
                                     },
                                     {
                                         label: 'Педагоги',

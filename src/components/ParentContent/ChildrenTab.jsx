@@ -6,6 +6,7 @@ import { gql, useQuery, useApolloClient } from "@apollo/client"
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
 import { useActions } from '@/helpers'
+import { userGQL, usersQueryGraphQL } from '@/graphQL'
 
 const { Search } = Input
 
@@ -14,19 +15,6 @@ query GetStudentsByParentId($parentId: String!){
     GetStudentsByParentId(parentId: $parentId) {
         userHttp{
             id
-            lastname
-            firstname
-            middlename
-        }
-    }
-}`
-
-const SEARCH_STUDENTS_BY_EMAIL = gql`
-query SearchStudentsByEmail($email: String!) {
-    SearchStudentsByEmail(email: $email) {
-        userHttp{
-            id
-            email
             lastname
             firstname
             middlename
@@ -51,10 +39,7 @@ const ChildrenTab = ({ clientId }) => {
     })
 
     const SearchStudents = async value => {
-        const result = await client.query({
-            query: SEARCH_STUDENTS_BY_EMAIL,
-            variables: { email: value },
-        })
+        const result = await usersQueryGraphQL.searchStudentsByEmail(value, clientId)
         setSearchResult(result.data.SearchStudentsByEmail)
     }
 
