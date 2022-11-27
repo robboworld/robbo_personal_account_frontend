@@ -45,6 +45,22 @@ export const userGQL = {
             }
         }
     `,
+    GET_UNIT_ADMIN_BY_ID: gql`
+        query GetUnitAdminById($unitAdminId: String!){
+            GetUnitAdminById(unitAdminId: $unitAdminId){
+                userHttp{
+                    id
+                    lastname
+                    firstname
+                    middlename
+                    nickname
+                    email
+                    createdAt
+                    role
+                }
+            }
+        }
+    `,
 }
 
 export const usersQueryGraphQL = {
@@ -150,22 +166,7 @@ export const usersQueryGraphQL = {
     getUnitAdminById(unitAdminId) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query GetUnitAdminById($unitAdminId: String!){
-                        GetStudentById(unitAdminId: $unitAdminId){
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                                nickname
-                                email
-                                createdAt
-                                role
-                            }
-                        }
-                    }
-                `,
+                query: userGQL.GET_UNIT_ADMIN_BY_ID,
                 variables: unitAdminId,
             },
         )
