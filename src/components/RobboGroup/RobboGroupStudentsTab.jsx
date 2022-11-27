@@ -1,23 +1,27 @@
 import React, { useState } from "react"
-import { Button, Space, Input, List } from "antd"
+import { Button, Space, Input, List, Modal } from "antd"
 import { useQuery } from "@apollo/client"
+import { useHistory } from 'react-router-dom'
 
 import { useActions } from "@/helpers/useActions"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
+import AddChildren from "@/components/AddChildren"
 import { userGQL, usersQueryGraphQL } from "@/graphQL/query"
-
+import { PEEK_PROFILE_PAGE } from "@/constants"
 
 const { Search } = Input
 
 export default ({ robboGroupId, robboUnitId }) => {
     const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
+    const history = useHistory()
     const {
         addStudentToRobboGroupRequest,
     } = useActions()
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
+    const [openAddChildren, setOpenAddChildren] = useState(false)
 
     const SearchStudents = async value => {
         const result = await usersQueryGraphQL.searchStudentsByEmail(value, "0")
@@ -28,7 +32,10 @@ export default ({ robboGroupId, robboUnitId }) => {
         variables: { robboGroupId },
         notifyOnNetworkStatusChange: true,
     })
-    console.log(searchItems)
+
+    const openProfileStudent = userId => {
+        history.push(PEEK_PROFILE_PAGE, { studentId: userId })
+    }
 
     return (
         <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
@@ -45,12 +52,23 @@ export default ({ robboGroupId, robboUnitId }) => {
                                 key={index}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
+                                handleClick={() => openProfileStudent(userHttp.id)}
                                 handleDelete={childIndex => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
                             />
                         )}
                     />
             }
             <Button type='primary' onClick={() => setOpenSearchSection(!openSearchSection)}>Добавить ученика</Button>
+            <Button type='primary' onClick={setOpenAddChildren}>Создать </Button>
+            <Modal
+                title='Заполните данные ученика'
+                centered
+                open={openAddChildren}
+                onCancel={() => setOpenAddChildren(false)}
+                footer={[]}
+            >
+                <AddChildren parentId='' />
+            </Modal>
             {
                 openSearchSection &&
                 <React.Fragment>

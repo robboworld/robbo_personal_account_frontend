@@ -20,6 +20,16 @@ export const robboGroupGQL = {
         }
     }
     `,
+    GET_ROBBO_GROUP_BY_ID: gql`
+    query GetRobboGroupById($id: String!) {
+        GetRobboGroupById(id: $id) {
+            id
+            name
+            robboUnitId
+            lastModified
+        }
+    }
+    `,
 }
 
 export const robboGroupsQueryGraphQL = {
@@ -35,15 +45,7 @@ export const robboGroupsQueryGraphQL = {
     getRobboGroupById(id) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query GetRobboGroupById($id: String!) {
-                        GetRobboGroupById(id: $id) {
-                            id
-                            name
-                            robboUnitId
-                        }
-                    }
-                `,
+                query: robboGroupGQL.GET_ROBBO_GROUP_BY_ID,
                 variables: id,
             },
         )
