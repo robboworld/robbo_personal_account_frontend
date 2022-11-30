@@ -13,8 +13,8 @@ import { PEEK_PROFILE_PAGE } from "@/constants"
 
 const { Search } = Input
 
-const RobboGroupStudentsTab = ({
-    robboGroupId, robboUnitId,
+const RobboUnitStudentsTab = ({
+    robboUnitId,
     disableСhanges,
 }) => {
     const token = localStorage.getItem('token')
@@ -32,8 +32,8 @@ const RobboGroupStudentsTab = ({
         setSearchResult(result.data.SearchStudentsByEmail)
     }
 
-    const getStudentsByRobboGroupIdResult = useQuery(userGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID, {
-        variables: { robboGroupId },
+    const getStudentsByRobboUnitIdResult = useQuery(userGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID, {
+        variables: { robboUnitId },
         notifyOnNetworkStatusChange: true,
     })
 
@@ -45,11 +45,11 @@ const RobboGroupStudentsTab = ({
         <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             Ученики
             {
-                getStudentsByRobboGroupIdResult?.loading
+                getStudentsByRobboUnitIdResult?.loading
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={getStudentsByRobboGroupIdResult.data.GetStudentsByRobboGroup}
+                        dataSource={getStudentsByRobboUnitIdResult.data.GetStudentsByRobboUnitId}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}
@@ -97,7 +97,7 @@ const RobboGroupStudentsTab = ({
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => addStudentToRobboGroupRequest(token, { id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
+                                handleClick={() => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: robboUnitId + "" }, userHttp.id)}
                                 handleDelete={false}
                             />
                         )}
@@ -109,10 +109,9 @@ const RobboGroupStudentsTab = ({
 }
 
 
-RobboGroupStudentsTab.propTypes = {
+RobboUnitStudentsTab.propTypes = {
     robboUnitId: PropTypes.string.isRequired,
-    robboGroupId: PropTypes.string.isRequired,
     disableСhanges: PropTypes.bool,
 }
 
-export default RobboGroupStudentsTab
+export default RobboUnitStudentsTab

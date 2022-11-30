@@ -31,6 +31,9 @@ import {
     GET_ROBBO_GROUPS_BY_ACCESS_TOKEN,
     GET_ROBBO_GROUPS_BY_ACCESS_TOKEN_SUCCESS,
     GET_ROBBO_GROUPS_BY_ACCESS_TOKEN_FAILED,
+    GET_ALL_ROBBO_GROUPS,
+    GET_ALL_ROBBO_GROUPS_SUCCESS,
+    GET_ALL_ROBBO_GROUPS_FAILED,
 } from "@/constants"
 
 export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (token, robboUnitId, robboGroupId) => {
@@ -241,4 +244,12 @@ export const getRobboGroupsByAccessTokenFailed = createAction(GET_ROBBO_GROUPS_B
         err,
     }
 })
+
+export const getAllRobboGroups = createAction(GET_ALL_ROBBO_GROUPS)
+export const getAllRobboGroupsSuccess = createAction(GET_ALL_ROBBO_GROUPS_SUCCESS, response => (
+    {
+        response,
+    }
+))
+export const getAllRobboGroupsFailed = createAction(GET_ALL_ROBBO_GROUPS_FAILED, err => ({ err }))
 

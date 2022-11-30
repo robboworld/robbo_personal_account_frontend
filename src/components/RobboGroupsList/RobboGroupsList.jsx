@@ -5,7 +5,9 @@ import { List, Space } from "antd"
 import { Text } from './components'
 
 import Loader from "@/components//Loader"
-import ListItem from "@/components//ListItem"
+import ListItem from "@/components/ListItem"
+import { DragResize } from "@/components/UI"
+import RobboGroup from "@/components/RobboGroup"
 import { useActions } from "@/helpers"
 
 import { getRobboGroupsState } from "@/reducers/robboGroups"
@@ -36,7 +38,19 @@ export default ({ teacherId }) => {
                                 itemIndex={index}
                                 key={index}
                                 label={robboGroup.name}
-                                render={() => { }}
+                                render={(open, setOpen) => (
+                                    <DragResize
+                                        open={open} setOpen={setOpen}
+                                        content={() => (
+                                            // refactor in robboGroup useQuery
+                                            <RobboGroup
+                                                robboUnitId={robboGroup.robboUnitId}
+                                                robboGroupId={robboGroup.id}
+                                                disableСhanges
+                                            />
+                                        )}
+                                    />
+                                )}
                             />
                         )}
                     />

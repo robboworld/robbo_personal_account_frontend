@@ -10,7 +10,7 @@ import {
     searchRobboGroupsByTitleFailed, searchRobboGroupsByTitleSuccess,
     getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenSuccess,
     getRobboGroupsByAccessTokenFailed, getRobboGroupsByTeacherId,
-    getRobboGroupsByTeacherIdFailed, getRobboGroupsByTeacherIdSuccess,
+    getRobboGroupsByTeacherIdFailed, getRobboGroupsByTeacherIdSuccess, getAllRobboGroups, getAllRobboGroupsSuccess, getAllRobboGroupsFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -87,6 +87,15 @@ export default handleActions({
         return { ...state, loading: false, robboGroups: action.payload.response }
     },
     [getRobboGroupsByTeacherIdFailed](state) {
+        return { ...state, loading: false }
+    },
+    [getAllRobboGroups](state) {
+        return { ...state, loading: true }
+    },
+    [getAllRobboGroupsSuccess](state, action) {
+        return { ...state, loading: false, robboGroups: action.payload.response }
+    },
+    [getAllRobboGroupsFailed](state, action) {
         return { ...state, loading: false }
     },
 }, INITIAL_STATE)

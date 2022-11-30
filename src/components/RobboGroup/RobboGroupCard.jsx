@@ -1,12 +1,13 @@
 import React from "react"
 import { useQuery } from "@apollo/client"
 import { Button, Form, Input } from 'antd'
+import { PropTypes } from 'prop-types'
 
 import { useActions } from "@/helpers"
 import { robboGroupGQL } from "@/graphQL"
 import Loader from "@/components/Loader"
 
-export default ({ robboGroupId }) => {
+const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     const layout = {
         labelCol: {
             span: 8,
@@ -31,6 +32,7 @@ export default ({ robboGroupId }) => {
                     name='normal_robbo_group_card'
                     className='robbo-group-form'
                     labelWrap
+                    disabled={disableСhanges}
                     {...layout}
                     form={form}
                     initialValues={{
@@ -62,3 +64,11 @@ export default ({ robboGroupId }) => {
             )
     )
 }
+
+
+RobboGroupCard.propTypes = {
+    robboGroupId: PropTypes.string.isRequired,
+    disableСhanges: PropTypes.bool,
+}
+
+export default RobboGroupCard

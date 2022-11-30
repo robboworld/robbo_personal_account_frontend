@@ -1,13 +1,13 @@
 import React from "react"
 import { Tabs } from "antd"
-
+import { PropTypes } from 'prop-types'
 
 import RobboGroupStudentsTab from "./RobboGroupStudentsTab"
 import RobboGroupCard from "./RobboGroupCard"
 
 import Flex from '@/components/Flex'
 
-export default ({ robboUnitId, robboGroupId }) => {
+const RobboGroup = ({ robboUnitId, robboGroupId, disableСhanges }) => {
     return (
         <Flex width='100%'>
             <Flex
@@ -21,12 +21,19 @@ export default ({ robboUnitId, robboGroupId }) => {
                         {
                             label: 'Карточка',
                             key: '1',
-                            children: <RobboGroupCard robboGroupId={robboGroupId} />,
+                            children:
+                                <RobboGroupCard
+                                    robboGroupId={robboGroupId} disableСhanges={disableСhanges}
+                                />,
                         },
                         {
                             label: 'Ученики',
                             key: '2',
-                            children: <RobboGroupStudentsTab robboGroupId={robboGroupId} robboUnitId={robboUnitId} />,
+                            children:
+                                <RobboGroupStudentsTab
+                                    robboGroupId={robboGroupId} robboUnitId={robboUnitId}
+                                    disableСhanges={disableСhanges}
+                                />,
                         },
                         {
                             label: 'Педагоги',
@@ -39,3 +46,11 @@ export default ({ robboUnitId, robboGroupId }) => {
         </Flex>
     )
 }
+
+RobboGroup.propTypes = {
+    robboUnitId: PropTypes.string.isRequired,
+    robboGroupId: PropTypes.string.isRequired,
+    disableСhanges: PropTypes.bool,
+}
+
+export default RobboGroup

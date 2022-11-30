@@ -25,13 +25,16 @@ export default () => {
     const {
         getRobboGroupsByRobboUnitIdRequest,
         deleteRobboGroupRequest,
+        getAllRobboGroups,
     } = useActions()
 
     const { robboUnitId } = useParams()
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
-            getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
+            if (robboUnitId)
+                getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
+            else getAllRobboGroups()
         return () => {
             // clear
         }
