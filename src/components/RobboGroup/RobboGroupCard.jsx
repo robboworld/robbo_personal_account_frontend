@@ -1,11 +1,11 @@
 import React from "react"
-import { useQuery } from "@apollo/client"
+import { useQuery, useMutation } from "@apollo/client"
 import { Button, Form, Input } from 'antd'
 import { PropTypes } from 'prop-types'
 
-import { useActions } from "@/helpers"
 import { robboGroupGQL } from "@/graphQL"
 import Loader from "@/components/Loader"
+import { robboGroupMutationGQL } from "@/graphQL/mutation"
 
 const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     const layout = {
@@ -17,13 +17,23 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
         },
     }
     const [form] = Form.useForm()
-    const token = localStorage.getItem('token')
-    const { updateRobboGroup } = useActions()
 
     const { data, loading } = useQuery(robboGroupGQL.GET_ROBBO_GROUP_BY_ID, {
         variables: { id: robboGroupId },
         notifyOnNetworkStatusChange: true,
     })
+
+    const [updateRobboGroup, updateMutation] = useMutation(
+        robboGroupMutationGQL.UPDATE_ROBBO_GROUP,
+        {
+            refetchQueries: [
+                {
+                    query: robboGroupGQL.GET_ROBBO_GROUP_BY_ID,
+                    variables: { id: robboGroupId },
+                },
+            ],
+        },
+    )
 
     return (
         loading ? <Loader />
@@ -39,7 +49,11 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
                         name: data.GetRobboGroupById.name,
                     }}
                     onFinish={({ name }) => {
-                        updateRobboGroup(token, { ...data.GetRobboGroupById, name })
+                        updateRobboGroup({
+                            variables: {
+                                input: { id: data.GetRobboGroupById.id, robboUnitId: data.GetRobboGroupById.robboUnitId, name: name },
+                            },
+                        })
                     }}
                 >
                     <Form.Item

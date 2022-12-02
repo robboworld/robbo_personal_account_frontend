@@ -34,7 +34,7 @@ export default () => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             if (robboUnitId)
                 getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
-            else getAllRobboGroups()
+            else getAllRobboGroups() // Только для Super Admin
         return () => {
             // clear
         }
