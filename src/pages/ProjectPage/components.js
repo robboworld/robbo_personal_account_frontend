@@ -7,7 +7,6 @@ export const ProjectStage = styled.div`
   margin: 0 1rem;
 `
 export const UnsharedMessage = styled.div`
-  border-radius: 1rem;
   padding: 1rem;
   margin: 1rem 0;
   width: 100%;

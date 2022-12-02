@@ -1,14 +1,9 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    clearProjectPageState,
-    getProjectPageById,
+    clearProjectPageState, getProjectPageById,
     getProjectPageByIdFailed, getProjectPageByIdSuccess,
-    onChangeProjectPageInstruction,
-    onChangeProjectPageNotes,
-    onChangeProjectPageTitle,
-    onSharedProject,
-    updateProjectPage,
+    onSharedProject, updateProjectPage,
     updateProjectPageFailed, updateProjectPageSuccess,
 } from '@/actions'
 
@@ -22,7 +17,7 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getProjectPageByIdSuccess](state, action) {
-        return { ...state, loading: false, projectPage: action.payload.response.data.projectPage }
+        return { ...state, loading: false, projectPage: action.payload.response.data }
     },
     [getProjectPageByIdFailed](state, action) {
         return { ...state, loading: false }
@@ -34,16 +29,7 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [updateProjectPageFailed](state, action) {
-        return { ...state, loading: true }
-    },
-    [onChangeProjectPageTitle](state, action) {
-        return { ...state, projectPage: { ...state.projectPage, title: action.payload.title } }
-    },
-    [onChangeProjectPageInstruction](state, action) {
-        return { ...state, projectPage: { ...state.projectPage, instruction: action.payload.instruction } }
-    },
-    [onChangeProjectPageNotes](state, action) {
-        return { ...state, projectPage: { ...state.projectPage, notes: action.payload.notes } }
+        return { ...state, loading: false }
     },
     [onSharedProject](state, action) {
         return { ...state, projectPage: { ...state.projectPage, isShared: action.payload.isShared } }
