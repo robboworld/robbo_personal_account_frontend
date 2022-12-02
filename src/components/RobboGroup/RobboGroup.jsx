@@ -5,6 +5,8 @@ import { Tabs } from "antd"
 import RobboGroupStudentsTab from "./RobboGroupStudentsTab"
 import RobboGroupCard from "./RobboGroupCard"
 
+import RobboGroupTeachersTab from "./RobboGroupTeachersTab"
+
 import Flex from '@/components/Flex'
 
 export default ({ robboUnitId, robboGroupId }) => {
@@ -31,7 +33,7 @@ export default ({ robboUnitId, robboGroupId }) => {
                         {
                             label: 'Педагоги',
                             key: '3',
-                            children: "Педагоги",
+                            children: <RobboGroupTeachersTab robboGroupId={robboGroupId} />,
                         },
                     ]}
                 />
