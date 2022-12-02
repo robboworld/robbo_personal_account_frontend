@@ -33,6 +33,7 @@ export const robboGroupGQL = {
     GET_ALL_ROBBO_GROUPS: gql`
     query{
         GetAllRobboGroups{
+            id
             name
             robboUnitId
         }

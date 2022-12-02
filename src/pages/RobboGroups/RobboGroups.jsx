@@ -94,7 +94,7 @@ export default () => {
                                                                         content={() => (
                                                                             // refactor in robboGroup useQuery
                                                                             <RobboGroup
-                                                                                robboUnitId={robboUnitId}
+                                                                                robboUnitId={robboGroup.robboUnitId}
                                                                                 robboGroupId={robboGroup.id}
                                                                             />
                                                                         )}

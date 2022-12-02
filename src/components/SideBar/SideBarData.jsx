@@ -22,6 +22,7 @@ import {
   ROBBO_UNITS_ROUTE,
   STUDY_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
+  ROBBO_GROUPS_ROUTE,
 } from '@/constants'
 
 export const SidebarDataStudent = [
@@ -146,8 +147,8 @@ export const SidebarDataSuperAdmin = [
     icon: <RobotOutlined />,
   }, {
     key: '7',
-    label: 'Robbo Units',
-    pathname: ROBBO_UNITS_ROUTE,
+    label: 'Robbo Groups',
+    pathname: ROBBO_GROUPS_ROUTE,
     icon: <RobotOutlined />,
   },
   {
