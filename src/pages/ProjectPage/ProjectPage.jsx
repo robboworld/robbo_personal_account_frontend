@@ -12,7 +12,7 @@ import Loader from '@/components/Loader'
 import { useActions } from '@/helpers/useActions'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
-import { getProjectPagesState } from '@/reducers/myProjects'
+import { getProjectPageState } from '@/reducers/projectPage'
 
 const { TextArea } = Input
 
@@ -45,7 +45,7 @@ export default () => {
         }
     }, [loginLoading])
 
-    const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPagesState(projectPage))
+    const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
 
     const seeInsideHandler = () => {
         window.location.replace(config.scratchURL + `?#${projectPageId}`)
@@ -57,9 +57,11 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
+    console.log(projectPage)
+
     return (
         <PageLayout>
-            {loginLoading
+            {loginLoading || loading
                 ? <Loader />
                 : (
                     <Flex direction='column' align='flex-start'
@@ -75,60 +77,53 @@ export default () => {
                                 </Flex>
                             </UnsharedMessage>
                         }
-                        {
-                            loading
-                                ? <Loader />
-                                : (
-                                    <React.Fragment>
-                                        <Form
-                                            name='normal_projectPage'
-                                            className='projectPage-form'
-                                            {...layout}
-                                            form={form}
-                                            initialValues={{
-                                                title: projectPage.title,
-                                                instruction: projectPage.instruction,
-                                                notes: projectPage.notes,
-                                            }}
-                                            onFinish={({ title, instruction, notes }) => {
-                                                updateProjectPage(token, { ...projectPage, title, instruction, notes })
-                                            }}
-                                        >
-                                            <Form.Item
-                                                name='title' placeholder={projectPage.title}
-                                                label='Название'
-                                            >
-                                                <Input size='large' />
-                                            </Form.Item>
-                                            <Form.Item
-                                                name='instruction' placeholder={projectPage.title}
-                                                label='Инструкция'
-                                            >
-                                                <TextArea size='large' rows={4} />
-                                            </Form.Item>
-                                            <Form.Item
-                                                name='notes' placeholder={projectPage.title}
-                                                label='Примечание'
-                                            >
-                                                <TextArea size='large' rows={4} />
-                                            </Form.Item>
-                                            <Form.Item >
-                                                <Button
-                                                    type='primary' htmlType='submit'
-                                                    className='login-form-button'
-                                                >
-                                                    Сохранить
-                                                </Button>
-                                            </Form.Item>
-                                        </Form>
-                                        <Button
-                                            type='primary' onClick={seeInsideHandler}
-                                        >
-                                            Открыть в Robbo Scratch
-                                        </Button>
-                                    </React.Fragment>
-                                )
-                        }
+
+                        <Form
+                            name='normal_projectPage'
+                            className='projectPage-form'
+                            {...layout}
+                            form={form}
+                            initialValues={{
+                                title: projectPage.title,
+                                instruction: projectPage.instruction,
+                                notes: projectPage.notes,
+                            }}
+                            onFinish={({ title, instruction, notes }) => {
+                                updateProjectPage(token, { ...projectPage, title, instruction, notes })
+                            }}
+                        >
+                            <Form.Item
+                                name='title' placeholder={projectPage.title}
+                                label='Название'
+                            >
+                                <Input size='large' />
+                            </Form.Item>
+                            <Form.Item
+                                name='instruction' placeholder={projectPage.title}
+                                label='Инструкция'
+                            >
+                                <TextArea size='large' rows={4} />
+                            </Form.Item>
+                            <Form.Item
+                                name='notes' placeholder={projectPage.title}
+                                label='Примечание'
+                            >
+                                <TextArea size='large' rows={4} />
+                            </Form.Item>
+                            <Form.Item >
+                                <Button
+                                    type='primary' htmlType='submit'
+                                    className='login-form-button'
+                                >
+                                    Сохранить
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                        <Button
+                            type='primary' onClick={seeInsideHandler}
+                        >
+                            Открыть в Robbo Scratch
+                        </Button>
                     </Flex>
                 )
             }

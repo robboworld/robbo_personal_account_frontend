@@ -15,8 +15,6 @@ export const ProjectPageItem = styled.li`
     display: flex;
     justify-content: flex-start
     align-items: center;
-    width: 100%;
-  }
 `
 
 export const ScratchLink = styled.a`

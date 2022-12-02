@@ -24,7 +24,7 @@ export default ({ projectPageIndex, projectPage }) => {
 
     return (
         <ProjectPageItem>
-            <Space direction='vertical'></Space>
+            <Space direction='vertical'>
                 <ScratchLink onClick={toProjectPageHandler}> {projectPage.title}</ScratchLink>
                 <LastModified>
                     {'Последние изменение: ' + projectPage.lastModified}
@@ -39,6 +39,6 @@ export default ({ projectPageIndex, projectPage }) => {
                     удалить
                 </RemoveProjectPage>
             </Flex>
-        </ProjectPageItem >
+        </ProjectPageItem>
     )
 }

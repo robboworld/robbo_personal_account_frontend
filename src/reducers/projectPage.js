@@ -17,7 +17,7 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getProjectPageByIdSuccess](state, action) {
-        return { ...state, loading: false, projectPage: action.payload.response.data }
+        return { ...state, loading: false, projectPage: action.payload.response }
     },
     [getProjectPageByIdFailed](state, action) {
         return { ...state, loading: false }
@@ -35,9 +35,9 @@ export default handleActions({
         return { ...state, projectPage: { ...state.projectPage, isShared: action.payload.isShared } }
     },
     [clearProjectPageState](state, action) {
-        return { ...state, loading: false, projectPage: {} }
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 
-export const getProjectPage = state => state.projectPage
+export const getProjectPageState = state => state
 export const getProjectPageLoading = state => state.loading 
