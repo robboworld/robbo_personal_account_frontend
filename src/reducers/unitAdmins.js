@@ -14,6 +14,7 @@ import {
     searchUnitAdminsByEmailFailed, searchUnitAdminsByEmailRequest,
     searchUnitAdminsByEmailSuccess, setNewUnitAdminForRobboUnitFailed,
     setNewUnitAdminForRobboUnitRequest, setNewUnitAdminForRobboUnitSuccess,
+    clearUnitAdminsPageState,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -95,6 +96,9 @@ export default handleActions({
     },
     [deleteUnitAdminForRobboUnitFailed](state) {
         return { ...state, loading: false }
+    },
+    [clearUnitAdminsPageState](state) {
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

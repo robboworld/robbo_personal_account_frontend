@@ -24,6 +24,7 @@ import {
     getClientPageById,
     getClientPageByIdSuccess,
     getClientPageByIdFailed,
+    clearClientPageState,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -141,6 +142,9 @@ export default handleActions({
     },
     [getClientPageByIdFailed](state, action) {
         return { ...state, clientLoading: false }
+    },
+    [clearClientPageState](state) {
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

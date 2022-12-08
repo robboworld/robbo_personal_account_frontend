@@ -9,16 +9,16 @@ const INITIAL_STATE = {
 
 export default handleActions({
     [getCoursePageById](state, action) {
-        return {...state, loading: true}
+        return { ...state, loading: true }
     },
     [getCoursePageByIdFailed](state, action) {
-        return {...state, loading: false}
+        return { ...state, loading: false }
     },
     [getCoursePageByIdSuccess](state, action) {
-        return {...state, coursePage: action.payload.course, loading: false}
+        return { ...state, coursePage: action.payload.course, loading: false }
     },
     [clearCoursePageState](state, action) {
-        return {...state, coursePage:{}, loading: true}
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

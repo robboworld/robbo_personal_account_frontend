@@ -15,6 +15,8 @@ import {
     GET_ROBBO_UNIT_BY_ID_SUCCESS,
     UPDATE_ROBBO_UNIT, UPDATE_ROBBO_UNIT_FAILED,
     UPDATE_ROBBO_UNIT_SUCCESS,
+    CLEAR_ROBBO_UNITS_PAGE,
+    CLEAR_ROBBO_UNIT_PAGE,
 } from "@/constants"
 
 export const getRobboUnits = createAction(GET_ALL_ROBBO_UNITS, token => {
@@ -139,3 +141,6 @@ export const getRobboUnitsByUnitAdminIdFailed = createAction(GET_ROBBO_UNITS_BY_
         err,
     }
 })
+
+export const clearRobboUnitsPage = createAction(CLEAR_ROBBO_UNITS_PAGE)
+export const clearRobboUnitPage = createAction(CLEAR_ROBBO_UNIT_PAGE)

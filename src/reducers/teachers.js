@@ -28,7 +28,7 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [clearTeachersState](state, action) {
-        return { ...state, loading: false, teachers: [] }
+        return INITIAL_STATE
     },
     [deleteTeacher](state) {
         return { ...state, loading: true }

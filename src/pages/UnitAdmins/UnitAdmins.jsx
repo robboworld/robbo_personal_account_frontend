@@ -24,13 +24,13 @@ export default () => {
     const token = localStorage.getItem('token')
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
-    const { deleteUnitAdmin, getUnitAdmins } = useActions()
+    const { deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState } = useActions()
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
             getUnitAdmins(token)
         return () => {
-            // clearTeachersState
+            clearUnitAdminsPageState()
         }
     }, [loginLoading])
 

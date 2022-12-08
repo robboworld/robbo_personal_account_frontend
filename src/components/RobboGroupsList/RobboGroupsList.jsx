@@ -14,13 +14,16 @@ import { getRobboGroupsState } from "@/reducers/robboGroups"
 
 
 export default ({ teacherId }) => {
-    const { getRobboGroupsByAccessToken, getRobboGroupsByTeacherId } = useActions()
+    const { getRobboGroupsByAccessToken, getRobboGroupsByTeacherId, clearRobboGroupsPage } = useActions()
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
     useEffect(() => {
         if (teacherId) {
             getRobboGroupsByTeacherId(teacherId)
         } else {
             getRobboGroupsByAccessToken()
+        }
+        return () => {
+            clearRobboGroupsPage()
         }
     }, [])
 

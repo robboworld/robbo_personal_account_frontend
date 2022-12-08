@@ -14,7 +14,7 @@ const INITIAL_STATE = {
 export default handleActions({
 
     [clearProfileState](state) {
-        return { ...state, profile: {}, loading: false }
+        return INITIAL_STATE
     },
     [getProfileById](state) {
         return { ...state, loading: true }
