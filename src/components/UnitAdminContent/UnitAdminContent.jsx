@@ -2,6 +2,8 @@ import React from 'react'
 import { Button, Tabs } from "antd"
 import { useQuery } from '@apollo/client'
 
+import UnitsOfAdmin from './UnitsOfAdmin'
+
 import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
 import { useActions } from '@/helpers/useActions'
@@ -32,7 +34,7 @@ export default ({ unitAdminId }) => {
                         {
                             label: 'Units',
                             key: '2',
-                            children: 'Назначенные юниты у админа',
+                            children: <UnitsOfAdmin adminId={unitAdminId} />,
                         },
                     ]}
                 />
