@@ -30,6 +30,15 @@ export const robboGroupGQL = {
         }
     }
     `,
+    GET_ALL_ROBBO_GROUPS: gql`
+    query{
+        GetAllRobboGroups{
+            id
+            name
+            robboUnitId
+        }
+    }     
+    `,
 }
 
 export const robboGroupsQueryGraphQL = {
@@ -38,6 +47,14 @@ export const robboGroupsQueryGraphQL = {
             {
                 query: robboGroupGQL.SEARCH_GROUPS_BY_NAME,
                 variables: name,
+            },
+        )
+    },
+
+    getAllRobboGroups() {
+        return graphQLClient.query(
+            {
+                query: robboGroupGQL.GET_ALL_ROBBO_GROUPS,
             },
         )
     },

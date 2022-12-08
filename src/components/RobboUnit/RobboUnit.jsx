@@ -2,10 +2,11 @@ import React from "react"
 import { useHistory } from "react-router-dom"
 import { Button, Tabs } from "antd"
 
+import RobboUnitStudentsTab from "./RobboUnitStudentsTab"
+
 import RobboUnitCard from "@/components/RobboUnitCard"
 import Flex from '@/components/Flex'
 import RobboUnitAccessSetting from "@/components/RobboUnitAccessSetting"
-
 
 export default ({ robboUnitId }) => {
     const history = useHistory()
@@ -34,6 +35,11 @@ export default ({ robboUnitId }) => {
                             label: 'Доступ',
                             key: '3',
                             children: <RobboUnitAccessSetting robboUnitId={robboUnitId} />,
+                        },
+                        {
+                            label: 'Ученики',
+                            key: '4',
+                            children: <RobboUnitStudentsTab robboUnitId={robboUnitId} />,
                         },
                     ]}
                 />

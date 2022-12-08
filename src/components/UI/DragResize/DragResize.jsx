@@ -50,7 +50,6 @@ const DragResize = ({
                 onDrag={onDrag}
             >
                 <ModalWindow open={open}>
-
                     <ModalContent>
                         <Flex
                             direction='column' width='100%'

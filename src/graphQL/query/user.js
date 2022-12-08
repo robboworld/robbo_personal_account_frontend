@@ -45,6 +45,7 @@ export const userGQL = {
             }
         }
     `,
+
     GET_UNIT_ADMIN_BY_ID: gql`
         query GetUnitAdminById($unitAdminId: String!){
             GetUnitAdminById(unitAdminId: $unitAdminId){
@@ -61,6 +62,7 @@ export const userGQL = {
             }
         }
     `,
+    
     GET_TEACHERS_BY_ROBBO_GROUP_ID: gql`
         query GetTeachersByRobboGroupId($robboGroupId: String!){
             GetTeachersByRobboGroupId(robboGroupId: $robboGroupId){
@@ -73,6 +75,19 @@ export const userGQL = {
             }
         }
     `,
+
+    GET_STUDENTS_BY_ROBBO_UNIT_ID: gql`
+    query GetStudentsByRobboUnitId($robboUnitId: String!){
+        GetStudentsByRobboUnitId(robboUnitId: $robboUnitId){
+            userHttp{
+                id
+                lastname
+                firstname
+                middlename                   
+            }
+        }
+    }
+`,
 }
 
 export const usersQueryGraphQL = {
@@ -307,6 +322,12 @@ export const usersQueryGraphQL = {
             {
                 query: userGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID,
                 variables: robboGroupId,
+                
+    getStudentsByRobboUnitId(robboUnitId) {
+        return graphQLClient.query(
+            {
+                query: userGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID,
+                variables: robboUnitId,
             },
         )
     },

@@ -1,39 +1,39 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, Redirect } from 'react-router-dom'
+import { Input, Button, Form } from 'antd'
 
-import { ProjectStage, UnsharedMessage, Title, Instructions, Notes } from './components'
+import { UnsharedMessage } from './components'
 
 import PageLayout from '@/components/PageLayout'
-import SideBar from '@/components/SideBar'
 import Flex from '@/components/Flex'
-import Button from '@/components/UI/Button'
-import Input from '@/components/UI/Input'
-import { getProjectPage, getProjectPageLoading } from '@/reducers/projectPage'
 import config from '@/config'
-import Textarea from '@/components/UI/TextArea'
 import Loader from '@/components/Loader'
 import { useActions } from '@/helpers/useActions'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
+import { getProjectPageState } from '@/reducers/projectPage'
 
-export default props => {
+const { TextArea } = Input
+
+export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     const {
         getProjectPageById,
         clearProjectPageState,
-        onChangeProjectPageTitle,
-        onChangeProjectPageInstruction,
-        onSharedProject,
         updateProjectPage,
-        onChangeProjectPageNotes,
     } = useActions()
 
-    const [titleEditMode, setTitleEditMode] = useState(false)
-    const [instructionsEditMode, setInstructionsEditMode] = useState(false)
-    const [notesEditMode, setNotesEditMode] = useState(false)
-
+    const layout = {
+        labelCol: {
+            span: 8,
+        },
+        wrapperCol: {
+            span: 16,
+        },
+    }
+    const [form] = Form.useForm()
     const { projectPageId } = useParams()
     const token = localStorage.getItem('token')
 
@@ -45,42 +45,7 @@ export default props => {
         }
     }, [loginLoading])
 
-    const projectPage = useSelector(({ projectPage }) => getProjectPage(projectPage))
-    const loading = useSelector(({ projectPage }) => getProjectPageLoading(projectPage))
-
-    const onChangeTitleHandler = title => {
-        onChangeProjectPageTitle(title)
-    }
-
-    const onChangeInstructionsHanler = instruction => {
-        onChangeProjectPageInstruction(instruction)
-    }
-
-    const onChangeNotesHanler = notes => {
-        onChangeProjectPageNotes(notes)
-    }
-
-    const onBlurHandler = element => {
-        switch (element) {
-            case 'title':
-                setTitleEditMode(false)
-                updateProjectPage(token, projectPage)
-                return
-            case 'instruction':
-                setInstructionsEditMode(false)
-                updateProjectPage(token, projectPage)
-                return
-            case 'notes':
-                setNotesEditMode(false)
-                updateProjectPage(token, projectPage)
-
-        }
-    }
-
-    const onSharedHandler = () => {
-        onSharedProject(!projectPage.isShared)
-        updateProjectPage(token, projectPage)
-    }
+    const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
 
     const seeInsideHandler = () => {
         window.location.replace(config.scratchURL + `?#${projectPageId}`)
@@ -92,9 +57,11 @@ export default props => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
+    console.log(projectPage)
+
     return (
         <PageLayout>
-            {loading || loginLoading
+            {loginLoading || loading
                 ? <Loader />
                 : (
                     <Flex direction='column' align='flex-start'
@@ -106,104 +73,57 @@ export default props => {
                                 <Flex align='center' width='100%'
                                     height='100%' justify='space-between' >
                                     <span>Данный проект не открыт для общего доступа</span>
-                                    <Button
-                                        content='Открыть доступ'
-                                        background='#ff8c1a'
-                                        padding='0.5rem'
-                                        handleSubmit={onSharedHandler}
-                                    />
+                                    <Button>Открыть</Button>
                                 </Flex>
                             </UnsharedMessage>
                         }
-                        <Flex align='center' width='100%'
-                            justify='space-between'>
-                            {titleEditMode
-                                ? (
-                                    <Input
-                                        onBlur={() => { onBlurHandler('title') }}
-                                        value={projectPage.title}
-                                        width='50%'
-                                        height='4rem'
-                                        fontSize='3rem'
-                                        handleInput={onChangeTitleHandler}
-                                    />)
-                                : (
-                                    <Title onClick={() => { setTitleEditMode(true) }}>
-                                        <span>{projectPage.title}</span>
-                                    </Title>
-                                )
 
-                            }
-                            <Button
-                                content='Открыть в Scratch'
-                                background='grey'
-                                margin='1rem' padding='0.5rem'
-                                handleSubmit={seeInsideHandler}
-                            />
-                        </Flex>
-                        <Flex direction='row' justify='space-between'
-                            width='100%' height='41%'
-                            padding='2rem 0'>
-                            <ProjectStage />
-                            <Flex direction='column' width='100%'
-                                height='100%'>
-                                <Flex direction='column' width='100%'
-                                    height='100%' align='center'>
-                                    <h4>Инструкция</h4>
-                                    {
-                                        instructionsEditMode
-                                            ? (
-                                                <Textarea
-                                                    onBlur={() => { onBlurHandler('instruction') }}
-                                                    handleInput={onChangeInstructionsHanler}
-                                                    value={projectPage.instruction}
-                                                    width='100%'
-                                                    height='15vh'
-                                                    padding='2rem'
-                                                    placeholder='Инструкция здесь'
-                                                    fontSize='1vw'
-                                                    margin='1rem 0'
-                                                />)
-                                            : (
-                                                <Instructions onClick={() => { setInstructionsEditMode(true) }}>
-                                                    {
-                                                        projectPage.instruction
-                                                    }
-                                                </Instructions>
-                                            )
-                                    }
-
-                                </Flex>
-                                <Flex direction='column' width='100%'
-                                    height='100%' align='center'>
-                                    <h4>Примечание</h4>
-                                    {
-                                        notesEditMode
-                                            ? (
-                                                <Textarea
-                                                    onBlur={() => { onBlurHandler('notes') }}
-                                                    handleInput={onChangeNotesHanler}
-                                                    value={projectPage.notes}
-                                                    width='100%'
-                                                    height='15vh'
-                                                    padding='2rem'
-                                                    placeholder='Примечание здесь'
-                                                    fontSize='1vw'
-                                                    margin='1rem 0'
-                                                />)
-                                            : (
-                                                <Notes onClick={() => { setNotesEditMode(true) }}>
-                                                    {
-                                                        projectPage.notes
-                                                    }
-                                                </Notes>
-                                            )
-                                    }
-                                </Flex>
-                            </Flex>
-
-                        </Flex>
-
+                        <Form
+                            name='normal_projectPage'
+                            className='projectPage-form'
+                            {...layout}
+                            form={form}
+                            initialValues={{
+                                title: projectPage.title,
+                                instruction: projectPage.instruction,
+                                notes: projectPage.notes,
+                            }}
+                            onFinish={({ title, instruction, notes }) => {
+                                updateProjectPage(token, { ...projectPage, title, instruction, notes })
+                            }}
+                        >
+                            <Form.Item
+                                name='title' placeholder={projectPage.title}
+                                label='Название'
+                            >
+                                <Input size='large' />
+                            </Form.Item>
+                            <Form.Item
+                                name='instruction' placeholder={projectPage.title}
+                                label='Инструкция'
+                            >
+                                <TextArea size='large' rows={4} />
+                            </Form.Item>
+                            <Form.Item
+                                name='notes' placeholder={projectPage.title}
+                                label='Примечание'
+                            >
+                                <TextArea size='large' rows={4} />
+                            </Form.Item>
+                            <Form.Item >
+                                <Button
+                                    type='primary' htmlType='submit'
+                                    className='login-form-button'
+                                >
+                                    Сохранить
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                        <Button
+                            type='primary' onClick={seeInsideHandler}
+                        >
+                            Открыть в Robbo Scratch
+                        </Button>
                     </Flex>
                 )
             }
