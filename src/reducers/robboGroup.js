@@ -9,6 +9,7 @@ import {
     deleteStudentFromRobboGroupSuccess,
     getRobboGroupByIdFailed,
     getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
+    clearRobboGroupPage,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -48,6 +49,9 @@ export default handleActions({
     },
     [deleteStudentFromRobboGroupFailed](state) {
         return { ...state, loading: false }
+    },
+    [clearRobboGroupPage](state) {
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

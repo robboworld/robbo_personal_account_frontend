@@ -47,6 +47,17 @@ export const robboUnitGQL = {
             }
         }
     `,
+
+    GET_ROBBO_UNITS_BY_UNIT_ADMIN_ID: gql`
+        query GetRobboUnitsByUnitAdminId($unitAdminId: String!){
+            GetRobboUnitsByUnitAdminId(unitAdminId: $unitAdminId){
+                    id
+                    name
+                    city
+                    lastModified
+            }
+        }
+    `,
 }
 
 export const robboUnitQueryGraphQL = {
@@ -64,6 +75,14 @@ export const robboUnitQueryGraphQL = {
             {
                 query: robboUnitGQL.SEARCH_UNIT_ADMINS_BY_EMAIL,
                 variables: email,
+            },
+        )
+    },
+    getRobboUnitsByUnitAdminId(unitAdminId) {
+        return graphQLClient.query(
+            {
+                query: robboUnitGQL.GET_ROBBO_UNITS_BY_UNIT_ADMIN_ID,
+                variables: unitAdminId,
             },
         )
     },

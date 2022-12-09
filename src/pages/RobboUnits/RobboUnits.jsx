@@ -24,7 +24,7 @@ export default () => {
     const history = useHistory()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
-    const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest } = useActions()
+    const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage } = useActions()
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export default () => {
             }
 
         return () => {
-            // clear
+            clearRobboUnitsPage()
         }
     }, [loginLoading])
 

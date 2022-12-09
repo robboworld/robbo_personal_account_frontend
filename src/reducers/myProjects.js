@@ -47,7 +47,7 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [clearMyProjectsState](state, action) {
-        return { ...state, newProjectId: '', loading: false, projectPages: [] }
+        return INITIAL_STATE
     },
     [getProjectPagesByAccessToken](state) {
         return { ...state, loading: true }

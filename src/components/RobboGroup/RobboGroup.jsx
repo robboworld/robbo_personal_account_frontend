@@ -5,6 +5,8 @@ import { PropTypes } from 'prop-types'
 import RobboGroupStudentsTab from "./RobboGroupStudentsTab"
 import RobboGroupCard from "./RobboGroupCard"
 
+import RobboGroupTeachersTab from "./RobboGroupTeachersTab"
+
 import Flex from '@/components/Flex'
 
 const RobboGroup = ({ robboUnitId, robboGroupId, disableСhanges }) => {
@@ -38,7 +40,7 @@ const RobboGroup = ({ robboUnitId, robboGroupId, disableСhanges }) => {
                         {
                             label: 'Педагоги',
                             key: '3',
-                            children: "Педагоги",
+                            children: <RobboGroupTeachersTab robboGroupId={robboGroupId} />,
                         },
                     ]}
                 />

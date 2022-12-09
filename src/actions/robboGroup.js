@@ -37,6 +37,8 @@ import {
     UPDATE_ROBBO_GROUP,
     UPDATE_ROBBO_GROUP_SUCCESS,
     UPDATE_ROBBO_GROUP_FAILED,
+    CLEAR_ROBBO_GROUPS_PAGE,
+    CLEAR_ROBBO_GROUP_PAGE,
 } from "@/constants"
 
 export const getRobboGroupByIdRequest = createAction(GET_ROBBO_GROUP_BY_ID, (token, robboUnitId, robboGroupId) => {
@@ -259,3 +261,6 @@ export const getAllRobboGroupsFailed = createAction(GET_ALL_ROBBO_GROUPS_FAILED,
 export const updateRobboGroup = createAction(UPDATE_ROBBO_GROUP, robboGroup => robboGroup)
 export const updateRobboGroupSuccess = createAction(UPDATE_ROBBO_GROUP_SUCCESS, response => response)
 export const updateRobboGroupFailed = createAction(UPDATE_ROBBO_GROUP_FAILED, err => err)
+
+export const clearRobboGroupsPage = createAction(CLEAR_ROBBO_GROUPS_PAGE)
+export const clearRobboGroupPage = createAction(CLEAR_ROBBO_GROUP_PAGE)

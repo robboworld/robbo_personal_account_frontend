@@ -11,6 +11,7 @@ import {
     getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenSuccess,
     getRobboGroupsByAccessTokenFailed, getRobboGroupsByTeacherId,
     getRobboGroupsByTeacherIdFailed, getRobboGroupsByTeacherIdSuccess, getAllRobboGroups, getAllRobboGroupsSuccess, getAllRobboGroupsFailed,
+    clearRobboGroupsPage,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -97,6 +98,9 @@ export default handleActions({
     },
     [getAllRobboGroupsFailed](state, action) {
         return { ...state, loading: false }
+    },
+    [clearRobboGroupsPage](state) {
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

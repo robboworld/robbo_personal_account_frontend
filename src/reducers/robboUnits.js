@@ -10,6 +10,7 @@ import {
     getRobboUnits, getRobboUnitsByUnitAdminIdFailed, getRobboUnitsByUnitAdminIdRequest,
     getRobboUnitsByUnitAdminIdSuccess, getRobboUnitsFailed,
     getRobboUnitsSuccess,
+    clearRobboUnitsPage,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -66,6 +67,9 @@ export default handleActions({
         return {
             ...state, loading: false,
         }
+    },
+    [clearRobboUnitsPage](state) {
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

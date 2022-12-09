@@ -22,14 +22,14 @@ export default () => {
 
 
     const token = localStorage.getItem('token')
-    const { getTeachers, deleteTeacher } = useActions()
+    const { getTeachers, deleteTeacher, clearTeachersState } = useActions()
     const { teachers, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
             getTeachers(token)
         return () => {
-            // clearTeachersState
+            clearTeachersState()
         }
     }, [loginLoading])
 

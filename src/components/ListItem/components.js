@@ -17,6 +17,9 @@ export const Title = styled.a`
     cursor: pointer;
     border-bottom: 1px lightgrey solid;
     padding: 1rem 0 1rem 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     &:hover {
         color: #44A444;
         border-bottom: 1px #44A444 solid;
@@ -45,6 +48,7 @@ export const IconsWrapper = styled.div`
 `
 
 export const IconDiv = styled.div`
+
     height: 100%;
     width: 20px;
     display: inline-block;

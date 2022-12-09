@@ -19,14 +19,14 @@ import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN } from '@/constants'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-    const { getClients, deleteParentRequest } = useActions()
+    const { getClients, deleteParentRequest, clearClientPageState } = useActions()
     const token = localStorage.getItem('token')
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
             getClients(token)
         return () => {
-            // clearstate
+            clearClientPageState()
         }
     }, [loginLoading])
 

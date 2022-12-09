@@ -26,6 +26,7 @@ export default () => {
         getRobboGroupsByRobboUnitIdRequest,
         deleteRobboGroupRequest,
         getAllRobboGroups,
+        clearRobboGroupsPage,
     } = useActions()
 
     const { robboUnitId } = useParams()
@@ -36,7 +37,7 @@ export default () => {
                 getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
             else getAllRobboGroups() // Только для Super Admin
         return () => {
-            // clear
+            clearRobboGroupsPage()
         }
     }, [loginLoading])
 

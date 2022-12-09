@@ -35,8 +35,8 @@ const ListItem = ({
     }
 
     return (
-        <StyledListItem onClick={handleClick}>
-            <Title onClick={() => setContentOpen(true)}> {label}</Title>
+        <StyledListItem >
+            <Title onClick={handleClick || (() => setContentOpen(true))}> {label}</Title>
 
             <IconsWrapper>
                 {
