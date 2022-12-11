@@ -8,6 +8,7 @@ import Flex from "@/components/Flex"
 import { useActions } from "@/helpers/useActions"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
+import { updateProfile } from '@/actions'
 
 const GET_PARENT_BY_ID = gql`
 query GetParentById($parentId: String!){
@@ -27,11 +28,9 @@ query GetParentById($parentId: String!){
 `
 
 export default ({ clientId }) => {
-    const {
-        updateProfile,
-    } = useActions()
+    const actions = useActions({ updateProfile }, [])
 
-    const { loading, error, data } = useQuery(GET_PARENT_BY_ID, {
+    const { loading, data } = useQuery(GET_PARENT_BY_ID, {
         variables: { parentId: clientId },
     })
 
@@ -49,7 +48,9 @@ export default ({ clientId }) => {
                             {
                                 label: 'Профиль',
                                 key: '1',
-                                children: loading ? <Loader /> : <ProfileCard updateHandle={updateProfile} profile={data.GetParentById?.userHttp} />,
+                                children: loading
+                                    ? <Loader />
+                                    : <ProfileCard updateHandle={actions.updateProfile} profile={data.GetParentById?.userHttp} />,
                             },
                             {
                                 label: 'Дети',

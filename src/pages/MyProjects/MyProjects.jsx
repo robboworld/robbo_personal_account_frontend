@@ -12,20 +12,25 @@ import config from '@/config'
 import { useActions } from '@/helpers/useActions'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
 import { checkAccess, useUserIdentity } from '@/helpers'
-
+import {
+    getProjectPagesByAccessToken,
+    clearMyProjectsState,
+    createProjectPage,
+} from '@/actions'
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
     const token = localStorage.getItem('token')
 
-    const {
-        getProjectPagesByAccessToken, clearMyProjectsState,
+    const actions = useActions({
+        getProjectPagesByAccessToken,
+        clearMyProjectsState,
         createProjectPage,
-    } = useActions()
+    }, [])
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            getProjectPagesByAccessToken()
+            actions.getProjectPagesByAccessToken()
         return () => {
-            clearMyProjectsState()
+            actions.clearMyProjectsState()
         }
     }, [loginLoading])
 
@@ -51,7 +56,7 @@ export default () => {
                                 <Col span={24}>Мои проекты</Col>
                                 <Col span={24}>
                                     <Button
-                                        type='primary' onClick={() => createProjectPage(token)}>
+                                        type='primary' onClick={() => actions.createProjectPage(token)}>
                                         Создать новый
                                     </Button>
                                 </Col>

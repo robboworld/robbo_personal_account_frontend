@@ -15,17 +15,17 @@ import Flex from '@/components/Flex'
 import { useActions } from '@/helpers/useActions'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT, SUPER_ADMIN } from '@/constants'
 import { checkAccess } from '@/helpers'
-
+import { getAllCoursePages, clearAllCoursePagesState } from '@/actions'
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const { getAllCoursePages, clearAllCoursePagesState } = useActions()
+    const actions = useActions({ getAllCoursePages, clearAllCoursePagesState })
     const token = localStorage.getItem('token')
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
-            getAllCoursePages(token)
+            actions.getAllCoursePages(token)
         return () => {
-            clearAllCoursePagesState()
+            actions.clearAllCoursePagesState()
         }
     }, [loginLoading])
 

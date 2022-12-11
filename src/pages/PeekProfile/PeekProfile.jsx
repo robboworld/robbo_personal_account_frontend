@@ -1,43 +1,39 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-
+import { redirect } from 'react-router-dom'
 import { useQuery } from "@apollo/client"
 
 import PageLayout from '@/components/PageLayout'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import Loader from '@/components/Loader'
 import { useActions } from '@/helpers/useActions'
-import { SUPER_ADMIN } from '@/constants'
+import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import ProfileCard from '@/components/ProfileCard'
-
 import { userGQL } from '@/graphQL'
+import { updateProfile } from '@/actions'
 
 export default ({ location }) => {
 
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-    const isUserSuperAdmin = checkAccess(userRole, [SUPER_ADMIN])
+    if (!loginLoading && !checkAccess(userRole,
+        [SUPER_ADMIN])) {
+        return redirect(HOME_PAGE_ROUTE)
+    } else if (!isAuth && !loginLoading) {
+        return redirect(LOGIN_PAGE_ROUTE)
+    }
 
-    const {
-        updateProfile,
-    } = useActions()
+    const actions = useActions({ updateProfile }, [])
 
     const { loading, error, data } = useQuery(userGQL.GET_STUDENT_BY_ID, {
         variables: { studentId: location.state.studentId },
         notifyOnNetworkStatusChange: true,
     })
 
-    const token = localStorage.getItem('token')
-
     return (
         <PageLayout>
             {
                 loginLoading || loading
                     ? <Loader />
-                    : data === undefined
-                        ? <h3>Not finded</h3>
-                        : isUserSuperAdmin
-                            ? <ProfileCard updateHandle={updateProfile} profile={data.GetStudentById?.userHttp} />
-                            : <ProfileCard profile={data.GetStudentById?.userHttp} />
+                    : <ProfileCard updateHandle={actions.updateProfile} profile={data.GetStudentById?.userHttp} />
             }
         </PageLayout>
     )

@@ -2,22 +2,19 @@ import React from "react"
 import { useQuery } from "@apollo/client"
 import { Button, Form, Input } from 'antd'
 
+import Loader from "@/components/Loader"
 import { useActions } from "@/helpers"
 import { robboUnitGQL } from "@/graphQL"
-import Loader from "@/components/Loader"
+import { updateRobboUnit } from '@/actions'
 
 export default ({ robboUnitId }) => {
     const layout = {
-        labelCol: {
-            span: 8,
-        },
-        wrapperCol: {
-            span: 16,
-        },
+        labelCol: { span: 8 },
+        wrapperCol: { span: 16 },
     }
     const [form] = Form.useForm()
     const token = localStorage.getItem('token')
-    const { updateRobboUnit } = useActions()
+    const actions = useActions({ updateRobboUnit }, [])
 
     const { data, loading } = useQuery(robboUnitGQL.GET_ROBBO_UNIT_BY_ID, {
         variables: { id: robboUnitId },
@@ -37,7 +34,7 @@ export default ({ robboUnitId }) => {
                         city: data.GetRobboUnitById.city,
                     }}
                     onFinish={({ name, city }) => {
-                        updateRobboUnit(token, { ...data.GetRobboUnitById, name, city })
+                        actions.updateRobboUnit(token, { ...data.GetRobboUnitById, name, city })
                     }}
                 >
                     <Form.Item

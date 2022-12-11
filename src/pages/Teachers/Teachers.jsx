@@ -16,21 +16,20 @@ import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
 import Loader from '@/components/Loader'
 import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
+import { getTeachers, deleteTeacher, clearTeachersState } from '@/actions'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
 
     const token = localStorage.getItem('token')
-    const { getTeachers, deleteTeacher, clearTeachersState } = useActions()
+    const actions = useActions({ getTeachers, deleteTeacher, clearTeachersState }, [])
     const { teachers, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            getTeachers(token)
-        return () => {
-            clearTeachersState()
-        }
+            actions.getTeachers(token)
+        return () => actions.clearTeachersState()
     }, [loginLoading])
 
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
@@ -81,7 +80,7 @@ export default () => {
                                                         ${teacher.userHttp.firstname} 
                                                         ${teacher.userHttp.middlename}
                                                     `}
-                                                handleDelete={teacherIndex => deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
+                                                handleDelete={teacherIndex => actions.deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
                                                 render={(open, setOpen) => (
                                                     <DragResize
                                                         open={open} setOpen={setOpen}

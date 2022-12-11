@@ -8,15 +8,25 @@ import { WelcomeText } from "./components"
 import PageLayout from '@/components/PageLayout'
 import Flex from "@/components/Flex"
 import RobboUnit from "@/components/RobboUnit"
-import { Button, DragResize } from "@/components/UI"
+import Loader from "@/components/Loader"
+import ListItem from "@/components/ListItem"
 import AddRobboUnit from "@/components/AddRobboUnit"
 import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
-import Loader from "@/components/Loader"
-import ListItem from "@/components/ListItem"
+import { Button, DragResize } from "@/components/UI"
 import { useUserIdentity, checkAccess } from "@/helpers"
-import { HOME_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN, LOGIN_PAGE_ROUTE } from "@/constants"
-
+import {
+    HOME_PAGE_ROUTE,
+    SUPER_ADMIN,
+    UNIT_ADMIN,
+    LOGIN_PAGE_ROUTE,
+} from "@/constants"
+import {
+    getRobboUnits,
+    getRobboUnitsByUnitAdminIdRequest,
+    deleteRobboUnitRequest,
+    clearRobboUnitsPage,
+} from '@/actions'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -24,23 +34,21 @@ export default () => {
     const history = useNavigate()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
-    const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage } = useActions()
+    const actions = useActions({ getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage }, [])
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             switch (userRole) {
                 case UNIT_ADMIN:
-                    getRobboUnitsByUnitAdminIdRequest(token)
+                    actions.getRobboUnitsByUnitAdminIdRequest(token)
                     break
                 case SUPER_ADMIN:
-                    getRobboUnits(token)
+                    actions.getRobboUnits(token)
                     break
             }
 
-        return () => {
-            clearRobboUnitsPage()
-        }
+        return () => actions.clearRobboUnitsPage()
     }, [loginLoading])
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
@@ -104,7 +112,7 @@ export default () => {
                                                         )}
                                                     />
                                                 )}
-                                                handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
+                                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
                                             />
                                         )
                                     })

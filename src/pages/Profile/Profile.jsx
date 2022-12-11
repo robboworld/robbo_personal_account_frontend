@@ -13,6 +13,11 @@ import { getProfileState } from '@/reducers/profile'
 import ProfileCard from '@/components/ProfileCard/ProfileCard'
 import { FREE_LISTENER, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN } from '@/constants'
 import ListChildren from '@/components/ListChildren'
+import {
+    clearProfileState,
+    updateProfile,
+    getProfileById,
+} from '@/actions'
 
 export default memo(() => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -31,13 +36,12 @@ export default memo(() => {
     }
 
     const token = localStorage.getItem('token')
-    const { getProfileById, getChildrenByParentId } = useActions()
 
-    const {
-        deleteProfile,
+    const actions = useActions({
+        getProfileById,
         clearProfileState,
         updateProfile,
-    } = useActions()
+    }, [])
 
     const { loading, profile } = useSelector(({ profile }) => getProfileState(profile))
     const isUserAParent = checkAccess(userRole, [PARENT])
@@ -51,9 +55,9 @@ export default memo(() => {
             SUPER_ADMIN,
             FREE_LISTENER,
         ]))
-            getProfileById(token)
+            actions.getProfileById(token)
         return () => {
-            clearProfileState()
+            actions.clearProfileState()
         }
     }, [loginLoading])
 
@@ -66,7 +70,7 @@ export default memo(() => {
                     : (
                         <Flex direction='row'>
                             <Flex margin='0.5rem' justify='flex-end'>
-                                <ProfileCard updateHandle={updateProfile} profile={profile}
+                                <ProfileCard updateHandle={actions.updateProfile} profile={profile}
                                     isUserAParent={isUserAParent} />
                             </Flex>
                             <Flex margin='0.5rem' width='100%'>

@@ -9,21 +9,25 @@ import ListItem from "@/components/ListItem"
 import { DragResize } from "@/components/UI"
 import RobboGroup from "@/components/RobboGroup"
 import { useActions } from "@/helpers"
-
 import { getRobboGroupsState } from "@/reducers/robboGroups"
+import {
+    getRobboGroupsByAccessToken,
+    getRobboGroupsByTeacherId,
+    clearRobboGroupsPage,
+} from '@/actions'
 
 
 export default ({ teacherId }) => {
-    const { getRobboGroupsByAccessToken, getRobboGroupsByTeacherId, clearRobboGroupsPage } = useActions()
+    const actions = useActions({ getRobboGroupsByAccessToken, getRobboGroupsByTeacherId, clearRobboGroupsPage }, [])
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
     useEffect(() => {
         if (teacherId) {
-            getRobboGroupsByTeacherId(teacherId)
+            actions.getRobboGroupsByTeacherId(teacherId)
         } else {
-            getRobboGroupsByAccessToken()
+            actions.getRobboGroupsByAccessToken()
         }
         return () => {
-            clearRobboGroupsPage()
+            actions.clearRobboGroupsPage()
         }
     }, [])
 
@@ -45,7 +49,6 @@ export default ({ teacherId }) => {
                                     <DragResize
                                         open={open} setOpen={setOpen}
                                         content={() => (
-                                            // refactor in robboGroup useQuery
                                             <RobboGroup
                                                 robboUnitId={robboGroup.robboUnitId}
                                                 robboGroupId={robboGroup.id}
@@ -61,3 +64,5 @@ export default ({ teacherId }) => {
         </Space>
     )
 }
+
+// TODO propTypes

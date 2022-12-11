@@ -99,7 +99,7 @@ export default () => (
         element={<RobboGroups />}
       />
       <Route
-        path='/'
+        path='/*'
         element={<Navigate to={HOME_PAGE_ROUTE} replace />}
       />
     </Routes>

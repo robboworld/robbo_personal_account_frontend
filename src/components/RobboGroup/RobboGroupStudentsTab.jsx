@@ -10,6 +10,7 @@ import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
 import { userGQL, usersQueryGraphQL } from "@/graphQL/query"
 import { PEEK_PROFILE_PAGE } from "@/constants"
+import { addStudentToRobboGroupRequest } from '@/actions'
 
 const { Search } = Input
 
@@ -20,9 +21,7 @@ const RobboGroupStudentsTab = ({
     const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
     const history = useNavigate()
-    const {
-        addStudentToRobboGroupRequest,
-    } = useActions()
+    const actions = useActions({ addStudentToRobboGroupRequest }, [])
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [openAddChildren, setOpenAddChildren] = useState(false)
@@ -57,7 +56,7 @@ const RobboGroupStudentsTab = ({
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
                                 handleClick={() => openProfileStudent(userHttp.id)}
-                                handleDelete={childIndex => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
+                                handleDelete={childIndex => actions.addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
                             />
                         )}
                     />
@@ -97,7 +96,7 @@ const RobboGroupStudentsTab = ({
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => addStudentToRobboGroupRequest(token, { id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
+                                handleClick={() => actions.addStudentToRobboGroupRequest(token, { id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
                                 handleDelete={false}
                             />
                         )}

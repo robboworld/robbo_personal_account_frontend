@@ -14,11 +14,12 @@ import {
 
 import { useActions } from '@/helpers/useActions'
 import { getLoginState } from '@/reducers/login'
-
+import { signOutRequest } from '@/actions'
+import { LOGIN_PAGE_ROUTE } from '@/constants'
 
 export default () => {
     const history = useNavigate()
-    const { signOutRequest } = useActions()
+    const actions = useActions({ signOutRequest }, [])
     const { userRole } = useSelector(({ login }) => getLoginState(login))
 
     let SideBarData = []
@@ -50,8 +51,8 @@ export default () => {
     }
 
     const onMenuClick = ({ item, key, keyPath, selectedKeys, domEvent }) => {
-        if (item.props.pathname === '/login') {
-            signOutRequest()
+        if (item.props.pathname === LOGIN_PAGE_ROUTE) {
+            actions.signOutRequest()
             history(item.props.pathname)
         }
         else {

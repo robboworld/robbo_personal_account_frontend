@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react"
-import { redirect, useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { Modal } from "antd"
+import { redirect, useParams } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
 import PageLayout from '@/components/PageLayout'
 import Flex from "@/components/Flex"
-import { DragResize, Button } from "@/components/UI"
 import Loader from "@/components/Loader"
 import AddStudentGroup from "@/components/AddStudentGroup"
 import RobboGroup from "@/components/RobboGroup"
@@ -15,29 +14,41 @@ import ListItem from "@/components/ListItem"
 import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN } from "@/constants"
+import { DragResize, Button } from "@/components/UI"
+import {
+    HOME_PAGE_ROUTE,
+    LOGIN_PAGE_ROUTE,
+    SUPER_ADMIN,
+    UNIT_ADMIN,
+} from "@/constants"
+import {
+    getRobboGroupsByRobboUnitIdRequest,
+    deleteRobboGroupRequest,
+    getAllRobboGroups,
+    clearRobboGroupsPage,
+} from '@/actions'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     const token = localStorage.getItem('token')
     const [openAddGroup, setOpenAddGroup] = useState(false)
-    const {
+    const actions = useActions({
         getRobboGroupsByRobboUnitIdRequest,
         deleteRobboGroupRequest,
         getAllRobboGroups,
         clearRobboGroupsPage,
-    } = useActions()
+    }, [])
 
     const { robboUnitId } = useParams()
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             if (robboUnitId)
-                getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
-            else getAllRobboGroups() // Только для Super Admin
+                actions.getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
+            else actions.getAllRobboGroups() // Только для Super Admin
         return () => {
-            clearRobboGroupsPage()
+            actions.clearRobboGroupsPage()
         }
     }, [loginLoading])
 
@@ -101,9 +112,14 @@ export default () => {
                                                                         )}
                                                                     />
                                                                 )}
-                                                                // handleClick={() => history.push(`/robboUnits/${robboUnit.id}/groups/${robboGroup.id}`)}
-                                                                handleDelete={robboGroupIndex =>
-                                                                    deleteRobboGroupRequest(token, robboUnitId, robboGroup.id, robboGroupIndex)
+                                                                handleDelete={
+                                                                    robboGroupIndex =>
+                                                                        actions.deleteRobboGroupRequest(
+                                                                            token,
+                                                                            robboUnitId,
+                                                                            robboGroup.id,
+                                                                            robboGroupIndex,
+                                                                        )
                                                                 }
                                                             />
                                                         )

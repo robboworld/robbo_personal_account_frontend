@@ -3,9 +3,10 @@ import React, { memo } from 'react'
 import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
+import { createTeacher } from '@/actions'
 
 export default memo(() => {
-    const { createTeacher } = useActions()
+    const actions = useActions({ createTeacher }, [])
     const token = localStorage.getItem('token')
 
     return (
@@ -15,7 +16,7 @@ export default memo(() => {
         >
             <SignUpForm
                 margin='0 0 10px 0'
-                handleSubmit={teacher => createTeacher(token, teacher)}
+                handleSubmit={teacher => actions.createTeacher(token, teacher)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',

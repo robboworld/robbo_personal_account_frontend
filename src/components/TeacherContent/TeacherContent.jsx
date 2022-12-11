@@ -9,6 +9,7 @@ import Loader from '@/components//Loader'
 import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
 import { useActions } from '@/helpers/useActions'
+import { updateProfile } from '@/actions'
 
 const GET_TEACHER_BY_ID = gql`
 query GetTeacherById($teacherId: String!){
@@ -28,9 +29,7 @@ query GetTeacherById($teacherId: String!){
 `
 
 export default ({ teacherId }) => {
-    const {
-        updateProfile,
-    } = useActions()
+    const actions = useActions({ updateProfile }, [])
 
     const { loading, error, data } = useQuery(GET_TEACHER_BY_ID, {
         variables: { teacherId },
@@ -47,7 +46,7 @@ export default ({ teacherId }) => {
                         {
                             label: 'Профиль',
                             key: '1',
-                            children: loading ? <Loader /> : <ProfileCard updateHandle={updateProfile} profile={data.GetTeacherById?.userHttp} />,
+                            children: loading ? <Loader /> : <ProfileCard updateHandle={actions.updateProfile} profile={data.GetTeacherById?.userHttp} />,
                         },
                         {
                             label: 'Группы',

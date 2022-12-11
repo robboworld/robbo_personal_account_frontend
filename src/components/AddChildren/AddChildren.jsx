@@ -3,10 +3,11 @@ import styled from 'styled-components'
 
 import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
-import { useActions } from '@/helpers/useActions'
+import { useActions } from '@/helpers'
+import { createChildren } from '@/actions'
 
 export default memo(({ parentId }) => {
-    const { createChildren } = useActions()
+    const actions = useActions({ createChildren }, [])
     const token = localStorage.getItem('token')
     return (
         <Flex
@@ -16,7 +17,7 @@ export default memo(({ parentId }) => {
             <Text>Создание ребенка</Text>
             <SignUpForm
                 margin='0 0 10px 0'
-                handleSubmit={child => createChildren(token, child, parentId.toString())}
+                handleSubmit={child => actions.createChildren(token, child, parentId.toString())}
                 buttonOption={{
                     content: 'Создать',
                     padding: '10px',

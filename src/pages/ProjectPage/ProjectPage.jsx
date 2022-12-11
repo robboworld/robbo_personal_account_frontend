@@ -13,17 +13,21 @@ import { useActions } from '@/helpers/useActions'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { getProjectPageState } from '@/reducers/projectPage'
-
+import {
+    getProjectPageById,
+    clearProjectPageState,
+    updateProjectPage,
+} from '@/actions'
 const { TextArea } = Input
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const {
+    const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
         updateProjectPage,
-    } = useActions()
+    }, [])
 
     const layout = {
         labelCol: {
@@ -39,9 +43,9 @@ export default () => {
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            getProjectPageById(token, projectPageId)
+            actions.getProjectPageById(token, projectPageId)
         return () => {
-            clearProjectPageState()
+            actions.clearProjectPageState()
         }
     }, [loginLoading])
 
@@ -89,7 +93,7 @@ export default () => {
                                 notes: projectPage.notes,
                             }}
                             onFinish={({ title, instruction, notes }) => {
-                                updateProjectPage(token, { ...projectPage, title, instruction, notes })
+                                actions.updateProjectPage(token, { ...projectPage, title, instruction, notes })
                             }}
                         >
                             <Form.Item

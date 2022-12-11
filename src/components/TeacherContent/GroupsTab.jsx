@@ -7,13 +7,13 @@ import { useQuery, useApolloClient } from "@apollo/client"
 import ListItem from '@/components/ListItem'
 import { useActions } from '@/helpers'
 import { robboGroupGQL } from '@/graphQL'
-
+import { setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest } from '@/actions'
 
 const { Search } = Input
 
 const GroupsTab = ({ teacherId }) => {
     const token = localStorage.getItem('token')
-    const { setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest } = useActions()
+    const actions = useActions({ setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest }, [])
     const client = useApolloClient()
     const history = useNavigate()
     const [openSearchSection, setOpenSearchSection] = useState(false)
@@ -47,7 +47,7 @@ const GroupsTab = ({ teacherId }) => {
                                 render={() => { }}
                                 label={`${robboGroup?.name}`}
                                 handleClick={() => history(`/robboUnits/${robboGroup.robboUnitId}/groups`)}
-                                handleDelete={() => deleteTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
+                                handleDelete={() => actions.deleteTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
                             />
                         )}
                     />
@@ -68,7 +68,7 @@ const GroupsTab = ({ teacherId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${robboGroup.name}`}
-                                handleClick={() => setTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
+                                handleClick={() => actions.setTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
                             />
                         )}
                     />

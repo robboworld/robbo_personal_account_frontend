@@ -7,17 +7,20 @@ import { useActions } from "@/helpers/useActions"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import { robboUnitGQL, robboUnitQueryGraphQL } from "@/graphQL/query"
-
+import {
+    setNewUnitAdminForRobboUnitRequest,
+    deleteUnitAdminForRobboUnitRequest,
+} from '@/actions'
 
 const { Search } = Input
 
 export default ({ robboUnitId }) => {
     const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
-    const {
+    const actions = useActions({
         setNewUnitAdminForRobboUnitRequest,
         deleteUnitAdminForRobboUnitRequest,
-    } = useActions()
+    }, [])
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
@@ -46,7 +49,7 @@ export default ({ robboUnitId }) => {
                                 key={index}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
-                                handleDelete={childIndex => deleteUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
+                                handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
                             />
                         )}
                     />
@@ -66,7 +69,7 @@ export default ({ robboUnitId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
+                                handleClick={() => actions.setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
                             />
                         )}
                     />

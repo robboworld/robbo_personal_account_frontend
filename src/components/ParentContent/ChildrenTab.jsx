@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Space, Button, Modal, List, Input } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
-import { gql, useQuery, useApolloClient } from "@apollo/client"
+import { gql, useQuery } from "@apollo/client"
 
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
 import { useActions } from '@/helpers'
-import { userGQL, usersQueryGraphQL } from '@/graphQL'
+import { usersQueryGraphQL } from '@/graphQL'
+import { createRelation, deleteChildRequest } from '@/actions'
 
 const { Search } = Input
 
@@ -24,11 +25,7 @@ query GetStudentsByParentId($parentId: String!){
 
 const ChildrenTab = ({ clientId }) => {
     const token = localStorage.getItem('token')
-    const client = useApolloClient()
-    const {
-        createRelation,
-        deleteChildRequest,
-    } = useActions()
+    const actions = useActions({ createRelation, deleteChildRequest }, [])
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchStudents, setSearchResult] = useState([])
@@ -57,7 +54,7 @@ const ChildrenTab = ({ clientId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                handleDelete={childIndex => actions.deleteChildRequest(token, userHttp.id, childIndex)}
                             />
                         )}
                     />
@@ -92,7 +89,7 @@ const ChildrenTab = ({ clientId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => createRelation(token, clientId, userHttp.id)}
+                                handleClick={() => actions.createRelation(token, clientId, userHttp.id)}
                             // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                             />
                         )}

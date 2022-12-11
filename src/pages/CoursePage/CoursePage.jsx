@@ -11,6 +11,7 @@ import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { checkAccess, useUserIdentity, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
+import { getCoursePageById, clearCoursePageState } from '@/actions'
 import {
     HOME_PAGE_ROUTE,
     LOGIN_PAGE_ROUTE,
@@ -24,13 +25,13 @@ export default () => {
 
     const token = localStorage.getItem('token')
     const { coursePageId } = useParams()
-    const { getCoursePageById, clearCoursePageState } = useActions()
+    const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
-            getCoursePageById(token, coursePageId)
+            actions.getCoursePageById(token, coursePageId)
         return () => {
-            clearCoursePageState()
+            actions.clearCoursePageState()
         }
     }, [loginLoading])
 

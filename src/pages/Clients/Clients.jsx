@@ -16,17 +16,18 @@ import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN } from '@/constants'
+import { getClients, deleteParentRequest, clearClientPageState } from '@/actions'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-    const { getClients, deleteParentRequest, clearClientPageState } = useActions()
+    const actions = useActions({ getClients, deleteParentRequest, clearClientPageState }, [])
     const token = localStorage.getItem('token')
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            getClients(token)
+            actions.getClients(token)
         return () => {
-            clearClientPageState()
+            actions.clearClientPageState()
         }
     }, [loginLoading])
 
@@ -76,7 +77,7 @@ export default () => {
                                                 return (
                                                     <ListItem
                                                         itemIndex={index}
-                                                        handleDelete={parentIndex => deleteParentRequest(token, parent.userHttp.id, parentIndex)}
+                                                        handleDelete={parentIndex => actions.deleteParentRequest(token, parent.userHttp.id, parentIndex)}
                                                         label={`
                                                                 ${parent.userHttp.lastname}
                                                                 ${parent.userHttp.firstname}
