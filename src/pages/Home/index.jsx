@@ -1,5 +1,5 @@
 import React from 'react'
-import { redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import PageLayout from '@/components/PageLayout'
 
@@ -10,7 +10,7 @@ export default () => {
   const { isAuth, loginLoading } = useUserIdentity()
 
   if (!isAuth && !loginLoading) {
-    return redirect(LOGIN_PAGE_ROUTE)
+    return <Navigate to={LOGIN_PAGE_ROUTE} />
   }
 
   return <PageLayout />

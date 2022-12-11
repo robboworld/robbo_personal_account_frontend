@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams, redirect } from 'react-router-dom'
+import { useParams, Navigate } from 'react-router-dom'
 import { Input, Button, Form } from 'antd'
 
 import { UnsharedMessage } from './components'
@@ -56,9 +56,9 @@ export default () => {
     }
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
-        return redirect(HOME_PAGE_ROUTE)
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     console.log(projectPage)

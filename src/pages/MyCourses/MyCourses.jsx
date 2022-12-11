@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import { WelcomeText } from './components'
 
@@ -33,9 +33,9 @@ export default () => {
     const loading = useSelector(({ myCourses }) => getCoursePagesLoading(myCourses))
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
-        return redirect(HOME_PAGE_ROUTE)
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     return (

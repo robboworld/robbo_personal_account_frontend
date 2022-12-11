@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { Button, List, Row, Col } from 'antd'
 
 import ProjectPageItem from './MyProjectsItem'
@@ -37,9 +37,9 @@ export default () => {
     const { projectPages, newProjectId, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
-        return redirect(HOME_PAGE_ROUTE)
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     if (newProjectId) {

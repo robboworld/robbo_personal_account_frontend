@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { Modal } from "antd"
-import { redirect, useParams } from "react-router-dom"
+import { Navigate, useParams } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
@@ -55,9 +55,9 @@ export default () => {
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
-        return redirect(HOME_PAGE_ROUTE)
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     return (

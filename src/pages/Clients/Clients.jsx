@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { Modal } from 'antd'
 
 import { ListParents, WelcomeText } from './components'
@@ -35,9 +35,9 @@ export default () => {
     const [openAddClients, setOpenAddClients] = useState(false)
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
-        return redirect(HOME_PAGE_ROUTE)
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     return (
@@ -77,7 +77,9 @@ export default () => {
                                                 return (
                                                     <ListItem
                                                         itemIndex={index}
-                                                        handleDelete={parentIndex => actions.deleteParentRequest(token, parent.userHttp.id, parentIndex)}
+                                                        handleDelete={
+                                                            parentIndex => actions.deleteParentRequest(token, parent.userHttp.id, parentIndex)
+                                                        }
                                                         label={`
                                                                 ${parent.userHttp.lastname}
                                                                 ${parent.userHttp.firstname}

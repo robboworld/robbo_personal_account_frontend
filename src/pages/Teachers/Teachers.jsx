@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { Modal } from 'antd'
 
 import { WelcomeText } from './components'
@@ -35,10 +35,11 @@ export default () => {
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
-        return redirect(HOME_PAGE_ROUTE)
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
+
     return (
         <PageLayout>
             <WelcomeText>Педагоги</WelcomeText>

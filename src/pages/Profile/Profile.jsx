@@ -1,6 +1,6 @@
-import React, { useEffect, useState, memo } from 'react'
+import React, { useEffect, memo } from 'react'
 import { useSelector } from 'react-redux'
-import { redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import { WelcomeText } from '../Clients/components'
 
@@ -30,9 +30,9 @@ export default memo(() => {
             SUPER_ADMIN,
             FREE_LISTENER,
         ])) {
-        return redirect(HOME_PAGE_ROUTE)
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     const token = localStorage.getItem('token')
