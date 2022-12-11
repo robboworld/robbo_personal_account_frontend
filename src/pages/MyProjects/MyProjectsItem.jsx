@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button, Space } from 'antd'
 
 import { ProjectPageItem, ScratchLink, LastModified, RemoveProjectPage } from './components'
@@ -11,11 +11,11 @@ import Flex from '@/components/Flex'
 export default ({ projectPageIndex, projectPage }) => {
 
     const { deleteProjectPage } = useActions()
-    const history = useHistory()
+    const history = useNavigate()
     const token = localStorage.getItem('token')
 
     const toProjectPageHandler = () => {
-        history.push(`/projects/${projectPage.projectPageId}`)
+        history(`/projects/${projectPage.projectPageId}`)
     }
 
     const seeInsideHandler = () => {

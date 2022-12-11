@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Button, Space, Input, List, Modal } from "antd"
 import { useQuery } from "@apollo/client"
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { PropTypes } from 'prop-types'
 
 import { useActions } from "@/helpers/useActions"
@@ -19,7 +19,7 @@ const RobboGroupStudentsTab = ({
 }) => {
     const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
-    const history = useHistory()
+    const history = useNavigate()
     const {
         addStudentToRobboGroupRequest,
     } = useActions()
@@ -38,7 +38,7 @@ const RobboGroupStudentsTab = ({
     })
 
     const openProfileStudent = userId => {
-        history.push(PEEK_PROFILE_PAGE, { studentId: userId })
+        history(PEEK_PROFILE_PAGE, { studentId: userId })
     }
 
     return (

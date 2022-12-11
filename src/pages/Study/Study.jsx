@@ -1,5 +1,5 @@
 import React from "react"
-import { Redirect } from "react-router-dom"
+import { redirect } from "react-router-dom"
 import { Tabs } from "antd"
 
 import PageLayout from '@/components/PageLayout'
@@ -13,9 +13,9 @@ export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
     if (!loginLoading && !checkAccess(userRole, [TEACHER])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return redirect(HOME_PAGE_ROUTE)
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return redirect(LOGIN_PAGE_ROUTE)
     }
 
     return (

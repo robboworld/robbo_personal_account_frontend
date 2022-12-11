@@ -1,5 +1,5 @@
 import React from "react"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Button, Tabs } from "antd"
 
 import RobboUnitStudentsTab from "./RobboUnitStudentsTab"
@@ -9,7 +9,7 @@ import Flex from '@/components/Flex'
 import RobboUnitAccessSetting from "@/components/RobboUnitAccessSetting"
 
 export default ({ robboUnitId }) => {
-    const history = useHistory()
+    const history = useNavigate()
 
     return (
         <Flex width='100%'>
@@ -29,7 +29,7 @@ export default ({ robboUnitId }) => {
                         {
                             label: 'Группы',
                             key: '2',
-                            children: <Button onClick={() => history.push(`/robboUnits/${robboUnitId}/groups`)}>Группы</Button>,
+                            children: <Button onClick={() => history(`/robboUnits/${robboUnitId}/groups`)}>Группы</Button>,
                         },
                         {
                             label: 'Доступ',

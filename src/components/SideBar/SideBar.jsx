@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Menu } from 'antd'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import {
     SidebarDataSuperAdmin,
@@ -17,7 +17,7 @@ import { getLoginState } from '@/reducers/login'
 
 
 export default () => {
-    const history = useHistory()
+    const history = useNavigate()
     const { signOutRequest } = useActions()
     const { userRole } = useSelector(({ login }) => getLoginState(login))
 
@@ -52,10 +52,10 @@ export default () => {
     const onMenuClick = ({ item, key, keyPath, selectedKeys, domEvent }) => {
         if (item.props.pathname === '/login') {
             signOutRequest()
-            history.push(item.props.pathname)
+            history(item.props.pathname)
         }
         else {
-            history.push(item.props.pathname)
+            history(item.props.pathname)
         }
 
     }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Redirect, useHistory } from "react-router-dom"
+import { redirect, useNavigate } from "react-router-dom"
 import { Modal } from "antd"
 
 import { WelcomeText } from "./components"
@@ -21,7 +21,7 @@ import { HOME_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN, LOGIN_PAGE_ROUTE } from "@/co
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const history = useHistory()
+    const history = useNavigate()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
     const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage } = useActions()
@@ -44,9 +44,9 @@ export default () => {
     }, [loginLoading])
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return redirect(HOME_PAGE_ROUTE)
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return redirect(LOGIN_PAGE_ROUTE)
     }
 
     return (
@@ -67,7 +67,7 @@ export default () => {
                     content='Программа'
                     padding='0.5rem'
                     margin='0.5rem'
-                    handleSubmit={() => history.push('/program')}
+                    handleSubmit={() => history('/program')}
                 />
                 <Button
                     background='green'

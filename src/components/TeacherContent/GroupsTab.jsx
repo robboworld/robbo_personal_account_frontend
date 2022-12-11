@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Space, Button, List, Input } from 'antd'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useQuery, useApolloClient } from "@apollo/client"
 
@@ -15,7 +15,7 @@ const GroupsTab = ({ teacherId }) => {
     const token = localStorage.getItem('token')
     const { setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest } = useActions()
     const client = useApolloClient()
-    const history = useHistory()
+    const history = useNavigate()
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchGroups, setSearchResult] = useState([])
 
@@ -46,7 +46,7 @@ const GroupsTab = ({ teacherId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${robboGroup?.name}`}
-                                handleClick={() => history.push(`/robboUnits/${robboGroup.robboUnitId}/groups`)}
+                                handleClick={() => history(`/robboUnits/${robboGroup.robboUnitId}/groups`)}
                                 handleDelete={() => deleteTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
                             />
                         )}

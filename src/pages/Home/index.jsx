@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Redirect } from 'react-router-dom'
+import { redirect } from 'react-router-dom'
 
 import PageLayout from '@/components/PageLayout'
 
@@ -10,7 +10,7 @@ export default memo(() => {
   const { isAuth, loginLoading } = useUserIdentity()
 
   if (!isAuth && !loginLoading) {
-    return <Redirect to={LOGIN_PAGE_ROUTE} />
+    return redirect(LOGIN_PAGE_ROUTE)
   }
 
   return (
