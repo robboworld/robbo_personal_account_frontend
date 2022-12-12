@@ -29,14 +29,16 @@ const SignUpForm = memo(({
         <Form
             name='normal_login'
             className='signup-form'
-            onFinish={({ email,
-                password,
-                role,
-                nickname,
-                lastname,
-                firstname,
-                middlename,
-            }) => {
+            onFinish={(
+                {
+                    email,
+                    password,
+                    role,
+                    nickname,
+                    lastname,
+                    firstname,
+                    middlename,
+                }) => {
                 return handleSubmit({
                     email, password, role, nickname, lastname, firstname, middlename,
                 })

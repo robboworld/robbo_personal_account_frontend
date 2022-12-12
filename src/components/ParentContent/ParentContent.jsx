@@ -1,5 +1,5 @@
 import React from "react"
-import { gql, useQuery } from "@apollo/client"
+import { useQuery } from "@apollo/client"
 import { Tabs } from 'antd'
 
 import ChildrenTab from "./ChildrenTab"
@@ -9,28 +9,12 @@ import { useActions } from "@/helpers/useActions"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 import { updateProfile } from '@/actions'
-
-const GET_PARENT_BY_ID = gql`
-query GetParentById($parentId: String!){
-    GetParentById(parentId: $parentId) {
-        userHttp{
-            id
-            lastname
-            firstname
-            middlename
-            nickname
-            email
-            createdAt
-            role
-        }
-    }
-}
-`
+import { userQuerysGQL } from "@/graphQL"
 
 export default ({ clientId }) => {
     const actions = useActions({ updateProfile }, [])
 
-    const { loading, data } = useQuery(GET_PARENT_BY_ID, {
+    const { loading, data } = useQuery(userQuerysGQL.GET_PARENT_BY_ID, {
         variables: { parentId: clientId },
     })
 

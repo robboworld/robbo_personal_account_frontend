@@ -6,6 +6,7 @@ import {
     getProfileById, getProfileByIdFailed, getProfileByIdSuccess,
     updateProfile, updateProfileFailed, updateProfileSuccess,
 } from '@/actions'
+import { usersMutationGraphQL } from '@/graphQL/mutation'
 
 function* getProfileByIdSaga(action) {
     try {
@@ -31,10 +32,10 @@ function* deleteProfileSaga(action) {
     }
 }
 
-function* updateProfileSaga(action) {
+function* updateProfileSaga({ payload }) {
     try {
-        const { token, profile } = action.payload
-        const response = yield call(profileAPI.updateProfile, token, profile)
+        const { profile, role } = payload
+        const response = yield call(usersMutationGraphQL.updateProfile, { input: profile }, role)
         console.log(response)
 
         yield put(updateProfileSuccess(response))

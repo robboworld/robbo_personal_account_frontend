@@ -2,20 +2,7 @@ import { gql } from "@apollo/client"
 
 import { graphQLClient } from "@/graphQL"
 
-export const userGQL = {
-    GET_STUDENTS_PY_PARENT_ID: gql`
-        query GetStudentsByParentId($parentId: String!){
-            GetStudentsByParentId(parentId: $parentId){
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                }
-            }
-        }
-    `,
-
+export const userQuerysGQL = {
     GET_STUDENT_BY_ID: gql`
         query GetStudentById($studentId: String!){
             GetStudentById(studentId: $studentId){
@@ -89,24 +76,140 @@ export const userGQL = {
     }
     `,
 
+    GET_ALL_PARENTS: gql`
+        query{ 
+            GetAllParents{
+                __typename
+                ... on ParentHttpList{
+                    parents{
+                        userHttp{
+                            id
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+                ... on Error{
+                    message
+                }
+            }
+        }
+    `,
+
+    GET_PARENT_BY_ID: gql`
+    query GetParentById($parentId: String!){
+        GetParentById(parentId: $parentId) {
+            ... on ParentHttp{
+                userHttp{
+                id
+                lastname
+                firstname
+                middlename
+                nickname
+                email
+                createdAt
+                role
+                }
+            }
+            ... on Error{
+                message
+            }
+        }
+    }
+    `,
+
+    GET_STUDENTS_BY_PARENT_ID: gql`
+    query GetStudentsByParentId($parentId: String!){
+        GetStudentsByParentId(parentId: $parentId) {
+            ... on StudentHttpList{
+                    students {
+                        userHttp{
+                        id
+                        lastname
+                        firstname
+                        middlename
+                    }
+                }
+            }
+            ... on Error{
+                message
+            }
+        }
+    }`,
+
+    SEARCH_STUDENTS_BY_EMAIL: gql`
+        query SearchStudentsByEmail($email: String!, $parentId: String!) {
+            SearchStudentsByEmail(email: $email, parentId: $parentId) {
+                ... on StudentHttpList{
+                    students {
+                        userHttp{
+                            id
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+                ... on Error{
+                    message
+                }
+            }
+        }
+    `,
+
+    GET_TEACHER_BY_ID: gql`
+        query GetTeacherById($teacherId: String!){
+            GetTeacherById(teacherId: $teacherId){
+                ... on TeacherHttp{
+                    userHttp{
+                    id
+                    lastname
+                    firstname
+                    middlename
+                    nickname
+                    email
+                    createdAt
+                    role
+                    }
+                }
+                ... on Error{
+                    message
+                }
+            }
+        }
+    `,
+
+    GET_SUPER_ADMIN_BY_ID: gql`
+        query GetSuperAdminById($superAdminId: String!){
+            GetStudentById(superAdminId: $superAdminId){
+                ... on ParentHttpList{
+                    superAdmniHttp{
+                        userHttp{
+                            id
+                            lastname
+                            firstname
+                            middlename
+                            nickname
+                            email
+                            createdAt
+                            role
+                        }
+                    }
+                }
+                ... on Error{
+                    message
+                }
+            }
+        }
+    `,
 }
 
 export const usersQueryGraphQL = {
     getAllParents() {
         return graphQLClient.query(
             {
-                query: gql`
-                    query{
-                        GetAllParents{
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                            }
-                        }
-                    }
-                `,
+                query: userQuerysGQL.GET_ALL_PARENTS,
             },
         )
     },
@@ -152,7 +255,7 @@ export const usersQueryGraphQL = {
     getStudentsByParentId(parentId) {
         return graphQLClient.query(
             {
-                query: userGQL.GET_STUDENTS_PY_PARENT_ID,
+                query: userQuerysGQL.GET_STUDENTS_BY_PARENT_ID,
                 variables: parentId,
             },
         )
@@ -161,22 +264,7 @@ export const usersQueryGraphQL = {
     getParentById(parentId) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query GetParentById($parentId: String!){
-                        GetParentById(parentId: $parentId) {
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                                nickname
-                                email
-                                createdAt
-                                role
-                            }
-                        }
-                    }
-                `,
+                query: userQuerysGQL.GET_PARENT_BY_ID,
                 variables: parentId,
             },
         )
@@ -185,7 +273,7 @@ export const usersQueryGraphQL = {
     getStudentById(studentId) {
         return graphQLClient.query(
             {
-                query: userGQL.GET_STUDENT_BY_ID,
+                query: userQuerysGQL.GET_STUDENT_BY_ID,
                 variables: studentId,
             },
         )
@@ -194,7 +282,7 @@ export const usersQueryGraphQL = {
     getUnitAdminById(unitAdminId) {
         return graphQLClient.query(
             {
-                query: userGQL.GET_UNIT_ADMIN_BY_ID,
+                query: userQuerysGQL.GET_UNIT_ADMIN_BY_ID,
                 variables: unitAdminId,
             },
         )
@@ -222,22 +310,7 @@ export const usersQueryGraphQL = {
     getTeacherById(teacherId) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query GetTeacherById($teacherId: String!){
-                        GetTeacherById(teacherId: $teacherId){
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                                nickname
-                                email
-                                createdAt
-                                role
-                            }
-                        }
-                    }
-                `,
+                query: userQuerysGQL.GET_TEACHER_BY_ID,
                 variables: teacherId,
             },
         )
@@ -246,22 +319,7 @@ export const usersQueryGraphQL = {
     getSuperAdminById(superAdminId) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query GetSuperAdminById($superAdminId: String!){
-                        GetStudentById(superAdminId: $superAdminId){
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                                nickname
-                                email
-                                createdAt
-                                role
-                            }
-                        }
-                    }
-                `,
+                query: userQuerysGQL.GET_SUPER_ADMIN_BY_ID,
                 variables: superAdminId,
             },
         )
@@ -270,18 +328,7 @@ export const usersQueryGraphQL = {
     searchStudentsByEmail(email, parentId) {
         return graphQLClient.query(
             {
-                query: gql`
-                    query SearchStudentsByEmail($email: String!, $parentId: String!) {
-                        SearchStudentsByEmail(email: $email, parentId: $parentId) {
-                            userHttp{
-                                id
-                                lastname
-                                firstname
-                                middlename
-                            }
-                        }
-                    }
-                `,
+                query: userQuerysGQL.SEARCH_STUDENTS_BY_EMAIL,
                 variables: {
                     email,
                     parentId,
@@ -312,7 +359,7 @@ export const usersQueryGraphQL = {
     getStudentsByRobboGroupId(robboGroupId) {
         return graphQLClient.query(
             {
-                query: userGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID,
+                query: userQuerysGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID,
                 variables: robboGroupId,
             },
         )
@@ -321,7 +368,7 @@ export const usersQueryGraphQL = {
     getTeachersByRobboGroupId(robboGroupId) {
         return graphQLClient.query(
             {
-                query: userGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID,
+                query: userQuerysGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID,
                 variables: robboGroupId,
             },
         )
@@ -329,7 +376,7 @@ export const usersQueryGraphQL = {
     getStudentsByRobboUnitId(robboUnitId) {
         return graphQLClient.query(
             {
-                query: userGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID,
+                query: userQuerysGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID,
                 variables: robboUnitId,
             },
         )

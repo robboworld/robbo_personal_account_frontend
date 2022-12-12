@@ -1,34 +1,40 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
-import { Modal } from 'antd'
+import { Modal, Button } from 'antd'
 
 import { ListParents, WelcomeText } from './components'
 
-import { getClientsState } from '@/reducers/clients'
 import PageLayout from '@/components/PageLayout'
 import Flex from '@/components/Flex'
 import ListItem from '@/components/ListItem'
-import { Button, DragResize } from '@/components/UI'
-import { useActions } from '@/helpers/useActions'
 import Loader from '@/components/Loader'
 import ParentContent from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
+import { DragResize } from '@/components/UI'
+import { useActions } from '@/helpers/useActions'
+import { getClientsState } from '@/reducers/clients'
 import { checkAccess, useUserIdentity } from '@/helpers'
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, SUPER_ADMIN } from '@/constants'
-import { getClients, deleteParentRequest, clearClientPageState } from '@/actions'
+import {
+    HOME_PAGE_ROUTE,
+    LOGIN_PAGE_ROUTE,
+    SUPER_ADMIN,
+} from '@/constants'
+import {
+    getClientsRequest,
+    deleteParentRequest,
+    clearClientsState,
+} from '@/actions'
+
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-    const actions = useActions({ getClients, deleteParentRequest, clearClientPageState }, [])
-    const token = localStorage.getItem('token')
+    const actions = useActions({ getClientsRequest, deleteParentRequest, clearClientsState }, [])
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getClients(token)
-        return () => {
-            actions.clearClientPageState()
-        }
+            actions.getClientsRequest()
+        return () => actions.clearClientsState()
     }, [loginLoading])
 
     const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
@@ -62,12 +68,9 @@ export default () => {
                             <Flex
                                 direction='row' justify='flex-end'
                                 align='flex-start'>
-                                <Button
-                                    content='Добавить родителя'
-                                    background='darkgreen'
-                                    padding='0.5rem'
-                                    handleSubmit={() => setOpenAddClients(true)}
-                                />
+                                <Button type='primary' onClick={() => setOpenAddClients(true)}>
+                                    Добавить родителя
+                                </Button>
                             </Flex>
                             <ListParents>
                                 {
@@ -78,7 +81,7 @@ export default () => {
                                                     <ListItem
                                                         itemIndex={index}
                                                         handleDelete={
-                                                            parentIndex => actions.deleteParentRequest(token, parent.userHttp.id, parentIndex)
+                                                            parentIndex => actions.deleteParentRequest(parent.userHttp.id, parentIndex)
                                                         }
                                                         label={`
                                                                 ${parent.userHttp.lastname}

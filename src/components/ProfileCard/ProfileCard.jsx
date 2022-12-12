@@ -18,7 +18,6 @@ const ProfileCard = ({
         },
     }
     const [form] = Form.useForm()
-    const token = localStorage.getItem('token')
 
     const isFormDisable = updateHandle === undefined
 
@@ -28,17 +27,18 @@ const ProfileCard = ({
                 name='normal_profile'
                 className='profile-form'
                 onFinish={({ email, nickname, middlename, firstname, lastname }) => {
-                    updateHandle(token, {
-                        id: profile.id,
-                        email,
-                        middlename,
-                        firstname,
-                        lastname,
-                        nickname,
-                        password: profile.password,
-                        createdAt: profile.createdAt,
-                        role: profile.role,
-                    })
+                    updateHandle({
+                        parentHttp: {
+                            userHttp: {
+                                id: profile.id,
+                                email,
+                                middlename,
+                                firstname,
+                                lastname,
+                                nickname,
+                            },
+                        },
+                    }, profile.role)
                 }}
                 {...layout}
                 form={form}
@@ -88,7 +88,7 @@ const ProfileCard = ({
                     }
                 </Form.Item>
                 {
-                    !isFormDisable                    &&
+                    !isFormDisable &&
                     <Form.Item >
                         <Button
                             type='primary' htmlType='submit'

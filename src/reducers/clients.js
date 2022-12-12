@@ -1,48 +1,53 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    getClients, getClientsSuccess,
-    getClientsFailed, clearClientsState,
-    addParent, addParentSuccess,
-    addParentFailed, deleteParentRequest,
-    deleteParentSuccess, deleteParentFailed,
-    createChildren, createChildreSuccess,
+    getClientsRequest,
+    getClientsSuccess,
+    getClientsFailed,
+    clearClientsState,
+    createParentRequest,
+    createParentSuccess,
+    createParentFailed,
+    deleteParentRequest,
+    deleteParentSuccess,
+    deleteParentFailed,
+    createChildrenRequest,
+    createChildreSuccess,
     createChildrenFailed,
     deleteChildRequest,
     deleteChildSuccess,
     deleteChildFailed,
-    getChildrenByParentId,
     getChildrenByParentIdSuccess,
     getChildrenByParentIdFailed,
     clearChildrenState,
-    searchStudent,
+    searchStudentRequest,
     searchStudentSuccess,
     searchStudentFailed,
-    createRelation,
     createRelationSuccess,
     createRelationFailed,
-    getClientPageById,
+    getClientPageByIdRequest,
     getClientPageByIdSuccess,
     getClientPageByIdFailed,
-    clearClientPageState,
+    getChildrenByParentIdRequest,
+    createStudentParentRelationRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    clientsLoading: true,
-    childrenLoading: true,
     parents: [],
     children: [],
     searchResult: [],
     client: {},
     clientLoading: true,
+    clientsLoading: true,
+    childrenLoading: true,
 }
 
 export default handleActions({
-    [getClients](state, action) {
+    [getClientsRequest](state, action) {
         return { ...state, clientsLoading: true }
     },
-    [getClientsSuccess](state, action) {
-        return { ...state, clientsLoading: false, parents: action.payload.clients }
+    [getClientsSuccess](state, { payload }) {
+        return { ...state, clientsLoading: false, parents: payload.response }
     },
     [getClientsFailed](state, action) {
         return { ...state, clientsLoading: false }
@@ -50,32 +55,32 @@ export default handleActions({
     [clearClientsState](state, action) {
         return { ...state }
     },
-    [addParent](state) {
+    [createParentRequest](state) {
         return { ...state, clientsLoading: true }
     },
-    [addParentSuccess](state, action) {
-        const { response, parent } = action.payload
+    [createParentSuccess](state, { payload }) {
+        const { response } = payload
         return {
             ...state,
             clientsLoading: false,
-            parents: [...state.parents, { userHttp: { id: response.parentId, ...parent }, children: [] }],
+            parents: [...state.parents, { userHttp: { ...response.userHttp }, children: [] }],
         }
     },
-    [addParentFailed](state, action) {
+    [createParentFailed](state, action) {
         return { ...state, clientsLoading: false }
     },
     [deleteParentRequest](state) {
         return { ...state, clientsLoading: true }
     },
-    [deleteParentSuccess](state, action) {
-        const newParent = [...state.parents]
-        newParent.splice(action.payload.parentIndex, 1)
-        return { ...state, clientsLoading: false, parents: newParent }
+    [deleteParentSuccess](state, { payload }) {
+        const newParents = [...state.parents]
+        newParents.splice(payload.parentIndex, 1)
+        return { ...state, clientsLoading: false, parents: newParents }
     },
     [deleteParentFailed](state) {
         return { ...state, clientsLoading: false }
     },
-    [createChildren](state) {
+    [createChildrenRequest](state) {
         return { ...state, childrenLoading: true }
     },
     [createChildreSuccess](state, action) {
@@ -92,21 +97,20 @@ export default handleActions({
     [deleteChildRequest](state) {
         return { ...state, childrenLoading: true }
     },
-    [deleteChildSuccess](state, action) {
-        const { childIndex } = action.payload
+    [deleteChildSuccess](state, { payload }) {
+        const { childIndex } = payload
         const newChildren = [...state.children]
-        console.log(childIndex)
         newChildren.splice(childIndex, 1)
         return { ...state, childrenLoading: false, children: newChildren }
     },
     [deleteChildFailed](state, action) {
         return { ...state, childrenLoading: false }
     },
-    [getChildrenByParentId](state) {
+    [getChildrenByParentIdRequest](state) {
         return { ...state, childrenLoading: true }
     },
-    [getChildrenByParentIdSuccess](state, action) {
-        const { response } = action.payload
+    [getChildrenByParentIdSuccess](state, { payload }) {
+        const { response } = payload
         return { ...state, childrenLoading: false, children: response }
     },
     [getChildrenByParentIdFailed](state, action) {
@@ -115,7 +119,7 @@ export default handleActions({
     [clearChildrenState](state) {
         return { ...state, children: [] }
     },
-    [searchStudent](state) {
+    [searchStudentRequest](state) {
         return { ...state, loading: true }
     },
     [searchStudentSuccess](state, action) {
@@ -124,7 +128,7 @@ export default handleActions({
     [searchStudentFailed](state, action) {
         return { ...state, loading: false }
     },
-    [createRelation](state) {
+    [createStudentParentRelationRequest](state) {
         return { ...state, loading: true }
     },
     [createRelationSuccess](state, action) {
@@ -133,7 +137,7 @@ export default handleActions({
     [createRelationFailed](state, action) {
         return { ...state, loading: false }
     },
-    [getClientPageById](state) {
+    [getClientPageByIdRequest](state) {
         return { ...state, clientLoading: true }
     },
     [getClientPageByIdSuccess](state, action) {
@@ -143,7 +147,7 @@ export default handleActions({
     [getClientPageByIdFailed](state, action) {
         return { ...state, clientLoading: false }
     },
-    [clearClientPageState](state) {
+    [clearClientsState](state) {
         return INITIAL_STATE
     },
 }, INITIAL_STATE)

@@ -48,12 +48,7 @@ export const deleteProfileFailed = createAction(DELETE_ACCOUNT_FAILED, err => {
     }
 })
 
-export const updateProfile = createAction(UPDATE_PROFILE, (token, profile) => {
-    return {
-        token,
-        profile,
-    }
-})
+export const updateProfile = createAction(UPDATE_PROFILE, (profile, role) => ({ profile, role }))
 
 export const updateProfileSuccess = createAction(UPDATE_PROFILE_SUCCESS, response => {
     toast.success('Профиль успешно обновлен!')
