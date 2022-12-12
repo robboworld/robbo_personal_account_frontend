@@ -7,7 +7,7 @@ import { PropTypes } from 'prop-types'
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
-import { userGQL, usersQueryGraphQL } from "@/graphQL/query"
+import { userQuerysGQL, usersQueryGraphQL } from "@/graphQL/query"
 import { PEEK_PROFILE_PAGE } from "@/constants"
 import { addStudentToRobboGroupRequest } from "@/actions"
 import { useActions } from "@/helpers/useActions"
@@ -31,7 +31,7 @@ const RobboUnitStudentsTab = ({
         setSearchResult(result.data.SearchStudentsByEmail)
     }
 
-    const getStudentsByRobboUnitIdResult = useQuery(userGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID, {
+    const getStudentsByRobboUnitIdResult = useQuery(userQuerysGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID, {
         variables: { robboUnitId },
         notifyOnNetworkStatusChange: true,
     })
@@ -48,7 +48,7 @@ const RobboUnitStudentsTab = ({
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={getStudentsByRobboUnitIdResult.data.GetStudentsByRobboUnitId}
+                        dataSource={getStudentsByRobboUnitIdResult.data.GetStudentsByRobboUnitId.students}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}

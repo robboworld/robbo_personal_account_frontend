@@ -8,14 +8,14 @@ import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
 import { useActions } from '@/helpers/useActions'
-import { userGQL } from '@/graphQL'
+import { userQuerysGQL, usersQueryGraphQL } from '@/graphQL'
 import { updateProfile } from '@/actions'
 
 export default ({ unitAdminId }) => {
 
     const actions = useActions({ updateProfile }, [])
 
-    const { data, loading } = useQuery(userGQL.GET_UNIT_ADMIN_BY_ID, {
+    const { data, loading } = useQuery(userQuerysGQL.GET_UNIT_ADMIN_BY_ID, {
         variables: { unitAdminId },
         notifyOnNetworkStatusChange: true,
     })
@@ -37,7 +37,7 @@ export default ({ unitAdminId }) => {
                         {
                             label: 'Units',
                             key: '2',
-                            children: <UnitsOfAdmin adminId={unitAdminId} />,
+                            children: <UnitsOfAdmin unitAdminId={unitAdminId} />,
                         },
                     ]}
                 />

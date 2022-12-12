@@ -8,7 +8,7 @@ import { useActions } from "@/helpers/useActions"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
-import { userGQL, usersQueryGraphQL } from "@/graphQL/query"
+import { userQuerysGQL, usersQueryGraphQL } from "@/graphQL/query"
 import { PEEK_PROFILE_PAGE } from "@/constants"
 import { addStudentToRobboGroupRequest } from '@/actions'
 
@@ -28,10 +28,10 @@ const RobboGroupStudentsTab = ({
 
     const SearchStudents = async value => {
         const result = await usersQueryGraphQL.searchStudentsByEmail(value, "0")
-        setSearchResult(result.data.SearchStudentsByEmail)
+        setSearchResult(result.data.SearchStudentsByEmail.students)
     }
 
-    const getStudentsByRobboGroupIdResult = useQuery(userGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID, {
+    const getStudentsByRobboGroupIdResult = useQuery(userQuerysGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID, {
         variables: { robboGroupId },
         notifyOnNetworkStatusChange: true,
     })
@@ -48,7 +48,7 @@ const RobboGroupStudentsTab = ({
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={getStudentsByRobboGroupIdResult.data.GetStudentsByRobboGroup}
+                        dataSource={getStudentsByRobboGroupIdResult.data.GetStudentsByRobboGroup.students}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}

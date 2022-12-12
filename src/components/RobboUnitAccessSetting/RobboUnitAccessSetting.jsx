@@ -42,7 +42,7 @@ export default ({ robboUnitId }) => {
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={getUnitAdminsByRobboUnitIdResult.data.GetUnitAdminsByRobboUnitId}
+                        dataSource={getUnitAdminsByRobboUnitIdResult.data.GetUnitAdminsByRobboUnitId.unitAdmins}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}

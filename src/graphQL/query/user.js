@@ -6,15 +6,20 @@ export const userQuerysGQL = {
     GET_STUDENT_BY_ID: gql`
         query GetStudentById($studentId: String!){
             GetStudentById(studentId: $studentId){
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                    nickname
-                    email
-                    createdAt
-                    role
+                ... on StudentHttp {
+                        userHttp{
+                        id
+                        lastname
+                        firstname
+                        middlename
+                        nickname
+                        email
+                        createdAt
+                        role
+                    }
+                }
+                ... on Error {
+                    message
                 }
             }
         }
@@ -23,11 +28,18 @@ export const userQuerysGQL = {
     GET_STUDENTS_BY_ROBBO_GROUP_ID: gql`
         query GetStudentsByRobboGroup($robboGroupId: String!){
             GetStudentsByRobboGroup(robboGroupId: $robboGroupId){
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename                   
+                ... on StudentHttpList {
+                    students{
+                        userHttp {
+                        id
+                        lastname
+                        firstname
+                        middlename 
+                    }
+                    }
+                }
+                ... on Error {
+                    message
                 }
             }
         }
@@ -36,15 +48,20 @@ export const userQuerysGQL = {
     GET_UNIT_ADMIN_BY_ID: gql`
         query GetUnitAdminById($unitAdminId: String!){
             GetUnitAdminById(unitAdminId: $unitAdminId){
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                    nickname
-                    email
-                    createdAt
-                    role
+                ... on UnitAdminHttp{
+                        userHttp {
+                        id
+                        lastname
+                        firstname
+                        middlename
+                        nickname
+                        email
+                        createdAt
+                        role
+                    }
+                }
+                ... on Error {
+                    message
                 }
             }
         }
@@ -53,11 +70,18 @@ export const userQuerysGQL = {
     GET_TEACHERS_BY_ROBBO_GROUP_ID: gql`
         query GetTeachersByRobboGroupId($robboGroupId: String!){
             GetTeachersByRobboGroupId(robboGroupId: $robboGroupId){
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
+                ... on TeacherHttpList {
+                    teachers {
+                        userHttp{
+                            id
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+                ... on Error {
+                    message
                 }
             }
         }
@@ -66,11 +90,18 @@ export const userQuerysGQL = {
     GET_STUDENTS_BY_ROBBO_UNIT_ID: gql`
     query GetStudentsByRobboUnitId($robboUnitId: String!){
         GetStudentsByRobboUnitId(robboUnitId: $robboUnitId){
-            userHttp{
-                id
-                lastname
-                firstname
-                middlename                   
+            ... on StudentHttpList{
+                    students {
+                        userHttp{
+                            id
+                            lastname
+                            firstname
+                            middlename                   
+                        }
+                }
+            }
+            ... on Error{
+                message
             }
         }
     }
