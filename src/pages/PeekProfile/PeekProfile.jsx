@@ -1,18 +1,17 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useQuery } from "@apollo/client"
 
 import PageLayout from '@/components/PageLayout'
-import { checkAccess, useUserIdentity } from '@/helpers'
 import Loader from '@/components/Loader'
-import { useActions } from '@/helpers/useActions'
-import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import ProfileCard from '@/components/ProfileCard'
-import { userQuerysGQL, usersQueryGraphQL } from '@/graphQL'
+import { checkAccess, useUserIdentity, useActions } from '@/helpers'
+import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
+import { userQuerysGQL } from '@/graphQL'
 import { updateProfile } from '@/actions'
 
-export default ({ location }) => {
-
+export default () => {
+    const location = useLocation()
     const { userRole, isAuth, loginLoading } = useUserIdentity()
     if (!loginLoading && !checkAccess(userRole,
         [SUPER_ADMIN])) {

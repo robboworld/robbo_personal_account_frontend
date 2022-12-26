@@ -122,7 +122,7 @@ function* getRobboGroupsByAccessTokenSaga() {
         const response = yield call(robboGroupsQueryGraphQL.getRobboGroupsByAccessToken)
         console.log(response)
 
-        yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken))
+        yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken.robboGroups))
     } catch (e) {
         yield put(getRobboGroupsByAccessTokenFailed(e))
     }
@@ -133,7 +133,7 @@ function* getAllRobboGroupsSaga() {
         const response = yield call(robboGroupsQueryGraphQL.getAllRobboGroups)
         console.log(response)
 
-        yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups))
+        yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups.robboGroups))
     } catch (e) {
         yield put(getAllRobboGroupsFailed(e))
     }

@@ -4,10 +4,10 @@ import { useQuery } from "@apollo/client"
 import { useNavigate } from 'react-router-dom'
 import { PropTypes } from 'prop-types'
 
-import { useActions } from "@/helpers/useActions"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
+import { useActions } from "@/helpers/useActions"
 import { userQuerysGQL, usersQueryGraphQL } from "@/graphQL/query"
 import { PEEK_PROFILE_PAGE } from "@/constants"
 import { addStudentToRobboGroupRequest } from '@/actions'
@@ -37,7 +37,7 @@ const RobboGroupStudentsTab = ({
     })
 
     const openProfileStudent = userId => {
-        history(PEEK_PROFILE_PAGE, { studentId: userId })
+        history(PEEK_PROFILE_PAGE, { state: { studentId: userId } })
     }
 
     return (
