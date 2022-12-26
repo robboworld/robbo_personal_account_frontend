@@ -7,7 +7,7 @@ import Loader from '@/components/Loader'
 import ProfileCard from '@/components/ProfileCard'
 import { checkAccess, useUserIdentity, useActions } from '@/helpers'
 import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
-import { userQuerysGQL } from '@/graphQL'
+import { studentQuerysGQL } from '@/graphQL'
 import { updateProfile } from '@/actions'
 
 export default () => {
@@ -22,7 +22,7 @@ export default () => {
 
     const actions = useActions({ updateProfile }, [])
 
-    const { loading, error, data } = useQuery(userQuerysGQL.GET_STUDENT_BY_ID, {
+    const { loading, error, data } = useQuery(studentQuerysGQL.GET_STUDENT_BY_ID, {
         variables: { studentId: location.state.studentId },
         notifyOnNetworkStatusChange: true,
     })

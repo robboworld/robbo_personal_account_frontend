@@ -8,12 +8,12 @@ import Flex from '@/components/Flex'
 import ListItem from '@/components/ListItem'
 import Loader from '@/components/Loader'
 import { DragResize } from '@/components/UI'
-import { userQuerysGQL } from '@/graphQL'
+import { studentQuerysGQL } from '@/graphQL'
 
 
 const ListChildren = ({ profile, isUserAParent }) => {
 
-    const { loading, error, data } = useQuery(userQuerysGQL.GET_STUDENTS_BY_PARENT_ID, {
+    const { loading, error, data } = useQuery(studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID, {
         variables: { parentId: profile.id },
         notifyOnNetworkStatusChange: true,
     })

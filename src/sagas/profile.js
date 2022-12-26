@@ -2,33 +2,23 @@ import { call, put, takeLatest } from 'redux-saga/effects'
 
 import { profileAPI } from '@/api'
 import {
-    deleteProfile, deleteProfileFailed, deleteProfileSuccess,
-    getProfileById, getProfileByIdFailed, getProfileByIdSuccess,
-    updateProfile, updateProfileFailed, updateProfileSuccess,
+    getProfileById,
+    getProfileByIdFailed,
+    getProfileByIdSuccess,
+    updateProfile,
+    updateProfileFailed,
+    updateProfileSuccess,
 } from '@/actions'
 import { usersMutationGraphQL } from '@/graphQL/mutation'
 
-function* getProfileByIdSaga(action) {
+function* getProfileByAccessTokenSaga({ payload }) {
     try {
-        const { token } = action.payload
-        const response = yield call(profileAPI.getProfileById, token)
+        const response = yield call(profileAPI.getProfileById)
         console.log(response)
 
         yield put(getProfileByIdSuccess(response.data.userHttp))
     } catch (e) {
         yield put(getProfileByIdFailed(e.message))
-    }
-}
-
-function* deleteProfileSaga(action) {
-    try {
-        const { token } = action.payload
-        const response = yield call(profileAPI.deleteAccount, token)
-        console.log(response)
-
-        yield put(deleteProfileSuccess(response))
-    } catch (e) {
-        yield put(deleteProfileFailed(e))
     }
 }
 
@@ -45,7 +35,6 @@ function* updateProfileSaga({ payload }) {
 }
 
 export function* profileSaga() {
-    yield takeLatest(getProfileById, getProfileByIdSaga)
-    yield takeLatest(deleteProfile, deleteProfileSaga)
+    yield takeLatest(getProfileById, getProfileByAccessTokenSaga)
     yield takeLatest(updateProfile, updateProfileSaga)
 }

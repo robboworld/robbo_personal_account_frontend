@@ -27,15 +27,6 @@ export default handleActions({
     [getProfileByIdFailed](state, action) {
         return { ...state, loading: false }
     },
-    [deleteProfile](state) {
-        return { ...state, loading: true }
-    },
-    [deleteProfileSuccess](state, action) {
-        return { ...state, loading: false }
-    },
-    [deleteProfileFailed](state, action) {
-        return { ...state, loading: false }
-    },
     [updateProfile](state, action) {
         return { ...state, loading: true }
     },
@@ -48,5 +39,3 @@ export default handleActions({
 }, INITIAL_STATE)
 
 export const getProfileState = state => state
-export const getProfile = state => state.profile
-export const getProfileLoading = state => state.loading

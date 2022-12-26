@@ -6,12 +6,12 @@ import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 
-import { userQuerysGQL } from '@/graphQL'
+import { studentQuerysGQL } from '@/graphQL'
 
 
 export default ({ childrenId }) => {
 
-    const { loading, error, data } = useQuery(userQuerysGQL.GET_STUDENT_BY_ID, {
+    const { loading, error, data } = useQuery(studentQuerysGQL.GET_STUDENT_BY_ID, {
         variables: { studentId: childrenId },
         notifyOnNetworkStatusChange: true,
     })

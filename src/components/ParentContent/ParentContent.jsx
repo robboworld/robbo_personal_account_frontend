@@ -5,16 +5,16 @@ import { Tabs } from 'antd'
 import ChildrenTab from "./ChildrenTab"
 
 import Flex from "@/components/Flex"
-import { useActions } from "@/helpers/useActions"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 import { updateProfile } from '@/actions'
-import { userQuerysGQL } from "@/graphQL"
+import { studentQuerysGQL } from "@/graphQL"
+import { useActions } from "@/helpers/useActions"
 
 export default ({ clientId }) => {
     const actions = useActions({ updateProfile }, [])
 
-    const { loading, data } = useQuery(userQuerysGQL.GET_PARENT_BY_ID, {
+    const { loading, data } = useQuery(studentQuerysGQL.GET_PARENT_BY_ID, {
         variables: { parentId: clientId },
     })
 

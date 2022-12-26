@@ -6,7 +6,7 @@ import { useQuery } from "@apollo/client"
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
 import { useActions } from '@/helpers'
-import { userQuerysGQL, usersQueryGraphQL } from '@/graphQL'
+import { studentQuerysGQL, studentQuerysGraphQL } from '@/graphQL'
 import { createStudentParentRelationRequest, deleteChildRequest } from '@/actions'
 
 const { Search } = Input
@@ -17,13 +17,13 @@ const ChildrenTab = ({ clientId }) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchStudents, setSearchResult] = useState([])
 
-    const getStudentsResult = useQuery(userQuerysGQL.GET_STUDENTS_BY_PARENT_ID, {
+    const getStudentsResult = useQuery(studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID, {
         variables: { parentId: clientId },
         notifyOnNetworkStatusChange: true,
     })
 
     const SearchStudents = async value => {
-        const result = await usersQueryGraphQL.searchStudentsByEmail(value, clientId)
+        const result = await studentQuerysGraphQL.searchStudentsByEmail(value, clientId)
         setSearchResult(result.data.SearchStudentsByEmail.students)
     }
 

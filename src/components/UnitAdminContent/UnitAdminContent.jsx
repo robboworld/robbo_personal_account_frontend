@@ -8,14 +8,14 @@ import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
 import { useActions } from '@/helpers/useActions'
-import { userQuerysGQL, usersQueryGraphQL } from '@/graphQL'
+import { studentQuerysGQL } from '@/graphQL'
 import { updateProfile } from '@/actions'
 
 export default ({ unitAdminId }) => {
 
     const actions = useActions({ updateProfile }, [])
 
-    const { data, loading } = useQuery(userQuerysGQL.GET_UNIT_ADMIN_BY_ID, {
+    const { data, loading } = useQuery(studentQuerysGQL.GET_UNIT_ADMIN_BY_ID, {
         variables: { unitAdminId },
         notifyOnNetworkStatusChange: true,
     })

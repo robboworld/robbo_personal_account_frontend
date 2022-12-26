@@ -4,11 +4,11 @@ import { useQuery } from "@apollo/client"
 
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
-import { userQuerysGQL } from "@/graphQL/query"
+import { studentQuerysGQL } from "@/graphQL/query"
 
 export default ({ robboGroupId }) => {
 
-    const getTeachersByRobboGroupIdResult = useQuery(userQuerysGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID, {
+    const getTeachersByRobboGroupIdResult = useQuery(studentQuerysGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID, {
         variables: { robboGroupId },
         notifyOnNetworkStatusChange: true,
     })

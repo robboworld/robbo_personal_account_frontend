@@ -7,7 +7,7 @@ import { PropTypes } from 'prop-types'
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
-import { userQuerysGQL, usersQueryGraphQL } from "@/graphQL/query"
+import { studentQuerysGQL, studentQuerysGraphQL } from "@/graphQL/query"
 import { PEEK_PROFILE_PAGE } from "@/constants"
 import { addStudentToRobboGroupRequest } from "@/actions"
 import { useActions } from "@/helpers/useActions"
@@ -27,11 +27,11 @@ const RobboUnitStudentsTab = ({
     const [openAddChildren, setOpenAddChildren] = useState(false)
 
     const SearchStudents = async value => {
-        const result = await usersQueryGraphQL.searchStudentsByEmail(value, "0")
+        const result = await studentQuerysGraphQL.searchStudentsByEmail(value, "0")
         setSearchResult(result.data.SearchStudentsByEmail)
     }
 
-    const getStudentsByRobboUnitIdResult = useQuery(userQuerysGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID, {
+    const getStudentsByRobboUnitIdResult = useQuery(studentQuerysGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID, {
         variables: { robboUnitId },
         notifyOnNetworkStatusChange: true,
     })

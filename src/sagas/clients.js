@@ -1,6 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { notification } from 'antd'
 
+import { clientsAPI } from '@/api'
 import {
     createParentFailed,
     createParentSuccess,
@@ -29,15 +30,16 @@ import {
     createStudentParentRelationRequest,
     getClientPageByIdRequest,
     createParentRequest,
-}
-    from '@/actions'
-import { clientsAPI } from '@/api'
-import { usersQueryGraphQL } from '@/graphQL'
-import { usersMutationGraphQL } from '@/graphQL/mutation'
+} from '@/actions'
+
+import {
+    studentQuerysGraphQL,
+    usersMutationGraphQL,
+} from '@/graphQL'
 
 function* getClientsSaga(action) {
     try {
-        const response = yield call(usersQueryGraphQL.getAllParents)
+        const response = yield call(studentQuerysGraphQL.getAllParents)
         console.log(response)
         yield put(getClientsSuccess(response.data.GetAllParents.parents))
     } catch (e) {
@@ -48,7 +50,7 @@ function* getClientsSaga(action) {
 function* getClientByIdSaga({ payload }) {
     try {
         const { id } = payload
-        const response = yield call(usersQueryGraphQL.getParentById, { parentId: id })
+        const response = yield call(studentQuerysGraphQL.getParentById, { parentId: id })
         console.log(response)
         yield put(getClientPageByIdSuccess(response.data.GetParentById))
     } catch (e) {
@@ -114,7 +116,7 @@ function* deleteChildSaga({ payload }) {
 function* getChildrenByParentIdSaga({ payload }) {
     try {
         const { parentId } = payload
-        const response = yield call(usersQueryGraphQL.getStudentsByParentId, { parentId: parentId })
+        const response = yield call(studentQuerysGraphQL.getStudentsByParentId, { parentId: parentId })
         console.log(response)
 
         yield put(getChildrenByParentIdSuccess(response.data.GetStudentsByParentId.students))
