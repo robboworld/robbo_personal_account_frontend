@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
 import { Space, Button, List, Input } from 'antd'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useQuery, useApolloClient } from "@apollo/client"
 
 import ListItem from '@/components/ListItem'
 import { useActions } from '@/helpers'
 import { robboGroupGQL } from '@/graphQL'
-
+import { setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest } from '@/actions'
 
 const { Search } = Input
 
 const GroupsTab = ({ teacherId }) => {
     const token = localStorage.getItem('token')
-    const { setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest } = useActions()
+    const actions = useActions({ setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest }, [])
     const client = useApolloClient()
-    const history = useHistory()
+    const history = useNavigate()
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchGroups, setSearchResult] = useState([])
 
@@ -46,8 +46,8 @@ const GroupsTab = ({ teacherId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${robboGroup?.name}`}
-                                handleClick={() => history.push(`/robboUnits/${robboGroup.robboUnitId}/groups`)}
-                                handleDelete={() => deleteTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
+                                handleClick={() => history(`/robboUnits/${robboGroup.robboUnitId}/groups`)}
+                                handleDelete={() => actions.deleteTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
                             />
                         )}
                     />
@@ -68,7 +68,7 @@ const GroupsTab = ({ teacherId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${robboGroup.name}`}
-                                handleClick={() => setTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
+                                handleClick={() => actions.setTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
                             />
                         )}
                     />

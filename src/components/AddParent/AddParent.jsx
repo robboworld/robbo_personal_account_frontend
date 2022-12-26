@@ -3,10 +3,10 @@ import React, { memo } from 'react'
 import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
+import { createParentRequest } from '@/actions'
 
 export default memo(() => {
-    const { addParent } = useActions()
-    const token = localStorage.getItem('token')
+    const actions = useActions({ createParentRequest }, [])
     return (
         <Flex
             direction='column' width='100%'
@@ -14,7 +14,7 @@ export default memo(() => {
         >
             <SignUpForm
                 margin='0 0 10px 0'
-                handleSubmit={parent => addParent(token, parent)}
+                handleSubmit={parent => actions.createParentRequest(parent)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',

@@ -1,16 +1,20 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import { profileAPI } from '@/api'
 import {
-    deleteProfile, deleteProfileFailed, deleteProfileSuccess,
-    getProfileById, getProfileByIdFailed, getProfileByIdSuccess,
-    updateProfile, updateProfileFailed, updateProfileSuccess,
+    getProfileById,
+    getProfileByIdFailed,
+    getProfileByIdSuccess,
+    updateProfile,
+    updateProfileFailed,
+    updateProfileSuccess,
 } from '@/actions'
+import { usersMutationGraphQL } from '@/graphQL/mutation'
 
-function* getProfileByIdSaga(action) {
+function* getProfileByAccessTokenSaga({ payload }) {
     try {
-        const { token } = action.payload
-        const response = yield call(profileAPI.getProfileById, token)
+        const response = yield call(profileAPI.getProfileById)
         console.log(response)
 
         yield put(getProfileByIdSuccess(response.data.userHttp))
@@ -19,32 +23,21 @@ function* getProfileByIdSaga(action) {
     }
 }
 
-function* deleteProfileSaga(action) {
+function* updateProfileSaga({ payload }) {
     try {
-        const { token } = action.payload
-        const response = yield call(profileAPI.deleteAccount, token)
-        console.log(response)
-
-        yield put(deleteProfileSuccess(response))
-    } catch (e) {
-        yield put(deleteProfileFailed(e))
-    }
-}
-
-function* updateProfileSaga(action) {
-    try {
-        const { token, profile } = action.payload
-        const response = yield call(profileAPI.updateProfile, token, profile)
+        const { profile, role } = payload
+        const response = yield call(usersMutationGraphQL.updateProfile, { input: profile }, role)
         console.log(response)
 
         yield put(updateProfileSuccess(response))
+        notification.success({ message: 'Успешно обновлено!' })
     } catch (e) {
         yield put(updateProfileFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
 export function* profileSaga() {
-    yield takeLatest(getProfileById, getProfileByIdSaga)
-    yield takeLatest(deleteProfile, deleteProfileSaga)
+    yield takeLatest(getProfileById, getProfileByAccessTokenSaga)
     yield takeLatest(updateProfile, updateProfileSaga)
 }

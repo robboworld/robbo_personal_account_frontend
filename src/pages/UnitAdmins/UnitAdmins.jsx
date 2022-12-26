@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
-import { Redirect } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import { Modal } from "antd"
 
 import { WelcomeText } from "./components"
@@ -17,6 +17,7 @@ import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import UnitAdminContent from "@/components/UnitAdminContent"
 import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from "@/constants"
+import { deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState } from '@/actions'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -24,20 +25,18 @@ export default () => {
     const token = localStorage.getItem('token')
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
-    const { deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState } = useActions()
+    const actions = useActions({ deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState }, [])
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            getUnitAdmins(token)
-        return () => {
-            clearUnitAdminsPageState()
-        }
+            actions.getUnitAdmins(token)
+        return () => actions.clearUnitAdminsPageState()
     }, [loginLoading])
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     return (
@@ -80,7 +79,7 @@ export default () => {
                                                         ${unitAdmin.userHttp.firstname}
                                                         ${unitAdmin.userHttp.middlename}
                                                     `}
-                                                handleDelete={unitAdminIndex => deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
+                                                handleDelete={unitAdminIndex => actions.deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
                                                 render={(open, setOpen) => (
                                                     <DragResize
                                                         open={open} setOpen={setOpen}

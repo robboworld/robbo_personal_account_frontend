@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Redirect, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 
 import { Title, Avatar, Description } from './components'
 
@@ -11,6 +11,7 @@ import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { checkAccess, useUserIdentity, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
+import { getCoursePageById, clearCoursePageState } from '@/actions'
 import {
     HOME_PAGE_ROUTE,
     LOGIN_PAGE_ROUTE,
@@ -24,13 +25,13 @@ export default () => {
 
     const token = localStorage.getItem('token')
     const { coursePageId } = useParams()
-    const { getCoursePageById, clearCoursePageState } = useActions()
+    const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
-            getCoursePageById(token, coursePageId)
+            actions.getCoursePageById(token, coursePageId)
         return () => {
-            clearCoursePageState()
+            actions.clearCoursePageState()
         }
     }, [loginLoading])
 
@@ -42,9 +43,9 @@ export default () => {
     }
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
 

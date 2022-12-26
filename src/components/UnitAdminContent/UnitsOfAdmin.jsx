@@ -4,31 +4,29 @@ import { useQuery } from "@apollo/client"
 
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
-import { userGQL, robboUnitGQL } from "@/graphQL/query"
+import { robboUnitQuerysGQL } from "@/graphQL/query"
 
-export default ({ adminId }) => {
-    const token = localStorage.getItem('token')
+export default ({ unitAdminId }) => {
 
-    const getRobboUnitsByUnitAdminIdResult = useQuery(robboUnitGQL.GET_ROBBO_UNITS_BY_UNIT_ADMIN_ID, {
-        variables: { unitAdminId: adminId },
+    const { data, loading } = useQuery(robboUnitQuerysGQL.GET_ROBBO_UNITS_BY_UNIT_ADMIN_ID, {
+        variables: { unitAdminId: unitAdminId },
         notifyOnNetworkStatusChange: true,
     })
 
-    console.log(getRobboUnitsByUnitAdminIdResult)
-
+    console.log(data)
     return (
         <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             {
-                getRobboUnitsByUnitAdminIdResult?.loading
+                loading
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={getRobboUnitsByUnitAdminIdResult.data.getRobboUnitsByUnitAdminId}
-                        renderItem={({ RobboUnitHttp }, index) => (
+                        dataSource={data?.GetRobboUnitsByUnitAdminId?.robboUnits}
+                        renderItem={({ robboUnitHttp }, index) => (
                             <ListItem
                                 itemIndex={index}
                                 key={index}
-                                label={`${RobboUnitHttp.name}`}
+                                label={`${robboUnitHttp.name}`}
                                 render={() => { }}
                             />
                         )}

@@ -1,6 +1,7 @@
 import React, { memo, useState } from 'react'
+import { Button } from 'antd'
 
-import { Input, Button } from '@/components/UI'
+import { Input } from '@/components/UI'
 import Flex from '@/components/Flex'
 
 export default memo(({
@@ -31,13 +32,10 @@ export default memo(({
                 width='100%' margin='1rem 0 2rem 0'
             >
                 <Button
-                    content={buttonOption.content}
-                    handleSubmit={
-                        () => handleSubmit({
-                            name, city,
-                        })}
-                    padding={buttonOption.padding}
-                />
+                    type='primary' onClick={() => handleSubmit({ name, city })}
+                >
+                    Создать
+                </Button>
             </Flex>
         </Flex>
     )

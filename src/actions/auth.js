@@ -1,11 +1,18 @@
 import { createAction } from 'redux-actions'
-import { toast } from 'react-toastify'
 
 import {
-    SIGN_IN_SUCCESS, SIGN_IN_FAILED, SIGN_IN,
-    SIGN_UP_FAILED, SIGN_UP, SIGN_UP_SUCCESS,
-    SIGN_OUT, SIGN_OUT_SUCCESS, SIGN_OUT_FAILED,
-    CHECK_AUTH, CHECK_AUTH_SUCCESS, CHECK_AUTH_FAILED,
+    SIGN_IN_SUCCESS,
+    SIGN_IN_FAILED,
+    SIGN_IN,
+    SIGN_UP_FAILED,
+    SIGN_UP,
+    SIGN_UP_SUCCESS,
+    SIGN_OUT,
+    SIGN_OUT_SUCCESS,
+    SIGN_OUT_FAILED,
+    CHECK_AUTH,
+    CHECK_AUTH_SUCCESS,
+    CHECK_AUTH_FAILED,
     CLEAR_LOGIN_STATE,
 } from '@/constants'
 
@@ -24,7 +31,6 @@ export const signInSucces = createAction(SIGN_IN_SUCCESS, response => {
 })
 
 export const signInFailed = createAction(SIGN_IN_FAILED, error => {
-    toast.error(error)
     return {
         error,
     }
@@ -43,7 +49,6 @@ export const signUpSuccess = createAction(SIGN_UP_SUCCESS, response => {
 })
 
 export const signUpFailed = createAction(SIGN_UP_FAILED, error => {
-    toast.error(error)
     return {
         error,
     }
@@ -65,7 +70,6 @@ export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
     }
 })
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED, error => {
-    toast.error(error)
     return {
         error,
     }

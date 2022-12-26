@@ -1,15 +1,16 @@
 import React, { useState } from "react"
 import { Button, Space, Input, List, Modal } from "antd"
 import { useQuery } from "@apollo/client"
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { PropTypes } from 'prop-types'
 
-import { useActions } from "@/helpers/useActions"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
-import { userGQL, usersQueryGraphQL } from "@/graphQL/query"
+import { studentQuerysGQL, studentQuerysGraphQL } from "@/graphQL/query"
 import { PEEK_PROFILE_PAGE } from "@/constants"
+import { addStudentToRobboGroupRequest } from "@/actions"
+import { useActions } from "@/helpers/useActions"
 
 const { Search } = Input
 
@@ -19,26 +20,24 @@ const RobboUnitStudentsTab = ({
 }) => {
     const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
-    const history = useHistory()
-    const {
-        addStudentToRobboGroupRequest,
-    } = useActions()
+    const history = useNavigate()
+    const actions = useActions({ addStudentToRobboGroupRequest }, [])
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [openAddChildren, setOpenAddChildren] = useState(false)
 
     const SearchStudents = async value => {
-        const result = await usersQueryGraphQL.searchStudentsByEmail(value, "0")
+        const result = await studentQuerysGraphQL.searchStudentsByEmail(value, "0")
         setSearchResult(result.data.SearchStudentsByEmail)
     }
 
-    const getStudentsByRobboUnitIdResult = useQuery(userGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID, {
+    const getStudentsByRobboUnitIdResult = useQuery(studentQuerysGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID, {
         variables: { robboUnitId },
         notifyOnNetworkStatusChange: true,
     })
 
     const openProfileStudent = userId => {
-        history.push(PEEK_PROFILE_PAGE, { studentId: userId })
+        history(PEEK_PROFILE_PAGE, { studentId: userId })
     }
 
     return (
@@ -49,7 +48,7 @@ const RobboUnitStudentsTab = ({
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={getStudentsByRobboUnitIdResult.data.GetStudentsByRobboUnitId}
+                        dataSource={getStudentsByRobboUnitIdResult.data.GetStudentsByRobboUnitId.students}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}
@@ -57,7 +56,7 @@ const RobboUnitStudentsTab = ({
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
                                 handleClick={() => openProfileStudent(userHttp.id)}
-                                handleDelete={childIndex => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
+                                handleDelete={childIndex => actions.addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
                             />
                         )}
                     />
@@ -97,7 +96,7 @@ const RobboUnitStudentsTab = ({
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: robboUnitId + "" }, userHttp.id)}
+                                handleClick={() => actions.addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: robboUnitId + "" }, userHttp.id)}
                                 handleDelete={false}
                             />
                         )}

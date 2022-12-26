@@ -1,37 +1,20 @@
 import React from "react"
-import { gql, useQuery } from "@apollo/client"
+import { useQuery } from "@apollo/client"
 import { Tabs } from 'antd'
 
 import ChildrenTab from "./ChildrenTab"
 
 import Flex from "@/components/Flex"
-import { useActions } from "@/helpers/useActions"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
-
-const GET_PARENT_BY_ID = gql`
-query GetParentById($parentId: String!){
-    GetParentById(parentId: $parentId) {
-        userHttp{
-            id
-            lastname
-            firstname
-            middlename
-            nickname
-            email
-            createdAt
-            role
-        }
-    }
-}
-`
+import { updateProfile } from '@/actions'
+import { parentQuerysGQL } from "@/graphQL"
+import { useActions } from "@/helpers/useActions"
 
 export default ({ clientId }) => {
-    const {
-        updateProfile,
-    } = useActions()
+    const actions = useActions({ updateProfile }, [])
 
-    const { loading, error, data } = useQuery(GET_PARENT_BY_ID, {
+    const { loading, data } = useQuery(parentQuerysGQL.GET_PARENT_BY_ID, {
         variables: { parentId: clientId },
     })
 
@@ -49,7 +32,9 @@ export default ({ clientId }) => {
                             {
                                 label: 'Профиль',
                                 key: '1',
-                                children: loading ? <Loader /> : <ProfileCard updateHandle={updateProfile} profile={data.GetParentById?.userHttp} />,
+                                children: loading
+                                    ? <Loader />
+                                    : <ProfileCard updateHandle={actions.updateProfile} profile={data.GetParentById?.userHttp} />,
                             },
                             {
                                 label: 'Дети',

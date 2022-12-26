@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { List } from 'antd'
 import { useQuery } from '@apollo/client'
 
@@ -8,12 +8,12 @@ import Flex from '@/components/Flex'
 import ListItem from '@/components/ListItem'
 import Loader from '@/components/Loader'
 import { DragResize } from '@/components/UI'
-import { userGQL } from '@/graphQL'
+import { studentQuerysGQL } from '@/graphQL'
 
 
 const ListChildren = ({ profile, isUserAParent }) => {
 
-    const { loading, error, data } = useQuery(userGQL.GET_STUDENTS_PY_PARENT_ID, {
+    const { loading, error, data } = useQuery(studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID, {
         variables: { parentId: profile.id },
         notifyOnNetworkStatusChange: true,
     })

@@ -1,17 +1,23 @@
 import React, { lazy, Suspense } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 import {
-  HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE,
-  PROJECT_PAGE_ROUTE, MY_PROJECTS_ROUTE,
-  MY_COURSES_ROUTE, COURSE_PAGE_ROUTE,
-  PROFILE_PAGE_ROUTE, PEEK_PROFILE_PAGE,
-  TEACHERS_PAGE_ROUTE, CLIENTS_ROUTE,
-  UNIT_ADMINS_ROUTE, ROBBO_UNITS_ROUTE,
-  ROBBO_UNIT_STUDENT_GROUPS_PAGE, STUDY_PAGE_ROUTE,
+  HOME_PAGE_ROUTE,
+  LOGIN_PAGE_ROUTE,
+  PROJECT_PAGE_ROUTE,
+  MY_PROJECTS_ROUTE,
+  MY_COURSES_ROUTE,
+  COURSE_PAGE_ROUTE,
+  PROFILE_PAGE_ROUTE,
+  PEEK_PROFILE_PAGE,
+  TEACHERS_PAGE_ROUTE,
+  CLIENTS_ROUTE,
+  UNIT_ADMINS_ROUTE,
+  ROBBO_UNITS_ROUTE,
+  ROBBO_UNIT_STUDENT_GROUPS_PAGE,
+  STUDY_PAGE_ROUTE,
   ROBBO_GROUPS_ROUTE,
 } from '@/constants'
-
 import Loader from '@/components/Loader'
 
 const HomePage = lazy(() => import('@/pages/Home'))
@@ -31,84 +37,71 @@ const Study = lazy(() => import('@/pages/Study'))
 
 export default () => (
   <Suspense fallback={<Loader />}>
-    <Switch>
+    <Routes>
       <Route
-        exact
         path={HOME_PAGE_ROUTE}
-        component={HomePage}
+        element={<HomePage />}
       />
       <Route
-        exact
         path={LOGIN_PAGE_ROUTE}
-        component={LoginPage}
+        element={<LoginPage />}
       />
       <Route
-        exact
         path={MY_PROJECTS_ROUTE}
-        component={MyProjects}
+        element={<MyProjects />}
       />
       <Route
-        exact
         path={PROJECT_PAGE_ROUTE}
-        component={ProjectPage}
+        element={<ProjectPage />}
       />
       <Route
-        exact
         path={MY_COURSES_ROUTE}
-        component={MyCourses}
+        element={<MyCourses />}
       />
       <Route
-        exact
         path={COURSE_PAGE_ROUTE}
-        component={CoursePage}
+        element={<CoursePage />}
       />
       <Route
-        exact
         path={CLIENTS_ROUTE}
-        component={ClientsPage}
+        element={<ClientsPage />}
       />
-
       <Route
-        exact
         path={TEACHERS_PAGE_ROUTE}
-        component={TeachersPage}
+        element={<TeachersPage />}
       />
       <Route
-        exact
         path={PROFILE_PAGE_ROUTE}
-        component={ProfilePage}
+        element={<ProfilePage />}
       />
       <Route
-        exact
         path={PEEK_PROFILE_PAGE}
-        component={PeekProfilePage}
+        element={<PeekProfilePage />}
       />
       <Route
-        exact
         path={UNIT_ADMINS_ROUTE}
-        component={UnitAdminsPage}
+        element={<UnitAdminsPage />}
       />
       <Route
-        exact
         path={ROBBO_UNITS_ROUTE}
-        component={RobboUnitsPage}
+        element={<RobboUnitsPage />}
       />
       <Route
-        exact
         path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
-        component={RobboGroups}
+        element={<RobboGroups />}
       />
       <Route
-        exact
         path={STUDY_PAGE_ROUTE}
-        component={Study}
+        element={<Study />}
       />
       <Route
-        exact
         path={ROBBO_GROUPS_ROUTE}
-        component={RobboGroups}
+        element={<RobboGroups />}
       />
-      <Redirect from='/' to={HOME_PAGE_ROUTE} />
-    </Switch>
+      <Route
+        path='/*'
+        element={<Navigate to={HOME_PAGE_ROUTE} replace />}
+      />
+    </Routes>
   </Suspense>
 )

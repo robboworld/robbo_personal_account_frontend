@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams, Redirect } from 'react-router-dom'
+import { useParams, Navigate } from 'react-router-dom'
 import { Input, Button, Form } from 'antd'
 
 import { UnsharedMessage } from './components'
@@ -13,17 +13,21 @@ import { useActions } from '@/helpers/useActions'
 import { checkAccess, useUserIdentity } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { getProjectPageState } from '@/reducers/projectPage'
-
+import {
+    getProjectPageById,
+    clearProjectPageState,
+    updateProjectPage,
+} from '@/actions'
 const { TextArea } = Input
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const {
+    const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
         updateProjectPage,
-    } = useActions()
+    }, [])
 
     const layout = {
         labelCol: {
@@ -39,9 +43,9 @@ export default () => {
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            getProjectPageById(token, projectPageId)
+            actions.getProjectPageById(token, projectPageId)
         return () => {
-            clearProjectPageState()
+            actions.clearProjectPageState()
         }
     }, [loginLoading])
 
@@ -52,9 +56,9 @@ export default () => {
     }
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     console.log(projectPage)
@@ -89,7 +93,7 @@ export default () => {
                                 notes: projectPage.notes,
                             }}
                             onFinish={({ title, instruction, notes }) => {
-                                updateProjectPage(token, { ...projectPage, title, instruction, notes })
+                                actions.updateProjectPage(token, { ...projectPage, title, instruction, notes })
                             }}
                         >
                             <Form.Item

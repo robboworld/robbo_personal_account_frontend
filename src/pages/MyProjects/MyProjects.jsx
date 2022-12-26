@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { Button, List, Row, Col } from 'antd'
 
 import ProjectPageItem from './MyProjectsItem'
@@ -12,29 +12,34 @@ import config from '@/config'
 import { useActions } from '@/helpers/useActions'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
 import { checkAccess, useUserIdentity } from '@/helpers'
-
+import {
+    getProjectPagesByAccessToken,
+    clearMyProjectsState,
+    createProjectPage,
+} from '@/actions'
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
     const token = localStorage.getItem('token')
 
-    const {
-        getProjectPagesByAccessToken, clearMyProjectsState,
+    const actions = useActions({
+        getProjectPagesByAccessToken,
+        clearMyProjectsState,
         createProjectPage,
-    } = useActions()
+    }, [])
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            getProjectPagesByAccessToken()
+            actions.getProjectPagesByAccessToken()
         return () => {
-            clearMyProjectsState()
+            actions.clearMyProjectsState()
         }
     }, [loginLoading])
 
     const { projectPages, newProjectId, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     if (newProjectId) {
@@ -51,7 +56,7 @@ export default () => {
                                 <Col span={24}>Мои проекты</Col>
                                 <Col span={24}>
                                     <Button
-                                        type='primary' onClick={() => createProjectPage(token)}>
+                                        type='primary' onClick={() => actions.createProjectPage(token)}>
                                         Создать новый
                                     </Button>
                                 </Col>

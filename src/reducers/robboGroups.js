@@ -2,16 +2,28 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    createRobboGroupFailed, createRobboGroupRequest,
-    createRobboGroupSuccess, getRobboGroupsByRobboUnitIdRequest,
-    getRobboGroupsByRobboUnitIdSuccess, getRobboGroupsByRobboUnitIdFailed,
-    deleteRobboGroupRequest, deleteRobboGroupSuccess,
-    deleteRobboGroupFailed, searchRobboGroupsByTitleRequest,
-    searchRobboGroupsByTitleFailed, searchRobboGroupsByTitleSuccess,
-    getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenSuccess,
-    getRobboGroupsByAccessTokenFailed, getRobboGroupsByTeacherId,
-    getRobboGroupsByTeacherIdFailed, getRobboGroupsByTeacherIdSuccess, getAllRobboGroups, getAllRobboGroupsSuccess, getAllRobboGroupsFailed,
+    createRobboGroupFailed,
+    createRobboGroupRequest,
+    createRobboGroupSuccess,
+    getRobboGroupsByRobboUnitIdRequest,
+    getRobboGroupsByRobboUnitIdSuccess,
+    getRobboGroupsByRobboUnitIdFailed,
+    deleteRobboGroupRequest,
+    deleteRobboGroupSuccess,
+    deleteRobboGroupFailed,
+    searchRobboGroupsByTitleRequest,
+    searchRobboGroupsByTitleFailed,
+    searchRobboGroupsByTitleSuccess,
+    getRobboGroupsByAccessToken,
+    getRobboGroupsByAccessTokenSuccess,
+    getRobboGroupsByAccessTokenFailed,
+    getRobboGroupsByTeacherId,
+    getRobboGroupsByTeacherIdFailed,
+    getRobboGroupsByTeacherIdSuccess,
+    getAllRobboGroupsSuccess,
+    getAllRobboGroupsFailed,
     clearRobboGroupsPage,
+    getAllRobboGroupsRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -90,7 +102,7 @@ export default handleActions({
     [getRobboGroupsByTeacherIdFailed](state) {
         return { ...state, loading: false }
     },
-    [getAllRobboGroups](state) {
+    [getAllRobboGroupsRequest](state) {
         return { ...state, loading: true }
     },
     [getAllRobboGroupsSuccess](state, action) {

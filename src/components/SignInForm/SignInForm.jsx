@@ -1,12 +1,17 @@
-import React, { memo, useState, useEffect } from 'react'
+import React, { memo } from 'react'
 import { Button, Select, Form, Input } from 'antd'
 import { PropTypes } from 'prop-types'
 
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
 
 import {
-    FREE_LISTENER, PARENT, STUDENT,
-    TEACHER, UNIT_ADMIN, SUPER_ADMIN, userRole,
+    FREE_LISTENER,
+    PARENT,
+    STUDENT,
+    TEACHER,
+    UNIT_ADMIN,
+    SUPER_ADMIN,
+    userRole,
 } from '@/constants'
 
 const SignInForm = memo(({
@@ -24,11 +29,6 @@ const SignInForm = memo(({
     ]
 
     const [form] = Form.useForm()
-    const [, forceUpdate] = useState({})
-
-    useEffect(() => {
-        forceUpdate({})
-    }, [])
 
     return (
         <Form
@@ -100,7 +100,6 @@ const SignInForm = memo(({
                         </Button>
                     )
                 }
-
             </Form.Item>
         </Form >
     )

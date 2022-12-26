@@ -1,20 +1,21 @@
 import React from 'react'
-import { Button, Tabs } from "antd"
+import { Tabs } from "antd"
 import { useQuery } from '@apollo/client'
 
 import UnitsOfAdmin from './UnitsOfAdmin'
 
+import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
 import { useActions } from '@/helpers/useActions'
-import { userGQL } from '@/graphQL'
-import Loader from '@/components/Loader'
+import { studentQuerysGQL } from '@/graphQL'
+import { updateProfile } from '@/actions'
 
 export default ({ unitAdminId }) => {
 
-    const { updateProfile } = useActions()
+    const actions = useActions({ updateProfile }, [])
 
-    const { data, loading } = useQuery(userGQL.GET_UNIT_ADMIN_BY_ID, {
+    const { data, loading } = useQuery(studentQuerysGQL.GET_UNIT_ADMIN_BY_ID, {
         variables: { unitAdminId },
         notifyOnNetworkStatusChange: true,
     })
@@ -29,12 +30,14 @@ export default ({ unitAdminId }) => {
                         {
                             label: 'Карточка',
                             key: '1',
-                            children: loading ? <Loader /> : <ProfileCard profile={data.GetUnitAdminById.userHttp} updateHandle={updateProfile} />,
+                            children: loading
+                                ? <Loader />
+                                : <ProfileCard profile={data.GetUnitAdminById.userHttp} updateHandle={actions.updateProfile} />,
                         },
                         {
                             label: 'Units',
                             key: '2',
-                            children: <UnitsOfAdmin adminId={unitAdminId} />,
+                            children: <UnitsOfAdmin unitAdminId={unitAdminId} />,
                         },
                     ]}
                 />

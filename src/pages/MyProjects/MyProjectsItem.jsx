@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button, Space } from 'antd'
 
 import { ProjectPageItem, ScratchLink, LastModified, RemoveProjectPage } from './components'
@@ -7,15 +7,16 @@ import { ProjectPageItem, ScratchLink, LastModified, RemoveProjectPage } from '.
 import config from '@/config'
 import { useActions } from '@/helpers/useActions'
 import Flex from '@/components/Flex'
+import { deleteProjectPage } from '@/actions'
 
 export default ({ projectPageIndex, projectPage }) => {
 
-    const { deleteProjectPage } = useActions()
-    const history = useHistory()
+    const actions = useActions({ deleteProjectPage }, [])
+    const history = useNavigate()
     const token = localStorage.getItem('token')
 
     const toProjectPageHandler = () => {
-        history.push(`/projects/${projectPage.projectPageId}`)
+        history(`/projects/${projectPage.projectPageId}`)
     }
 
     const seeInsideHandler = () => {
@@ -35,7 +36,7 @@ export default ({ projectPageIndex, projectPage }) => {
             </Space>
             <Flex width='58%' justify='flex-end'
                 align='center'>
-                <RemoveProjectPage onClick={() => deleteProjectPage(token, projectPage.projectPageId, projectPageIndex)}>
+                <RemoveProjectPage onClick={() => actions.deleteProjectPage(token, projectPage.projectPageId, projectPageIndex)}>
                     удалить
                 </RemoveProjectPage>
             </Flex>

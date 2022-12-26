@@ -6,27 +6,31 @@ import { useQuery } from "@apollo/client"
 import { useActions } from "@/helpers/useActions"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
-import { robboUnitGQL, robboUnitQueryGraphQL } from "@/graphQL/query"
-
+import { robboUnitQuerysGQL, robboUnitQuerysGraphQL } from "@/graphQL/query"
+import {
+    setNewUnitAdminForRobboUnitRequest,
+    deleteUnitAdminForRobboUnitRequest,
+} from '@/actions'
 
 const { Search } = Input
 
 export default ({ robboUnitId }) => {
     const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
-    const {
+    const actions = useActions({
         setNewUnitAdminForRobboUnitRequest,
         deleteUnitAdminForRobboUnitRequest,
-    } = useActions()
+    }, [])
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
     const SearchUnitAdmins = async value => {
-        const result = await robboUnitQueryGraphQL.SearchUnitAdminByEmail({ email: value })
-        setSearchResult(result.data.SearchUnitAdminsByEmail)
+        const result = await robboUnitQuerysGraphQL.SearchUnitAdminByEmail(value, robboUnitId)
+        console.log(result)
+        setSearchResult(result.data.SearchUnitAdminsByEmail.unitAdmins)
     }
 
-    const getUnitAdminsByRobboUnitIdResult = useQuery(robboUnitGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID, {
+    const getUnitAdminsByRobboUnitIdResult = useQuery(robboUnitQuerysGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID, {
         variables: { robboUnitId },
         notifyOnNetworkStatusChange: true,
     })
@@ -39,14 +43,14 @@ export default ({ robboUnitId }) => {
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={getUnitAdminsByRobboUnitIdResult.data.GetUnitAdminsByRobboUnitId}
+                        dataSource={getUnitAdminsByRobboUnitIdResult.data.GetUnitAdminsByRobboUnitId.unitAdmins}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}
                                 key={index}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
-                                handleDelete={childIndex => deleteUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
+                                handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
                             />
                         )}
                     />
@@ -66,7 +70,7 @@ export default ({ robboUnitId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
+                                handleClick={() => actions.setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
                             />
                         )}
                     />

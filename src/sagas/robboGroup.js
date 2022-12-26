@@ -2,21 +2,35 @@ import { call, takeLatest, put } from 'redux-saga/effects'
 
 import { robboGroupAPI } from '@/api'
 import {
-    addStudentToRobboGroupFailed, addStudentToRobboGroupRequest,
-    addStudentToRobboGroupSuccess, createRobboGroupFailed,
-    createRobboGroupRequest, createRobboGroupSuccess,
-    deleteRobboGroupFailed, deleteRobboGroupRequest,
-    deleteRobboGroupSuccess, deleteStudentFromRobboGroupFailed,
-    deleteStudentFromRobboGroupRequest, getAllRobboGroupsFailed,
-    getAllRobboGroupsSuccess, getRobboGroupByIdFailed,
-    getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
-    getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenFailed,
-    getRobboGroupsByAccessTokenSuccess, getRobboGroupsByRobboUnitIdFailed,
-    getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSuccess,
-    getRobboGroupsByTeacherId, getRobboGroupsByTeacherIdFailed,
-    getRobboGroupsByTeacherIdSuccess, searchRobboGroupsByTitleFailed,
-    searchRobboGroupsByTitleRequest, searchRobboGroupsByTitleSuccess,
-    getAllRobboGroups,
+    addStudentToRobboGroupFailed,
+    addStudentToRobboGroupRequest,
+    addStudentToRobboGroupSuccess,
+    createRobboGroupFailed,
+    createRobboGroupRequest,
+    createRobboGroupSuccess,
+    deleteRobboGroupFailed,
+    deleteRobboGroupRequest,
+    deleteRobboGroupSuccess,
+    deleteStudentFromRobboGroupFailed,
+    deleteStudentFromRobboGroupRequest,
+    getAllRobboGroupsFailed,
+    getAllRobboGroupsSuccess,
+    getRobboGroupByIdFailed,
+    getRobboGroupByIdRequest,
+    getRobboGroupByIdSuccess,
+    getRobboGroupsByAccessToken,
+    getRobboGroupsByAccessTokenFailed,
+    getRobboGroupsByAccessTokenSuccess,
+    getRobboGroupsByRobboUnitIdFailed,
+    getRobboGroupsByRobboUnitIdRequest,
+    getRobboGroupsByRobboUnitIdSuccess,
+    getRobboGroupsByTeacherId,
+    getRobboGroupsByTeacherIdFailed,
+    getRobboGroupsByTeacherIdSuccess,
+    searchRobboGroupsByTitleFailed,
+    searchRobboGroupsByTitleRequest,
+    searchRobboGroupsByTitleSuccess,
+    getAllRobboGroupsRequest,
 } from '@/actions'
 import { robboGroupsQueryGraphQL } from '@/graphQL/query'
 
@@ -122,18 +136,19 @@ function* getRobboGroupsByAccessTokenSaga() {
         const response = yield call(robboGroupsQueryGraphQL.getRobboGroupsByAccessToken)
         console.log(response)
 
-        yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken))
+        yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken.robboGroups))
     } catch (e) {
         yield put(getRobboGroupsByAccessTokenFailed(e))
     }
 }
 
-function* getAllRobboGroupsSaga() {
+function* getAllRobboGroupsSaga({ payload }) {
     try {
-        const response = yield call(robboGroupsQueryGraphQL.getAllRobboGroups)
+        const { page, pageSize } = payload
+        const response = yield call(robboGroupsQueryGraphQL.getAllRobboGroups, page, pageSize)
         console.log(response)
 
-        yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups))
+        yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups.robboGroups))
     } catch (e) {
         yield put(getAllRobboGroupsFailed(e))
     }
@@ -149,5 +164,5 @@ export function* robboGroupSaga() {
     yield takeLatest(searchRobboGroupsByTitleRequest, searchRobboGroupsByTitleSaga)
     yield takeLatest(getRobboGroupsByTeacherId, getRobboGroupsByTeacherIdSaga)
     yield takeLatest(getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenSaga)
-    yield takeLatest(getAllRobboGroups, getAllRobboGroupsSaga)
+    yield takeLatest(getAllRobboGroupsRequest, getAllRobboGroupsSaga)
 }

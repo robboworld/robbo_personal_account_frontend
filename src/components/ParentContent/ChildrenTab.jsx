@@ -1,46 +1,34 @@
 import React, { useState } from 'react'
-import { Space, Button, Modal, List, Input } from 'antd'
+import { Space, Button, Modal, List, Input, notification } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
-import { gql, useQuery, useApolloClient } from "@apollo/client"
+import { useQuery } from "@apollo/client"
 
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
 import { useActions } from '@/helpers'
-import { userGQL, usersQueryGraphQL } from '@/graphQL'
+import { studentQuerysGQL, studentQuerysGraphQL } from '@/graphQL'
+import { createStudentParentRelationRequest, deleteChildRequest } from '@/actions'
 
 const { Search } = Input
 
-const GET_STUDENT_BY_PARENT_ID = gql`
-query GetStudentsByParentId($parentId: String!){
-    GetStudentsByParentId(parentId: $parentId) {
-        userHttp{
-            id
-            lastname
-            firstname
-            middlename
-        }
-    }
-}`
-
 const ChildrenTab = ({ clientId }) => {
-    const token = localStorage.getItem('token')
-    const client = useApolloClient()
-    const {
-        createRelation,
-        deleteChildRequest,
-    } = useActions()
+    const actions = useActions({ createStudentParentRelationRequest, deleteChildRequest }, [])
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchStudents, setSearchResult] = useState([])
 
-    const getStudentsResult = useQuery(GET_STUDENT_BY_PARENT_ID, {
+    const getStudentsResult = useQuery(studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID, {
         variables: { parentId: clientId },
         notifyOnNetworkStatusChange: true,
     })
 
     const SearchStudents = async value => {
-        const result = await usersQueryGraphQL.searchStudentsByEmail(value, clientId)
-        setSearchResult(result.data.SearchStudentsByEmail)
+        const result = await studentQuerysGraphQL.searchStudentsByEmail(value, clientId)
+        setSearchResult(result.data.SearchStudentsByEmail.students)
+    }
+
+    if (getStudentsResult.error) {
+        notification.error({ message: 'Ошибка', description: getStudentsResult.error })
     }
 
     return (
@@ -50,14 +38,14 @@ const ChildrenTab = ({ clientId }) => {
                     ? <LoadingOutlined />
                     : <List
                         bordered
-                        dataSource={getStudentsResult.data.GetStudentsByParentId}
+                        dataSource={getStudentsResult.data.GetStudentsByParentId.students}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
+                                handleDelete={childIndex => actions.deleteChildRequest(userHttp.id, childIndex)}
                             />
                         )}
                     />
@@ -92,7 +80,7 @@ const ChildrenTab = ({ clientId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => createRelation(token, clientId, userHttp.id)}
+                                handleClick={() => actions.createStudentParentRelationRequest(clientId, userHttp.id)}
                             // handleDelete={childIndex => deleteChildRequest(token, userHttp.id, childIndex)}
                             />
                         )}

@@ -1,52 +1,60 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Redirect, useHistory } from "react-router-dom"
-import { Modal } from "antd"
+import { Navigate, useNavigate } from "react-router-dom"
+import { Modal, Button, Space } from "antd"
 
 import { WelcomeText } from "./components"
 
 import PageLayout from '@/components/PageLayout'
 import Flex from "@/components/Flex"
 import RobboUnit from "@/components/RobboUnit"
-import { Button, DragResize } from "@/components/UI"
+import Loader from "@/components/Loader"
+import ListItem from "@/components/ListItem"
 import AddRobboUnit from "@/components/AddRobboUnit"
 import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
-import Loader from "@/components/Loader"
-import ListItem from "@/components/ListItem"
+import { DragResize } from "@/components/UI"
 import { useUserIdentity, checkAccess } from "@/helpers"
-import { HOME_PAGE_ROUTE, SUPER_ADMIN, UNIT_ADMIN, LOGIN_PAGE_ROUTE } from "@/constants"
-
+import {
+    HOME_PAGE_ROUTE,
+    SUPER_ADMIN,
+    UNIT_ADMIN,
+    LOGIN_PAGE_ROUTE,
+} from "@/constants"
+import {
+    getRobboUnitsRequest,
+    getRobboUnitsByUnitAdminIdRequest,
+    deleteRobboUnitRequest,
+    clearRobboUnitsPage,
+} from '@/actions'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const history = useHistory()
+    const history = useNavigate()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
-    const { getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage } = useActions()
+    const actions = useActions({ getRobboUnitsRequest, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage }, [])
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             switch (userRole) {
                 case UNIT_ADMIN:
-                    getRobboUnitsByUnitAdminIdRequest(token)
+                    actions.getRobboUnitsByUnitAdminIdRequest(token)
                     break
                 case SUPER_ADMIN:
-                    getRobboUnits(token)
+                    actions.getRobboUnitsRequest(token)
                     break
             }
 
-        return () => {
-            clearRobboUnitsPage()
-        }
+        return () => actions.clearRobboUnitsPage()
     }, [loginLoading])
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return <Navigate to={LOGIN_PAGE_ROUTE} />
     }
 
     return (
@@ -62,20 +70,19 @@ export default () => {
             </Modal>
             <Flex direction='column' justify='flex-end'
                 align='flex-start'>
-                <Button
-                    background='green'
-                    content='Программа'
-                    padding='0.5rem'
-                    margin='0.5rem'
-                    handleSubmit={() => history.push('/program')}
-                />
-                <Button
-                    background='green'
-                    content='Добавить Robbo Unit'
-                    padding='0.5rem'
-                    margin='0.5rem'
-                    handleSubmit={() => setOpenAddRobboUnit(true)}
-                />
+                <Space>
+                    <Button
+                        type='primary' onClick={() => history('/program')}
+                    >
+                        Программа
+                    </Button>
+                    <Button
+                        onClick={() => setOpenAddRobboUnit(true)} type='primary'
+                    >
+                        Добавить Robbo Unit
+                    </Button>
+                </Space>
+
 
             </Flex>
             {
@@ -104,7 +111,7 @@ export default () => {
                                                         )}
                                                     />
                                                 )}
-                                                handleDelete={robboUnitIndex => deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
+                                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
                                             />
                                         )
                                     })

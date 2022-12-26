@@ -1,15 +1,15 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { CoursePageItem, Avatar, TitleLink, LittleDescription } from './components'
 
 import Flex from '@/components/Flex'
 
 export default ({ coursePage }) => {
-    const history = useHistory()
+    const history = useNavigate()
 
     const toCoursePageHandler = () => {
-        history.push(`/courses/${coursePage.id}`)
+        history(`/courses/${coursePage.id}`)
     }
 
     return (

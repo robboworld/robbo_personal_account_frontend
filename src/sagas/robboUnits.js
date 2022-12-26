@@ -1,6 +1,7 @@
 import { call, takeLatest, put } from 'redux-saga/effects'
 
 import { robboUnitsAPI } from '@/api'
+import { robboUnitMutationsGraphQL, robboUnitQuerysGraphQL } from '@/graphQL'
 import {
     getRobboUnitsFailed,
     getRobboUnitsSuccess,
@@ -8,28 +9,28 @@ import {
     deleteRobboUnitFailed,
     createRobboUnitSuccess,
     createRobboUnitFailed,
-    getRobboUnits,
     deleteRobboUnitRequest,
-    getRobboUnitById,
-    createRobboUnit,
     getRobboUnitByIdSuccess,
     getRobboUnitByIdFailed,
-    updateRobboUnit,
     updateRobboUnitSuccess,
     updateRobboUnitFailed,
     getRobboUnitsByUnitAdminIdSuccess,
     getRobboUnitsByUnitAdminIdFailed,
     getRobboUnitsByUnitAdminIdRequest,
+    getRobboUnitsRequest,
+    createRobboUnitRequest,
+    getRobboUnitByIdRequest,
+    updateRobboUnitRequest,
 } from '@/actions'
 
 
-function* getRobboUnitsSaga(action) {
+function* getAllRobboUnitsSaga({ payload }) {
     try {
-        const { token } = action.payload
-        const response = yield call(robboUnitsAPI.getRobboUnits, token)
+        const { page, pageSize } = payload
+        const response = yield call(robboUnitQuerysGraphQL.getAllRobboUnits, "1", "10")
         console.log(response)
 
-        yield put(getRobboUnitsSuccess(response.data))
+        yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
     } catch (e) {
         yield put(getRobboUnitsFailed(e.message))
     }
@@ -74,7 +75,7 @@ function* deleteRobboUnitSaga(action) {
 function* createRobboUnitSaga(action) {
     try {
         const { token, robboUnit } = action.payload
-        const response = yield call(robboUnitsAPI.createRobboUnit, token, robboUnit)
+        const response = yield call(robboUnitMutationsGraphQL.createRobboUnit, { input: robboUnit })
         console.log(response)
 
         yield put(createRobboUnitSuccess(response.data, robboUnit))
@@ -96,10 +97,10 @@ function* updateRobboUnitSaga(action) {
 }
 
 export function* robboUnitsSaga() {
-    yield takeLatest(getRobboUnits, getRobboUnitsSaga)
+    yield takeLatest(getRobboUnitsRequest, getAllRobboUnitsSaga)
     yield takeLatest(deleteRobboUnitRequest, deleteRobboUnitSaga)
-    yield takeLatest(createRobboUnit, createRobboUnitSaga)
-    yield takeLatest(getRobboUnitById, getRobboUnitByIdSaga)
-    yield takeLatest(updateRobboUnit, updateRobboUnitSaga)
+    yield takeLatest(createRobboUnitRequest, createRobboUnitSaga)
+    yield takeLatest(getRobboUnitByIdRequest, getRobboUnitByIdSaga)
+    yield takeLatest(updateRobboUnitRequest, updateRobboUnitSaga)
     yield takeLatest(getRobboUnitsByUnitAdminIdRequest, getRobboUnitsByUnitAdminIdSaga)
 }

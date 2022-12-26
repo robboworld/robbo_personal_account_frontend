@@ -1,16 +1,16 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
 
+import PageLayoutLogin from '@/components/PageLayoutLogin'
 import { useUserIdentity } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
-import PageLayoutLogin from '@/components/PageLayoutLogin'
 
 export default () => {
     const { isAuth, loginLoading } = useUserIdentity()
 
-    if (isAuth) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+    if (isAuth && !loginLoading) {
+        return <Navigate to={HOME_PAGE_ROUTE} />
     }
     return (
         <React.Fragment>
@@ -20,6 +20,5 @@ export default () => {
                     : <PageLayoutLogin />
             }
         </React.Fragment>
-
     )
 }

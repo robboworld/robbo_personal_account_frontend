@@ -11,6 +11,8 @@ import {
 const SignUpForm = memo(({
     handleSubmit,
     needSelectRole,
+    robboGroupId,
+    robboUnitId,
 }) => {
     const roles = [
         { value: STUDENT, label: userRole[STUDENT] },
@@ -29,14 +31,16 @@ const SignUpForm = memo(({
         <Form
             name='normal_login'
             className='signup-form'
-            onFinish={({ email,
-                password,
-                role,
-                nickname,
-                lastname,
-                firstname,
-                middlename,
-            }) => {
+            onFinish={(
+                {
+                    email,
+                    password,
+                    role,
+                    nickname,
+                    lastname,
+                    firstname,
+                    middlename,
+                }) => {
                 return handleSubmit({
                     email, password, role, nickname, lastname, firstname, middlename,
                 })
@@ -171,6 +175,8 @@ const SignUpForm = memo(({
 SignUpForm.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     needSelectRole: PropTypes.bool,
+    robboGroupId: PropTypes.string,
+    robboUnitId: PropTypes.string,
 }
 
 export default SignUpForm

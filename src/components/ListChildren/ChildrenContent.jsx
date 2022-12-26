@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { useQuery } from "@apollo/client"
 import { Tabs } from 'antd'
 
@@ -6,12 +6,12 @@ import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 
-import { userGQL } from '@/graphQL'
+import { studentQuerysGQL } from '@/graphQL'
 
 
 export default ({ childrenId }) => {
 
-    const { loading, error, data } = useQuery(userGQL.GET_STUDENT_BY_ID, {
+    const { loading, error, data } = useQuery(studentQuerysGQL.GET_STUDENT_BY_ID, {
         variables: { studentId: childrenId },
         notifyOnNetworkStatusChange: true,
     })
