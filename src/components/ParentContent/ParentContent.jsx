@@ -8,13 +8,13 @@ import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 import { updateProfile } from '@/actions'
-import { studentQuerysGQL } from "@/graphQL"
+import { parentQuerysGQL } from "@/graphQL"
 import { useActions } from "@/helpers/useActions"
 
 export default ({ clientId }) => {
     const actions = useActions({ updateProfile }, [])
 
-    const { loading, data } = useQuery(studentQuerysGQL.GET_PARENT_BY_ID, {
+    const { loading, data } = useQuery(parentQuerysGQL.GET_PARENT_BY_ID, {
         variables: { parentId: clientId },
     })
 

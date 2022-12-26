@@ -1,4 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import { profileAPI } from '@/api'
 import {
@@ -29,8 +30,10 @@ function* updateProfileSaga({ payload }) {
         console.log(response)
 
         yield put(updateProfileSuccess(response))
+        notification.success({ message: 'Успешно обновлено!' })
     } catch (e) {
         yield put(updateProfileFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 

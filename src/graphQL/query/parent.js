@@ -4,8 +4,8 @@ import { graphQLClient } from "@/graphQL"
 
 export const parentQuerysGQL = {
     GET_ALL_PARENTS: gql`
-        query{ 
-            GetAllParents{
+        query GetAllParent($page: String!, $pageSize: String!){ 
+            GetAllParents(page: $page, pageSize: $pageSize){
                 __typename
                 ... on ParentHttpList{
                     parents{
@@ -45,13 +45,34 @@ export const parentQuerysGQL = {
         }
     }
     `,
+
+    SEARCH_PARENT_BY_EMAIL: gql`
+     query SearchParentsByEmail($email: String!) {
+        SearchParentsByEmail(email: $email) {
+                ... on ParentHttpList{
+                    parents {
+                        userHttp{
+                            id
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+                ... on Error{
+                    message
+                }
+            }
+        }
+    `,
 }
 
 export const parentQuerysGraphQL = {
-    getAllParents() {
+    getAllParents(page, pageSize) {
         return graphQLClient.query(
             {
                 query: parentQuerysGQL.GET_ALL_PARENTS,
+                variables: { page, pageSize: "10" },
             },
         )
     },
@@ -65,4 +86,12 @@ export const parentQuerysGraphQL = {
         )
     },
 
+    searchParentByEmail(email) {
+        return graphQLClient.query(
+            {
+                query: parentQuerysGQL.SEARCH_PARENT_BY_EMAIL,
+                variables: email,
+            },
+        )
+    },
 }

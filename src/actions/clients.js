@@ -32,7 +32,7 @@ import {
     CREATE_RELATION_FAILED,
 } from '@/constants'
 
-export const getClientsRequest = createAction(GET_CLIENTS_REQUEST)
+export const getClientsRequest = createAction(GET_CLIENTS_REQUEST, (page, pageSize) => ({ page, pageSize }))
 export const getClientsSuccess = createAction(GET_CLIENTS_SUCCESS, response => ({ response }))
 export const getClientsFailed = createAction(GET_CLIENTS_FAILED, err => ({ err }))
 

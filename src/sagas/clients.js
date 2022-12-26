@@ -1,7 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { notification } from 'antd'
 
-import { clientsAPI } from '@/api'
 import {
     createParentFailed,
     createParentSuccess,
@@ -33,13 +32,16 @@ import {
 } from '@/actions'
 
 import {
+    parentQuerysGraphQL,
     studentQuerysGraphQL,
     usersMutationGraphQL,
 } from '@/graphQL'
 
-function* getClientsSaga(action) {
+function* getClientsSaga({ payload }) {
     try {
-        const response = yield call(studentQuerysGraphQL.getAllParents)
+        console.log()
+        const { page, pageSize } = payload
+        const response = yield call(parentQuerysGraphQL.getAllParents, page, pageSize)
         console.log(response)
         yield put(getClientsSuccess(response.data.GetAllParents.parents))
     } catch (e) {
@@ -50,7 +52,7 @@ function* getClientsSaga(action) {
 function* getClientByIdSaga({ payload }) {
     try {
         const { id } = payload
-        const response = yield call(studentQuerysGraphQL.getParentById, { parentId: id })
+        const response = yield call(parentQuerysGraphQL.getParentById, { parentId: id })
         console.log(response)
         yield put(getClientPageByIdSuccess(response.data.GetParentById))
     } catch (e) {
@@ -116,7 +118,7 @@ function* deleteChildSaga({ payload }) {
 function* getChildrenByParentIdSaga({ payload }) {
     try {
         const { parentId } = payload
-        const response = yield call(studentQuerysGraphQL.getStudentsByParentId, { parentId: parentId })
+        const response = yield call(parentQuerysGraphQL.getStudentsByParentId, { parentId: parentId })
         console.log(response)
 
         yield put(getChildrenByParentIdSuccess(response.data.GetStudentsByParentId.students))
@@ -126,13 +128,13 @@ function* getChildrenByParentIdSaga({ payload }) {
     }
 }
 
-function* searchStudentSaga(action) {
+function* searchStudentSaga({ payload }) {
     try {
-        const { token, input } = action.payload
-        const response = yield call(clientsAPI.searchStudent, token, input)
+        const { input } = payload
+        const response = yield call(studentQuerysGraphQL.searchStudentsByEmail, { email: input })
         console.log(response)
 
-        yield put(searchStudentSuccess(response.data))
+        yield put(searchStudentSuccess(response.data.SearchStudentsByEmail.students))
     } catch (e) {
         yield put(searchStudentFailed(e))
     }

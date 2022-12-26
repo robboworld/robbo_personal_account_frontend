@@ -33,7 +33,7 @@ export default () => {
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getClientsRequest()
+            actions.getClientsRequest("1", "10")
         return () => actions.clearClientsState()
     }, [loginLoading])
 
