@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Modal } from "antd"
+import { Modal, Button } from "antd"
 import { Navigate, useParams } from "react-router-dom"
 
 import { WelcomeText } from "./components"
@@ -14,7 +14,7 @@ import ListItem from "@/components/ListItem"
 import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
-import { DragResize, Button } from "@/components/UI"
+import { DragResize } from "@/components/UI"
 import {
     HOME_PAGE_ROUTE,
     LOGIN_PAGE_ROUTE,
@@ -78,11 +78,9 @@ export default () => {
                             <Flex direction='row' justify='flex-end'
                                 align='flex-start'>
                                 <Button
-                                    background='green'
-                                    content='Создать группу'
-                                    padding='0.5rem'
-                                    handleSubmit={() => setOpenAddGroup(true)}
-                                />
+                                    onClick={() => setOpenAddGroup(true)} type='primary'
+                                >Создать группу
+                                </Button>
                             </Flex>
                             {
                                 loading ? <Loader />
