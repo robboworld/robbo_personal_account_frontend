@@ -4,8 +4,8 @@ import { Button, Form, Input } from 'antd'
 
 import Loader from "@/components/Loader"
 import { useActions } from "@/helpers"
-import { robboUnitGQL } from "@/graphQL"
-import { updateRobboUnit } from '@/actions'
+import { robboUnitQuerysGQL } from "@/graphQL"
+import { updateRobboUnitRequest } from '@/actions'
 
 export default ({ robboUnitId }) => {
     const layout = {
@@ -14,9 +14,9 @@ export default ({ robboUnitId }) => {
     }
     const [form] = Form.useForm()
     const token = localStorage.getItem('token')
-    const actions = useActions({ updateRobboUnit }, [])
+    const actions = useActions({ updateRobboUnitRequest }, [])
 
-    const { data, loading } = useQuery(robboUnitGQL.GET_ROBBO_UNIT_BY_ID, {
+    const { data, loading } = useQuery(robboUnitQuerysGQL.GET_ROBBO_UNIT_BY_ID, {
         variables: { id: robboUnitId },
         notifyOnNetworkStatusChange: true,
     })
@@ -34,7 +34,7 @@ export default ({ robboUnitId }) => {
                         city: data.GetRobboUnitById.city,
                     }}
                     onFinish={({ name, city }) => {
-                        actions.updateRobboUnit(token, { ...data.GetRobboUnitById, name, city })
+                        actions.updateRobboUnitRequest(token, { ...data.GetRobboUnitById, name, city })
                     }}
                 >
                     <Form.Item

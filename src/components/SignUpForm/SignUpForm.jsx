@@ -11,6 +11,8 @@ import {
 const SignUpForm = memo(({
     handleSubmit,
     needSelectRole,
+    robboGroupId,
+    robboUnitId,
 }) => {
     const roles = [
         { value: STUDENT, label: userRole[STUDENT] },
@@ -173,6 +175,8 @@ const SignUpForm = memo(({
 SignUpForm.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     needSelectRole: PropTypes.bool,
+    robboGroupId: PropTypes.string,
+    robboUnitId: PropTypes.string,
 }
 
 export default SignUpForm

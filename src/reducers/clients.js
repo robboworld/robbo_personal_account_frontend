@@ -52,9 +52,6 @@ export default handleActions({
     [getClientsFailed](state, action) {
         return { ...state, clientsLoading: false }
     },
-    [clearClientsState](state, action) {
-        return { ...state }
-    },
     [createParentRequest](state) {
         return { ...state, clientsLoading: true }
     },
@@ -83,8 +80,8 @@ export default handleActions({
     [createChildrenRequest](state) {
         return { ...state, childrenLoading: true }
     },
-    [createChildreSuccess](state, action) {
-        const { response, child } = action.payload
+    [createChildreSuccess](state, { payload }) {
+        const { response, child } = payload
         return {
             ...state,
             childrenLoading: false,
@@ -122,8 +119,8 @@ export default handleActions({
     [searchStudentRequest](state) {
         return { ...state, loading: true }
     },
-    [searchStudentSuccess](state, action) {
-        return { ...state, loading: false, searchResult: action.payload.response }
+    [searchStudentSuccess](state, { payload }) {
+        return { ...state, loading: false, searchResult: payload.response }
     },
     [searchStudentFailed](state, action) {
         return { ...state, loading: false }
@@ -140,9 +137,8 @@ export default handleActions({
     [getClientPageByIdRequest](state) {
         return { ...state, clientLoading: true }
     },
-    [getClientPageByIdSuccess](state, action) {
-        console.log(action)
-        return { ...state, client: action.payload.client, clientLoading: false }
+    [getClientPageByIdSuccess](state, { payload }) {
+        return { ...state, client: payload.client, clientLoading: false }
     },
     [getClientPageByIdFailed](state, action) {
         return { ...state, clientLoading: false }

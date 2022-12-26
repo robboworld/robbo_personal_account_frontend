@@ -6,7 +6,7 @@ import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers'
 import { createChildrenRequest } from '@/actions'
 
-export default memo(({ parentId }) => {
+export default memo(({ parentId, robboGroupId, robboUnitId }) => {
     const actions = useActions({ createChildrenRequest }, [])
     return (
         <Flex
@@ -21,6 +21,8 @@ export default memo(({ parentId }) => {
                     content: 'Создать',
                     padding: '10px',
                 }}
+                robboGroupId={robboGroupId}
+                robboUnitId={robboUnitId}
             />
         </Flex>
     )

@@ -24,7 +24,7 @@ import {
 import {
     getRobboGroupsByRobboUnitIdRequest,
     deleteRobboGroupRequest,
-    getAllRobboGroups,
+    getAllRobboGroupsRequest,
     clearRobboGroupsPage,
 } from '@/actions'
 
@@ -36,7 +36,7 @@ export default () => {
     const actions = useActions({
         getRobboGroupsByRobboUnitIdRequest,
         deleteRobboGroupRequest,
-        getAllRobboGroups,
+        getAllRobboGroupsRequest,
         clearRobboGroupsPage,
     }, [])
 
@@ -46,7 +46,7 @@ export default () => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             if (robboUnitId)
                 actions.getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
-            else actions.getAllRobboGroups() // Только для Super Admin
+            else actions.getAllRobboGroupsRequest("1", "10") // Только для Super Admin
         return () => {
             actions.clearRobboGroupsPage()
         }

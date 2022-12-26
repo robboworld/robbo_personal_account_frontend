@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, useNavigate } from "react-router-dom"
-import { Modal } from "antd"
+import { Modal, Button, Space } from "antd"
 
 import { WelcomeText } from "./components"
 
@@ -13,7 +13,7 @@ import ListItem from "@/components/ListItem"
 import AddRobboUnit from "@/components/AddRobboUnit"
 import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
-import { Button, DragResize } from "@/components/UI"
+import { DragResize } from "@/components/UI"
 import { useUserIdentity, checkAccess } from "@/helpers"
 import {
     HOME_PAGE_ROUTE,
@@ -22,7 +22,7 @@ import {
     LOGIN_PAGE_ROUTE,
 } from "@/constants"
 import {
-    getRobboUnits,
+    getRobboUnitsRequest,
     getRobboUnitsByUnitAdminIdRequest,
     deleteRobboUnitRequest,
     clearRobboUnitsPage,
@@ -34,7 +34,7 @@ export default () => {
     const history = useNavigate()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const token = localStorage.getItem('token')
-    const actions = useActions({ getRobboUnits, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage }, [])
+    const actions = useActions({ getRobboUnitsRequest, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage }, [])
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export default () => {
                     actions.getRobboUnitsByUnitAdminIdRequest(token)
                     break
                 case SUPER_ADMIN:
-                    actions.getRobboUnits(token)
+                    actions.getRobboUnitsRequest(token)
                     break
             }
 
@@ -70,20 +70,19 @@ export default () => {
             </Modal>
             <Flex direction='column' justify='flex-end'
                 align='flex-start'>
-                <Button
-                    background='green'
-                    content='Программа'
-                    padding='0.5rem'
-                    margin='0.5rem'
-                    handleSubmit={() => history('/program')}
-                />
-                <Button
-                    background='green'
-                    content='Добавить Robbo Unit'
-                    padding='0.5rem'
-                    margin='0.5rem'
-                    handleSubmit={() => setOpenAddRobboUnit(true)}
-                />
+                <Space>
+                    <Button
+                        type='primary' onClick={() => history('/program')}
+                    >
+                        Программа
+                    </Button>
+                    <Button
+                        onClick={() => setOpenAddRobboUnit(true)} type='primary'
+                    >
+                        Добавить Robbo Unit
+                    </Button>
+                </Space>
+
 
             </Flex>
             {

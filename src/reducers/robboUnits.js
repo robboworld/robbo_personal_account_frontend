@@ -1,16 +1,19 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    createRobboUnit,
     createRobboUnitFailed,
     createRobboUnitSuccess,
     deleteRobboUnitFailed,
     deleteRobboUnitRequest,
     deleteRobboUnitSuccess,
-    getRobboUnits, getRobboUnitsByUnitAdminIdFailed, getRobboUnitsByUnitAdminIdRequest,
-    getRobboUnitsByUnitAdminIdSuccess, getRobboUnitsFailed,
+    getRobboUnitsByUnitAdminIdFailed,
+    getRobboUnitsByUnitAdminIdRequest,
+    getRobboUnitsByUnitAdminIdSuccess,
+    getRobboUnitsFailed,
     getRobboUnitsSuccess,
     clearRobboUnitsPage,
+    getRobboUnitsRequest,
+    createRobboUnitRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -19,7 +22,7 @@ const INITIAL_STATE = {
 }
 
 export default handleActions({
-    [getRobboUnits](state) {
+    [getRobboUnitsRequest](state) {
         return { ...state, loading: true }
     },
     [getRobboUnitsSuccess](state, action) {
@@ -37,9 +40,6 @@ export default handleActions({
     [getRobboUnitsByUnitAdminIdFailed](state, action) {
         return { ...state, loading: false }
     },
-    // [clearTeachersState](state, action) {
-    //     return { ...state, loading: false, robboUnits: [] }
-    // },
     [deleteRobboUnitRequest](state) {
         return { ...state, loading: true }
     },
@@ -52,7 +52,7 @@ export default handleActions({
     [deleteRobboUnitFailed](state, action) {
         return { ...state, loading: false }
     },
-    [createRobboUnit](state) {
+    [createRobboUnitRequest](state) {
         return { ...state, loading: true }
     },
     [createRobboUnitSuccess](state, action) {

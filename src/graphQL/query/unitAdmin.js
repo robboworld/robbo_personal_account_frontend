@@ -37,36 +37,49 @@ export const unitAdminQuerysGQL = {
         }
     }`,
 
-    GET_UNIT_ADMIN_BY_ROBBO_UNIT_ID:
-        gql`
-        query GetUnitAdminsByRobboUnitId($robboUnitId: String!){
-            GetUnitAdminsByRobboUnitId(robboUnitId: $robboUnitId){
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
+    GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID: gql`
+    query GetUnitAdminsByRobboUnitId($robboUnitId: String!){
+        GetUnitAdminsByRobboUnitId(robboUnitId: $robboUnitId){
+            ... on UnitAdminHttpList{
+                unitAdmins {
+                    userHttp{
+                        id
+                        lastname
+                        firstname
+                        middlename
+                    }
                 }
             }
+            ... on Error{
+                message
+            }
         }
+    }
     `,
 
-    SEARCH_UNIT_ADMIN_BY_EMAIL: gql`
-        query SearchUnitAdminsByEmail($email: String!) {
-            SearchUnitAdminsByEmail(email: $email) {
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
+    SEARCH_UNIT_ADMINS_BY_EMAIL: gql`
+    query SearchUnitAdminsByEmail($email: String!, $robboUnitId: String!){
+        SearchUnitAdminsByEmail(email: $email, robboUnitId: $robboUnitId){
+            ... on UnitAdminsHttpList{
+                unitAdmins {
+                    userHttp{
+                        id
+                        lastname
+                        firstname
+                        middlename
+                    }
                 }
             }
+            ... on Error{
+                message
+            }
         }
+    }
     `,
 }
 
 export const unitAdminQuerysGraphQL = {
-    getUnitAdminById(unitAdminId) {
+    GetUnitAdminById(unitAdminId) {
         return graphQLClient.query(
             {
                 query: unitAdminQuerysGQL.GET_UNIT_ADMIN_BY_ID,
@@ -75,20 +88,20 @@ export const unitAdminQuerysGraphQL = {
         )
     },
 
-    getUnitAdminsByRobboUnitId(robboUnitId) {
+    GetUnitAdminsByRobboUnitId(robboUnitId) {
         return graphQLClient.query(
             {
-                query: unitAdminQuerysGQL.GET_UNIT_ADMIN_BY_ROBBO_UNIT_ID,
+                query: unitAdminQuerysGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID,
                 variables: robboUnitId,
             },
         )
     },
 
-    searchUnitAdminsByEmail(email) {
+    SearchUnitAdminByEmail(email, robboUnitId) {
         return graphQLClient.query(
             {
-                query: unitAdminQuerysGQL.SEARCH_UNIT_ADMIN_BY_EMAIL,
-                variables: email,
+                query: unitAdminQuerysGQL.SEARCH_UNIT_ADMINS_BY_EMAIL,
+                variables: { email, robboUnitId },
             },
         )
     },

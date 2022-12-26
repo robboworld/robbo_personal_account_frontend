@@ -4,11 +4,11 @@ import { useQuery } from "@apollo/client"
 
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
-import { robboUnitGQL } from "@/graphQL/query"
+import { robboUnitQuerysGQL } from "@/graphQL/query"
 
 export default ({ unitAdminId }) => {
 
-    const { data, loading } = useQuery(robboUnitGQL.GET_ROBBO_UNITS_BY_UNIT_ADMIN_ID, {
+    const { data, loading } = useQuery(robboUnitQuerysGQL.GET_ROBBO_UNITS_BY_UNIT_ADMIN_ID, {
         variables: { unitAdminId: unitAdminId },
         notifyOnNetworkStatusChange: true,
     })
