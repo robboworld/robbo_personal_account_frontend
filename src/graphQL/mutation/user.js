@@ -53,7 +53,7 @@ export const userMutationsGQL = {
     `,
 
     UPDATE_STUDENT: gql`
-        mutation UpdateStudent($input: UpdateStudentInput!) {
+        mutation UpdateStudent($input: UpdateProfileInput!) {
             UpdateStudent(input: $input) {
                 ... on StudentHttp {
                     userHttp{
@@ -76,7 +76,7 @@ export const userMutationsGQL = {
     `,
 
     UPDATE_SUPER_ADMIN: gql`
-    mutation UpdateSuperAdmin($input: UpdateSuperAdminInput!) {
+    mutation UpdateSuperAdmin($input: UpdateProfileInput!) {
         UpdateSuperAdmin(input: $input) {
             ... on SuperAdminHttp {
                 userHttp{
@@ -99,7 +99,7 @@ export const userMutationsGQL = {
     `,
 
     UPDATE_TEACHER: gql`
-    mutation UpdateTeacher($input: UpdateTeacherInput!) {
+    mutation UpdateTeacher($input: UpdateProfileInput!) {
         UpdateTeacher(input: $input) {
             ... on TeacherHttp {
                 userHttp{
@@ -122,7 +122,7 @@ export const userMutationsGQL = {
     `,
 
     UPDATE_UNIT_ADMIN: gql`
-    mutation UpdateUnitAdmin($input: UpdateUnitAdminInput!) {
+    mutation UpdateUnitAdmin($input: UpdateProfileInput!) {
         UpdateUnitAdmin(input: $input) {
             ... on UnitAdminHttp {
                 userHttp{
@@ -145,7 +145,7 @@ export const userMutationsGQL = {
     `,
 
     UPDATE_FREE_LISTENER: gql`
-    mutation UpdateStudent($input: UpdateStudentInput!) {
+    mutation UpdateStudent($input: UpdateProfileInput!) {
         UpdateStudent(input: $input) {
             ... on StudentHttp {
                 userHttp{
@@ -168,7 +168,7 @@ export const userMutationsGQL = {
     `,
 
     UPDATE_PARENT: gql`
-    mutation UpdateParent($input: UpdateParentInput!) {
+    mutation UpdateParent($input: UpdateProfileInput!) {
         UpdateParent(input: $input) {
             ... on ParentHttp {
                 userHttp{
@@ -250,6 +250,8 @@ export const usersMutationGraphQL = {
     },
 
     updateProfile(input, role) {
+        console.log(input)
+        console.log(role)
         let gqlString = null
         switch (role) {
             case STUDENT:
@@ -273,7 +275,6 @@ export const usersMutationGraphQL = {
             default:
                 break
         }
-        console.log(gqlString)
         return graphQLClient.mutate(
             {
                 mutation: gqlString,

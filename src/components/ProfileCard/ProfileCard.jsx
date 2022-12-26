@@ -27,18 +27,16 @@ const ProfileCard = ({
                 name='normal_profile'
                 className='profile-form'
                 onFinish={({ email, nickname, middlename, firstname, lastname }) => {
-                    updateHandle({
-                        parentHttp: {
-                            userHttp: {
-                                id: profile.id,
-                                email,
-                                middlename,
-                                firstname,
-                                lastname,
-                                nickname,
-                            },
+                    updateHandle(
+                        {
+                            id: profile.id,
+                            email,
+                            middlename,
+                            firstname,
+                            lastname,
+                            nickname,
                         },
-                    }, profile.role)
+                        profile.role)
                 }}
                 {...layout}
                 form={form}

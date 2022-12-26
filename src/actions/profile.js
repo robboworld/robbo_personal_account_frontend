@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions'
-import { toast } from 'react-toastify'
 
 import { DELETE_PROFILE, GET_PROFILE_BY_ID, UPDATE_PROFILE } from '@/constants/sagas/profile'
 import {
@@ -51,14 +50,12 @@ export const deleteProfileFailed = createAction(DELETE_ACCOUNT_FAILED, err => {
 export const updateProfile = createAction(UPDATE_PROFILE, (profile, role) => ({ profile, role }))
 
 export const updateProfileSuccess = createAction(UPDATE_PROFILE_SUCCESS, response => {
-    toast.success('Профиль успешно обновлен!')
     return {
         response,
     }
 })
 
 export const updateProfileFailed = createAction(UPDATE_PROFILE_FAILED, err => {
-    toast.error('Ошибка при обновлении.')
     return {
         err,
     }
