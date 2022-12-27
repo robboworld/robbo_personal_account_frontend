@@ -22,7 +22,7 @@ export const profileMutationsGQL = {
 
 }
 
-export const profileMutationGraphQL = {
+export const profileMutationsGraphQL = {
     UpdateProfile(input, role) {
         let update = {}
         let refetchQueries = null

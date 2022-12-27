@@ -23,7 +23,10 @@ export const robboUnitQuerysGQL = {
         query GetAllRobboUnits($page: String!, $pageSize: String!){
             GetAllRobboUnits(page: $page, pageSize: $pageSize){
                 ... on RobboUnitHttpList {
-                    robboUnits {name}
+                    robboUnits {
+                        id
+                        name
+                    }
                 }
                 ... on Error {
                     message

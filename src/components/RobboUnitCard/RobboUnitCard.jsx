@@ -34,7 +34,7 @@ export default ({ robboUnitId }) => {
                         city: data.GetRobboUnitById.city,
                     }}
                     onFinish={({ name, city }) => {
-                        actions.updateRobboUnitRequest(token, { ...data.GetRobboUnitById, name, city })
+                        actions.updateRobboUnitRequest({ id: data.GetRobboUnitById.id, name, city })
                     }}
                 >
                     <Form.Item

@@ -3,10 +3,13 @@ import styled from "styled-components"
 import { Button, Space, Input, List } from "antd"
 import { useQuery } from "@apollo/client"
 
-import { useActions } from "@/helpers/useActions"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
-import { robboUnitQuerysGQL, robboUnitQuerysGraphQL } from "@/graphQL/query"
+import { useActions } from "@/helpers/useActions"
+import {
+    unitAdminQuerysGQL,
+    unitAdminQuerysGraphQL,
+} from "@/graphQL/query"
 import {
     setNewUnitAdminForRobboUnitRequest,
     deleteUnitAdminForRobboUnitRequest,
@@ -25,12 +28,12 @@ export default ({ robboUnitId }) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
     const SearchUnitAdmins = async value => {
-        const result = await robboUnitQuerysGraphQL.SearchUnitAdminByEmail(value, robboUnitId)
+        const result = await unitAdminQuerysGraphQL.SearchUnitAdminByEmail(value, robboUnitId)
         console.log(result)
         setSearchResult(result.data.SearchUnitAdminsByEmail.unitAdmins)
     }
 
-    const getUnitAdminsByRobboUnitIdResult = useQuery(robboUnitQuerysGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID, {
+    const getUnitAdminsByRobboUnitIdResult = useQuery(unitAdminQuerysGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID, {
         variables: { robboUnitId },
         notifyOnNetworkStatusChange: true,
     })

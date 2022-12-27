@@ -27,7 +27,7 @@ const RobboUnitStudentsTab = ({
     const [openAddChildren, setOpenAddChildren] = useState(false)
 
     const SearchStudents = async value => {
-        const result = await studentQuerysGraphQL.searchStudentsByEmail(value, "0")
+        const result = await studentQuerysGraphQL.SearchStudentsByEmail(value, "0")
         setSearchResult(result.data.SearchStudentsByEmail)
     }
 
