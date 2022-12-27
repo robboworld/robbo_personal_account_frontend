@@ -10,7 +10,7 @@ import {
     updateProfileFailed,
     updateProfileSuccess,
 } from '@/actions'
-import { usersMutationGraphQL } from '@/graphQL/mutation'
+import { profileMutationGraphQL } from '@/graphQL/mutation'
 
 function* getProfileByAccessTokenSaga({ payload }) {
     try {
@@ -26,7 +26,7 @@ function* getProfileByAccessTokenSaga({ payload }) {
 function* updateProfileSaga({ payload }) {
     try {
         const { profile, role } = payload
-        const response = yield call(usersMutationGraphQL.updateProfile, { input: profile }, role)
+        const response = yield call(profileMutationGraphQL.updateProfile, { input: profile }, role)
         console.log(response)
 
         yield put(updateProfileSuccess(response))

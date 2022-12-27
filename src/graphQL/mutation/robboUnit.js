@@ -31,7 +31,7 @@ export const robboUnitMutationsGQL = {
 }
 
 export const robboUnitMutationsGraphQL = {
-    createRobboUnit(input) {
+    CreateRobboUnit(input) {
         return graphQLClient.mutate(
             {
                 mutation: robboUnitMutationsGQL.CREATE_ROBBO_UNIT,
@@ -40,7 +40,7 @@ export const robboUnitMutationsGraphQL = {
         )
     },
 
-    deleteRobboUnit(robboUnitId) {
+    DeleteRobboUnit(robboUnitId) {
         return graphQLClient.mutate(
             {
                 mutation: robboUnitMutationsGQL.DELETE_ROBBO_UNIT,

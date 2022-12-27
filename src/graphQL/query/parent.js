@@ -68,7 +68,7 @@ export const parentQuerysGQL = {
 }
 
 export const parentQuerysGraphQL = {
-    getAllParents(page, pageSize) {
+    GetAllParents(page, pageSize) {
         return graphQLClient.query(
             {
                 query: parentQuerysGQL.GET_ALL_PARENTS,
@@ -77,7 +77,7 @@ export const parentQuerysGraphQL = {
         )
     },
 
-    getParentById(parentId) {
+    GetParentById(parentId) {
         return graphQLClient.query(
             {
                 query: parentQuerysGQL.GET_PARENT_BY_ID,
@@ -86,7 +86,7 @@ export const parentQuerysGraphQL = {
         )
     },
 
-    searchParentByEmail(email) {
+    SearchParentByEmail(email) {
         return graphQLClient.query(
             {
                 query: parentQuerysGQL.SEARCH_PARENT_BY_EMAIL,

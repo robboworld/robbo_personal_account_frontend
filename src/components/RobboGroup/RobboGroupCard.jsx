@@ -5,7 +5,7 @@ import { PropTypes } from 'prop-types'
 
 import { robboGroupGQL } from "@/graphQL"
 import Loader from "@/components/Loader"
-import { robboGroupMutationGQL } from "@/graphQL/mutation"
+import { robboGroupMutationsGQL } from "@/graphQL/mutation"
 
 const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     const layout = {
@@ -24,7 +24,7 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     })
 
     const [updateRobboGroup, updateMutation] = useMutation(
-        robboGroupMutationGQL.UPDATE_ROBBO_GROUP,
+        robboGroupMutationsGQL.UPDATE_ROBBO_GROUP,
         {
             refetchQueries: [
                 {

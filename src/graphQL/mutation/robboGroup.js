@@ -1,6 +1,8 @@
 import { gql } from "@apollo/client"
 
-export const robboGroupMutationGQL = {
+import { graphQLClient } from "@/graphQL"
+
+export const robboGroupMutationsGQL = {
     UPDATE_ROBBO_GROUP: gql`
         mutation  UpdateRobboGroup($input:  UpdateRobboGroup!) {
             UpdateRobboGroup(input: $input) {
@@ -15,4 +17,15 @@ export const robboGroupMutationGQL = {
             }
         }
     `,
+}
+
+export const robboGroupMutationsGraphQL = {
+    UpdateRobboGroup(input) {
+        return graphQLClient.mutate(
+            {
+                mutation: robboGroupMutationsGQL.UPDATE_ROBBO_GROUP,
+                variables: input,
+            },
+        )
+    },
 }

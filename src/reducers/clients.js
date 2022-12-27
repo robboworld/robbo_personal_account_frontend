@@ -12,7 +12,7 @@ import {
     deleteParentSuccess,
     deleteParentFailed,
     createChildrenRequest,
-    createChildreSuccess,
+    createChildrenSuccess,
     createChildrenFailed,
     deleteChildRequest,
     deleteChildSuccess,
@@ -80,7 +80,7 @@ export default handleActions({
     [createChildrenRequest](state) {
         return { ...state, childrenLoading: true }
     },
-    [createChildreSuccess](state, { payload }) {
+    [createChildrenSuccess](state, { payload }) {
         const { response, child } = payload
         return {
             ...state,

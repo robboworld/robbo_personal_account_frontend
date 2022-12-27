@@ -52,7 +52,7 @@ export const robboUnitQuerysGQL = {
 }
 
 export const robboUnitQuerysGraphQL = {
-    getRobboUnitById(id) {
+    GetRobboUnitById(id) {
         return graphQLClient.query(
             {
                 query: robboUnitQuerysGQL.GET_ROBBO_UNIT_BY_ID,
@@ -61,7 +61,7 @@ export const robboUnitQuerysGraphQL = {
         )
     },
 
-    getRobboUnitsByUnitAdminId(unitAdminId) {
+    GetRobboUnitsByUnitAdminId(unitAdminId) {
         return graphQLClient.query(
             {
                 query: robboUnitQuerysGQL.GET_ROBBO_UNITS_BY_UNIT_ADMIN_ID,
@@ -70,7 +70,7 @@ export const robboUnitQuerysGraphQL = {
         )
     },
 
-    getAllRobboUnits(page, pageSize) {
+    GetAllRobboUnits(page, pageSize) {
         return graphQLClient.query(
             {
                 query: robboUnitQuerysGQL.GET_ALL_ROBBO_UNITS,
