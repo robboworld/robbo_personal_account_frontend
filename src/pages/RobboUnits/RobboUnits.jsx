@@ -111,7 +111,7 @@ export default () => {
                                                         )}
                                                     />
                                                 )}
-                                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
+                                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(robboUnit.id, robboUnitIndex)}
                                             />
                                         )
                                     })

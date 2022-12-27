@@ -55,12 +55,12 @@ export default handleActions({
     [createRobboUnitRequest](state) {
         return { ...state, loading: true }
     },
-    [createRobboUnitSuccess](state, action) {
-        const { response, robboUnit } = action.payload
+    [createRobboUnitSuccess](state, { payload }) {
+        const { response } = payload
         return {
             ...state,
             loading: false,
-            robboUnits: [...state.robboUnits, { id: response.robboUnitId, ...robboUnit }],
+            robboUnits: [...state.robboUnits, { ...response }],
         }
     },
     [createRobboUnitFailed](state, action) {

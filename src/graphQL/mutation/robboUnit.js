@@ -19,6 +19,15 @@ export const robboUnitMutationsGQL = {
         }
         }
     `,
+
+    DELETE_ROBBO_UNIT: gql`
+        mutation DeleteRobboUnit($robboUnitId: String!){
+            DeleteRobboUnit(robboUnitId: $robboUnitId) {
+                __typename
+                robboUnitId
+            }
+        }
+    `,
 }
 
 export const robboUnitMutationsGraphQL = {
@@ -27,6 +36,15 @@ export const robboUnitMutationsGraphQL = {
             {
                 mutation: robboUnitMutationsGQL.CREATE_ROBBO_UNIT,
                 variables: input,
+            },
+        )
+    },
+
+    deleteRobboUnit(robboUnitId) {
+        return graphQLClient.mutate(
+            {
+                mutation: robboUnitMutationsGQL.DELETE_ROBBO_UNIT,
+                variables: robboUnitId,
             },
         )
     },

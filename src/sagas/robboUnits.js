@@ -60,13 +60,14 @@ function* getRobboUnitByIdSaga(action) {
     }
 }
 
-function* deleteRobboUnitSaga(action) {
+function* deleteRobboUnitSaga({ payload }) {
     try {
-        const { token, robboUnitId, robboUnitIndex } = action.payload
-        const response = yield call(robboUnitsAPI.deleteRobboUnit, token, robboUnitId)
+        const { robboUnitId, robboUnitIndex } = payload
+        console.log(robboUnitId)
+        const response = yield call(robboUnitMutationsGraphQL.deleteRobboUnit, { robboUnitId })
         console.log(response)
 
-        yield put(deleteRobboUnitSuccess(response.data, robboUnitIndex))
+        yield put(deleteRobboUnitSuccess(response.data.DeleteRobboUnit, robboUnitIndex))
     } catch (e) {
         yield put(deleteRobboUnitFailed(e))
     }
@@ -74,11 +75,11 @@ function* deleteRobboUnitSaga(action) {
 
 function* createRobboUnitSaga(action) {
     try {
-        const { token, robboUnit } = action.payload
+        const { robboUnit } = action.payload
         const response = yield call(robboUnitMutationsGraphQL.createRobboUnit, { input: robboUnit })
         console.log(response)
 
-        yield put(createRobboUnitSuccess(response.data, robboUnit))
+        yield put(createRobboUnitSuccess(response.data.CreateRobboUnit))
     } catch (e) {
         yield put(createRobboUnitFailed(e))
     }
