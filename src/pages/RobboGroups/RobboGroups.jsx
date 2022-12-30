@@ -31,7 +31,6 @@ import {
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const token = localStorage.getItem('token')
     const [openAddGroup, setOpenAddGroup] = useState(false)
     const actions = useActions({
         getRobboGroupsByRobboUnitIdRequest,
@@ -45,7 +44,7 @@ export default () => {
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             if (robboUnitId)
-                actions.getRobboGroupsByRobboUnitIdRequest(token, robboUnitId)
+                actions.getRobboGroupsByRobboUnitIdRequest(robboUnitId)
             else actions.getAllRobboGroupsRequest("1", "10") // Только для Super Admin
         return () => {
             actions.clearRobboGroupsPage()
@@ -113,7 +112,6 @@ export default () => {
                                                                 handleDelete={
                                                                     robboGroupIndex =>
                                                                         actions.deleteRobboGroupRequest(
-                                                                            token,
                                                                             robboUnitId,
                                                                             robboGroup.id,
                                                                             robboGroupIndex,

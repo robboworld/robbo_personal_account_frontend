@@ -3,9 +3,8 @@ import { useQuery, useMutation } from "@apollo/client"
 import { Button, Form, Input } from 'antd'
 import { PropTypes } from 'prop-types'
 
-import { robboGroupGQL } from "@/graphQL"
+import { robboGroupQuerysGQL, robboGroupMutationsGQL } from "@/graphQL"
 import Loader from "@/components/Loader"
-import { robboGroupMutationsGQL } from "@/graphQL/mutation"
 
 const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     const layout = {
@@ -18,7 +17,7 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     }
     const [form] = Form.useForm()
 
-    const { data, loading } = useQuery(robboGroupGQL.GET_ROBBO_GROUP_BY_ID, {
+    const { data, loading } = useQuery(robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID, {
         variables: { id: robboGroupId },
         notifyOnNetworkStatusChange: true,
     })
@@ -28,7 +27,7 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
         {
             refetchQueries: [
                 {
-                    query: robboGroupGQL.GET_ROBBO_GROUP_BY_ID,
+                    query: robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID,
                     variables: { id: robboGroupId },
                 },
             ],
