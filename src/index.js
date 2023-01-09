@@ -8,7 +8,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { ConfigProvider } from 'antd'
-import enGB from 'antd/locale/ru_RU'
+// import enGB from 'antd/locale/ru_RU'
 
 import ErrorBoundary from '@/pages/ErrorBoundary'
 import Application from '@/app'
@@ -25,14 +25,14 @@ root.render(
   <ApolloProvider client={graphQLClient}>
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <ConfigProvider locale={enGB}>
-          <BrowserRouter>
-            <ErrorBoundary>
-              <Application />
-            </ErrorBoundary>
-            <GlobalStyles />
-          </BrowserRouter>
-        </ConfigProvider>
+        {/* <ConfigProvider locale={enGB}> */}
+        <BrowserRouter>
+          <ErrorBoundary>
+            <Application />
+          </ErrorBoundary>
+          <GlobalStyles />
+        </BrowserRouter>
+        {/* </ConfigProvider> */}
       </ThemeProvider>
     </Provider>
   </ApolloProvider>

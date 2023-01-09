@@ -56,7 +56,7 @@ const RobboGroupStudentsTab = ({
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
                                 handleClick={() => openProfileStudent(userHttp.id)}
-                                handleDelete={childIndex => actions.addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
+                                handleDelete={childIndex => actions.addStudentToRobboGroupRequest({ id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
                             />
                         )}
                     />
@@ -96,7 +96,7 @@ const RobboGroupStudentsTab = ({
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => actions.addStudentToRobboGroupRequest(token, { id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
+                                handleClick={() => actions.addStudentToRobboGroupRequest({ id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
                                 handleDelete={false}
                             />
                         )}

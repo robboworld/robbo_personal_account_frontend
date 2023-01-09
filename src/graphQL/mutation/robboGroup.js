@@ -57,7 +57,7 @@ export const robboGroupMutationsGraphQL = {
         return graphQLClient.mutate(
             {
                 mutation: robboGroupMutationsGQL.CREATE_ROBBO_GROUP,
-                variables: input,
+                variables: { input },
             },
         )
     },
@@ -75,7 +75,7 @@ export const robboGroupMutationsGraphQL = {
         return graphQLClient.mutate(
             {
                 mutation: robboGroupMutationsGQL.DELETE_ROBBO_GROUP,
-                variables: robboGroupId,
+                variables: { robboGroupId },
             },
         )
     },

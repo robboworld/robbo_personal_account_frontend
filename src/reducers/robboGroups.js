@@ -36,12 +36,12 @@ export default handleActions({
     [createRobboGroupRequest](state) {
         return { ...state, loading: true }
     },
-    [createRobboGroupSuccess](state, action) {
-        const { response, robboGroup } = action.payload
+    [createRobboGroupSuccess](state, { payload }) {
+        const { response } = payload
         return {
             ...state,
             loading: false,
-            robboGroups: [...state.robboGroups, { id: response.robboGroupId, ...robboGroup }],
+            robboGroups: [...state.robboGroups, ...response],
         }
     },
     [createRobboGroupFailed](state) {

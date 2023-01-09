@@ -53,7 +53,7 @@ function* getRobboGroupByIdSaga(action) {
 function* deleteRobboGroupSaga({ payload }) {
     try {
         const { robboUnitId, robboGroupId, robboGroupIndex } = payload
-        const response = yield call(robboGroupMutationsGraphQL.DeleteRobboGroup, robboUnitId, robboGroupId)
+        const response = yield call(robboGroupMutationsGraphQL.DeleteRobboGroup, robboGroupId)
         console.log(response)
 
         yield put(deleteRobboGroupSuccess(response.data.DeleteRobboGroup, robboGroupIndex))
@@ -67,7 +67,8 @@ function* deleteRobboGroupSaga({ payload }) {
 function* createRobboGroupSaga({ payload }) {
     try {
         const { robboUnitId, robboGroup } = payload
-        const response = yield call(robboGroupMutationsGraphQL.CreateRobboGroup, { id: robboUnitId, ...robboGroup })
+        console.log(robboUnitId, robboGroup)
+        const response = yield call(robboGroupMutationsGraphQL.CreateRobboGroup, { robboUnitId: String(robboUnitId), ...robboGroup })
         console.log(response)
 
         yield put(createRobboGroupSuccess(response.data.CreateRobboGroup))
