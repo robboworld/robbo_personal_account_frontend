@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Menu } from 'antd'
+import { Menu, Select } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -61,12 +61,23 @@ export default () => {
 
     }
 
+
+    const languages = [
+        { value: "EN", label: "English" },
+        { value: "RU", label: "Русский" },
+    ]
+
     return (
-        <Menu
-            theme='light'
-            mode='inline'
-            onClick={onMenuClick}
-            items={SideBarData}
-        />
+        <React.Fragment>
+            <Menu
+                theme='light'
+                mode='inline'
+                onClick={onMenuClick}
+                items={SideBarData}
+            />
+            <Select
+                options={languages} defaultValue='RU'
+            />
+        </React.Fragment>
     )
 }
