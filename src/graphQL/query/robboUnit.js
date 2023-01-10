@@ -52,6 +52,25 @@ export const robboUnitQuerysGQL = {
             }
         }
     `,
+
+    GET_ROBBO_UNITS_BY_ACCESS_TOKEN: gql`
+        query GetRobboUnitsByAccessToken($page: String!, $pageSize: String!){
+            GetRobboUnitsByAccessToken(page: $page, pageSize: $pageSize){
+                ... on RobboUnitHttpList {
+                    robboUnits{
+                        id
+                        name
+                        city
+                        lastModified
+                    }
+                    countRows
+                }
+                ... on Error {
+                    message
+                }
+            }
+        }
+    `,
 }
 
 export const robboUnitQuerysGraphQL = {
@@ -77,6 +96,15 @@ export const robboUnitQuerysGraphQL = {
         return graphQLClient.query(
             {
                 query: robboUnitQuerysGQL.GET_ALL_ROBBO_UNITS,
+                variables: { page: "1", pageSize: "10" },
+            },
+        )
+    },
+
+    GetRobboUnitsByAccessToken(page, pageSize) {
+        return graphQLClient.query(
+            {
+                query: robboUnitQuerysGQL.GET_ROBBO_UNITS_BY_ACCESS_TOKEN,
                 variables: { page: "1", pageSize: "10" },
             },
         )

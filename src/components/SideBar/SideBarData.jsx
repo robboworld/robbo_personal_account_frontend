@@ -330,24 +330,30 @@ export const SidebarDataUnitAdmin = [
   },
   {
     key: '6',
+    label: 'Robbo Groups',
+    pathname: ROBBO_GROUPS_ROUTE,
+    icon: <RobotOutlined />,
+  },
+  {
+    key: '7',
     label: 'Ученики',
     pathname: '/program',
     icon: <FaIcons.FaTasks />,
   },
   {
-    key: '7',
+    key: '8',
     label: 'Финансы',
     pathname: '/payments',
     icon: <CreditCardOutlined />,
   },
   {
-    key: '8',
+    key: '9',
     label: 'Задачи',
     pathname: '/informer',
     icon: <FaIcons.FaInfo />,
   },
   {
-    key: '9',
+    key: '10',
     label: 'Выйти',
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,

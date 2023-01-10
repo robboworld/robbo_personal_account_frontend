@@ -33,7 +33,7 @@ const Text = styled.p`
 `
 
 AddStudentGroup.propTypes = {
-    robboUnitId: PropTypes.string.isRequired,
+    robboUnitId: PropTypes.string,
 }
 
 export default AddStudentGroup

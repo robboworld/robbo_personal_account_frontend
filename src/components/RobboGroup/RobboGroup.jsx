@@ -50,7 +50,7 @@ const RobboGroup = ({ robboUnitId, robboGroupId, disableСhanges }) => {
 }
 
 RobboGroup.propTypes = {
-    robboUnitId: PropTypes.string.isRequired,
+    robboUnitId: PropTypes.string,
     robboGroupId: PropTypes.string.isRequired,
     disableСhanges: PropTypes.bool,
 }

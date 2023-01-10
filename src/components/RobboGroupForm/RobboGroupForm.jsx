@@ -4,7 +4,8 @@ import { Input, Button } from '@/components/UI'
 import Flex from '@/components/Flex'
 
 export default memo(({
-    margin, handleSubmit,
+    margin,
+    handleSubmit,
     buttonOption,
 }) => {
 

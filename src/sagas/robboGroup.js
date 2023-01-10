@@ -31,6 +31,9 @@ import {
     searchRobboGroupsByTitleRequest,
     searchRobboGroupsByTitleSuccess,
     getAllRobboGroupsRequest,
+    getAllRobboGroupsForUnitAdminRequest,
+    getAllRobboGroupsForUnitAdminSuccess,
+    getAllRobboGroupsForUnitAdminFailed,
 } from '@/actions'
 import {
     robboGroupMutationsGraphQL,
@@ -171,6 +174,19 @@ function* getAllRobboGroupsSaga({ payload }) {
     }
 }
 
+function* getAllRobboGroupsForUnitAdminSaga({ payload }) {
+    try {
+        const { page, pageSize } = payload
+        const response = yield call(robboGroupsQuerysGraphQL.GetAllRobboGroupsForUnitAdmin, page, pageSize)
+        console.log(response)
+
+        yield put(getAllRobboGroupsForUnitAdminSuccess(response.data.GetAllRobboGroupsForUnitAdmin.robboGroups))
+    } catch (e) {
+        yield put(getAllRobboGroupsForUnitAdminFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
+    }
+}
+
 export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupByIdRequest, getRobboGroupByIdSaga)
     yield takeLatest(deleteRobboGroupRequest, deleteRobboGroupSaga)
@@ -182,4 +198,5 @@ export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupsByTeacherId, getRobboGroupsByTeacherIdSaga)
     yield takeLatest(getRobboGroupsByAccessTokenRequest, getRobboGroupsByAccessTokenSaga)
     yield takeLatest(getAllRobboGroupsRequest, getAllRobboGroupsSaga)
+    yield takeLatest(getAllRobboGroupsForUnitAdminRequest, getAllRobboGroupsForUnitAdminSaga)
 }

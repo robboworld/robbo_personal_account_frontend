@@ -24,6 +24,9 @@ import {
     clearRobboGroupsPage,
     getAllRobboGroupsRequest,
     getRobboGroupsByAccessTokenRequest,
+    getAllRobboGroupsForUnitAdminRequest,
+    getAllRobboGroupsForUnitAdminSuccess,
+    getAllRobboGroupsForUnitAdminFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -108,6 +111,15 @@ export default handleActions({
         return { ...state, loading: false, robboGroups: action.payload.response }
     },
     [getAllRobboGroupsFailed](state, action) {
+        return { ...state, loading: false }
+    },
+    [getAllRobboGroupsForUnitAdminRequest](state) {
+        return { ...state, loading: true }
+    },
+    [getAllRobboGroupsForUnitAdminSuccess](state, action) {
+        return { ...state, loading: false, robboGroups: action.payload.response }
+    },
+    [getAllRobboGroupsForUnitAdminFailed](state, action) {
         return { ...state, loading: false }
     },
     [clearRobboGroupsPage](state) {
