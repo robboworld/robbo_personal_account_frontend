@@ -1,6 +1,6 @@
 import { call, takeLatest, put } from 'redux-saga/effects'
+import { notification } from 'antd'
 
-import { robboUnitsAPI } from '@/api'
 import { robboUnitMutationsGraphQL, robboUnitQuerysGraphQL } from '@/graphQL'
 import {
     getRobboUnitsFailed,
@@ -27,72 +27,81 @@ import {
 function* getAllRobboUnitsSaga({ payload }) {
     try {
         const { page, pageSize } = payload
-        const response = yield call(robboUnitQuerysGraphQL.getAllRobboUnits, "1", "10")
+        const response = yield call(robboUnitQuerysGraphQL.GetAllRobboUnits, "1", "10")
         console.log(response)
 
         yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
     } catch (e) {
         yield put(getRobboUnitsFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
-function* getRobboUnitsByUnitAdminIdSaga(action) {
+function* getRobboUnitsByUnitAdminIdSaga({ payload }) {
     try {
-        const { token } = action.payload
-        const response = yield call(robboUnitsAPI.getRobboUnitsByUnitAdminId, token)
+        const { page, pageSize } = payload
+        const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitsByUnitAdminId, page, pageSize)
         console.log(response)
 
         yield put(getRobboUnitsByUnitAdminIdSuccess(response.data))
     } catch (e) {
         yield put(getRobboUnitsByUnitAdminIdFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
 function* getRobboUnitByIdSaga(action) {
     try {
-        const { token, robboUnitId } = action.payload
-        const response = yield call(robboUnitsAPI.getRobboUnitById, token, robboUnitId)
+        const { robboUnitId } = action.payload
+        const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitById, { robboUnitId })
         console.log(response)
 
         yield put(getRobboUnitByIdSuccess(response.data))
     } catch (e) {
         yield put(getRobboUnitByIdFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
-function* deleteRobboUnitSaga(action) {
+function* deleteRobboUnitSaga({ payload }) {
     try {
-        const { token, robboUnitId, robboUnitIndex } = action.payload
-        const response = yield call(robboUnitsAPI.deleteRobboUnit, token, robboUnitId)
+        const { robboUnitId, robboUnitIndex } = payload
+        const response = yield call(robboUnitMutationsGraphQL.DeleteRobboUnit, { robboUnitId })
         console.log(response)
 
-        yield put(deleteRobboUnitSuccess(response.data, robboUnitIndex))
+        yield put(deleteRobboUnitSuccess(response.data.DeleteRobboUnit, robboUnitIndex))
+        notification.success({ message: '', description: 'Unit успешно удален!' })
     } catch (e) {
         yield put(deleteRobboUnitFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
 function* createRobboUnitSaga(action) {
     try {
-        const { token, robboUnit } = action.payload
-        const response = yield call(robboUnitMutationsGraphQL.createRobboUnit, { input: robboUnit })
+        const { robboUnit } = action.payload
+        const response = yield call(robboUnitMutationsGraphQL.CreateRobboUnit, { input: robboUnit })
         console.log(response)
 
-        yield put(createRobboUnitSuccess(response.data, robboUnit))
+        yield put(createRobboUnitSuccess(response.data.CreateRobboUnit))
+        notification.success({ message: '', description: 'Unit успешно создан!' })
     } catch (e) {
         yield put(createRobboUnitFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
-function* updateRobboUnitSaga(action) {
+function* updateRobboUnitSaga({ payload }) {
     try {
-        const { token, robboUnit } = action.payload
-        const response = yield call(robboUnitsAPI.updateRobboUnit, token, robboUnit)
+        const { robboUnit } = payload
+        const response = yield call(robboUnitMutationsGraphQL.UpdateRobboUnit, { input: robboUnit })
         console.log(response)
 
-        yield put(updateRobboUnitSuccess(response))
+        yield put(updateRobboUnitSuccess(response.data.UpdateRobboUnit))
+        notification.success({ message: '', description: 'Unit успешно обновлен!' })
     } catch (e) {
         yield put(updateRobboUnitFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 

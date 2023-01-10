@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
-import { Modal, Button } from 'antd'
+import { Navigate, useSearchParams } from 'react-router-dom'
+import { Modal, Button, Pagination } from 'antd'
 
 import { ListParents, WelcomeText } from './components'
 
@@ -30,14 +30,16 @@ import {
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
     const actions = useActions({ getClientsRequest, deleteParentRequest, clearClientsState }, [])
+    const [searchParams, setSearchParams] = useSearchParams()
+    const currentPage = searchParams.get('page') || '1'
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getClientsRequest("1", "10")
+            actions.getClientsRequest(currentPage, "10")
         return () => actions.clearClientsState()
-    }, [loginLoading])
+    }, [loginLoading, currentPage])
 
-    const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
+    const { parents, countRows, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
     const [openAddClients, setOpenAddClients] = useState(false)
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
@@ -52,7 +54,7 @@ export default () => {
                 loginLoading ? <Loader />
                     : (
 
-                        <Flex width='100%' height='100%'
+                        <Flex width='100%' height='95%'
                             direction='column'
                         >
                             <WelcomeText>Клиенты</WelcomeText>
@@ -102,6 +104,13 @@ export default () => {
                                             })
                                         )}
                             </ListParents>
+                            <Pagination
+                                defaultCurrent={1} defaultPageSize={10}
+                                total={countRows} current={+currentPage}
+                                onChange={(page, pageSize) => {
+                                    setSearchParams({ page })
+                                }}
+                            />
                         </Flex>
                     )
             }

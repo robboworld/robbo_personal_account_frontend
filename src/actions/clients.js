@@ -49,7 +49,7 @@ export const deleteParentSuccess = createAction(DELETE_PARENT_SUCCESS, (response
 export const deleteParentFailed = createAction(DELETE_PARENT_FAILED, err => ({ err }))
 
 export const createChildrenRequest = createAction(CREATE_CHILDREN_REQUEST, (child, parentId) => ({ child, parentId }))
-export const createChildreSuccess = createAction(CREATE_CHILDREN_SUCCESS, (response, child) => ({ response, child }))
+export const createChildrenSuccess = createAction(CREATE_CHILDREN_SUCCESS, (response, child) => ({ response, child }))
 export const createChildrenFailed = createAction(CREATE_CHILDREN_FAILED, err => ({ err }))
 
 export const deleteChildRequest = createAction(DELETE_CHILD_REQUEST, (childId, childIndex) => ({ childId, childIndex }))

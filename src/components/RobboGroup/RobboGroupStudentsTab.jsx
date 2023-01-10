@@ -8,7 +8,7 @@ import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
-import { studentQuerysGQL } from "@/graphQL/query"
+import { studentQuerysGQL, studentQuerysGraphQL } from "@/graphQL/query"
 import { PEEK_PROFILE_PAGE } from "@/constants"
 import { addStudentToRobboGroupRequest } from '@/actions'
 
@@ -27,7 +27,7 @@ const RobboGroupStudentsTab = ({
     const [openAddChildren, setOpenAddChildren] = useState(false)
 
     const SearchStudents = async value => {
-        const result = await studentQuerysGQL.searchStudentsByEmail(value, "0")
+        const result = await studentQuerysGraphQL.SearchStudentsByEmail(value, "0")
         setSearchResult(result.data.SearchStudentsByEmail.students)
     }
 
@@ -56,7 +56,7 @@ const RobboGroupStudentsTab = ({
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
                                 handleClick={() => openProfileStudent(userHttp.id)}
-                                handleDelete={childIndex => actions.addStudentToRobboGroupRequest(token, { id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
+                                handleDelete={childIndex => actions.addStudentToRobboGroupRequest({ id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
                             />
                         )}
                     />
@@ -96,7 +96,7 @@ const RobboGroupStudentsTab = ({
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => actions.addStudentToRobboGroupRequest(token, { id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
+                                handleClick={() => actions.addStudentToRobboGroupRequest({ id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
                                 handleDelete={false}
                             />
                         )}

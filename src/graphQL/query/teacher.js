@@ -60,7 +60,7 @@ export const teacherQuerysGQL = {
 }
 
 export const teacherQuerysGraphQL = {
-    getAllTeachers() {
+    GetAllTeachers() {
         return graphQLClient.query(
             {
                 query: teacherQuerysGQL.GET_ALL_TEACHERS,
@@ -68,7 +68,7 @@ export const teacherQuerysGraphQL = {
         )
     },
 
-    getTeacherById(teacherId) {
+    GetTeacherById(teacherId) {
         return graphQLClient.query(
             {
                 query: teacherQuerysGQL.GET_TEACHER_BY_ID,
@@ -77,7 +77,7 @@ export const teacherQuerysGraphQL = {
         )
     },
 
-    getTeachersByRobboGroupId(robboGroupId) {
+    GetTeachersByRobboGroupId(robboGroupId) {
         return graphQLClient.query(
             {
                 query: teacherQuerysGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID,

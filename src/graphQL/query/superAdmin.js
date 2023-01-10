@@ -27,7 +27,7 @@ export const superAdminQuerysGQL = {
 }
 
 export const superAdminQuerysGraphQL = {
-    getSuperAdminById(superAdminId) {
+    GetSuperAdminById(superAdminId) {
         return graphQLClient.query(
             {
                 query: superAdminQuerysGQL.GET_SUPER_ADMIN_BY_ID,

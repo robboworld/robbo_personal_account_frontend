@@ -11,20 +11,20 @@ import RobboGroup from "@/components/RobboGroup"
 import { useActions } from "@/helpers"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
 import {
-    getRobboGroupsByAccessToken,
+    getRobboGroupsByAccessTokenRequest,
     getRobboGroupsByTeacherId,
     clearRobboGroupsPage,
 } from '@/actions'
 
 
 export default ({ teacherId }) => {
-    const actions = useActions({ getRobboGroupsByAccessToken, getRobboGroupsByTeacherId, clearRobboGroupsPage }, [])
+    const actions = useActions({ getRobboGroupsByAccessTokenRequest, getRobboGroupsByTeacherId, clearRobboGroupsPage }, [])
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
     useEffect(() => {
         if (teacherId) {
             actions.getRobboGroupsByTeacherId(teacherId)
         } else {
-            actions.getRobboGroupsByAccessToken()
+            actions.getRobboGroupsByAccessTokenRequest("1", "10")
         }
         return () => {
             actions.clearRobboGroupsPage()

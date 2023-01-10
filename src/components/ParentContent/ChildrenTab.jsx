@@ -23,7 +23,7 @@ const ChildrenTab = ({ clientId }) => {
     })
 
     const SearchStudents = async value => {
-        const result = await studentQuerysGraphQL.searchStudentsByEmail(value, clientId)
+        const result = await studentQuerysGraphQL.SearchStudentsByEmail(value, clientId)
         setSearchResult(result.data.SearchStudentsByEmail.students)
     }
 

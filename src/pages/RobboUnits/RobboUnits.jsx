@@ -33,18 +33,22 @@ export default () => {
 
     const history = useNavigate()
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
-    const token = localStorage.getItem('token')
-    const actions = useActions({ getRobboUnitsRequest, getRobboUnitsByUnitAdminIdRequest, deleteRobboUnitRequest, clearRobboUnitsPage }, [])
+    const actions = useActions({
+        getRobboUnitsRequest,
+        getRobboUnitsByUnitAdminIdRequest,
+        deleteRobboUnitRequest,
+        clearRobboUnitsPage,
+    }, [])
     const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             switch (userRole) {
                 case UNIT_ADMIN:
-                    actions.getRobboUnitsByUnitAdminIdRequest(token)
+                    actions.getRobboUnitsByUnitAdminIdRequest("page", "pageSize")
                     break
                 case SUPER_ADMIN:
-                    actions.getRobboUnitsRequest(token)
+                    actions.getRobboUnitsRequest("page", "pageSize")
                     break
             }
 
@@ -111,7 +115,7 @@ export default () => {
                                                         )}
                                                     />
                                                 )}
-                                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(token, robboUnit.id, robboUnitIndex)}
+                                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(robboUnit.id, robboUnitIndex)}
                                             />
                                         )
                                     })

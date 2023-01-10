@@ -33,7 +33,7 @@ export const projectPageGQL = {
 }
 
 export const projectPageQueryGraphQL = {
-    getProjectPagesByAccessToken() {
+    GetProjectPagesByAccessToken() {
         return graphQLClient.query(
             {
                 query: projectPageGQL.GET_PROJECT_PAGE_BY_STUDENT_ID,
@@ -41,7 +41,7 @@ export const projectPageQueryGraphQL = {
         )
     },
 
-    getProjectPageById(projectPageID) {
+    GetProjectPageById(projectPageID) {
         return graphQLClient.query(
             {
                 query: projectPageGQL.GET_PROJECT_PAGE_BY_ID,

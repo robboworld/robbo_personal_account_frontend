@@ -6,8 +6,11 @@ import { useQuery, useApolloClient } from "@apollo/client"
 
 import ListItem from '@/components/ListItem'
 import { useActions } from '@/helpers'
-import { robboGroupGQL } from '@/graphQL'
-import { setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest } from '@/actions'
+import { robboGroupQuerysGQL } from '@/graphQL'
+import {
+    setTeacherForRobboGroupRequest,
+    deleteTeacherForRobboGroupRequest,
+} from '@/actions'
 
 const { Search } = Input
 
@@ -19,14 +22,14 @@ const GroupsTab = ({ teacherId }) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchGroups, setSearchResult] = useState([])
 
-    const getRobboGroupsResult = useQuery(robboGroupGQL.GET_ROBBO_GROUPS_BY_TEACHER_ID, {
+    const getRobboGroupsResult = useQuery(robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_TEACHER_ID, {
         variables: { teacherId },
         notifyOnNetworkStatusChange: true,
     })
 
     const SearchGroups = async value => {
         const result = await client.query({
-            query: robboGroupGQL.SEARCH_GROUPS_BY_NAME,
+            query: robboGroupQuerysGQL.SEARCH_GROUPS_BY_NAME,
             variables: { name: value },
         })
         setSearchResult(result.data.SearchGroupsByName)

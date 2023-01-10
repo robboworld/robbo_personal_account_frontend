@@ -62,11 +62,13 @@ export default () => {
     }
 
     return (
-        <Menu
-            theme='light'
-            mode='inline'
-            onClick={onMenuClick}
-            items={SideBarData}
-        />
+        <React.Fragment>
+            <Menu
+                theme='light'
+                mode='inline'
+                onClick={onMenuClick}
+                items={SideBarData}
+            />
+        </React.Fragment>
     )
 }

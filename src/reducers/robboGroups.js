@@ -14,7 +14,6 @@ import {
     searchRobboGroupsByTitleRequest,
     searchRobboGroupsByTitleFailed,
     searchRobboGroupsByTitleSuccess,
-    getRobboGroupsByAccessToken,
     getRobboGroupsByAccessTokenSuccess,
     getRobboGroupsByAccessTokenFailed,
     getRobboGroupsByTeacherId,
@@ -24,6 +23,7 @@ import {
     getAllRobboGroupsFailed,
     clearRobboGroupsPage,
     getAllRobboGroupsRequest,
+    getRobboGroupsByAccessTokenRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -36,12 +36,12 @@ export default handleActions({
     [createRobboGroupRequest](state) {
         return { ...state, loading: true }
     },
-    [createRobboGroupSuccess](state, action) {
-        const { response, robboGroup } = action.payload
+    [createRobboGroupSuccess](state, { payload }) {
+        const { response } = payload
         return {
             ...state,
             loading: false,
-            robboGroups: [...state.robboGroups, { id: response.robboGroupId, ...robboGroup }],
+            robboGroups: [...state.robboGroups, ...response],
         }
     },
     [createRobboGroupFailed](state) {
@@ -52,7 +52,6 @@ export default handleActions({
     },
     [getRobboGroupsByRobboUnitIdSuccess](state, action) {
         const { response } = action.payload
-        console.log(response)
         return {
             ...state,
             loading: false,
@@ -84,7 +83,7 @@ export default handleActions({
     [searchRobboGroupsByTitleFailed](state) {
         return { ...state, loading: false }
     },
-    [getRobboGroupsByAccessToken](state) {
+    [getRobboGroupsByAccessTokenRequest](state) {
         return { ...state, loading: true }
     },
     [getRobboGroupsByAccessTokenSuccess](state, action) {

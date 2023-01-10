@@ -106,7 +106,7 @@ export const studentQuerysGQL = {
 }
 
 export const studentQuerysGraphQL = {
-    getStudentsByParentId(parentId) {
+    GetStudentsByParentId(parentId) {
         return graphQLClient.query(
             {
                 query: studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID,
@@ -115,7 +115,7 @@ export const studentQuerysGraphQL = {
         )
     },
 
-    getStudentById(studentId) {
+    GetStudentById(studentId) {
         return graphQLClient.query(
             {
                 query: studentQuerysGQL.GET_STUDENT_BY_ID,
@@ -124,7 +124,7 @@ export const studentQuerysGraphQL = {
         )
     },
 
-    searchStudentsByEmail(email, parentId) {
+    SearchStudentsByEmail(email, parentId) {
         return graphQLClient.query(
             {
                 query: studentQuerysGQL.SEARCH_STUDENTS_BY_EMAIL,
@@ -136,7 +136,7 @@ export const studentQuerysGraphQL = {
         )
     },
 
-    getStudentsByRobboGroupId(robboGroupId) {
+    GetStudentsByRobboGroupId(robboGroupId) {
         return graphQLClient.query(
             {
                 query: studentQuerysGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID,
@@ -145,7 +145,7 @@ export const studentQuerysGraphQL = {
         )
     },
 
-    getStudentsByRobboUnitId(robboUnitId) {
+    GetStudentsByRobboUnitId(robboUnitId) {
         return graphQLClient.query(
             {
                 query: studentQuerysGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID,

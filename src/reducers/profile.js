@@ -1,9 +1,13 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    clearProfileState, deleteProfile, deleteProfileFailed,
-    deleteProfileSuccess, getProfileById, getProfileByIdFailed,
-    getProfileByIdSuccess, updateProfile, updateProfileFailed, updateProfileSuccess,
+    clearProfileState,
+    getProfileById,
+    getProfileByIdFailed,
+    getProfileByIdSuccess,
+    updateProfile,
+    updateProfileFailed,
+    updateProfileSuccess,
 } from '@/actions/profile'
 
 const INITIAL_STATE = {
