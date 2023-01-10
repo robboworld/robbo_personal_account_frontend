@@ -43,7 +43,7 @@ function* getClientsSaga({ payload }) {
         const { page, pageSize } = payload
         const response = yield call(parentQuerysGraphQL.GetAllParents, page, pageSize)
         console.log(response)
-        yield put(getClientsSuccess(response.data.GetAllParents.parents))
+        yield put(getClientsSuccess(response.data.GetAllParents))
     } catch (e) {
         yield put(getClientsFailed(e.message))
         notification.error({ message: 'Ошибка', description: e.message })

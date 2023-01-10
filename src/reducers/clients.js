@@ -40,6 +40,7 @@ const INITIAL_STATE = {
     clientLoading: true,
     clientsLoading: true,
     childrenLoading: true,
+    countRows: 0,
 }
 
 export default handleActions({
@@ -47,7 +48,7 @@ export default handleActions({
         return { ...state, clientsLoading: true }
     },
     [getClientsSuccess](state, { payload }) {
-        return { ...state, clientsLoading: false, parents: payload.response }
+        return { ...state, clientsLoading: false, parents: payload.response.parents, countRows: payload.response.countRows }
     },
     [getClientsFailed](state, action) {
         return { ...state, clientsLoading: false }

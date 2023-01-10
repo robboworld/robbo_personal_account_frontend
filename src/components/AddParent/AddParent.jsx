@@ -13,7 +13,7 @@ export default memo(() => {
             align='center'
         >
             <SignUpForm
-                margin='0 0 10px 0'
+                margin='0 0 0 0'
                 handleSubmit={parent => actions.createParentRequest(parent)}
                 buttonOption={{
                     content: 'Добавить',

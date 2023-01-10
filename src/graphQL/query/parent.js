@@ -16,6 +16,7 @@ export const parentQuerysGQL = {
                             middlename
                         }
                     }
+                    countRows
                 }
                 ... on Error{
                     message
