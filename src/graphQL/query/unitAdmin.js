@@ -7,7 +7,7 @@ export const unitAdminQuerysGQL = {
     query GetUnitAdminById($unitAdminId: String!){
         GetUnitAdminById(unitAdminId: $unitAdminId){
             ... on UnitAdminHttp{
-                    userHttp {
+                userHttp {
                     id
                     lastname
                     firstname
@@ -26,14 +26,22 @@ export const unitAdminQuerysGQL = {
     `,
 
     GET_ALL_UNIT_ADMINS: gql`
-        query{
-            GetAllUnitAdmins{
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
+        query GetAllUnitAdmins($page: String!, $pageSize: String!){
+            GetAllUnitAdmins(page: $page, pageSize: $pageSize){
+                ... on UnitAdminHttpList{
+                unitAdmins {
+                    userHttp{
+                        id
+                        lastname
+                        firstname
+                        middlename
+                    }
                 }
+                countRows
+            }
+            ... on Error{
+                message
+            }
         }
     }`,
 
@@ -84,6 +92,15 @@ export const unitAdminQuerysGraphQL = {
             {
                 query: unitAdminQuerysGQL.GET_UNIT_ADMIN_BY_ID,
                 variables: unitAdminId,
+            },
+        )
+    },
+
+    GetAllUnitAdmins(page, pageSize) {
+        return graphQLClient.query(
+            {
+                query: unitAdminQuerysGQL.GET_ALL_UNIT_ADMINS,
+                variables: { page: "1", pageSize: "10" },
             },
         )
     },

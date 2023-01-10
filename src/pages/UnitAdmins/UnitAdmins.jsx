@@ -1,35 +1,32 @@
 import React, { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
-import { Modal } from "antd"
+import { Modal, Button } from "antd"
 
 import { WelcomeText } from "./components"
 
 import PageLayout from '@/components/PageLayout'
-import { DragResize, Button } from '@/components/UI'
+import { DragResize } from '@/components/UI'
 import ListItem from '@/components/ListItem'
 import Flex from '@/components/Flex'
 import AddUnitAdmin from "@/components/AddUnitAdmin"
-
+import UnitAdminContent from "@/components/UnitAdminContent"
 import { getUnitAdminsState } from "@/reducers/unitAdmins"
 import Loader from "@/components/Loader"
 import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
-import UnitAdminContent from "@/components/UnitAdminContent"
 import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from "@/constants"
 import { deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState } from '@/actions'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-
-    const token = localStorage.getItem('token')
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
     const actions = useActions({ deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState }, [])
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getUnitAdmins(token)
+            actions.getUnitAdmins("page", "pageSize")
         return () => actions.clearUnitAdminsPageState()
     }, [loginLoading])
 
@@ -52,12 +49,9 @@ export default () => {
             </Modal>
             <Flex direction='row' justify='flex-end'
                 align='flex-start'>
-                <Button
-                    background='green'
-                    content='Добавить Unit Админа'
-                    padding='0.5rem'
-                    handleSubmit={() => { setOpenAddUnitAdmin(true) }}
-                />
+                <Button type='primary' onClick={() => setOpenAddUnitAdmin(true)}>
+                    Добавить Unit Админа
+                </Button>
             </Flex>
             {
                 loading ? <Loader />
@@ -79,7 +73,7 @@ export default () => {
                                                         ${unitAdmin.userHttp.firstname}
                                                         ${unitAdmin.userHttp.middlename}
                                                     `}
-                                                handleDelete={unitAdminIndex => actions.deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
+                                                handleDelete={unitAdminIndex => actions.deleteUnitAdmin(unitAdmin.userHttp.id, unitAdminIndex)}
                                                 render={(open, setOpen) => (
                                                     <DragResize
                                                         open={open} setOpen={setOpen}
