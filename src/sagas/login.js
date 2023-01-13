@@ -7,6 +7,7 @@ import {
     signOutRequest, signOutSuccess, signOutFailed,
     checkAuthRequest, checkAuthSuccess, checkAuthFailed,
 } from '@/actions'
+import { graphQLClient } from '@/graphQL'
 
 function* signInSaga(action) {
     try {
@@ -39,6 +40,7 @@ function* signOutSaga(action) {
     try {
         localStorage.removeItem('token')
         const response = yield call(authAPI.signOut)
+        graphQLClient.resetStore()
         console.log(response)
         yield put(signOutSuccess())
     } catch (e) {

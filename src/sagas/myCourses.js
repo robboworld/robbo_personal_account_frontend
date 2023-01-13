@@ -1,10 +1,19 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import { coursePageAPI } from '@/api'
 import {
-    getAllCoursePages, getAllCoursePagesFailed, getAllCoursePagesSuccess,
-    getCoursePageById, getCoursePageByIdFailed, getCoursePageByIdSuccess,
+    getAllCoursePages,
+    getAllCoursePagesFailed,
+    getAllCoursePagesSuccess,
+    getCoursePageById,
+    getCoursePageByIdFailed,
+    getCoursePageByIdSuccess,
+    getCoursePagesByUserFailed,
+    getCoursePagesByUserRequest,
+    getCoursePagesByUserSuccess,
 } from '@/actions'
+import { coursePageQuerysGraphQL } from '@/graphQL'
 
 
 function* getAllCoursePagesSaga(action) {
@@ -32,7 +41,20 @@ function* getCoursePageByIdSaga(action) {
     }
 }
 
+function* getCoursePagesByUserSaga(action) {
+    try {
+        const response = yield call(coursePageQuerysGraphQL.GetCoursesByUser)
+        console.log(response)
+
+        yield put(getCoursePagesByUserSuccess(response.data?.GetCoursesByUser?.results))
+    } catch (e) {
+        yield put(getCoursePagesByUserFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
+    }
+}
+
 export function* myCoursesSaga() {
     yield takeLatest(getAllCoursePages, getAllCoursePagesSaga)
     yield takeLatest(getCoursePageById, getCoursePageByIdSaga)
+    yield takeLatest(getCoursePagesByUserRequest, getCoursePagesByUserSaga)
 }

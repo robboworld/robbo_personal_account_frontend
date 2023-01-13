@@ -1,6 +1,17 @@
 import { handleActions } from 'redux-actions'
 
-import { getCoursePageById, getCoursePageByIdFailed, getCoursePageByIdSuccess, clearCoursePageState } from '@/actions'
+import {
+    getCoursePageById,
+    getCoursePageByIdFailed,
+    getCoursePageByIdSuccess,
+    clearCoursePageState,
+    createCourseAccessRelationStudentRequest,
+    createCourseAccessRelationStudentSuccess,
+    createCourseAccessRelationStudentFailed,
+    deleteCourseAccessRelationStudentRequest,
+    deleteCourseAccessRelationStudentSuccess,
+    deleteCourseAccessRelationStudentFailed,
+} from '@/actions'
 
 const INITIAL_STATE = {
     loading: true,
@@ -19,6 +30,24 @@ export default handleActions({
     },
     [clearCoursePageState](state, action) {
         return INITIAL_STATE
+    },
+    [createCourseAccessRelationStudentRequest](state) {
+        return { ...state, loading: true }
+    },
+    [createCourseAccessRelationStudentSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationStudentFailed](state) {
+        return { ...state, loading: false }
+    },
+    [deleteCourseAccessRelationStudentRequest](state) {
+        return { ...state, loading: true }
+    },
+    [deleteCourseAccessRelationStudentSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [deleteCourseAccessRelationStudentFailed](state) {
+        return { ...state, loading: false }
     },
 }, INITIAL_STATE)
 

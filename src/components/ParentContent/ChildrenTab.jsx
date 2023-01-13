@@ -39,7 +39,7 @@ const ChildrenTab = ({ clientId }) => {
                     : <List
                         bordered
                         dataSource={getStudentsResult.data.GetStudentsByParentId.students}
-                        renderItem={({ userHttp }, index) => (
+                        renderItem={(userHttp, index) => (
                             <ListItem
                                 itemIndex={index}
                                 key={index}

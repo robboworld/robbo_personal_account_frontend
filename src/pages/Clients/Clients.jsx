@@ -53,7 +53,6 @@ export default () => {
             {
                 loginLoading ? <Loader />
                     : (
-
                         <Flex width='100%' height='95%'
                             direction='column'
                         >

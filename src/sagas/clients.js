@@ -150,6 +150,7 @@ function* createStudentParentRelationSaga({ payload }) {
         console.log(response)
 
         yield put(createRelationSuccess(response.data))
+        notification.success({ message: '', description: 'Ученик успешно добавлен!' })
     } catch (e) {
         yield put(createRelationFailed(e))
         notification.error({ message: 'Ошибка', description: e.message })

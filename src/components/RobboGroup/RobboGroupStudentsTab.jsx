@@ -18,7 +18,6 @@ const RobboGroupStudentsTab = ({
     robboGroupId, robboUnitId,
     disableСhanges,
 }) => {
-    const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
     const history = useNavigate()
     const actions = useActions({ addStudentToRobboGroupRequest }, [])

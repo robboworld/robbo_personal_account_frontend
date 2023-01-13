@@ -28,7 +28,7 @@ const ListChildren = ({ profile, isUserAParent }) => {
                             <Flex direction='column' width='100%'>
                                 <h3>Дети</h3>
                                 <List
-                                    dataSource={data.GetStudentsByParentId}
+                                    dataSource={data.GetStudentsByParentId.students}
                                     renderItem={({ userHttp }, index) => (
                                         <ListItem
                                             itemIndex={index}
