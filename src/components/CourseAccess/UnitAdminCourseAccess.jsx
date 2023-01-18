@@ -3,7 +3,7 @@ import { Row, Button, Col, List, Input } from 'antd'
 
 import ListItem from "@/components/ListItem"
 import { unitAdminQuerysGraphQL } from '@/graphQL'
-import { createCourseAccessRelationStudentRequest } from '@/actions'
+import { createCourseAccessRelationUnitAdminRequest } from '@/actions'
 import { useActions } from '@/helpers'
 
 const { Search } = Input
@@ -11,7 +11,7 @@ const { Search } = Input
 const UnitAdminCourseAccess = ({ courseId }) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchItems, setSearchResult] = useState([])
-    const actions = useActions({ createCourseAccessRelationStudentRequest }, [])
+    const actions = useActions({ createCourseAccessRelationUnitAdminRequest }, [])
 
     const SearchUnitAdmins = async value => {
         const result = await unitAdminQuerysGraphQL.SearchUnitAdminByEmail(value, "")
@@ -46,7 +46,7 @@ const UnitAdminCourseAccess = ({ courseId }) => {
                                         key={index}
                                         render={() => { }}
                                         label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                    // handleClick={() => actions.createCourseAccessRelationStudentRequest(courseId, userHttp.id)}
+                                        handleClick={() => actions.createCourseAccessRelationUnitAdminRequest(courseId, userHttp.id)}
                                     />
                                 )}
                             />

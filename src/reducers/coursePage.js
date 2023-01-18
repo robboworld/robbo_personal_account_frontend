@@ -11,6 +11,18 @@ import {
     deleteCourseAccessRelationStudentRequest,
     deleteCourseAccessRelationStudentSuccess,
     deleteCourseAccessRelationStudentFailed,
+    createCourseAccessRelationTeacherRequest,
+    createCourseAccessRelationTeacherSuccess,
+    createCourseAccessRelationTeacherFailed,
+    createCourseAccessRelationUnitAdminRequest,
+    createCourseAccessRelationUnitAdminSuccess,
+    createCourseAccessRelationUnitAdminFailed,
+    createCourseAccessRelationRobboUnitRequest,
+    createCourseAccessRelationRobboUnitSuccess,
+    createCourseAccessRelationRobboUnitFailed,
+    createCourseAccessRelationRobboGroupRequest,
+    createCourseAccessRelationRobboGroupSuccess,
+    createCourseAccessRelationRobboGroupFailed,
 } from '@/actions'
 
 const INITIAL_STATE = {
@@ -38,6 +50,42 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [createCourseAccessRelationStudentFailed](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationTeacherRequest](state) {
+        return { ...state, loading: true }
+    },
+    [createCourseAccessRelationTeacherSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationTeacherFailed](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationUnitAdminRequest](state) {
+        return { ...state, loading: true }
+    },
+    [createCourseAccessRelationUnitAdminSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationUnitAdminFailed](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationRobboUnitRequest](state) {
+        return { ...state, loading: true }
+    },
+    [createCourseAccessRelationRobboUnitSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationRobboUnitFailed](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationRobboGroupRequest](state) {
+        return { ...state, loading: true }
+    },
+    [createCourseAccessRelationRobboGroupSuccess](state) {
+        return { ...state, loading: false }
+    },
+    [createCourseAccessRelationRobboGroupFailed](state) {
         return { ...state, loading: false }
     },
     [deleteCourseAccessRelationStudentRequest](state) {

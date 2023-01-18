@@ -3,7 +3,7 @@ import { Row, Button, Col, List, Input } from 'antd'
 
 import ListItem from "@/components/ListItem"
 import { robboGroupsQuerysGraphQL } from '@/graphQL'
-import { createCourseAccessRelationStudentRequest } from '@/actions'
+import { createCourseAccessRelationRobboGroupRequest } from '@/actions'
 import { useActions } from '@/helpers'
 
 const { Search } = Input
@@ -11,7 +11,7 @@ const { Search } = Input
 const RobboGroupCourseAccess = ({ courseId }) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchItems, setSearchResult] = useState([])
-    const actions = useActions({ createCourseAccessRelationStudentRequest }, [])
+    const actions = useActions({ createCourseAccessRelationRobboGroupRequest }, [])
 
     const SearchRobboGroups = async value => {
         const result = await robboGroupsQuerysGraphQL.SearchRobboGroupsByName(value)
@@ -46,7 +46,7 @@ const RobboGroupCourseAccess = ({ courseId }) => {
                                         key={index}
                                         render={() => { }}
                                         label={`${robboGroup.name}`}
-                                        handleClick={() => actions.createCourseAccessRelationStudentRequest(courseId, robboGroup.id)}
+                                        handleClick={() => actions.createCourseAccessRelationRobboGroupRequest(courseId, robboGroup.id)}
                                     />
                                 )}
                             />
