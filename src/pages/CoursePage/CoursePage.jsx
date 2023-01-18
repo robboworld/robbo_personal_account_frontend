@@ -18,6 +18,7 @@ import {
     EDX_TEST_COURSES_ADDRESS,
     STUDENT,
     SUPER_ADMIN,
+    UNIT_ADMIN,
 } from '@/constants'
 import CourseAccess from '@/components/CourseAccess'
 
@@ -75,18 +76,21 @@ export default () => {
                                         <Col span={24}>
                                             <Button
                                                 type='primary' size='large'
-                                                onClick={() => setOpen(true)}
-                                            >
-                                                Доступ
-                                            </Button>
-                                        </Col>
-                                        <Col span={24}>
-                                            <Button
-                                                type='primary' size='large'
                                             >
                                                 Прогресс
                                             </Button>
                                         </Col>
+                                        {
+                                            checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN]) &&
+                                            <Col span={24}>
+                                                <Button
+                                                    type='primary' size='large'
+                                                    onClick={() => setOpen(true)}
+                                                >
+                                                    Доступ
+                                                </Button>
+                                            </Col>
+                                        }
                                         <Col>
                                             <Button
                                                 type='primary' size='large'
@@ -113,12 +117,11 @@ export default () => {
                                     </Flex>
                                 </Flex>
                                 <Modal
-                                    title='Доступ к курсу'
-                                    centered
-                                    open={open}
-                                    onOk={() => setOpen(true)}
+                                    title='Доступ к курсу' centered
+                                    open={open} onOk={() => setOpen(true)}
                                     // confirmLoading={ }
                                     onCancel={() => setOpen(false)}
+                                    width='50%'
                                 >
                                     <CourseAccess courseId={coursePage.id} />
                                 </Modal>

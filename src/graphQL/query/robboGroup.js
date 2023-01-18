@@ -125,7 +125,7 @@ export const robboGroupsQuerysGraphQL = {
         return graphQLClient.query(
             {
                 query: robboGroupQuerysGQL.SEARCH_GROUPS_BY_NAME,
-                variables: name,
+                variables: { name },
             },
         )
     },

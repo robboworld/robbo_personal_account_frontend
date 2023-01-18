@@ -57,6 +57,27 @@ export const teacherQuerysGQL = {
             }
         }
     `,
+
+    SEARCH_TEACHERS_BY_EMAIL: gql`
+        query SearchTeachersByEmail($email: String!) {
+            SearchTeachersByEmail(email: $email) {
+                ... on TeacherHttpList{
+                    teachers {
+                        userHttp {
+                            id 
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+
+                ... on Error{
+                        message
+                }
+            }
+        }
+    `,
 }
 
 export const teacherQuerysGraphQL = {
@@ -82,6 +103,17 @@ export const teacherQuerysGraphQL = {
             {
                 query: teacherQuerysGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID,
                 variables: robboGroupId,
+            },
+        )
+    },
+
+    SearchTeachersByEmail(email) {
+        return graphQLClient.query(
+            {
+                query: teacherQuerysGQL.SEARCH_TEACHERS_BY_EMAIL,
+                variables: {
+                    email,
+                },
             },
         )
     },
