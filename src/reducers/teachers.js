@@ -1,14 +1,22 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    clearTeachersState, createTeacher,
-    createTeacherFailed, createTeacherSuccess,
-    deleteTeacher, deleteTeacherFailed,
-    deleteTeacherForRobboGroupFailed, deleteTeacherForRobboGroupRequest,
-    deleteTeacherForRobboGroupSuccess, deleteTeacherSuccess,
-    getTeachers, getTeachersFailed,
-    getTeachersSuccess, setTeacherForRobboGroupFailed,
-    setTeacherForRobboGroupRequest, setTeacherForRobboGroupSuccess,
+    clearTeachersState,
+    createTeacher,
+    createTeacherFailed,
+    createTeacherSuccess,
+    deleteTeacher,
+    deleteTeacherFailed,
+    deleteTeacherForRobboGroupFailed,
+    deleteTeacherForRobboGroupRequest,
+    deleteTeacherForRobboGroupSuccess,
+    deleteTeacherSuccess,
+    getTeachers,
+    getTeachersFailed,
+    getTeachersSuccess,
+    setTeacherForRobboGroupFailed,
+    setTeacherForRobboGroupRequest,
+    setTeacherForRobboGroupSuccess,
 } from "@/actions"
 
 const INITIAL_STATE = {
@@ -46,11 +54,11 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [createTeacherSuccess](state, action) {
-        const { response, teacher } = action.payload
+        const { response } = action.payload
         return {
             ...state,
             loading: false,
-            teachers: [...state.teachers, { userHttp: { id: response.teacherId, ...teacher } }],
+            teachers: [...state.teachers, { userHttp: { ...response.userHttp } }],
         }
     },
     [createTeacherFailed](state, action) {

@@ -139,8 +139,8 @@ function* searchRobboGroupsByTitleSaga(action) {
 
 function* getRobboGroupsByTeacherIdSaga(action) {
     try {
-        const { teacherId } = action.payload
-        const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByTeacherId, { teacherId })
+        const { teacherId, page, pageSize } = action.payload
+        const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByTeacherId, teacherId, page, pageSize)
 
         yield put(getRobboGroupsByTeacherIdSuccess(response.data.GetRobboGroupsByTeacherId.robboGroups))
     } catch (e) {

@@ -46,13 +46,21 @@ export const teacherQuerysGQL = {
     `,
 
     GET_ALL_TEACHERS: gql`
-        query{
-            GetAllTeachers{
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
+        query GetAllTeachers($page: String!, $pageSize: String!){
+            GetAllTeachers(page: $page, pageSize: $pageSize){
+                ... on TeacherHttpList{
+                    teachers {
+                        userHttp {
+                            id 
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+
+                ... on Error{
+                        message
                 }
             }
         }
@@ -81,10 +89,11 @@ export const teacherQuerysGQL = {
 }
 
 export const teacherQuerysGraphQL = {
-    GetAllTeachers() {
+    GetAllTeachers(page, pageSize) {
         return graphQLClient.query(
             {
                 query: teacherQuerysGQL.GET_ALL_TEACHERS,
+                variables: { page, pageSize },
             },
         )
     },

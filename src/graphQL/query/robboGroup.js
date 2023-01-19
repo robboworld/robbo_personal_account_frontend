@@ -4,9 +4,9 @@ import { graphQLClient } from "@/graphQL"
 
 export const robboGroupQuerysGQL = {
     GET_ROBBO_GROUPS_BY_TEACHER_ID: gql`
-    query GetRobboGroupsByTeacherId($teacherId: String!) {
-        GetRobboGroupsByTeacherId(teacherId: $teacherId){
-            ... on RobboGroupHttp {
+    query GetRobboGroupsByTeacherId($teacherId: String!, $page: String!, $pageSize: String!) {
+        GetRobboGroupsByTeacherId(teacherId: $teacherId, page: $page, pageSize: $pageSize){
+            ... on RobboGroupHttpList {
                 robboGroups {
                     id
                     robboUnitId
@@ -148,11 +148,12 @@ export const robboGroupsQuerysGraphQL = {
         )
     },
 
-    GetRobboGroupsByTeacherId(teacherId) {
+    GetRobboGroupsByTeacherId(teacherId, page, pageSize) {
+        console.log(page, pageSize)
         return graphQLClient.query(
             {
                 query: robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_TEACHER_ID,
-                variables: teacherId,
+                variables: { teacherId, page, pageSize },
             },
         )
     },
