@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Navigate, useNavigate } from "react-router-dom"
-import { Modal, Button, Space } from "antd"
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom"
+import { Modal, Button, Space, Pagination } from "antd"
 
 import { WelcomeText } from "./components"
 
@@ -31,7 +31,9 @@ import {
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const history = useNavigate()
+    const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const currentPage = searchParams.get('page') || '1'
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const actions = useActions({
         getRobboUnitsRequest,
@@ -39,21 +41,21 @@ export default () => {
         deleteRobboUnitRequest,
         clearRobboUnitsPage,
     }, [])
-    const { robboUnits, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
+    const { robboUnits, countRows, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             switch (userRole) {
                 case UNIT_ADMIN:
-                    actions.getRobboUnitsByUnitAdminIdRequest("page", "pageSize")
+                    actions.getRobboUnitsByUnitAdminIdRequest(currentPage, "10")
                     break
                 case SUPER_ADMIN:
-                    actions.getRobboUnitsRequest("page", "pageSize")
+                    actions.getRobboUnitsRequest(currentPage, "10")
                     break
             }
 
         return () => actions.clearRobboUnitsPage()
-    }, [loginLoading])
+    }, [loginLoading, currentPage])
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
         return <Navigate to={HOME_PAGE_ROUTE} />
@@ -76,7 +78,7 @@ export default () => {
                 align='flex-start'>
                 <Space>
                     <Button
-                        type='primary' onClick={() => history('/program')}
+                        type='primary' onClick={() => navigate('/program')}
                     >
                         Программа
                     </Button>
@@ -124,6 +126,13 @@ export default () => {
                         </Flex>
                     )
             }
+            <Pagination
+                defaultCurrent={1} defaultPageSize={10}
+                total={countRows} current={+currentPage}
+                onChange={(page, pageSize) => {
+                    setSearchParams({ page })
+                }}
+            />
         </PageLayout>
     )
 }

@@ -60,6 +60,7 @@ export const robboGroupQuerysGQL = {
                     robboUnitId
                     lastModified
                 }
+                countRows
             }
             ... on Error {
                 message
@@ -134,7 +135,7 @@ export const robboGroupsQuerysGraphQL = {
         return graphQLClient.query(
             {
                 query: robboGroupQuerysGQL.GET_ALL_ROBBO_GROUPS,
-                variables: { page, pageSize: "10" },
+                variables: { page, pageSize },
             },
         )
     },

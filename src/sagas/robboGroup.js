@@ -84,12 +84,11 @@ function* createRobboGroupSaga({ payload }) {
 
 function* getRobboGroupsByRobboUnitIdSaga({ payload }) {
     try {
-        const { robboUnitId } = payload
-        console.log(robboUnitId)
-        const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByRobboUnitId, "1,", "10", robboUnitId)
+        const { robboUnitId, page, pageSize } = payload
+        const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByRobboUnitId, page, pageSize, robboUnitId)
         console.log(response)
 
-        yield put(getRobboGroupsByRobboUnitIdSuccess(response.data.GetRobboGroupsByRobboUnitId.robboGroups))
+        yield put(getRobboGroupsByRobboUnitIdSuccess(response.data.GetRobboGroupsByRobboUnitId))
     } catch (e) {
         yield put(getRobboGroupsByRobboUnitIdFailed(e))
         notification.error({ message: 'Ошибка', description: e.message })
@@ -167,7 +166,7 @@ function* getAllRobboGroupsSaga({ payload }) {
         const response = yield call(robboGroupsQuerysGraphQL.GetAllRobboGroups, page, pageSize)
         console.log(response)
 
-        yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups.robboGroups))
+        yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups))
     } catch (e) {
         yield put(getAllRobboGroupsFailed(e))
         notification.error({ message: 'Ошибка', description: e.message })

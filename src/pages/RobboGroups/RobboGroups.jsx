@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Modal, Button } from "antd"
-import { Navigate, useParams } from "react-router-dom"
+import { Modal, Button, Pagination } from "antd"
+import { Navigate, useParams, useSearchParams } from "react-router-dom"
 
 import { WelcomeText } from "./components"
 
@@ -42,21 +42,23 @@ export default () => {
     }, [])
 
     const { robboUnitId } = useParams()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const currentPage = searchParams.get('page') || '1'
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
             if (robboUnitId)
                 actions.getRobboGroupsByRobboUnitIdRequest(robboUnitId)
             else if (checkAccess(userRole, [SUPER_ADMIN]))
-                actions.getAllRobboGroupsRequest("1", "10") // Только для Super Admin
+                actions.getAllRobboGroupsRequest(currentPage, "10") // Только для Super Admin
             else
-                actions.getAllRobboGroupsForUnitAdminRequest("1", "10") // For UnitAdmin
+                actions.getAllRobboGroupsForUnitAdminRequest(currentPage, "10") // For UnitAdmin
         return () => {
             actions.clearRobboGroupsPage()
         }
-    }, [loginLoading])
+    }, [loginLoading, currentPage])
 
-    const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
+    const { robboGroups, countRows, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
         return <Navigate to={HOME_PAGE_ROUTE} />
@@ -130,6 +132,13 @@ export default () => {
                                         </Flex>
                                     )
                             }
+                            <Pagination
+                                defaultCurrent={1} defaultPageSize={10}
+                                total={countRows} current={+currentPage}
+                                onChange={(page, pageSize) => {
+                                    setSearchParams({ page })
+                                }}
+                            />
                         </div>
                     )
             }

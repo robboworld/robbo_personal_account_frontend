@@ -43,7 +43,7 @@ function* getRobboUnitsByUnitAdminIdSaga({ payload }) {
         const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitsByAccessToken, page, pageSize)
         console.log(response)
 
-        yield put(getRobboUnitsByUnitAdminIdSuccess(response.data.GetRobboUnitsByAccessToken.robboUnits))
+        yield put(getRobboUnitsByUnitAdminIdSuccess(response.data.GetRobboUnitsByAccessToken))
     } catch (e) {
         yield put(getRobboUnitsByUnitAdminIdFailed(e.message))
         notification.error({ message: 'Ошибка', description: e.message })

@@ -31,6 +31,7 @@ import {
 
 const INITIAL_STATE = {
     robboGroups: [],
+    countRows: 0,
     searchResult: [],
     loading: true,
 }
@@ -53,13 +54,12 @@ export default handleActions({
     [getRobboGroupsByRobboUnitIdRequest](state) {
         return { ...state, loading: true }
     },
-    [getRobboGroupsByRobboUnitIdSuccess](state, action) {
-        const { response } = action.payload
+    [getRobboGroupsByRobboUnitIdSuccess](state, { payload }) {
         return {
             ...state,
             loading: false,
-            robboGroups: [...response],
-
+            robboGroups: payload.response.robboGroups,
+            countRows: payload.response.countRows,
         }
     },
     [getRobboGroupsByRobboUnitIdFailed](state) {
@@ -107,8 +107,8 @@ export default handleActions({
     [getAllRobboGroupsRequest](state) {
         return { ...state, loading: true }
     },
-    [getAllRobboGroupsSuccess](state, action) {
-        return { ...state, loading: false, robboGroups: action.payload.response }
+    [getAllRobboGroupsSuccess](state, { payload }) {
+        return { ...state, loading: false, robboGroups: payload.response.robboGroups, countRows: payload.response.countRows }
     },
     [getAllRobboGroupsFailed](state, action) {
         return { ...state, loading: false }

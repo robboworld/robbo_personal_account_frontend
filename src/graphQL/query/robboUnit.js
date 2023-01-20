@@ -123,7 +123,7 @@ export const robboUnitQuerysGraphQL = {
         return graphQLClient.query(
             {
                 query: robboUnitQuerysGQL.GET_ROBBO_UNITS_BY_ACCESS_TOKEN,
-                variables: { page: "1", pageSize: "10" },
+                variables: { page, pageSize },
             },
         )
     },
