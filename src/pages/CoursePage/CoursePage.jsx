@@ -82,7 +82,7 @@ export default () => {
                                             </Button>
                                         </Col>
                                         {
-                                            checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN]) &&
+                                            checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN, TEACHER]) &&
                                             <Col span={24}>
                                                 <Button
                                                     type='primary' size='large'
@@ -124,7 +124,7 @@ export default () => {
                                     onCancel={() => setOpen(false)}
                                     width='50%'
                                 >
-                                    <CourseAccess courseId={coursePage.id} />
+                                    <CourseAccess courseId={coursePage.id} userRole={userRole} />
                                 </Modal>
                             </Flex>
                         </Flex >
