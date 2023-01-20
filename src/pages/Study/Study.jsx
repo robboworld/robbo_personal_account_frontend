@@ -2,11 +2,16 @@ import React from "react"
 import { Navigate } from "react-router-dom"
 import { Tabs } from "antd"
 
-import PageLayout from '@/components/PageLayout'
-import { useUserIdentity, checkAccess } from "@/helpers"
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, TEACHER } from "@/constants"
-import RobboGroupsList from "@/components/RobboGroupsList"
+import TeacherCourses from "./TeacherCourses"
 
+import PageLayout from '@/components/PageLayout'
+import RobboGroupsList from "@/components/RobboGroupsList"
+import { useUserIdentity, checkAccess } from "@/helpers"
+import {
+    HOME_PAGE_ROUTE,
+    LOGIN_PAGE_ROUTE,
+    TEACHER,
+} from "@/constants"
 
 export default () => {
 
@@ -42,7 +47,7 @@ export default () => {
                     {
                         label: 'Курсы',
                         key: '4',
-                        children: 'Курсы',
+                        children: <TeacherCourses />,
                     },
                 ]}
             />

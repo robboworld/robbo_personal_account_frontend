@@ -19,6 +19,7 @@ import {
     STUDENT,
     SUPER_ADMIN,
     UNIT_ADMIN,
+    TEACHER,
 } from '@/constants'
 import CourseAccess from '@/components/CourseAccess'
 
@@ -31,7 +32,7 @@ export default () => {
     const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
     useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
+        if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN, UNIT_ADMIN, TEACHER]))
             actions.getCoursePageById(token, coursePageId)
         return () => {
             actions.clearCoursePageState()
@@ -45,7 +46,7 @@ export default () => {
         window.open(EDX_TEST_COURSES_ADDRESS + coursePage.course_id + '/about')
     }
 
-    if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
+    if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN, UNIT_ADMIN, TEACHER])) {
         return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
         return <Navigate to={LOGIN_PAGE_ROUTE} />

@@ -25,7 +25,7 @@ const items = [
 ]
 
 const CourseAccess = ({ courseId }) => {
-    const [selectedKey, setSelectedIKey] = useState('0')
+    const [selectedKey, setSelectedKey] = useState('0')
     return (
         <Tabs
             defaultActiveKey='1'
@@ -38,7 +38,7 @@ const CourseAccess = ({ courseId }) => {
                                 selectable: true,
                                 defaultSelectedKeys: ['0'],
                                 selectedKeys: [selectedKey],
-                                onSelect: ({ item, key }) => setSelectedIKey(key),
+                                onSelect: ({ key }) => setSelectedKey(key),
                             }}
                         >
                             <Space>
@@ -59,7 +59,7 @@ const CourseAccess = ({ courseId }) => {
                                 selectable: true,
                                 defaultSelectedKeys: ['0'],
                                 selectedKeys: [selectedKey],
-                                onSelect: ({ item, key }) => setSelectedIKey(key),
+                                onSelect: ({ item, key }) => setSelectedKey(key),
                             }}
                         >
                             <Space>
@@ -80,7 +80,7 @@ const CourseAccess = ({ courseId }) => {
                                 selectable: true,
                                 defaultSelectedKeys: ['0'],
                                 selectedKeys: [selectedKey],
-                                onSelect: ({ item, key }) => setSelectedIKey(key),
+                                onSelect: ({ item, key }) => setSelectedKey(key),
                             }}
                         >
                             <Space>
@@ -101,7 +101,7 @@ const CourseAccess = ({ courseId }) => {
                                 selectable: true,
                                 defaultSelectedKeys: ['0'],
                                 selectedKeys: [selectedKey],
-                                onSelect: ({ item, key }) => setSelectedIKey(key),
+                                onSelect: ({ item, key }) => setSelectedKey(key),
                             }}
                         >
                             <Space>
@@ -122,7 +122,7 @@ const CourseAccess = ({ courseId }) => {
                                 selectable: true,
                                 defaultSelectedKeys: ['0'],
                                 selectedKeys: [selectedKey],
-                                onSelect: ({ item, key }) => setSelectedIKey(key),
+                                onSelect: ({ item, key }) => setSelectedKey(key),
                             }}
                         >
                             <Space>

@@ -147,6 +147,34 @@ export const coursePageQuerysGQL = {
         }
     }
     `,
+
+    GET_COURSES_BY_ROBBO_UNIT_ID: gql`
+        query GetCoursesByRobboUnitId($robboUnitId: String!, $page: String, $pageSize: String){
+            GetCoursesByRobboUnitId(robboUnitId: $robboUnitId, page: $page, pageSize: $pageSize) {
+                ... on CoursesListHttp{
+                    results{
+                        id
+                        name
+                        course_id
+                    }
+                }
+            }
+        }
+    `,
+
+    GET_COURSES_BY_ROBBO_GROUP_ID: gql`
+    query GetCoursesByRobboGroupId($robboGroupId: String!, $page: String, $pageSize: String){
+        GetCoursesByRobboGroupId(robboGroupId: $robboGroupId, page: $page, pageSize: $pageSize) {
+            ... on CoursesListHttp{
+                results{
+                    id
+                    name
+                    course_id
+                }
+            }
+        }
+    }
+    `,
 }
 
 export const coursePageQuerysGraphQL = {
@@ -154,6 +182,24 @@ export const coursePageQuerysGraphQL = {
         return graphQLClient.query(
             {
                 query: coursePageQuerysGQL.GET_COURSES_BY_USER,
+            },
+        )
+    },
+
+    GetCoursesByRobboUnitId(robboUnitId, page, pageSize) {
+        return graphQLClient.query(
+            {
+                query: coursePageQuerysGQL.GET_COURSES_BY_ROBBO_UNIT_ID,
+                variables: { robboUnitId, page, pageSize },
+            },
+        )
+    },
+
+    GetCoursesByRobboGroupId(robboGroupId, page, pageSize) {
+        return graphQLClient.query(
+            {
+                query: coursePageQuerysGQL.GET_COURSES_BY_ROBBO_GROUP_ID,
+                variables: { robboGroupId, page, pageSize },
             },
         )
     },

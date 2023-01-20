@@ -34,6 +34,12 @@ import {
     CREATE_ACCESS_COURSE_RELATION_ROBBO_UNIT_REQUEST,
     CREATE_ACCESS_COURSE_RELATION_ROBBO_UNIT_SUCCESS,
     CREATE_ACCESS_COURSE_RELATION_ROBBO_UNIT_FAILED,
+    GET_COURSE_PAGES_BY_ROBBO_UNIT_ID_REQUEST,
+    GET_COURSE_PAGES_BY_ROBBO_UNIT_ID_SUCCESS,
+    GET_COURSE_PAGES_BY_ROBBO_UNIT_ID_FAILED,
+    GET_COURSE_PAGES_BY_ROBBO_GROUP_ID_REQUEST,
+    GET_COURSE_PAGES_BY_ROBBO_GROUP_ID_SUCCESS,
+    GET_COURSE_PAGES_BY_ROBBO_GROUP_ID_FAILED,
 } from '@/constants'
 
 export const getAllCoursePages = createAction(GET_ALL_COURSE_PAGES, token => {
@@ -135,6 +141,16 @@ export const deleteCourseAccessRelationRobboGroupFailed = createAction(DELETE_AC
 export const getCoursePagesByUserRequest = createAction(GET_COURSE_PAGES_BY_USER_REQUEST)
 export const getCoursePagesByUserSuccess = createAction(GET_COURSE_PAGES_BY_USER_SUCCESS, response => ({ response }))
 export const getCoursePagesByUserFailed = createAction(GET_COURSE_PAGES_BY_USER_FAILED, err => ({ err }))
+
+export const getCoursePagesByRobboUnitIdRequest = createAction(GET_COURSE_PAGES_BY_ROBBO_UNIT_ID_REQUEST,
+    (robboUnitId, page, pageSize) => ({ robboUnitId, page, pageSize }))
+export const getCoursePagesByRobboUnitIdSuccess = createAction(GET_COURSE_PAGES_BY_ROBBO_UNIT_ID_SUCCESS, response => ({ response }))
+export const getCoursePagesByRobboUnitIdFailed = createAction(GET_COURSE_PAGES_BY_ROBBO_UNIT_ID_FAILED, err => ({ err }))
+
+export const getCoursePagesByRobboGroupIdRequest = createAction(GET_COURSE_PAGES_BY_ROBBO_GROUP_ID_REQUEST,
+    (robboGroupId, page, pageSize) => ({ robboGroupId, page, pageSize }))
+export const getCoursePagesByRobboGroupIdSuccess = createAction(GET_COURSE_PAGES_BY_ROBBO_GROUP_ID_SUCCESS, response => ({ response }))
+export const getCoursePagesByRobboGroupIdFailed = createAction(GET_COURSE_PAGES_BY_ROBBO_GROUP_ID_FAILED, err => ({ err }))
 
 export const clearCoursePageState = createAction(CLEAR_COURSE_PAGE_STATE)
 export const clearAllCoursePagesState = createAction(CLEAR_ALL_COURSE_PAGES_STATE)

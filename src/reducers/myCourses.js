@@ -39,5 +39,6 @@ export default handleActions({
     },
 }, INITIAL_STATE)
 
+export const getCoursePagesState = state => state
 export const getCoursePages = state => state.coursePages
 export const getCoursePagesLoading = state => state.loading

@@ -21,7 +21,7 @@ const CurrentCourseAccessRobboGroups = ({ courseId }) => {
                 {loading ? <Loader /> : (
                     <List
                         bordered
-                        dataSource={data.GetRobboGroupsAdmittedToTheCourse.robboGroups}
+                        dataSource={data.GetRobboGroupsAdmittedToTheCourse?.robboGroups}
                         renderItem={(robboGroup, index) => (
                             <ListItem
                                 itemIndex={index}

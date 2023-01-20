@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button, Tabs } from "antd"
 
 import RobboUnitStudentsTab from "./RobboUnitStudentsTab"
+import RobboUnitCourses from "./RobboUnitCourses"
 
 import RobboUnitCard from "@/components/RobboUnitCard"
 import Flex from '@/components/Flex'
@@ -40,6 +41,11 @@ export default ({ robboUnitId }) => {
                             label: 'Ученики',
                             key: '4',
                             children: <RobboUnitStudentsTab robboUnitId={robboUnitId} />,
+                        },
+                        {
+                            label: 'Курсы',
+                            key: '5',
+                            children: <RobboUnitCourses robboUnitId={robboUnitId} />,
                         },
                     ]}
                 />
