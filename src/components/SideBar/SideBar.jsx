@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { Menu } from 'antd'
 import { useNavigate } from 'react-router-dom'
@@ -17,10 +17,9 @@ import { getLoginState } from '@/reducers/login'
 import { signOutRequest } from '@/actions'
 import { LOGIN_PAGE_ROUTE } from '@/constants'
 
-export default () => {
-    const history = useNavigate()
+export default ({ selectedNavBarKey = '1' }) => {
+    const navigate = useNavigate()
     const actions = useActions({ signOutRequest }, [])
-    const [selectedKey, setSelectedKey] = useState('0')
     const { userRole } = useSelector(({ login }) => getLoginState(login))
 
     let SideBarData = []
@@ -54,21 +53,18 @@ export default () => {
     const onMenuClick = ({ item, key }) => {
         if (item.props.pathname === LOGIN_PAGE_ROUTE) {
             actions.signOutRequest()
-            history(item.props.pathname)
         }
         else {
-            history(item.props.pathname)
+            navigate(item.props.pathname, { state: { selectedNavBarKey: key } })
         }
 
     }
-
     return (
         <Menu
             theme='light'
             mode='inline'
-            selectedKey={selectedKey}
+            selectedKeys={[selectedNavBarKey]}
             onClick={onMenuClick}
-            onSelect={({ key }) => setSelectedKey(key)}
             items={SideBarData}
         />
     )

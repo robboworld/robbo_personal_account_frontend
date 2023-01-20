@@ -13,8 +13,7 @@ import { updateProfile } from '@/actions'
 export default () => {
     const location = useLocation()
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-    if (!loginLoading && !checkAccess(userRole,
-        [SUPER_ADMIN])) {
+    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
         return <Navigate to={HOME_PAGE_ROUTE} />
     } else if (!isAuth && !loginLoading) {
         return <Navigate to={LOGIN_PAGE_ROUTE} />
