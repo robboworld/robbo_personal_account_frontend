@@ -75,7 +75,11 @@ export default () => {
                                 handleDelete={
                                     parentIndex => actions.deleteParentRequest(userHttp.id, parentIndex)
                                 }
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                label={`
+                                                        ${userHttp.lastname}
+                                                        ${userHttp.firstname}
+                                                        ${userHttp.middlename}
+                                                `}
                                 key={index}
                                 render={(open, setOpen) => (
                                     <DragResize

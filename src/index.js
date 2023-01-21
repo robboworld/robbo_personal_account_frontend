@@ -9,8 +9,6 @@ import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { ConfigProvider } from 'antd'
 import enUS from 'antd/locale/en_US'
-import zhCN from 'antd/locale/zh_CN'
-// import enUS from 'antd/lib/locale-provider/en_US'
 
 import ErrorBoundary from '@/pages/ErrorBoundary'
 import Application from '@/app'
@@ -23,7 +21,6 @@ const container = document.getElementById('root')
 const root = createRoot(container)
 
 root.render(
-  // <StrictMode>
   <ApolloProvider client={graphQLClient}>
     <Provider store={store}>
       <ThemeProvider theme={theme}>
@@ -37,7 +34,24 @@ root.render(
         </ConfigProvider>
       </ThemeProvider>
     </Provider>
-  </ApolloProvider>
-  // </StrictMode>
-  ,
+  </ApolloProvider>,
 )
+
+// // Before
+// const container = document.getElementById('app');
+// render(<App tab="home" />, container, () => {
+//   console.log('rendered');
+// });
+
+// // After
+// function AppWithCallbackAfterRender() {
+//   useEffect(() => {
+//     console.log('rendered');
+//   });
+
+//   return <App tab="home" />
+// }
+
+// const container = document.getElementById('app');
+// const root = createRoot(container);
+// root.render(<AppWithCallbackAfterRender />);
