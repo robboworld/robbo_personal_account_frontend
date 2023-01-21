@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import {
   HOME_PAGE_ROUTE,
@@ -23,7 +24,8 @@ import {
   TEACHER,
 } from '@/constants'
 import Loader from '@/components/Loader'
-import { useUserIdentity, checkAccess, ProtectedRoute } from '@/helpers'
+import { ProtectedRoute } from '@/helpers'
+import { getLoginState } from '@/reducers/login'
 
 const HomePage = lazy(() => import('@/pages/Home'))
 const LoginPage = lazy(() => import('@/pages/Login'))
@@ -41,14 +43,14 @@ const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const Study = lazy(() => import('@/pages/Study'))
 
 const App = () => {
-  const { userRole, isAuth } = useUserIdentity()
+  const { userRole } = useSelector(({ login }) => getLoginState(login))
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route
           path={HOME_PAGE_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth}>
+            <ProtectedRoute>
               <HomePage />
             </ProtectedRoute>
           }
@@ -60,7 +62,7 @@ const App = () => {
         <Route
           path={MY_PROJECTS_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [STUDENT])}>
+            <ProtectedRoute allowedRoles={[STUDENT]}>
               <MyProjects />
             </ProtectedRoute>
           }
@@ -68,7 +70,7 @@ const App = () => {
         <Route
           path={PROJECT_PAGE_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [STUDENT])}>
+            <ProtectedRoute allowedRoles={[STUDENT]}>
               <ProjectPage />
             </ProtectedRoute>
           }
@@ -76,7 +78,7 @@ const App = () => {
         <Route
           path={MY_COURSES_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth}>
+            <ProtectedRoute>
               <MyCourses />
             </ProtectedRoute>
           }
@@ -84,7 +86,7 @@ const App = () => {
         <Route
           path={COURSE_PAGE_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth}>
+            <ProtectedRoute>
               <CoursePage userRole={userRole} />
             </ProtectedRoute>
           }
@@ -92,7 +94,7 @@ const App = () => {
         <Route
           path={CLIENTS_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [SUPER_ADMIN])}>
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
               <ClientsPage />
             </ProtectedRoute>
           }
@@ -100,7 +102,7 @@ const App = () => {
         <Route
           path={TEACHERS_PAGE_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])}>
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
               <TeachersPage />
             </ProtectedRoute>
           }
@@ -108,7 +110,7 @@ const App = () => {
         <Route
           path={PROFILE_PAGE_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth}>
+            <ProtectedRoute>
               <ProfilePage userRole={userRole} />
             </ProtectedRoute>
           }
@@ -116,7 +118,7 @@ const App = () => {
         <Route
           path={PEEK_PROFILE_PAGE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])}>
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
               <PeekProfilePage />
             </ProtectedRoute>
           }
@@ -124,7 +126,7 @@ const App = () => {
         <Route
           path={UNIT_ADMINS_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [SUPER_ADMIN])}>
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
               <UnitAdminsPage />
             </ProtectedRoute>
           }
@@ -132,7 +134,7 @@ const App = () => {
         <Route
           path={ROBBO_UNITS_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])}>
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
               <RobboUnitsPage userRole={userRole} />
             </ProtectedRoute>
           }
@@ -140,7 +142,7 @@ const App = () => {
         <Route
           path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])}>
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
               <RobboGroups userRole={userRole} />
             </ProtectedRoute>
           }
@@ -148,7 +150,7 @@ const App = () => {
         <Route
           path={STUDY_PAGE_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [TEACHER])}>
+            <ProtectedRoute allowedRoles={[TEACHER]}>
               <Study />
             </ProtectedRoute>
           }
@@ -156,7 +158,7 @@ const App = () => {
         <Route
           path={ROBBO_GROUPS_ROUTE}
           element={
-            <ProtectedRoute isAllowed={isAuth && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])}>
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
               <RobboGroups userRole={userRole} />
             </ProtectedRoute>
           }

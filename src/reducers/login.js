@@ -38,7 +38,7 @@ export default handleActions({
         return { ...state, loginLoading: true }
     },
     [signOutSuccess](state) {
-        return { ...state, isAuth: false, loginLoading: false }
+        return { ...state, isAuth: false, loginLoading: false, userRole: null }
     },
     [signOutFailed](state) {
         return { ...state, loginLoading: false }

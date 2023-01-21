@@ -319,7 +319,7 @@ export const SidebarDataUnitAdmin = [
   {
     key: '4',
     label: 'Педагоги',
-    pathname: '/program',
+    pathname: TEACHERS_PAGE_ROUTE,
     icon: <FaIcons.FaTasks />,
   },
   {
