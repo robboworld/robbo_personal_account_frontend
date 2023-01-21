@@ -9,22 +9,18 @@ import PageLayout from '@/components/PageLayout'
 import Flex from '@/components/Flex'
 import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
-import { checkAccess, useUserIdentity, courseDescriptionParser } from '@/helpers'
+import { checkAccess, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
 import { getCoursePageById, clearCoursePageState } from '@/actions'
 import {
-    HOME_PAGE_ROUTE,
-    LOGIN_PAGE_ROUTE,
     EDX_TEST_COURSES_ADDRESS,
-    STUDENT,
     SUPER_ADMIN,
     UNIT_ADMIN,
     TEACHER,
 } from '@/constants'
 import CourseAccess from '@/components/CourseAccess'
 
-export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
+export default ({ userRole }) => {
     const [open, setOpen] = useState(false)
 
     const token = localStorage.getItem('token')
@@ -32,12 +28,11 @@ export default () => {
     const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
     useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN, UNIT_ADMIN, TEACHER]))
-            actions.getCoursePageById(token, coursePageId)
+        actions.getCoursePageById(token, coursePageId)
         return () => {
             actions.clearCoursePageState()
         }
-    }, [loginLoading])
+    }, [])
 
     const loading = useSelector(state => getCoursePageLoading(state.coursePage))
     const coursePage = useSelector(state => getCoursePage(state.coursePage))
@@ -46,17 +41,10 @@ export default () => {
         window.open(EDX_TEST_COURSES_ADDRESS + coursePage.course_id + '/about')
     }
 
-    if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN, UNIT_ADMIN, TEACHER])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
-
-
     return (
         <PageLayout>
             {
-                loading || loginLoading
+                loading
                     ? <Loader />
                     : (
                         <Flex padding='2rem' direction='column'>

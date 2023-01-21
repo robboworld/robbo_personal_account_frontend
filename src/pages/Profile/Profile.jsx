@@ -1,17 +1,14 @@
 import React, { useEffect, memo } from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
-
-import { WelcomeText } from '../Clients/components'
 
 import PageLayout from '@/components/PageLayout'
-import { checkAccess, useUserIdentity } from '@/helpers'
+import { checkAccess } from '@/helpers'
 import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
 import { useActions } from '@/helpers/useActions'
 import { getProfileState } from '@/reducers/profile'
 import ProfileCard from '@/components/ProfileCard/ProfileCard'
-import { FREE_LISTENER, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN } from '@/constants'
+import { PARENT } from '@/constants'
 import ListChildren from '@/components/ListChildren'
 import {
     clearProfileState,
@@ -19,22 +16,7 @@ import {
     getProfileById,
 } from '@/actions'
 
-export default memo(() => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
-    if (!loginLoading && !checkAccess(userRole,
-        [
-            STUDENT,
-            PARENT,
-            TEACHER,
-            UNIT_ADMIN,
-            SUPER_ADMIN,
-            FREE_LISTENER,
-        ])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
-
+export default memo(({ userRole }) => {
     const token = localStorage.getItem('token')
 
     const actions = useActions({
@@ -47,25 +29,17 @@ export default memo(() => {
     const isUserAParent = checkAccess(userRole, [PARENT])
 
     useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [
-            STUDENT,
-            PARENT,
-            TEACHER,
-            UNIT_ADMIN,
-            SUPER_ADMIN,
-            FREE_LISTENER,
-        ]))
-            actions.getProfileById(token)
+        actions.getProfileById(token)
         return () => {
             actions.clearProfileState()
         }
-    }, [loginLoading])
+    }, [])
 
     return (
         <PageLayout>
-            <WelcomeText>Profile</WelcomeText>
+            Profile
             {
-                loading || loginLoading
+                loading
                     ? <Loader />
                     : (
                         <Flex direction='row'>

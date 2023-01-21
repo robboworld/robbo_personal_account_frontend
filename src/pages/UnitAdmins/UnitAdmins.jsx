@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
-import { Navigate } from "react-router-dom"
 import { Modal, Button } from "antd"
 
 import { WelcomeText } from "./components"
@@ -13,28 +12,18 @@ import AddUnitAdmin from "@/components/AddUnitAdmin"
 import UnitAdminContent from "@/components/UnitAdminContent"
 import { getUnitAdminsState } from "@/reducers/unitAdmins"
 import Loader from "@/components/Loader"
-import { useUserIdentity, checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
-import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from "@/constants"
 import { deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState } from '@/actions'
 
 export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
     const actions = useActions({ deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState }, [])
 
     useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getUnitAdmins("page", "pageSize")
+        actions.getUnitAdmins("page", "pageSize")
         return () => actions.clearUnitAdminsPageState()
-    }, [loginLoading])
-
-    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
+    }, [])
 
     return (
         <PageLayout>

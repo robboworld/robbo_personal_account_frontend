@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { Modal, Button, Space, Pagination } from "antd"
 
 import { WelcomeText } from "./components"
@@ -14,12 +14,9 @@ import AddRobboUnit from "@/components/AddRobboUnit"
 import { useActions } from "@/helpers/useActions"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
 import { DragResize } from "@/components/UI"
-import { useUserIdentity, checkAccess } from "@/helpers"
 import {
-    HOME_PAGE_ROUTE,
     SUPER_ADMIN,
     UNIT_ADMIN,
-    LOGIN_PAGE_ROUTE,
 } from "@/constants"
 import {
     getRobboUnitsRequest,
@@ -28,9 +25,7 @@ import {
     clearRobboUnitsPage,
 } from '@/actions'
 
-export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
-
+export default ({ userRole }) => {
     const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams()
     const currentPage = searchParams.get('page') || '1'
@@ -44,24 +39,17 @@ export default () => {
     const { robboUnits, countRows, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
 
     useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN]))
-            switch (userRole) {
-                case UNIT_ADMIN:
-                    actions.getRobboUnitsByUnitAdminIdRequest(currentPage, "10")
-                    break
-                case SUPER_ADMIN:
-                    actions.getRobboUnitsRequest(currentPage, "10")
-                    break
-            }
+        switch (userRole) {
+            case UNIT_ADMIN:
+                actions.getRobboUnitsByUnitAdminIdRequest(currentPage, "10")
+                break
+            case SUPER_ADMIN:
+                actions.getRobboUnitsRequest(currentPage, "10")
+                break
+        }
 
         return () => actions.clearRobboUnitsPage()
-    }, [loginLoading, currentPage])
-
-    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
+    }, [currentPage])
 
     return (
         <PageLayout>

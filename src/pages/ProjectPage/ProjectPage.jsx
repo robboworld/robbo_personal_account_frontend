@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams, Navigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Input, Button, Form } from 'antd'
 
 import { UnsharedMessage } from './components'
@@ -10,8 +10,6 @@ import Flex from '@/components/Flex'
 import config from '@/config'
 import Loader from '@/components/Loader'
 import { useActions } from '@/helpers/useActions'
-import { checkAccess, useUserIdentity } from '@/helpers'
-import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { getProjectPageState } from '@/reducers/projectPage'
 import {
     getProjectPageById,
@@ -21,8 +19,6 @@ import {
 const { TextArea } = Input
 
 export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
-
     const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
@@ -42,12 +38,11 @@ export default () => {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            actions.getProjectPageById(token, projectPageId)
+        actions.getProjectPageById(token, projectPageId)
         return () => {
             actions.clearProjectPageState()
         }
-    }, [loginLoading])
+    }, [])
 
     const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
 
@@ -55,17 +50,9 @@ export default () => {
         window.location.replace(config.scratchURL + `?#${projectPageId}`)
     }
 
-    if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
-
-    console.log(projectPage)
-
     return (
         <PageLayout>
-            {loginLoading || loading
+            {loading
                 ? <Loader />
                 : (
                     <Flex direction='column' align='flex-start'
