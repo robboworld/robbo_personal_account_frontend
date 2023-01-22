@@ -1,3 +1,3 @@
-import MyCourses from './MyCourses'
+import MyCoursesContainer from './MyCoursesContainer'
 
-export default MyCourses
+export default MyCoursesContainer
