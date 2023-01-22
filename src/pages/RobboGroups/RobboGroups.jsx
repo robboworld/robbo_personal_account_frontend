@@ -62,6 +62,7 @@ export default ({ userRole }) => {
             <WelcomeText>Группы</WelcomeText>
             <Modal
                 centered
+                title='Заполните данные Robbo Group'
                 open={openAddGroup}
                 onCancel={() => setOpenAddGroup(false)}
                 footer={[]}

@@ -1,17 +1,15 @@
 import React, { memo } from 'react'
+import { Col } from 'antd'
 
-import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
 import { createTeacher } from '@/actions'
 
-export default memo(() => {
-    const actions = useActions({ createTeacher }, [])
 
+const AddTeacher = memo(() => {
+    const actions = useActions({ createTeacher }, [])
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
+        <Col span={24}
         >
             <SignUpForm
                 margin='0 0 10px 0'
@@ -21,6 +19,8 @@ export default memo(() => {
                     padding: '10px',
                 }}
             />
-        </Flex>
+        </Col>
     )
 })
+
+export default AddTeacher

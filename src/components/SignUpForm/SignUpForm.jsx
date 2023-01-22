@@ -161,7 +161,7 @@ const SignUpForm = memo(({
                                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
                             }
                         >
-                            Зарегистрироваться
+                            Создать
                         </Button>
                     )
                 }

@@ -37,6 +37,7 @@ const UnitAdmins = ({
             </Row>
             <Modal
                 centered
+                title='Заполните данные Unit Admin'
                 open={openAddUnitAdmin}
                 onCancel={() => setOpenAddUnitAdmin(false)}
                 footer={[]}

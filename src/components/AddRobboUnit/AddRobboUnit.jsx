@@ -1,20 +1,14 @@
 import React, { memo } from 'react'
+import { Col } from 'antd'
 
-import { Text } from './components'
-
-import Flex from '@/components/Flex'
 import RobboUnitForm from '@/components/RobboUnitForm'
 import { useActions } from '@/helpers/useActions'
 import { createRobboUnitRequest } from '@/actions'
 
-export default memo(() => {
+const AddRobboUnit = memo(() => {
     const actions = useActions({ createRobboUnitRequest }, [])
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
-            <Text>Добавление Robbo Unit</Text>
+        <Col span={24}>
             <RobboUnitForm
                 margin='0 0 10px 0'
                 handleSubmit={robboUnit => actions.createRobboUnitRequest(robboUnit)}
@@ -23,6 +17,8 @@ export default memo(() => {
                     padding: '10px',
                 }}
             />
-        </Flex>
+        </Col>
     )
 })
+
+export default AddRobboUnit

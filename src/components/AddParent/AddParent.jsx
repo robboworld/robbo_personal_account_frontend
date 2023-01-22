@@ -1,25 +1,24 @@
 import React, { memo } from 'react'
+import { Col } from 'antd'
 
-import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
 import { createParentRequest } from '@/actions'
 
-export default memo(() => {
+const AddPrent = memo(() => {
     const actions = useActions({ createParentRequest }, [])
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
+        <Col span={24}>
             <SignUpForm
-                margin='0 0 0 0'
+                margin='0'
                 handleSubmit={parent => actions.createParentRequest(parent)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',
                 }}
             />
-        </Flex>
+        </Col>
     )
 })
+
+export default AddPrent

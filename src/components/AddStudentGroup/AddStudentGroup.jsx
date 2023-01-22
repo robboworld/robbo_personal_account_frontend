@@ -1,20 +1,16 @@
 import React, { memo } from "react"
-import styled from 'styled-components'
 import { PropTypes } from 'prop-types'
+import { Col } from "antd"
 
-import Flex from "@/components/Flex"
 import RobboGroupForm from "@/components/RobboGroupForm"
 import { useActions } from "@/helpers/useActions"
 import { createRobboGroupRequest } from '@/actions'
 
+
 const AddStudentGroup = memo(({ robboUnitId }) => {
     const actions = useActions({ createRobboGroupRequest }, [])
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
-            <Text>Добавление Robbo Group</Text>
+        <Col span={24}>
             <RobboGroupForm
                 margin='0 0 10px 0'
                 handleSubmit={robboGroup => actions.createRobboGroupRequest(String(robboUnitId), robboGroup)}
@@ -23,14 +19,9 @@ const AddStudentGroup = memo(({ robboUnitId }) => {
                     padding: '10px',
                 }}
             />
-        </Flex>
+        </Col>
     )
 })
-
-const Text = styled.p`
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-`
 
 AddStudentGroup.propTypes = {
     robboUnitId: PropTypes.string,

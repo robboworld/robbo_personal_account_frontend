@@ -30,6 +30,7 @@ const RobboUnits = ({
     return (
         <PageLayout>
             <Modal
+                title='Заполните данные Robbo Unit'
                 centered
                 open={openAddRobboUnit}
                 onCancel={() => setOpenAddRobboUnit(false)}

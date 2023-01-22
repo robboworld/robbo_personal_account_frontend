@@ -1,21 +1,16 @@
 import React, { memo } from 'react'
+import { Col } from 'antd'
 
-import { Text } from './components'
-
-import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
 import { createUnitAdmin } from '@/actions'
 
-export default memo(() => {
+
+const AddUnitAdmin = memo(() => {
     const actions = useActions({ createUnitAdmin }, [])
 
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
-            <Text>Добавление Unit Админа</Text>
+        <Col span={24}>
             <SignUpForm
                 margin='0 0 10px 0'
                 handleSubmit={unitAdmin => actions.createUnitAdmin(unitAdmin)}
@@ -25,6 +20,8 @@ export default memo(() => {
                 }}
             />
 
-        </Flex>
+        </Col>
     )
 })
+
+export default AddUnitAdmin
