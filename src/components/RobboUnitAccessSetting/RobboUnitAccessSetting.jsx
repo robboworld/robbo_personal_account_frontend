@@ -18,7 +18,6 @@ import {
 const { Search } = Input
 
 export default ({ robboUnitId }) => {
-    const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
     const actions = useActions({
         setNewUnitAdminForRobboUnitRequest,
@@ -29,7 +28,6 @@ export default ({ robboUnitId }) => {
 
     const SearchUnitAdmins = async value => {
         const result = await unitAdminQuerysGraphQL.SearchUnitAdminByEmail(value, robboUnitId)
-        console.log(result)
         setSearchResult(result.data.SearchUnitAdminsByEmail.unitAdmins)
     }
 
@@ -53,7 +51,7 @@ export default ({ robboUnitId }) => {
                                 key={index}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
-                                handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
+                                handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(userHttp.id, robboUnitId)}
                             />
                         )}
                     />
@@ -73,7 +71,7 @@ export default ({ robboUnitId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => actions.setNewUnitAdminForRobboUnitRequest(token, userHttp.id, robboUnitId)}
+                                handleClick={() => actions.setNewUnitAdminForRobboUnitRequest(userHttp.id, robboUnitId)}
                             />
                         )}
                     />

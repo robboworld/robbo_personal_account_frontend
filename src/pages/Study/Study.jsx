@@ -2,22 +2,12 @@ import React from "react"
 import { Navigate } from "react-router-dom"
 import { Tabs } from "antd"
 
+import TeacherCourses from "./TeacherCourses"
+
 import PageLayout from '@/components/PageLayout'
-import { useUserIdentity, checkAccess } from "@/helpers"
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, TEACHER } from "@/constants"
 import RobboGroupsList from "@/components/RobboGroupsList"
 
-
 export default () => {
-
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
-
-    if (!loginLoading && !checkAccess(userRole, [TEACHER])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
-
     return (
         <PageLayout>
             Обучение
@@ -42,7 +32,7 @@ export default () => {
                     {
                         label: 'Курсы',
                         key: '4',
-                        children: 'Курсы',
+                        children: <TeacherCourses />,
                     },
                 ]}
             />

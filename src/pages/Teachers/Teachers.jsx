@@ -1,48 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
-import { Modal } from 'antd'
-
-import { WelcomeText } from './components'
+import React, { useState } from 'react'
+import { Modal, Button, Row, Col, Typography, List } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
-import Flex from '@/components/Flex'
-import { useUserIdentity, checkAccess } from '@/helpers'
-import { getTeachersState } from '@/reducers/teachers'
-import { useActions } from '@/helpers/useActions'
-import { Button, DragResize } from '@/components/UI'
 import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
-import Loader from '@/components/Loader'
-import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
-import { getTeachers, deleteTeacher, clearTeachersState } from '@/actions'
-
-export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
+import { useActions } from '@/helpers/useActions'
+import { DragResize } from '@/components/UI'
+import { deleteTeacher } from '@/actions'
 
 
-    const token = localStorage.getItem('token')
-    const actions = useActions({ getTeachers, deleteTeacher, clearTeachersState }, [])
-    const { teachers, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
+const { Title } = Typography
 
-    useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getTeachers(token)
-        return () => actions.clearTeachersState()
-    }, [loginLoading])
+const Teachers = ({
+    data: {
+        GetAllTeachers,
+        loading,
+    },
+    pageSize,
+    currentPage,
+    onChangePage,
+}) => {
 
+    const actions = useActions({ deleteTeacher }, [])
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
-
-    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
-
     return (
         <PageLayout>
-            <WelcomeText>Педагоги</WelcomeText>
             <Modal
                 title='Заполните данные педагога'
                 open={openAddTeacher}
@@ -51,54 +34,53 @@ export default () => {
             >
                 <AddTeacher />
             </Modal>
-
-
-            <Flex direction='row' justify='flex-end'
-                align='flex-start'>
-                <Button
-                    background='green'
-                    content='Добавить педагога'
-                    padding='0.5rem'
-                    handleSubmit={() => setOpenAddTeacher(true)}
-                />
-            </Flex>
-            {
-                loading ? <Loader />
-                    : (
-                        <Flex
-                            widht='100%' direction='column'
-                            justify=' center'
-                        >
-                            <Flex direction='column'>
-                                {
-                                    teachers?.map((teacher, index) => {
-                                        return (
-                                            <ListItem
-                                                itemIndex={index}
-                                                key={index}
-                                                label={`
-                                                        ${teacher.userHttp.lastname}
-                                                        ${teacher.userHttp.firstname} 
-                                                        ${teacher.userHttp.middlename}
-                                                    `}
-                                                handleDelete={teacherIndex => actions.deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
-                                                render={(open, setOpen) => (
-                                                    <DragResize
-                                                        open={open} setOpen={setOpen}
-                                                        content={() => (
-                                                            <TeacherContent teacherId={teacher.userHttp.id} />
-                                                        )}
-                                                    />
-                                                )}
-                                            />
-                                        )
-                                    })
-                                }
-                            </Flex>
-                        </Flex>
-                    )
-            }
+            <Row align='middle'>
+                <Col span={22}>
+                    <Title>Педагоги</Title>
+                </Col>
+                <Col span={1}>
+                    <Button type='primary' onClick={() => setOpenAddTeacher(true)}>
+                        Добавить педагога
+                    </Button>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={loading}
+                        bordered
+                        size='large'
+                        dataSource={GetAllTeachers?.teachers}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: GetAllTeachers?.countRows,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={({ userHttp }, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                handleDelete={teacherIndex => actions.deleteTeacher(userHttp.id, teacherIndex)}
+                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                key={index}
+                                render={(open, setOpen) => (
+                                    <DragResize
+                                        open={open} setOpen={setOpen}
+                                        content={() => (
+                                            <TeacherContent teacherId={userHttp.id} />
+                                        )}
+                                    />
+                                )}
+                            />
+                        )}
+                    />
+                </Col>
+            </Row>
         </PageLayout >
-
     )
 }
+
+export default Teachers

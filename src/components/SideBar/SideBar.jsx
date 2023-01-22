@@ -1,6 +1,6 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { Menu } from 'antd'
+import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -12,18 +12,18 @@ import {
     SidebarDataFreeListener,
 } from './SideBarData.jsx'
 
-import { useActions } from '@/helpers/useActions'
-import { getLoginState } from '@/reducers/login'
+import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
+import { useActions, parseJwt } from '@/helpers'
 import { signOutRequest } from '@/actions'
 import { LOGIN_PAGE_ROUTE } from '@/constants'
 
-export default () => {
-    const history = useNavigate()
+export default ({ selectedNavBarKey = '1' }) => {
+    const navigate = useNavigate()
     const actions = useActions({ signOutRequest }, [])
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
+    const token = localStorage.getItem('token')
+    const { Role } = parseJwt(token)
     let SideBarData = []
-    switch (userRole) {
+    switch (Role) {
         case 0: {
             SideBarData = SidebarDataStudent
             break
@@ -50,25 +50,31 @@ export default () => {
         }
     }
 
-    const onMenuClick = ({ item, key, keyPath, selectedKeys, domEvent }) => {
+    const [loginOut, loginOutMutation] = useMutation(authMutationsGQL.SING_OUT, {
+        onCompleted: ({ SingIn }) => {
+            graphQLClient.resetStore()
+            localStorage.removeItem('token')
+            navigate('/login')
+        },
+    })
+
+    const onMenuClick = ({ item, key }) => {
         if (item.props.pathname === LOGIN_PAGE_ROUTE) {
-            actions.signOutRequest()
-            history(item.props.pathname)
+            // actions.signOutRequest()
+            loginOut()
         }
         else {
-            history(item.props.pathname)
+            navigate(item.props.pathname, { state: { selectedNavBarKey: key } })
         }
 
     }
-
     return (
-        <React.Fragment>
-            <Menu
-                theme='light'
-                mode='inline'
-                onClick={onMenuClick}
-                items={SideBarData}
-            />
-        </React.Fragment>
+        <Menu
+            theme='light'
+            mode='inline'
+            selectedKeys={[selectedNavBarKey]}
+            onClick={onMenuClick}
+            items={SideBarData}
+        />
     )
 }

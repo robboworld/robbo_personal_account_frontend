@@ -17,8 +17,14 @@ import {
   ROBBO_UNIT_STUDENT_GROUPS_PAGE,
   STUDY_PAGE_ROUTE,
   ROBBO_GROUPS_ROUTE,
+  SUPER_ADMIN,
+  STUDENT,
+  UNIT_ADMIN,
+  TEACHER,
+  PARENT,
 } from '@/constants'
 import Loader from '@/components/Loader'
+import { ProtectedRoute } from '@/helpers'
 
 const HomePage = lazy(() => import('@/pages/Home'))
 const LoginPage = lazy(() => import('@/pages/Login'))
@@ -29,79 +35,140 @@ const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
 const PeekProfilePage = lazy(() => import('@/pages/PeekProfile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
-const ClientsPage = lazy(() => import('@/pages/Clients'))
+const ClientsPageContainer = lazy(() => import('@/pages/Clients'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const Study = lazy(() => import('@/pages/Study'))
 
-export default () => (
-  <Suspense fallback={<Loader />}>
-    <Routes>
-      <Route
-        path={HOME_PAGE_ROUTE}
-        element={<HomePage />}
-      />
-      <Route
-        path={LOGIN_PAGE_ROUTE}
-        element={<LoginPage />}
-      />
-      <Route
-        path={MY_PROJECTS_ROUTE}
-        element={<MyProjects />}
-      />
-      <Route
-        path={PROJECT_PAGE_ROUTE}
-        element={<ProjectPage />}
-      />
-      <Route
-        path={MY_COURSES_ROUTE}
-        element={<MyCourses />}
-      />
-      <Route
-        path={COURSE_PAGE_ROUTE}
-        element={<CoursePage />}
-      />
-      <Route
-        path={CLIENTS_ROUTE}
-        element={<ClientsPage />}
-      />
-      <Route
-        path={TEACHERS_PAGE_ROUTE}
-        element={<TeachersPage />}
-      />
-      <Route
-        path={PROFILE_PAGE_ROUTE}
-        element={<ProfilePage />}
-      />
-      <Route
-        path={PEEK_PROFILE_PAGE}
-        element={<PeekProfilePage />}
-      />
-      <Route
-        path={UNIT_ADMINS_ROUTE}
-        element={<UnitAdminsPage />}
-      />
-      <Route
-        path={ROBBO_UNITS_ROUTE}
-        element={<RobboUnitsPage />}
-      />
-      <Route
-        path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
-        element={<RobboGroups />}
-      />
-      <Route
-        path={STUDY_PAGE_ROUTE}
-        element={<Study />}
-      />
-      <Route
-        path={ROBBO_GROUPS_ROUTE}
-        element={<RobboGroups />}
-      />
-      <Route
-        path='/*'
-        element={<Navigate to={HOME_PAGE_ROUTE} replace />}
-      />
-    </Routes>
-  </Suspense>
-)
+const App = () => {
+  return (
+    <Suspense fallback={<Loader />}>
+      <Routes>
+        <Route
+          path={HOME_PAGE_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={LOGIN_PAGE_ROUTE}
+          element={<LoginPage />}
+        />
+        <Route
+          path={MY_PROJECTS_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <MyProjects />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={PROJECT_PAGE_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <ProjectPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={MY_COURSES_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
+              <MyCourses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={COURSE_PAGE_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
+              <CoursePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={CLIENTS_ROUTE}
+          element={
+            <ProtectedRoute
+              allowedRoles={[SUPER_ADMIN]} >
+              <ClientsPageContainer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={TEACHERS_PAGE_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+              <TeachersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={PROFILE_PAGE_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={PEEK_PROFILE_PAGE}
+          element={
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+              <PeekProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={UNIT_ADMINS_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
+              <UnitAdminsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROBBO_UNITS_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+              <RobboUnitsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
+          element={
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+              <RobboGroups />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={STUDY_PAGE_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[TEACHER]}>
+              <Study />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROBBO_GROUPS_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+              <RobboGroups />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/*'
+          element={<Navigate to={HOME_PAGE_ROUTE} replace />}
+        />
+      </Routes>
+    </Suspense >
+  )
+}
+
+export default App

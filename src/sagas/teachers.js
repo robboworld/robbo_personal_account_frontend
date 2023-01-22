@@ -1,74 +1,92 @@
 import { call, takeLatest, put } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import { teachersAPI } from '@/api'
 import {
-    createTeacher, createTeacherFailed,
-    createTeacherSuccess, deleteTeacher,
-    deleteTeacherFailed, deleteTeacherSuccess,
-    getTeachers, getTeachersFailed,
-    getTeachersSuccess, deleteTeacherForRobboGroupFailed,
-    deleteTeacherForRobboGroupRequest, deleteTeacherForRobboGroupSuccess,
-    setTeacherForRobboGroupFailed, setTeacherForRobboGroupRequest,
+    createTeacher,
+    createTeacherFailed,
+    createTeacherSuccess,
+    deleteTeacher,
+    deleteTeacherFailed,
+    deleteTeacherSuccess,
+    getTeachers,
+    getTeachersFailed,
+    getTeachersSuccess,
+    deleteTeacherForRobboGroupFailed,
+    deleteTeacherForRobboGroupRequest,
+    deleteTeacherForRobboGroupSuccess,
+    setTeacherForRobboGroupFailed,
+    setTeacherForRobboGroupRequest,
     setTeacherForRobboGroupSuccess,
 } from '@/actions'
+import { teacherMutationsGraphQL, teacherQuerysGraphQL } from '@/graphQL'
 
 function* getTeachersSaga(action) {
     try {
-        const { token } = action.payload
-        const response = yield call(teachersAPI.getTeachers, token)
+        const { page, pageZie } = action.payload
+        const response = yield call(teacherQuerysGraphQL.GetAllTeachers, "1", "10")
         console.log(response)
 
-        yield put(getTeachersSuccess(response.data))
+        yield put(getTeachersSuccess(response.data.GetAllTeachers.teachers))
     } catch (e) {
         yield put(getTeachersFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
 function* deleteTeacherSaga(action) {
     try {
-        const { token, teacherId, teacherIndex } = action.payload
-        const response = yield call(teachersAPI.deleteTeacher, token, teacherId)
+        const { teacherId, teacherIndex } = action.payload
+        const response = yield call(teacherMutationsGraphQL.DeleteTeacher, teacherId)
         console.log(response)
 
-        yield put(deleteTeacherSuccess(response.data, teacherIndex))
+        yield put(deleteTeacherSuccess(response.data.DeleteTeacher, teacherIndex))
+        notification.success({ message: '', description: 'Педагог успешно удален!' })
     } catch (e) {
         yield put(deleteTeacherFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
 function* createTeacherSaga(action) {
     try {
-        const { token, teacher } = action.payload
-        const response = yield call(teachersAPI.createTeacher, token, teacher)
+        const { teacher } = action.payload
+        const response = yield call(teacherMutationsGraphQL.CreateTeacher, { input: teacher })
         console.log(response)
 
-        yield put(createTeacherSuccess(response.data, teacher))
+        yield put(createTeacherSuccess(response.data.CreateTeacher))
+        notification.success({ message: '', description: 'Педагог успешно создан!' })
     } catch (e) {
         yield put(createTeacherFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
 function* setTeacherForRobboGroupSaga(action) {
     try {
-        const { token, teacherId, robboGroupId } = action.payload
-        const response = yield call(teachersAPI.setTeacherForRobboGroup, token, teacherId, robboGroupId)
+        const { teacherId, robboGroupId } = action.payload
+        const response = yield call(teacherMutationsGraphQL.SetTeacherForRobboGroup, teacherId, robboGroupId)
         console.log(response)
 
-        yield put(setTeacherForRobboGroupSuccess(response.data))
+        yield put(setTeacherForRobboGroupSuccess(response.data.SetTeacherForRobboGroup))
+        notification.success({ message: '', description: 'Педагог успешно назначен!' })
     } catch (e) {
         yield put(setTeacherForRobboGroupFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
 function* deleteTeacherForRobboGroupSaga(action) {
     try {
-        const { token, teacherId, robboGroupId } = action.payload
-        const response = yield call(teachersAPI.deleteTeacherForRobboGroup, token, teacherId, robboGroupId)
+        const { teacherId, robboGroupId } = action.payload
+        const response = yield call(teacherMutationsGraphQL.DeleteTeacherForRobboGroup, teacherId, robboGroupId)
         console.log(response)
 
-        yield put(deleteTeacherForRobboGroupSuccess(response.data))
+        yield put(deleteTeacherForRobboGroupSuccess(response.data.DeleteTeacherForRobboGroup))
+        notification.success({ message: '', description: 'Педагог успешно отстранен!' })
     } catch (e) {
         yield put(deleteTeacherForRobboGroupFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 

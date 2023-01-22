@@ -15,7 +15,6 @@ import {
 const { Search } = Input
 
 const GroupsTab = ({ teacherId }) => {
-    const token = localStorage.getItem('token')
     const actions = useActions({ setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest }, [])
     const client = useApolloClient()
     const history = useNavigate()
@@ -23,7 +22,7 @@ const GroupsTab = ({ teacherId }) => {
     const [searchGroups, setSearchResult] = useState([])
 
     const getRobboGroupsResult = useQuery(robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_TEACHER_ID, {
-        variables: { teacherId },
+        variables: { teacherId, page: "1", pageSize: "10" },
         notifyOnNetworkStatusChange: true,
     })
 
@@ -32,7 +31,7 @@ const GroupsTab = ({ teacherId }) => {
             query: robboGroupQuerysGQL.SEARCH_GROUPS_BY_NAME,
             variables: { name: value },
         })
-        setSearchResult(result.data.SearchGroupsByName)
+        setSearchResult(result.data.SearchGroupsByName.robboGroups)
     }
 
     return (
@@ -42,7 +41,7 @@ const GroupsTab = ({ teacherId }) => {
                     ? <LoadingOutlined />
                     : <List
                         bordered
-                        dataSource={getRobboGroupsResult.data.GetRobboGroupsByTeacherId}
+                        dataSource={getRobboGroupsResult.data.GetRobboGroupsByTeacherId.robboGroups}
                         renderItem={(robboGroup, index) => (
                             <ListItem
                                 itemIndex={index}
@@ -50,7 +49,7 @@ const GroupsTab = ({ teacherId }) => {
                                 render={() => { }}
                                 label={`${robboGroup?.name}`}
                                 handleClick={() => history(`/robboUnits/${robboGroup.robboUnitId}/groups`)}
-                                handleDelete={() => actions.deleteTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
+                                handleDelete={() => actions.deleteTeacherForRobboGroupRequest(teacherId, robboGroup.id)}
                             />
                         )}
                     />
@@ -71,7 +70,7 @@ const GroupsTab = ({ teacherId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${robboGroup.name}`}
-                                handleClick={() => actions.setTeacherForRobboGroupRequest(token, teacherId, robboGroup.id)}
+                                handleClick={() => actions.setTeacherForRobboGroupRequest(teacherId, robboGroup.id)}
                             />
                         )}
                     />

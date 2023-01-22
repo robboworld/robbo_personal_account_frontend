@@ -1,5 +1,4 @@
 import React from "react"
-import { useQuery } from "@apollo/client"
 import { Tabs } from 'antd'
 
 import ChildrenTab from "./ChildrenTab"
@@ -8,15 +7,16 @@ import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
 import ProfileCard from "@/components/ProfileCard"
 import { updateProfile } from '@/actions'
-import { parentQuerysGQL } from "@/graphQL"
 import { useActions } from "@/helpers/useActions"
 
-export default ({ clientId }) => {
+const ParentContent = ({
+    parentId,
+    data: {
+        GetParentById,
+        loading,
+    },
+}) => {
     const actions = useActions({ updateProfile }, [])
-
-    const { loading, data } = useQuery(parentQuerysGQL.GET_PARENT_BY_ID, {
-        variables: { parentId: clientId },
-    })
 
     return (
 
@@ -34,12 +34,12 @@ export default ({ clientId }) => {
                                 key: '1',
                                 children: loading
                                     ? <Loader />
-                                    : <ProfileCard updateHandle={actions.updateProfile} profile={data.GetParentById?.userHttp} />,
+                                    : <ProfileCard updateHandle={actions.updateProfile} profile={GetParentById?.userHttp} />,
                             },
                             {
                                 label: 'Дети',
                                 key: '2',
-                                children: <ChildrenTab clientId={clientId} />,
+                                children: <ChildrenTab clientId={parentId} />,
                             },
                         ]}
                     />
@@ -47,4 +47,6 @@ export default ({ clientId }) => {
             </Flex>
         </Flex >
     )
-} 
+}
+
+export default ParentContent

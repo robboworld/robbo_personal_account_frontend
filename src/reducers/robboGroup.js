@@ -8,7 +8,8 @@ import {
     deleteStudentFromRobboGroupRequest,
     deleteStudentFromRobboGroupSuccess,
     getRobboGroupByIdFailed,
-    getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
+    getRobboGroupByIdRequest,
+    getRobboGroupByIdSuccess,
     clearRobboGroupPage,
 } from '@/actions'
 

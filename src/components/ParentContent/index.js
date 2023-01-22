@@ -1,2 +1,2 @@
-import ParentContent from './ParentContent'
-export default ParentContent
+import ParentContentContainer from './ParentContentContainer'
+export default ParentContentContainer

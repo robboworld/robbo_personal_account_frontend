@@ -4,9 +4,9 @@ import { graphQLClient } from "@/graphQL"
 
 export const robboGroupQuerysGQL = {
     GET_ROBBO_GROUPS_BY_TEACHER_ID: gql`
-    query GetRobboGroupsByTeacherId($teacherId: String!) {
-        GetRobboGroupsByTeacherId(teacherId: $teacherId){
-            ... on RobboGroupHttp {
+    query GetRobboGroupsByTeacherId($teacherId: String!, $page: String!, $pageSize: String!) {
+        GetRobboGroupsByTeacherId(teacherId: $teacherId, page: $page, pageSize: $pageSize){
+            ... on RobboGroupHttpList {
                 robboGroups {
                     id
                     robboUnitId
@@ -60,6 +60,7 @@ export const robboGroupQuerysGQL = {
                     robboUnitId
                     lastModified
                 }
+                countRows
             }
             ... on Error {
                 message
@@ -101,6 +102,23 @@ export const robboGroupQuerysGQL = {
         }
     }     
     `,
+    GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN: gql`
+    query GetAllRobboGroupsForUnitAdmin($page: String!, $pageSize: String!){
+        GetAllRobboGroupsForUnitAdmin(page: $page, pageSize: $pageSize){
+            ... on RobboGroupHttpList {
+                robboGroups {
+                    id
+                    name
+                    robboUnitId
+                    lastModified
+                }
+            }
+            ... on Error {
+                message
+            }
+        }
+    }     
+    `,
 }
 
 export const robboGroupsQuerysGraphQL = {
@@ -108,7 +126,7 @@ export const robboGroupsQuerysGraphQL = {
         return graphQLClient.query(
             {
                 query: robboGroupQuerysGQL.SEARCH_GROUPS_BY_NAME,
-                variables: name,
+                variables: { name },
             },
         )
     },
@@ -117,7 +135,7 @@ export const robboGroupsQuerysGraphQL = {
         return graphQLClient.query(
             {
                 query: robboGroupQuerysGQL.GET_ALL_ROBBO_GROUPS,
-                variables: { page, pageSize: "10" },
+                variables: { page, pageSize },
             },
         )
     },
@@ -131,11 +149,12 @@ export const robboGroupsQuerysGraphQL = {
         )
     },
 
-    GetRobboGroupsByTeacherId(teacherId) {
+    GetRobboGroupsByTeacherId(teacherId, page, pageSize) {
+        console.log(page, pageSize)
         return graphQLClient.query(
             {
                 query: robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_TEACHER_ID,
-                variables: teacherId,
+                variables: { teacherId, page, pageSize },
             },
         )
     },
@@ -154,6 +173,15 @@ export const robboGroupsQuerysGraphQL = {
             {
                 query: robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID,
                 variables: { robboUnitId },
+            },
+        )
+    },
+
+    GetAllRobboGroupsForUnitAdmin(page, pageSize) {
+        return graphQLClient.query(
+            {
+                query: robboGroupQuerysGQL.GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN,
+                variables: { page, pageSize: "10" },
             },
         )
     },

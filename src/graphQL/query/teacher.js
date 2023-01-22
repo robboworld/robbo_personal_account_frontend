@@ -46,13 +46,42 @@ export const teacherQuerysGQL = {
     `,
 
     GET_ALL_TEACHERS: gql`
-        query{
-            GetAllTeachers{
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
+        query GetAllTeachers($page: String!, $pageSize: String!){
+            GetAllTeachers(page: $page, pageSize: $pageSize){
+                ... on TeacherHttpList{
+                    teachers {
+                        userHttp {
+                            id 
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+
+                ... on Error{
+                        message
+                }
+            }
+        }
+    `,
+
+    SEARCH_TEACHERS_BY_EMAIL: gql`
+        query SearchTeachersByEmail($email: String!) {
+            SearchTeachersByEmail(email: $email) {
+                ... on TeacherHttpList{
+                    teachers {
+                        userHttp {
+                            id 
+                            lastname
+                            firstname
+                            middlename
+                        }
+                    }
+                }
+
+                ... on Error{
+                        message
                 }
             }
         }
@@ -60,10 +89,11 @@ export const teacherQuerysGQL = {
 }
 
 export const teacherQuerysGraphQL = {
-    GetAllTeachers() {
+    GetAllTeachers(page, pageSize) {
         return graphQLClient.query(
             {
                 query: teacherQuerysGQL.GET_ALL_TEACHERS,
+                variables: { page, pageSize },
             },
         )
     },
@@ -82,6 +112,17 @@ export const teacherQuerysGraphQL = {
             {
                 query: teacherQuerysGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID,
                 variables: robboGroupId,
+            },
+        )
+    },
+
+    SearchTeachersByEmail(email) {
+        return graphQLClient.query(
+            {
+                query: teacherQuerysGQL.SEARCH_TEACHERS_BY_EMAIL,
+                variables: {
+                    email,
+                },
             },
         )
     },

@@ -9,7 +9,6 @@ import { createUnitAdmin } from '@/actions'
 
 export default memo(() => {
     const actions = useActions({ createUnitAdmin }, [])
-    const token = localStorage.getItem('token')
 
     return (
         <Flex
@@ -19,7 +18,7 @@ export default memo(() => {
             <Text>Добавление Unit Админа</Text>
             <SignUpForm
                 margin='0 0 10px 0'
-                handleSubmit={unitAdmin => actions.createUnitAdmin(token, unitAdmin)}
+                handleSubmit={unitAdmin => actions.createUnitAdmin(unitAdmin)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',

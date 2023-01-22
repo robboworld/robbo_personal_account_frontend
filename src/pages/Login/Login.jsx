@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
 
@@ -6,19 +7,18 @@ import PageLayoutLogin from '@/components/PageLayoutLogin'
 import { useUserIdentity } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
 
-export default () => {
-    const { isAuth, loginLoading } = useUserIdentity()
+import { getLoginState } from '@/reducers/login'
 
-    if (isAuth && !loginLoading) {
+export default () => {
+    // const { isAuth } = useSelector(({ login }) => getLoginState(login))
+    // if (isAuth) {
+    //     return <Navigate to={HOME_PAGE_ROUTE} />
+    // }
+    const token = localStorage.getItem('token')
+    if (token) {
         return <Navigate to={HOME_PAGE_ROUTE} />
     }
     return (
-        <React.Fragment>
-            {
-                loginLoading
-                    ? <LoadingOutlined />
-                    : <PageLayoutLogin />
-            }
-        </React.Fragment>
+        <PageLayoutLogin />
     )
 }

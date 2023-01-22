@@ -88,7 +88,7 @@ export const parentMutationsGraphQL = {
                         fields: {
                             GetAllParents(existingParents = []) {
                                 const newParents = [...existingParents.parents]
-                                    .filter(parent => parent.id !== DeleteParent.parentId)
+                                    .filter(parent => parent.userHttp.id !== DeleteParent.parentId)
                                 return { ...existingParents, parents: newParents }
                             },
                         },

@@ -7,7 +7,6 @@ import { createTeacher } from '@/actions'
 
 export default memo(() => {
     const actions = useActions({ createTeacher }, [])
-    const token = localStorage.getItem('token')
 
     return (
         <Flex
@@ -16,7 +15,7 @@ export default memo(() => {
         >
             <SignUpForm
                 margin='0 0 10px 0'
-                handleSubmit={teacher => actions.createTeacher(token, teacher)}
+                handleSubmit={teacher => actions.createTeacher(teacher)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',

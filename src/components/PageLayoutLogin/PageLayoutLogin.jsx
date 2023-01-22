@@ -21,11 +21,6 @@ const PageLayoutLogin = () => {
                             key: '1',
                             children: <SignInForm handleSubmit={user => actions.signInRequest(user)} />,
                         },
-                        {
-                            label: `Регистрация`,
-                            key: '2',
-                            children: <SignUpForm handleSubmit={newUser => actions.signUpRequest(newUser)} />,
-                        },
                     ]}
                 />
             </Content>

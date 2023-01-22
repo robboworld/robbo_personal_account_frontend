@@ -1,6 +1,5 @@
 import React from 'react'
-
-import { gql, useQuery } from "@apollo/client"
+import { useQuery } from "@apollo/client"
 import { Tabs } from 'antd'
 
 import GroupsTab from './GroupsTab'
@@ -10,28 +9,12 @@ import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
 import { useActions } from '@/helpers/useActions'
 import { updateProfile } from '@/actions'
-
-const GET_TEACHER_BY_ID = gql`
-query GetTeacherById($teacherId: String!){
-    GetTeacherById(teacherId: $teacherId){
-        userHttp{
-            id
-            lastname
-            firstname
-            middlename
-            nickname
-            email
-            createdAt
-            role
-        }
-    }
-}
-`
+import { teacherQuerysGQL } from '@/graphQL'
 
 export default ({ teacherId }) => {
     const actions = useActions({ updateProfile }, [])
 
-    const { loading, error, data } = useQuery(GET_TEACHER_BY_ID, {
+    const { loading, error, data } = useQuery(teacherQuerysGQL.GET_TEACHER_BY_ID, {
         variables: { teacherId },
     })
 
@@ -56,7 +39,7 @@ export default ({ teacherId }) => {
                         {
                             label: 'Курсы',
                             key: '3',
-                            children: "Курсы",
+                            children: 'Курсы',
                         },
                     ]}
                 />

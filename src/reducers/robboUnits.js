@@ -19,6 +19,7 @@ import {
 const INITIAL_STATE = {
     robboUnits: [],
     loading: true,
+    countRows: 0,
 }
 
 export default handleActions({
@@ -34,8 +35,8 @@ export default handleActions({
     [getRobboUnitsByUnitAdminIdRequest](state) {
         return { ...state, loading: true }
     },
-    [getRobboUnitsByUnitAdminIdSuccess](state, action) {
-        return { ...state, robboUnits: action.payload.response, loading: false }
+    [getRobboUnitsByUnitAdminIdSuccess](state, { payload }) {
+        return { ...state, robboUnits: payload.response.robboUnits, loading: false, countRows: payload.response.countRows }
     },
     [getRobboUnitsByUnitAdminIdFailed](state, action) {
         return { ...state, loading: false }

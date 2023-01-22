@@ -1,6 +1,8 @@
 import React, { memo } from 'react'
 import { Button, Select, Form, Input } from 'antd'
 import { PropTypes } from 'prop-types'
+import { useMutation } from '@apollo/client'
+import { useNavigate } from 'react-router-dom'
 
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
 
@@ -13,6 +15,7 @@ import {
     SUPER_ADMIN,
     userRole,
 } from '@/constants'
+import { authMutationsGQL } from '@/graphQL'
 
 const SignInForm = memo(({
     handleSubmit,
@@ -29,13 +32,29 @@ const SignInForm = memo(({
     ]
 
     const [form] = Form.useForm()
+    const navigate = useNavigate()
+
+    const [login, loginMutation] = useMutation(authMutationsGQL.SIGN_IN, {
+        onCompleted: ({ SingIn }) => {
+            localStorage.setItem('token', SingIn.accessToken)
+            navigate('/')
+        },
+    })
 
     return (
         <Form
             name='normal_login'
             className='login-form'
             onFinish={({ email, password, role }) => {
-                return handleSubmit({ email, password, role })
+                login({
+                    variables: {
+                        input: {
+                            email,
+                            password,
+                            userRole: role,
+                        },
+                    },
+                })
             }}
             form={form}
         >

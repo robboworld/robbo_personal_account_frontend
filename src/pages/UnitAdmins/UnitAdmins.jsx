@@ -1,47 +1,40 @@
-import React, { useState, useEffect } from "react"
-import { useSelector } from "react-redux"
-import { Navigate } from "react-router-dom"
-import { Modal } from "antd"
-
-import { WelcomeText } from "./components"
+import React, { useState } from "react"
+import { Modal, Button, Typography, Row, Col, List } from "antd"
 
 import PageLayout from '@/components/PageLayout'
-import { DragResize, Button } from '@/components/UI'
 import ListItem from '@/components/ListItem'
-import Flex from '@/components/Flex'
 import AddUnitAdmin from "@/components/AddUnitAdmin"
-
-import { getUnitAdminsState } from "@/reducers/unitAdmins"
-import Loader from "@/components/Loader"
-import { useUserIdentity, checkAccess } from "@/helpers"
-import { useActions } from "@/helpers/useActions"
 import UnitAdminContent from "@/components/UnitAdminContent"
-import { SUPER_ADMIN, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from "@/constants"
-import { deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState } from '@/actions'
+import { DragResize } from '@/components/UI'
+import { useActions } from "@/helpers/useActions"
+import { deleteUnitAdmin } from '@/actions'
 
-export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
+const { Title } = Typography
 
-    const token = localStorage.getItem('token')
+const UnitAdmins = ({
+    data: {
+        GetAllUnitAdmins,
+        loading,
+    },
+    currentPage,
+    onChangePage,
+    pageSize,
+}) => {
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
-    const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
-    const actions = useActions({ deleteUnitAdmin, getUnitAdmins, clearUnitAdminsPageState }, [])
-
-    useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getUnitAdmins(token)
-        return () => actions.clearUnitAdminsPageState()
-    }, [loginLoading])
-
-    if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN])) {
-        return <Navigate to={HOME_PAGE_ROUTE} />
-    } else if (!isAuth && !loginLoading) {
-        return <Navigate to={LOGIN_PAGE_ROUTE} />
-    }
+    const actions = useActions({ deleteUnitAdmin }, [])
 
     return (
         <PageLayout>
-            <WelcomeText>Unit Админы</WelcomeText>
+            <Row align='middle'>
+                <Col span={21}>
+                    <Title>Unit Админы</Title>
+                </Col>
+                <Col span={1}>
+                    <Button type='primary' onClick={() => setOpenAddUnitAdmin(true)}>
+                        Добавить Unit Admin
+                    </Button>
+                </Col>
+            </Row>
             <Modal
                 centered
                 open={openAddUnitAdmin}
@@ -50,53 +43,43 @@ export default () => {
             >
                 <AddUnitAdmin />
             </Modal>
-            <Flex direction='row' justify='flex-end'
-                align='flex-start'>
-                <Button
-                    background='green'
-                    content='Добавить Unit Админа'
-                    padding='0.5rem'
-                    handleSubmit={() => { setOpenAddUnitAdmin(true) }}
-                />
-            </Flex>
-            {
-                loading ? <Loader />
-                    : (
-                        <Flex
-                            widht='100%' direction='column'
-                            justify=' center'
-                        >
-                            {/* TODO refactor list from antd */}
-                            <Flex direction='column'>
-                                {
-                                    unitAdmins?.map((unitAdmin, index) => {
-                                        return (
-                                            <ListItem
-                                                itemIndex={index}
-                                                key={index}
-                                                label={`
-                                                        ${unitAdmin.userHttp.lastname}
-                                                        ${unitAdmin.userHttp.firstname}
-                                                        ${unitAdmin.userHttp.middlename}
-                                                    `}
-                                                handleDelete={unitAdminIndex => actions.deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
-                                                render={(open, setOpen) => (
-                                                    <DragResize
-                                                        open={open} setOpen={setOpen}
-                                                        content={() => (
-                                                            // refactor useQuery
-                                                            <UnitAdminContent unitAdminId={unitAdmin.userHttp.id} />
-                                                        )}
-                                                    />
-                                                )}
-                                            />
-                                        )
-                                    })
-                                }
-                            </Flex>
-                        </Flex>
-                    )
-            }
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={loading}
+                        bordered
+                        size='large'
+                        dataSource={GetAllUnitAdmins?.unitAdmins}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: GetAllUnitAdmins?.countRows,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={({ userHttp }, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                handleDelete={unitAdminIndex => actions.deleteUnitAdmin(userHttp.id, unitAdminIndex)}
+                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                key={index}
+                                render={(open, setOpen) => (
+                                    <DragResize
+                                        open={open} setOpen={setOpen}
+                                        content={() => (
+                                            <UnitAdminContent unitAdminId={userHttp.id} />
+                                        )}
+                                    />
+                                )}
+                            />
+                        )}
+                    />
+                </Col>
+            </Row>
         </PageLayout>
     )
 }
+
+export default UnitAdmins

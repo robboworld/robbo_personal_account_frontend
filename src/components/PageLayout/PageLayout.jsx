@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Layout } from 'antd'
+import { useLocation } from 'react-router-dom'
 
 import {
     MenuFoldOutlined,
@@ -11,6 +12,7 @@ import SideBar from '@/components/SideBar'
 const { Header, Sider, Content } = Layout
 
 const PageLayout = ({ children }) => {
+    const location = useLocation()
     const [collapsed, setCollapsed] = useState(false)
     return (
         <Layout>
@@ -18,7 +20,7 @@ const PageLayout = ({ children }) => {
                 trigger={null} collapsible
                 collapsed={collapsed} theme='light'
             >
-                <SideBar />
+                <SideBar selectedNavBarKey={location.state?.selectedNavBarKey} />
             </Sider>
             <Layout>
                 <Header style={{ backgroundColor: 'green' }}>
