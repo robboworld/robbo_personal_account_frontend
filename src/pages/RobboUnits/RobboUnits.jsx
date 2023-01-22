@@ -1,59 +1,34 @@
-import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { useNavigate, useSearchParams } from "react-router-dom"
-import { Modal, Button, Space, Pagination } from "antd"
-
-import { WelcomeText } from "./components"
+import React, { useState } from "react"
+import { Modal, Button, Typography, Row, Col, List } from "antd"
 
 import PageLayout from '@/components/PageLayout'
-import Flex from "@/components/Flex"
 import RobboUnit from "@/components/RobboUnit"
-import Loader from "@/components/Loader"
 import ListItem from "@/components/ListItem"
 import AddRobboUnit from "@/components/AddRobboUnit"
 import { useActions } from "@/helpers/useActions"
-import { getRobboUnitsState } from "@/reducers/robboUnits"
 import { DragResize } from "@/components/UI"
-import {
-    SUPER_ADMIN,
-    UNIT_ADMIN,
-} from "@/constants"
-import {
-    getRobboUnitsRequest,
-    getRobboUnitsByUnitAdminIdRequest,
-    deleteRobboUnitRequest,
-    clearRobboUnitsPage,
-} from '@/actions'
+import { deleteRobboUnitRequest } from '@/actions'
 
-export default ({ userRole }) => {
-    const navigate = useNavigate()
-    const [searchParams, setSearchParams] = useSearchParams()
-    const currentPage = searchParams.get('page') || '1'
+const { Title } = Typography
+
+const RobboUnits = ({
+    GetRobboUnitsSuperAdmin,
+    GetRobboUnitsUnitAdmin,
+    currentPage,
+    pageSize,
+    onChangePage,
+}) => {
+    let data
+    GetRobboUnitsSuperAdmin
+        ? data = GetRobboUnitsSuperAdmin?.GetAllRobboUnits
+        : data = GetRobboUnitsUnitAdmin?.GetRobboUnitsByAccessToken
     const [openAddRobboUnit, setOpenAddRobboUnit] = useState(false)
     const actions = useActions({
-        getRobboUnitsRequest,
-        getRobboUnitsByUnitAdminIdRequest,
         deleteRobboUnitRequest,
-        clearRobboUnitsPage,
     }, [])
-    const { robboUnits, countRows, loading } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
-
-    useEffect(() => {
-        switch (userRole) {
-            case UNIT_ADMIN:
-                actions.getRobboUnitsByUnitAdminIdRequest(currentPage, "10")
-                break
-            case SUPER_ADMIN:
-                actions.getRobboUnitsRequest(currentPage, "10")
-                break
-        }
-
-        return () => actions.clearRobboUnitsPage()
-    }, [currentPage])
 
     return (
         <PageLayout>
-            <WelcomeText>Robbo Units</WelcomeText>
             <Modal
                 centered
                 open={openAddRobboUnit}
@@ -62,65 +37,57 @@ export default ({ userRole }) => {
             >
                 <AddRobboUnit />
             </Modal>
-            <Flex direction='column' justify='flex-end'
-                align='flex-start'>
-                <Space>
-                    <Button
-                        type='primary' onClick={() => navigate('/program')}
-                    >
-                        Программа
-                    </Button>
+            <Row align='middle'>
+                <Col span={21}>
+                    <Title>Robbo Units</Title>
+                </Col>
+                <Col span={1}>
                     <Button
                         onClick={() => setOpenAddRobboUnit(true)} type='primary'
                     >
                         Добавить Robbo Unit
                     </Button>
-                </Space>
-
-
-            </Flex>
-            {
-                loading ? <Loader />
-                    : (
-                        <Flex
-                            widht='100%' direction='column'
-                            justify=' center'
-                        >
-                            {/* TODO refactor list from antd */}
-                            <Flex direction='column'>
-                                {
-                                    robboUnits?.map((robboUnit, index) => {
-                                        return (
-                                            <ListItem
-                                                itemIndex={index}
-                                                key={index}
-                                                label={robboUnit.name}
-                                                render={(open, setOpen) => (
-                                                    <DragResize
-                                                        open={open} setOpen={setOpen}
-                                                        content={() => (
-                                                            <RobboUnit
-                                                                robboUnitId={robboUnit.id}
-                                                            />
-                                                        )}
-                                                    />
-                                                )}
-                                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(robboUnit.id, robboUnitIndex)}
+                </Col>
+            </Row>
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={data?.loading}
+                        bordered
+                        size='large'
+                        dataSource={data?.robboUnits}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: data?.countRows,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={(robboUnit, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                handleDelete={robboUnitIndex => actions.deleteRobboUnitRequest(robboUnit.id, robboUnitIndex)}
+                                label={`${robboUnit.name}`}
+                                key={index}
+                                render={(open, setOpen) => (
+                                    <DragResize
+                                        open={open} setOpen={setOpen}
+                                        content={() => (
+                                            <RobboUnit
+                                                robboUnitId={robboUnit.id}
                                             />
-                                        )
-                                    })
-                                }
-                            </Flex>
-                        </Flex>
-                    )
-            }
-            <Pagination
-                defaultCurrent={1} defaultPageSize={10}
-                total={countRows} current={+currentPage}
-                onChange={(page, pageSize) => {
-                    setSearchParams({ page })
-                }}
-            />
+                                        )}
+                                    />
+                                )}
+                            />
+                        )}
+                    />
+                </Col>
+            </Row>
         </PageLayout>
     )
 }
+
+export default RobboUnits

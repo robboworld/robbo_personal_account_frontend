@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 
 import {
   HOME_PAGE_ROUTE,
@@ -26,7 +25,6 @@ import {
 } from '@/constants'
 import Loader from '@/components/Loader'
 import { ProtectedRoute } from '@/helpers'
-import { getLoginState } from '@/reducers/login'
 
 const HomePage = lazy(() => import('@/pages/Home'))
 const LoginPage = lazy(() => import('@/pages/Login'))
@@ -37,8 +35,7 @@ const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
 const PeekProfilePage = lazy(() => import('@/pages/PeekProfile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
-const ClientsPageContainer = lazy(() => import('@/pages/Clients/ClientsContainer'))
-const ClientsPage = lazy(() => import('@/pages/Clients'))
+const ClientsPageContainer = lazy(() => import('@/pages/Clients'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
@@ -97,7 +94,7 @@ const App = () => {
           element={
             <ProtectedRoute
               allowedRoles={[SUPER_ADMIN]} >
-              <ClientsPage />
+              <ClientsPageContainer />
             </ProtectedRoute>
           }
         />

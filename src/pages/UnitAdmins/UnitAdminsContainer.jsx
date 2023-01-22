@@ -2,11 +2,11 @@ import React from 'react'
 import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams } from 'react-router-dom'
 
-import Clients from './Clients'
+import UnitAdmins from './UnitAdmins'
 
-import { parentQuerysGQL } from '@/graphQL'
+import { unitAdminQuerysGQL } from '@/graphQL'
 
-const ClientsContainer = () => {
+const UnitAdminsContainer = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const currentPage = searchParams.get('page') || '1'
     const pageSize = '10'
@@ -25,7 +25,7 @@ const ClientsContainer = () => {
 }
 
 const WithGraphQLComponent = graphql(
-    parentQuerysGQL.GET_ALL_PARENTS,
+    unitAdminQuerysGQL.GET_ALL_UNIT_ADMINS,
     {
         options: props => {
             return {
@@ -36,6 +36,6 @@ const WithGraphQLComponent = graphql(
             }
         },
     })
-    (Clients)
+    (UnitAdmins)
 
-export default ClientsContainer
+export default UnitAdminsContainer

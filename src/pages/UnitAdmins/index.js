@@ -1,2 +1,2 @@
-import UnitAdmins from "./UnitAdmins"
-export default UnitAdmins
+import UnitAdminsContainer from "./UnitAdminsContainer"
+export default UnitAdminsContainer

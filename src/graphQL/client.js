@@ -34,7 +34,6 @@ const retryLink = new RetryLink({
             if (error && error.result.ExpiredBy && error.statusCode === 401) {
                 localStorage.removeItem('token')
                 const accessToken = await refreshToken()
-                console.log(accessToken)
                 return true
             }
         },
@@ -74,7 +73,7 @@ const refreshToken = async () => {
         localStorage.setItem('token', accessToken || '')
         return accessToken
     } catch (err) {
-        // localStorage.clear()
+        localStorage.clear()
         console.error(err)
         throw err
     }
