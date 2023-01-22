@@ -36,22 +36,3 @@ root.render(
     </Provider>
   </ApolloProvider>,
 )
-
-// // Before
-// const container = document.getElementById('app');
-// render(<App tab="home" />, container, () => {
-//   console.log('rendered');
-// });
-
-// // After
-// function AppWithCallbackAfterRender() {
-//   useEffect(() => {
-//     console.log('rendered');
-//   });
-
-//   return <App tab="home" />
-// }
-
-// const container = document.getElementById('app');
-// const root = createRoot(container);
-// root.render(<AppWithCallbackAfterRender />);

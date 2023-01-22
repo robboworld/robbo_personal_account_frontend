@@ -22,6 +22,7 @@ import {
   STUDENT,
   UNIT_ADMIN,
   TEACHER,
+  PARENT,
 } from '@/constants'
 import Loader from '@/components/Loader'
 import { ProtectedRoute } from '@/helpers'
@@ -44,14 +45,13 @@ const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const Study = lazy(() => import('@/pages/Study'))
 
 const App = () => {
-  const { userRole } = useSelector(({ login }) => getLoginState(login))
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route
           path={HOME_PAGE_ROUTE}
           element={
-            <ProtectedRoute userRole={userRole}>
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
               <HomePage />
             </ProtectedRoute>
           }
@@ -79,7 +79,7 @@ const App = () => {
         <Route
           path={MY_COURSES_ROUTE}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
               <MyCourses />
             </ProtectedRoute>
           }
@@ -87,8 +87,8 @@ const App = () => {
         <Route
           path={COURSE_PAGE_ROUTE}
           element={
-            <ProtectedRoute>
-              <CoursePage userRole={userRole} />
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
+              <CoursePage />
             </ProtectedRoute>
           }
         />
@@ -96,7 +96,7 @@ const App = () => {
           path={CLIENTS_ROUTE}
           element={
             <ProtectedRoute
-              allowedRoles={[SUPER_ADMIN]} userRole={userRole}>
+              allowedRoles={[SUPER_ADMIN]} >
               <ClientsPage />
             </ProtectedRoute>
           }
@@ -112,8 +112,8 @@ const App = () => {
         <Route
           path={PROFILE_PAGE_ROUTE}
           element={
-            <ProtectedRoute>
-              <ProfilePage userRole={userRole} />
+            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
@@ -137,7 +137,7 @@ const App = () => {
           path={ROBBO_UNITS_ROUTE}
           element={
             <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <RobboUnitsPage userRole={userRole} />
+              <RobboUnitsPage />
             </ProtectedRoute>
           }
         />
@@ -145,7 +145,7 @@ const App = () => {
           path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
           element={
             <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <RobboGroups userRole={userRole} />
+              <RobboGroups />
             </ProtectedRoute>
           }
         />
@@ -161,7 +161,7 @@ const App = () => {
           path={ROBBO_GROUPS_ROUTE}
           element={
             <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <RobboGroups userRole={userRole} />
+              <RobboGroups />
             </ProtectedRoute>
           }
         />
@@ -170,7 +170,7 @@ const App = () => {
           element={<Navigate to={HOME_PAGE_ROUTE} replace />}
         />
       </Routes>
-    </Suspense>
+    </Suspense >
   )
 }
 

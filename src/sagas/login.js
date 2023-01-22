@@ -7,16 +7,15 @@ import {
     signOutRequest, signOutSuccess, signOutFailed,
     checkAuthRequest, checkAuthSuccess, checkAuthFailed,
 } from '@/actions'
-import { graphQLClient } from '@/graphQL'
+import { authMutationsGraphQL, graphQLClient } from '@/graphQL'
 
 function* signInSaga(action) {
     try {
         const { email, password, role } = action.payload
-        const response = yield call(authAPI.signIn, email, password, role)
+        const response = yield call(authMutationsGraphQL.SingIn, email, password, role)
         console.log(response)
-        localStorage.setItem('token', response.data.accessToken)
-        console.log(response.headers)
-        yield put(signInSucces(response))
+        localStorage.setItem('token', response.data.SingIn.accessToken)
+        yield put(signInSucces(response.data.SingIn))
     } catch (e) {
         console.log(e.response)
         yield put(signInFailed(e.response.data))
@@ -38,11 +37,11 @@ function* signUpSaga(action) {
 
 function* signOutSaga(action) {
     try {
-        localStorage.removeItem('token')
         const response = yield call(authAPI.signOut)
         graphQLClient.resetStore()
         console.log(response)
         yield put(signOutSuccess())
+        localStorage.removeItem('token')
     } catch (e) {
         console.log(e.response)
         yield put(signOutFailed(e.message))

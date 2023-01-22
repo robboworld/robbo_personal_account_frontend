@@ -20,7 +20,7 @@ export default handleActions({
         return { ...state, loginLoading: true }
     },
     [signInSucces](state, action) {
-        return { ...state, isAuth: true, loginLoading: false }
+        return { ...state, isAuth: true, loginLoading: false, userRole: action.payload.response.userRole }
     },
     [signInFailed](state, action) {
         return { ...state, isAuth: false, loginLoading: false }
