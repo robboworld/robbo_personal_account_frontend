@@ -8,7 +8,7 @@ import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
 import { studentQuerysGQL, studentQuerysGraphQL } from "@/graphQL/query"
-import { PEEK_PROFILE_PAGE } from "@/constants"
+import { PEEK_PROFILE_PAGE, PROFILE_PAGE_ROUTE } from "@/constants"
 import { addStudentToRobboGroupRequest } from "@/actions"
 import { useActions } from "@/helpers/useActions"
 
@@ -20,7 +20,7 @@ const RobboUnitStudentsTab = ({
 }) => {
     const token = localStorage.getItem('token')
     const [searchItems, setSearchResult] = useState([])
-    const history = useNavigate()
+    const navigate = useNavigate()
     const actions = useActions({ addStudentToRobboGroupRequest }, [])
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
@@ -37,7 +37,12 @@ const RobboUnitStudentsTab = ({
     })
 
     const openProfileStudent = userId => {
-        history(PEEK_PROFILE_PAGE, { studentId: userId })
+        navigate(PROFILE_PAGE_ROUTE, {
+            state: {
+                userId,
+                userRole: 0,
+            },
+        })
     }
 
     return (

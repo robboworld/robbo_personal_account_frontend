@@ -14,7 +14,6 @@ import CurrentCourseAccessRobboUnits from './CurrentAccessRobboUnits'
 import CurrentCourseAccessUnitAdmins from './CurrentAccessUnitAdmins'
 import CurrentCourseAccessTeachers from './CurrentAccessTeachers'
 
-import { checkAccess } from '@/helpers'
 import { TEACHER, UNIT_ADMIN } from '@/constants'
 
 const items = [

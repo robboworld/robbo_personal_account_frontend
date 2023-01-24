@@ -30,14 +30,14 @@ export const parentQuerysGQL = {
         GetParentById(parentId: $parentId) {
             ... on ParentHttp{
                 userHttp{
-                id
-                lastname
-                firstname
-                middlename
-                nickname
-                email
-                createdAt
-                role
+                    id
+                    lastname
+                    firstname
+                    middlename
+                    nickname
+                    email
+                    createdAt
+                    role
                 }
             }
             ... on Error{

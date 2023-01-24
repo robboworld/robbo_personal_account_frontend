@@ -20,9 +20,9 @@ export const ProtectedRoute = ({
     }
 
     const childrenWithProps = React.Children.map(children, child => {
-        const { Role } = parseJwt(token)
+        const { Id, Role } = parseJwt(token)
         if (React.isValidElement(child)) {
-            return React.cloneElement(child, { userRole: Role })
+            return React.cloneElement(child, { userRole: Role, userId: Id })
         }
         return child
     })

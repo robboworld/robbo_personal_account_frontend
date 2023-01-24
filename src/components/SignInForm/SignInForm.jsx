@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Button, Select, Form, Input } from 'antd'
+import { Button, Select, Form, Input, notification } from 'antd'
 import { PropTypes } from 'prop-types'
 import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
@@ -34,12 +34,16 @@ const SignInForm = memo(({
     const [form] = Form.useForm()
     const navigate = useNavigate()
 
-    const [login, loginMutation] = useMutation(authMutationsGQL.SIGN_IN, {
+    const [login] = useMutation(authMutationsGQL.SIGN_IN, {
         onCompleted: ({ SingIn }) => {
             localStorage.setItem('token', SingIn.accessToken)
             navigate('/')
         },
+        onError: error => {
+            notification.error({ message: 'Ошибка', description: error?.message })
+        },
     })
+
 
     return (
         <Form

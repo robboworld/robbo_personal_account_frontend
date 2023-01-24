@@ -2,7 +2,6 @@ import React from 'react'
 import { Layout, Tabs } from 'antd'
 
 import SignInForm from '@/components/SignInForm'
-import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers'
 import { signInRequest, signUpRequest } from '@/actions'
 
