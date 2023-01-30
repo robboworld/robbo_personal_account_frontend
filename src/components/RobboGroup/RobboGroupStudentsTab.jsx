@@ -9,7 +9,7 @@ import Loader from "@/components/Loader"
 import AddChildren from "@/components/AddChildren"
 import { useActions } from "@/helpers/useActions"
 import { studentQuerysGQL, studentQuerysGraphQL } from "@/graphQL/query"
-import { PEEK_PROFILE_PAGE, PROFILE_PAGE_ROUTE } from "@/constants"
+import { PROFILE_PAGE_ROUTE } from "@/constants"
 import { addStudentToRobboGroupRequest } from '@/actions'
 
 const { Search } = Input

@@ -26,7 +26,6 @@ const ProfileContainer = ({
     const location = useLocation()
     const peekUserId = location?.state?.userId
     const peekUserRole = location?.state?.userRole
-    console.log(peekUserId, peekUserRole)
     let Profile
 
     if (peekUserId) {

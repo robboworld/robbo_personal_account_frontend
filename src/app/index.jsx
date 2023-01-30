@@ -33,7 +33,6 @@ const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const MyCourses = lazy(() => import('@/pages/MyCourses'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
-const PeekProfilePage = lazy(() => import('@/pages/PeekProfile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
 const ClientsPageContainer = lazy(() => import('@/pages/Clients'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
@@ -111,14 +110,6 @@ const App = () => {
           element={
             <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
               <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={PEEK_PROFILE_PAGE}
-          element={
-            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <PeekProfilePage />
             </ProtectedRoute>
           }
         />

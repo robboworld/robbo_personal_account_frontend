@@ -35,15 +35,6 @@ const Clients = ({
                     </Button>
                 </Col>
             </Row>
-            <Modal
-                title='Заполните данные клиента'
-                centered
-                open={openAddClients}
-                onCancel={() => setOpenAddClients(false)}
-                footer={[]}
-            >
-                <AddParent />
-            </Modal>
             <Row>
                 <Col span={24}>
                     <List
@@ -81,6 +72,15 @@ const Clients = ({
                     />
                 </Col>
             </Row>
+            <Modal
+                title='Заполните данные клиента'
+                centered
+                open={openAddClients}
+                onCancel={() => setOpenAddClients(false)}
+                footer={[]}
+            >
+                <AddParent />
+            </Modal>
         </PageLayout >
     )
 }
