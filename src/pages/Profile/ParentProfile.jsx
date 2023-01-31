@@ -9,7 +9,10 @@ const { Title } = Typography
 const ParentProfile = ({
     GetUser,
     GetStudents,
+    UpdateParent,
+    mutate,
 }) => {
+    console.log(mutate)
     return (
         <PageLayout>
             <Row align='middle'>
@@ -18,7 +21,7 @@ const ParentProfile = ({
             <Row justify='start'>
                 <Col span={8}>
                     <Skeleton active loading={GetUser?.loading}>
-                        <ProfileCard profile={GetUser?.GetUser?.userHttp} />
+                        <ProfileCard profile={GetUser?.GetUser?.userHttp} updateHandle={UpdateParent} />
                     </Skeleton>
                 </Col>
                 <Col span={12}>

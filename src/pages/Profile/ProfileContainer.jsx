@@ -9,7 +9,11 @@ import UnitAdminProfile from './UnitAdminProfile'
 import ParentProfile from './ParentProfile'
 import TeacherProfile from './TeacherProfile'
 
-import { profileGQL, studentQuerysGQL } from '@/graphQL'
+import {
+    parentMutationsGQL,
+    profileGQL,
+    studentQuerysGQL,
+} from '@/graphQL'
 import {
     PARENT,
     STUDENT,
@@ -71,6 +75,11 @@ const ProfileContainer = ({
                                 }
                             },
                             name: 'GetStudents',
+                        },
+                    ),
+                    graphql(parentMutationsGQL.UPDATE_PARENT,
+                        {
+                            name: 'UpdateParent',
                         },
                     ),
                 )(ParentProfile)

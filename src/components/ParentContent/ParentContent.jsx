@@ -1,7 +1,6 @@
 import React from "react"
 import { Skeleton, Tabs } from 'antd'
 
-import ChildrenTab from "./ChildrenTab"
 import ChildrenTabContainer from "./ChildrenTabContainer"
 
 import ProfileCard from "@/components/ProfileCard"

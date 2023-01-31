@@ -29,14 +29,18 @@ const ProfileCard = ({
                 onFinish={({ email, nickname, middlename, firstname, lastname }) => {
                     updateHandle(
                         {
-                            id: profile.id,
-                            email,
-                            middlename,
-                            firstname,
-                            lastname,
-                            nickname,
-                        },
-                        profile.role)
+                            variables: {
+                                input: {
+                                    id: profile.id,
+                                    email,
+                                    middlename,
+                                    firstname,
+                                    lastname,
+                                    nickname,
+                                },
+                            },
+                        })
+                    // profile.role)
                 }}
                 {...layout}
                 form={form}
