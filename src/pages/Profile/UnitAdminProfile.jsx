@@ -15,7 +15,7 @@ const UnitAdminProfile = ({
     return (
         <PageLayout>
             <Row align='middle'>
-                <Title>Parent Профиль</Title>
+                <Title>Unit Admin Профиль</Title>
             </Row>
             <Row>
                 <Skeleton active loading={loading}>

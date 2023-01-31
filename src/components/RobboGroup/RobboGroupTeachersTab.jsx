@@ -6,10 +6,9 @@ import { useQuery } from "@apollo/client"
 import ListItem from "@/components/ListItem"
 import Loader from "@/components/Loader"
 import { teacherQuerysGQL } from "@/graphQL/query"
-import { PROFILE_PAGE_ROUTE } from "@/constants"
+import { PROFILE_PAGE_ROUTE, TEACHER } from "@/constants"
 
 export default ({ robboGroupId }) => {
-
     const navigate = useNavigate()
     const getTeachersByRobboGroupIdResult = useQuery(teacherQuerysGQL.GET_TEACHERS_BY_ROBBO_GROUP_ID, {
         variables: { robboGroupId },
@@ -20,7 +19,7 @@ export default ({ robboGroupId }) => {
         navigate(PROFILE_PAGE_ROUTE, {
             state: {
                 userId,
-                userRole: 1,
+                userRole: TEACHER,
             },
         })
     }

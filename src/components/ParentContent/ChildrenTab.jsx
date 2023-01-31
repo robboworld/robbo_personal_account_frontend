@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Space, Button, Col, List, Input, Row, Modal } from 'antd'
 
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
 import { useActions } from '@/helpers'
 import { createStudentParentRelationRequest, deleteChildRequest } from '@/actions'
+import { STUDENT, PROFILE_PAGE_ROUTE } from '@/constants'
 
 const { Search } = Input
 
@@ -19,6 +21,16 @@ const ChildrenTab = ({
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
+    const navigate = useNavigate()
+    const openProfileStudent = userId => {
+        navigate(PROFILE_PAGE_ROUTE, {
+            state: {
+                userId,
+                userRole: STUDENT,
+            },
+        })
+    }
+
     return (
         <Space direction='vertical' style={{ margin: '0.5rem' }}>
             <List
@@ -31,6 +43,7 @@ const ChildrenTab = ({
                         key={index}
                         render={() => { }}
                         label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                        handleClick={() => openProfileStudent(userHttp.id)}
                         handleDelete={childIndex => actions.deleteChildRequest(userHttp.id, childIndex)}
                     />
                 )}

@@ -1,10 +1,12 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Row, Col, List, notification } from 'antd'
 import { useQuery } from '@apollo/client'
 
 import ListItem from '@/components/ListItem'
 import Loader from '@/components/Loader'
 import { coursePageQuerysGQL } from '@/graphQL'
+import { PROFILE_PAGE_ROUTE, STUDENT } from "@/constants"
 
 const CurrentCourseAccessStudents = ({ courseId }) => {
 
@@ -14,6 +16,16 @@ const CurrentCourseAccessStudents = ({ courseId }) => {
     })
     if (error)
         notification.error({ message: 'Ошибка', description: error.message })
+
+    const navigate = useNavigate()
+    const openProfileStudent = userId => {
+        navigate(PROFILE_PAGE_ROUTE, {
+            state: {
+                userId,
+                userRole: STUDENT,
+            },
+        })
+    }
 
     return (
         <Row gutter={[0, 8]}>
@@ -28,7 +40,7 @@ const CurrentCourseAccessStudents = ({ courseId }) => {
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                            // handleClick={() => actions.createCourseAccessRelationRobboUnitRequest(courseId, robboUnit.id)}
+                                handleClick={() => openProfileStudent(userHttp.id)}
                             />
                         )}
                     />

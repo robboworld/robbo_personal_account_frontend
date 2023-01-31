@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import styled from "styled-components"
+import { useNavigate } from 'react-router-dom'
 import { Button, Space, Input, List } from "antd"
 import { useQuery } from "@apollo/client"
 
@@ -14,11 +15,13 @@ import {
     setNewUnitAdminForRobboUnitRequest,
     deleteUnitAdminForRobboUnitRequest,
 } from '@/actions'
+import { PROFILE_PAGE_ROUTE, UNIT_ADMIN } from "@/constants"
 
 const { Search } = Input
 
 export default ({ robboUnitId }) => {
     const [searchItems, setSearchResult] = useState([])
+    const navigate = useNavigate()
     const actions = useActions({
         setNewUnitAdminForRobboUnitRequest,
         deleteUnitAdminForRobboUnitRequest,
@@ -36,6 +39,15 @@ export default ({ robboUnitId }) => {
         notifyOnNetworkStatusChange: true,
     })
 
+    const openProfileUnitAdmin = userId => {
+        navigate(PROFILE_PAGE_ROUTE, {
+            state: {
+                userId,
+                userRole: UNIT_ADMIN,
+            },
+        })
+    }
+
     return (
         <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             Unit Админы
@@ -51,6 +63,7 @@ export default ({ robboUnitId }) => {
                                 key={index}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                                 render={() => { }}
+                                handleClick={() => openProfileUnitAdmin(userHttp.id)}
                                 handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(userHttp.id, robboUnitId)}
                             />
                         )}

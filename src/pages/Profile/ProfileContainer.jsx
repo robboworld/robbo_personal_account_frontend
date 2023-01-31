@@ -18,7 +18,6 @@ import {
     UNIT_ADMIN,
 } from '@/constants'
 
-
 const ProfileContainer = ({
     userId,
     userRole,
@@ -32,46 +31,13 @@ const ProfileContainer = ({
         // case when a user peek profile of another user
         switch (peekUserRole) {
             case STUDENT:
-                Profile = graphql(profileGQL.GET_USER,
-                    {
-                        options: props => {
-                            return {
-                                variables: {
-                                    peekUserId: props.peekUserId,
-                                    peekUserRole: props.peekUserRole,
-                                },
-                            }
-                        },
-                    },
-                )(StudentProfile)
+                Profile = PeekProfileWithGraphQL(StudentProfile)
                 return <Profile peekUserId={peekUserId} peekUserRole={peekUserRole} />
             case UNIT_ADMIN:
-                Profile = graphql(profileGQL.GET_USER,
-                    {
-                        options: props => {
-                            return {
-                                variables: {
-                                    peekUserId: props.peekUserId,
-                                    peekUserRole: props.peekUserRole,
-                                },
-                            }
-                        },
-                    },
-                )(UnitAdminProfile)
+                Profile = PeekProfileWithGraphQL(UnitAdminProfile)
                 return <Profile peekUserId={peekUserId} peekUserRole={peekUserRole} />
             case TEACHER:
-                Profile = graphql(profileGQL.GET_USER,
-                    {
-                        options: props => {
-                            return {
-                                variables: {
-                                    peekUserId: props.peekUserId,
-                                    peekUserRole: props.peekUserRole,
-                                },
-                            }
-                        },
-                    },
-                )(TeacherProfile)
+                Profile = PeekProfileWithGraphQL(TeacherProfile)
                 return <Profile peekUserId={peekUserId} peekUserRole={peekUserRole} />
             case PARENT:
                 return <WithGraphQLParentProfile peekUserId={peekUserId} peekUserRole={peekUserRole} />
@@ -113,18 +79,19 @@ const ProfileContainer = ({
     }
 }
 
-const WithGraphQLStudentProfile = graphql(
-    profileGQL.GET_USER,
-    {
-        options: props => {
-            return {
-                variables: {
-                    peekUserId: props.peekUserId,
-                    peekUserRole: props.peekUserRole,
-                },
-            }
+const PeekProfileWithGraphQL = Component => (
+    graphql(profileGQL.GET_USER,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        peekUserId: props.peekUserId,
+                        peekUserRole: props.peekUserRole,
+                    },
+                }
+            },
         },
-    },
+    )(Component)
 )
 
 const WithGraphQLParentProfile = compose(
