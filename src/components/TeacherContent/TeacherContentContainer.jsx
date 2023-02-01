@@ -3,33 +3,32 @@ import { compose } from 'redux'
 import { notification } from 'antd'
 import { graphql } from '@apollo/client/react/hoc'
 
-import ParentContent from './ParentContent'
+import TeacherContent from './TeacherContent'
 
-import { parentMutationsGQL, parentQuerysGQL } from '@/graphQL'
+import { teacherMutationsGQL, teacherQuerysGQL } from '@/graphQL'
 
-const ParentContentContainer = ({ parentId }) => {
+const TeacherContentContainer = ({ teacherId }) => {
     return (
         <WithGraphQLComponent
-            parentId={parentId}
+            teacherId={teacherId}
         />
     )
 }
 
 const WithGraphQLComponent = compose(
-    graphql(
-        parentQuerysGQL.GET_PARENT_BY_ID,
+    graphql(teacherQuerysGQL.GET_TEACHER_BY_ID,
         {
             options: props => {
                 return {
                     variables: {
-                        parentId: props.parentId,
+                        teacherId: props.teacherId,
                     },
                 }
             },
         }),
-    graphql(parentMutationsGQL.UPDATE_PARENT,
+    graphql(teacherMutationsGQL.UPDATE_TEACHER,
         {
-            name: 'UpdateParent',
+            name: 'UpdateTeacher',
             options: {
                 onCompleted: () => {
                     notification.success({ description: 'Профиль успешно обновлен!' })
@@ -40,6 +39,6 @@ const WithGraphQLComponent = compose(
             },
         },
     ))
-    (ParentContent)
+    (TeacherContent)
 
-export default ParentContentContainer
+export default TeacherContentContainer

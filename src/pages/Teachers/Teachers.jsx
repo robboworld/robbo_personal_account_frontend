@@ -47,6 +47,7 @@ const Teachers = ({
             <Row>
                 <Col span={24}>
                     <List
+                        className='teachersList'
                         loading={loading}
                         bordered
                         size='large'

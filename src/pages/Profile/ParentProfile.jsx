@@ -10,9 +10,8 @@ const ParentProfile = ({
     GetUser,
     GetStudents,
     UpdateParent,
-    mutate,
+    accessUpdate,
 }) => {
-    console.log(mutate)
     return (
         <PageLayout>
             <Row align='middle'>
@@ -21,7 +20,11 @@ const ParentProfile = ({
             <Row justify='start'>
                 <Col span={8}>
                     <Skeleton active loading={GetUser?.loading}>
-                        <ProfileCard profile={GetUser?.GetUser?.userHttp} updateHandle={UpdateParent} />
+                        <ProfileCard
+                            profile={GetUser?.GetUser?.userHttp}
+                            updateHandle={UpdateParent}
+                            accessUpdate={accessUpdate}
+                        />
                     </Skeleton>
                 </Col>
                 <Col span={12}>

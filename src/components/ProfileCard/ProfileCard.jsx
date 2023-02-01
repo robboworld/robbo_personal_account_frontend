@@ -9,6 +9,7 @@ import { userRole } from '@/constants'
 const ProfileCard = ({
     updateHandle,
     profile,
+    accessUpdate,
 }) => {
     const layout = {
         labelCol: {
@@ -18,9 +19,9 @@ const ProfileCard = ({
             span: 16,
         },
     }
+    console.log(accessUpdate)
     const [form] = Form.useForm()
-
-    const isFormDisable = updateHandle === undefined
+    const isFormDisable = accessUpdate
 
     return (
         <Flex margin='0.5rem' width='100%'>
@@ -41,7 +42,6 @@ const ProfileCard = ({
                                 },
                             },
                         })
-                    // profile.role)
                 }}
                 {...layout}
                 form={form}
@@ -118,6 +118,7 @@ ProfileCard.propTypes = {
         createdAt: PropTypes.string,
     }),
     updateHandle: PropTypes.func,
+    accessUpdate: PropTypes.bool,
 }
 
 export default ProfileCard

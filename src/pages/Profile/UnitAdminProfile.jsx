@@ -11,6 +11,8 @@ const UnitAdminProfile = ({
         GetUser,
         loading,
     },
+    UpdateUnitAdmin,
+    accessUpdate,
 }) => {
     return (
         <PageLayout>
@@ -19,7 +21,11 @@ const UnitAdminProfile = ({
             </Row>
             <Row>
                 <Skeleton active loading={loading}>
-                    <ProfileCard profile={GetUser?.userHttp} />
+                    <ProfileCard
+                        profile={GetUser?.userHttp}
+                        updateHandle={UpdateUnitAdmin}
+                        accessUpdate={accessUpdate}
+                    />
                 </Skeleton>
 
             </Row>

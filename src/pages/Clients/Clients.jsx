@@ -39,6 +39,7 @@ const Clients = ({
             <Row>
                 <Col span={24}>
                     <List
+                        className='clientsList'
                         loading={loading}
                         bordered
                         size='large'

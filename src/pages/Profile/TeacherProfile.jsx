@@ -11,6 +11,8 @@ const TeacherProfile = ({
         GetUser,
         loading,
     },
+    UpdateTeacher,
+    accessUpdate,
 }) => {
     return (
         <PageLayout>
@@ -19,7 +21,11 @@ const TeacherProfile = ({
             </Row>
             <Row>
                 <Skeleton active loading={loading}>
-                    <ProfileCard profile={GetUser?.userHttp} />
+                    <ProfileCard
+                        profile={GetUser?.userHttp}
+                        updateHandle={UpdateTeacher}
+                        accessUpdate={accessUpdate}
+                    />
                 </Skeleton>
 
             </Row>

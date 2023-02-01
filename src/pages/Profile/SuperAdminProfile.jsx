@@ -11,8 +11,9 @@ const SuperAdminProfile = ({
         GetUser,
         loading,
     },
+    UpdateSuperAdmin,
+    accessUpdate,
 }) => {
-    console.log(GetUser)
     return (
         <PageLayout>
             <Row align='middle'>
@@ -20,9 +21,12 @@ const SuperAdminProfile = ({
             </Row>
             <Row>
                 <Skeleton active loading={loading}>
-                    <ProfileCard profile={GetUser?.userHttp} />
+                    <ProfileCard
+                        profile={GetUser?.userHttp}
+                        updateHandle={UpdateSuperAdmin}
+                        accessUpdate={accessUpdate}
+                    />
                 </Skeleton>
-
             </Row>
         </PageLayout>
 

@@ -1,2 +1,2 @@
-import TeacherContent from './TeacherContent'
-export default TeacherContent
+import TeacherContentContainer from './TeacherContentContainer'
+export default TeacherContentContainer

@@ -1,4 +1,5 @@
 import React from 'react'
+import { notification } from 'antd'
 import { compose } from 'redux'
 import { useLocation } from 'react-router-dom'
 import { graphql } from '@apollo/client/react/hoc'
@@ -12,7 +13,11 @@ import TeacherProfile from './TeacherProfile'
 import {
     parentMutationsGQL,
     profileGQL,
+    studentMutationsGQL,
     studentQuerysGQL,
+    superAdminMutationsGQL,
+    teacherMutationsGQL,
+    unitAdminMutationsGQL,
 } from '@/graphQL'
 import {
     PARENT,
@@ -21,6 +26,7 @@ import {
     TEACHER,
     UNIT_ADMIN,
 } from '@/constants'
+import { checkAccess } from '@/helpers'
 
 const ProfileContainer = ({
     userId,
@@ -35,31 +41,104 @@ const ProfileContainer = ({
         // case when a user peek profile of another user
         switch (peekUserRole) {
             case STUDENT:
-                Profile = PeekProfileWithGraphQL(StudentProfile)
-                return <Profile peekUserId={peekUserId} peekUserRole={peekUserRole} />
+                return <WithGraphQLStudentPeekProfile
+                    peekUserId={peekUserId}
+                    peekUserRole={peekUserRole}
+                    accessUpdate={!checkAccess(userRole, [SUPER_ADMIN])}
+                />
             case UNIT_ADMIN:
-                Profile = PeekProfileWithGraphQL(UnitAdminProfile)
-                return <Profile peekUserId={peekUserId} peekUserRole={peekUserRole} />
+                return <WithGraphQLSUnitAdminPeekProfile
+                    peekUserId={peekUserId}
+                    peekUserRole={peekUserRole}
+                    accessUpdate={!checkAccess(userRole, [SUPER_ADMIN])}
+                />
             case TEACHER:
-                Profile = PeekProfileWithGraphQL(TeacherProfile)
-                return <Profile peekUserId={peekUserId} peekUserRole={peekUserRole} />
+                return <WithGraphQLSTeacherPeekProfile
+                    peekUserId={peekUserId}
+                    peekUserRole={peekUserRole}
+                    accessUpdate={!checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])}
+                />
             case PARENT:
-                return <WithGraphQLParentProfile peekUserId={peekUserId} peekUserRole={peekUserRole} />
+                return <WithGraphQLParentProfile
+                    peekUserId={peekUserId}
+                    peekUserRole={peekUserRole}
+                    accessUpdate={!checkAccess(userRole, [SUPER_ADMIN])}
+                />
         }
     } else {
         // case when a user receive self profile
         switch (userRole) {
             case STUDENT:
-                Profile = graphql(profileGQL.GET_USER)(StudentProfile)
+                Profile = compose(
+                    graphql(profileGQL.GET_USER),
+                    graphql(studentMutationsGQL.UPDATE_STUDENT,
+                        {
+                            name: 'UpdateStudent',
+                            options: {
+                                onCompleted: () => {
+                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                },
+                                onError: error => {
+                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                },
+                            },
+                        },
+                    ),
+                )(StudentProfile)
                 return <Profile />
             case SUPER_ADMIN:
-                Profile = graphql(profileGQL.GET_USER)(SuperAdminProfile)
+                Profile = compose(
+                    graphql(profileGQL.GET_USER),
+                    graphql(superAdminMutationsGQL.UPDATE_SUPER_ADMIN,
+                        {
+                            name: 'UpdateSuperAdmin',
+                            options: {
+                                onCompleted: () => {
+                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                },
+                                onError: error => {
+                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                },
+                            },
+                        },
+                    ),
+                )(SuperAdminProfile)
                 return <Profile />
             case UNIT_ADMIN:
-                Profile = graphql(profileGQL.GET_USER)(UnitAdminProfile)
+                Profile = compose(
+                    graphql(profileGQL.GET_USER),
+                    graphql(unitAdminMutationsGQL.UPDATE_UNIT_ADMIN,
+                        {
+                            name: 'UpdateUnitAdmin',
+                            options: {
+                                onCompleted: () => {
+                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                },
+                                onError: error => {
+                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                },
+                            },
+                        },
+                    ),
+                )(UnitAdminProfile)
                 return <Profile />
             case TEACHER:
-                Profile = graphql(profileGQL.GET_USER)(TeacherProfile)
+                Profile = compose(
+                    graphql(profileGQL.GET_USER),
+                    graphql(teacherMutationsGQL.UPDATE_TEACHER,
+                        {
+                            name: 'UpdateTeacher',
+                            options: {
+                                onCompleted: () => {
+                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                },
+                                onError: error => {
+                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                },
+                            },
+                        },
+                    ),
+                )(TeacherProfile)
                 return <Profile />
             case PARENT:
                 Profile = compose(
@@ -80,6 +159,14 @@ const ProfileContainer = ({
                     graphql(parentMutationsGQL.UPDATE_PARENT,
                         {
                             name: 'UpdateParent',
+                            options: {
+                                onCompleted: () => {
+                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                },
+                                onError: error => {
+                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                },
+                            },
                         },
                     ),
                 )(ParentProfile)
@@ -87,21 +174,6 @@ const ProfileContainer = ({
         }
     }
 }
-
-const PeekProfileWithGraphQL = Component => (
-    graphql(profileGQL.GET_USER,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        peekUserId: props.peekUserId,
-                        peekUserRole: props.peekUserRole,
-                    },
-                }
-            },
-        },
-    )(Component)
-)
 
 const WithGraphQLParentProfile = compose(
     graphql(
@@ -129,6 +201,107 @@ const WithGraphQLParentProfile = compose(
             },
         },
     ),
-)
+    graphql(parentMutationsGQL.UPDATE_PARENT,
+        {
+            name: 'UpdateParent',
+            skip: props => props.userRole !== SUPER_ADMIN,
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: 'Профиль успешно обновлен!' })
+                },
+                onError: error => {
+                    notification.error({ message: 'Ошибка', description: error?.message })
+                },
+            },
+        },
+    ),
+)(ParentProfile)
+
+const WithGraphQLStudentPeekProfile = compose(
+    graphql(
+        profileGQL.GET_USER,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        peekUserId: props.peekUserId,
+                        peekUserRole: props.peekUserRole,
+                    },
+                }
+            },
+        },
+    ),
+    graphql(studentMutationsGQL.UPDATE_STUDENT,
+        {
+            name: 'UpdateStudent',
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: 'Профиль успешно обновлен!' })
+                },
+                onError: error => {
+                    notification.error({ message: 'Ошибка', description: error?.message })
+                },
+            },
+        },
+    ),
+)(StudentProfile)
+
+const WithGraphQLSTeacherPeekProfile = compose(
+    graphql(
+        profileGQL.GET_USER,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        peekUserId: props.peekUserId,
+                        peekUserRole: props.peekUserRole,
+                    },
+                }
+            },
+        },
+    ),
+    graphql(teacherMutationsGQL.UPDATE_TEACHER,
+        {
+            name: 'UpdateTeacher',
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: 'Профиль успешно обновлен!' })
+                },
+                onError: error => {
+                    notification.error({ message: 'Ошибка', description: error?.message })
+                },
+            },
+        },
+    ),
+)(TeacherProfile)
+
+const WithGraphQLSUnitAdminPeekProfile = compose(
+    graphql(
+        profileGQL.GET_USER,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        peekUserId: props.peekUserId,
+                        peekUserRole: props.peekUserRole,
+                    },
+                }
+            },
+        },
+    ),
+    graphql(unitAdminMutationsGQL.UPDATE_UNIT_ADMIN,
+        {
+            name: 'UpdateUnitAdmin',
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: 'Профиль успешно обновлен!' })
+                },
+                onError: error => {
+                    notification.error({ message: 'Ошибка', description: error?.message })
+                },
+            },
+        },
+    ),
+)(UnitAdminProfile)
 
 export default ProfileContainer

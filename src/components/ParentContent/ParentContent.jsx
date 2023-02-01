@@ -5,9 +5,6 @@ import { FormattedMessage } from 'react-intl'
 import ChildrenTabContainer from "./ChildrenTabContainer"
 
 import ProfileCard from "@/components/ProfileCard"
-import { updateProfile } from '@/actions'
-import { useActions } from "@/helpers/useActions"
-
 
 const ParentContent = ({
     parentId,
@@ -15,8 +12,8 @@ const ParentContent = ({
         GetParentById,
         loading,
     },
+    UpdateParent,
 }) => {
-    const actions = useActions({ updateProfile }, [])
     return (
         <Tabs
             title='Карточка родителя'
@@ -26,8 +23,7 @@ const ParentContent = ({
                     label: <FormattedMessage id='parent_content.profile' />,
                     key: '1',
                     children: loading ? <Skeleton active loading={loading} />
-                        : <ProfileCard updateHandle={actions.updateProfile} profile={GetParentById?.userHttp} />,
-
+                        : <ProfileCard updateHandle={UpdateParent} profile={GetParentById?.userHttp} />,
                 },
                 {
                     label: <FormattedMessage id='parent_content.children' />,
