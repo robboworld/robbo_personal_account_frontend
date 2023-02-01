@@ -9,7 +9,6 @@ import {
   MY_COURSES_ROUTE,
   COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
-  PEEK_PROFILE_PAGE,
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
   UNIT_ADMINS_ROUTE,
@@ -40,7 +39,7 @@ const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const Study = lazy(() => import('@/pages/Study'))
 
-const App = () => {
+const Application = () => {
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
@@ -158,8 +157,8 @@ const App = () => {
           element={<Navigate to={HOME_PAGE_ROUTE} replace />}
         />
       </Routes>
-    </Suspense >
+    </Suspense>
   )
 }
 
-export default App
+export default Application

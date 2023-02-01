@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Modal, Button, Row, Col, List, Typography } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
@@ -27,7 +28,7 @@ const Clients = ({
         <PageLayout>
             <Row align='middle'>
                 <Col span={22}>
-                    <Title>Клиенты</Title>
+                    <Title><FormattedMessage id='clients.title' /></Title>
                 </Col>
                 <Col span={1}>
                     <Button type='primary' onClick={() => setOpenAddClients(true)}>
@@ -81,7 +82,7 @@ const Clients = ({
             >
                 <AddParent />
             </Modal>
-        </PageLayout >
+        </PageLayout>
     )
 }
 

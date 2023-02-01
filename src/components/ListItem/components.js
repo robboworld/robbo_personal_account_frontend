@@ -27,7 +27,7 @@ export const Title = styled.a`
 `
 export const DeleteButton = styled.button`
     font-size: 20px;
-    padding: 1rem;
+    padding: 1.29rem;
     background: none;
     border: none;
     border-bottom: 1px lightgrey solid;
