@@ -1,23 +1,32 @@
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Col, Row, Select, Typography } from 'antd'
+
+import { useActions } from '@/helpers'
+import { changeLanguage } from '@/actions'
 
 const { Title } = Typography
 
 const SelectLanguage = () => {
+    const actions = useActions({ changeLanguage }, [])
     const languages = [
         { value: 'ru', label: 'Русский' },
         { value: 'en', label: 'English' },
     ]
+
     return (
         <Row align='middle'>
-            <Col span={2}>
-                <Title level={5}>Язык</Title>
+            <Col span={3}>
+                <Title level={5}>
+                    <FormattedMessage id='header.select_language' />
+                </Title>
             </Col>
             <Col span={2}>
                 <Select
                     style={{ width: 120 }}
                     defaultValue='ru'
                     options={languages}
+                    onChange={value => actions.changeLanguage(value)}
                 />
             </Col>
 

@@ -1,3 +1,16 @@
 {
-    "clients.title": "Clients"
+    "clients.title": "Clients",
+    "clients.add_parent_button": "Add parent",
+    "parent_content.profile": "Profile",
+    "parent_content.children": "Children",
+    "profile_card.email": "Email",
+    "profile_card.password": "Password",
+    "profile_card.nickname": "Nickname",
+    "profile_card.firstname": "Firstname",
+    "profile_card.middlename": "Middlename",
+    "profile_card.lastname": "Lastname",
+    "profile_card.role": "Role",
+    "profile_card.created_at": "Created at",
+    "profile_card.save_button": "Save",
+    "header.select_language": "Language"
 }

@@ -1,5 +1,6 @@
 import React from "react"
 import { Skeleton, Tabs } from 'antd'
+import { FormattedMessage } from 'react-intl'
 
 import ChildrenTabContainer from "./ChildrenTabContainer"
 
@@ -16,21 +17,20 @@ const ParentContent = ({
     },
 }) => {
     const actions = useActions({ updateProfile }, [])
-
     return (
         <Tabs
             title='Карточка родителя'
             defaultActiveKey='1'
             items={[
                 {
-                    label: 'Профиль',
+                    label: <FormattedMessage id='parent_content.profile' />,
                     key: '1',
                     children: loading ? <Skeleton active loading={loading} />
                         : <ProfileCard updateHandle={actions.updateProfile} profile={GetParentById?.userHttp} />,
 
                 },
                 {
-                    label: 'Дети',
+                    label: <FormattedMessage id='parent_content.children' />,
                     key: '2',
                     children: <ChildrenTabContainer parentId={parentId} />,
                 },

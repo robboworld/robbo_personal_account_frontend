@@ -1,3 +1,16 @@
 {
-    "clients.title": "Клиенты"
+    "clients.title": "Клиенты",
+    "clients.add_parent_button": "Добавить родителя",
+    "parent_content.profile": "Профиль",
+    "parent_content.children": "Дети",
+    "profile_card.email": "Email",
+    "profile_card.password": "Пароль",
+    "profile_card.nickname": "Никнейм",
+    "profile_card.firstname": "Имя",
+    "profile_card.lastname": "Фамилия",
+    "profile_card.middlename": "Отчество",
+    "profile_card.role": "Роль",
+    "profile_card.created_at": "Создан",
+    "profile_card.save_button": "Сохранить",
+    "header.select_language": "Язык"
 }

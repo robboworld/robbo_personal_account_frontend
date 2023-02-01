@@ -1,6 +1,7 @@
 import React from 'react'
 import { PropTypes } from 'prop-types'
 import { Button, Form, Input } from 'antd'
+import { FormattedMessage } from 'react-intl'
 
 import Flex from '@/components/Flex'
 import { userRole } from '@/constants'
@@ -54,37 +55,37 @@ const ProfileCard = ({
                 disabled={isFormDisable}
             >
                 <Form.Item
-                    name='email' label='Email'
+                    name='email' label={<FormattedMessage id='profile_card.email' />}
                 >
                     <Input placeholder={profile.email} size='large' />
                 </Form.Item>
                 <Form.Item
-                    name='nickname' label='Nickname'
+                    name='nickname' label={<FormattedMessage id='profile_card.nickname' />}
                 >
                     <Input placeholder={profile.nickname} size='large' />
                 </Form.Item>
                 <Form.Item
-                    name='firstname' label='Имя'
+                    name='firstname' label={<FormattedMessage id='profile_card.firstname' />}
                 >
                     <Input
                         placeholder={profile.firstname} size='large' />
                 </Form.Item>
                 <Form.Item
-                    name='lastname' label='Фамилия'
+                    name='lastname' label={<FormattedMessage id='profile_card.lastname' />}
                 >
                     <Input placeholder={profile.lastname} size='large' />
                 </Form.Item>
                 <Form.Item
-                    name='middlename' label='Отчество'
+                    name='middlename' label={<FormattedMessage id='profile_card.middlename' />}
                 >
                     <Input placeholder={profile.middlename} size='large' />
                 </Form.Item>
-                <Form.Item label='Роль'>
+                <Form.Item label={<FormattedMessage id='profile_card.role' />}>
                     {
                         userRole[profile.role]
                     }
                 </Form.Item>
-                <Form.Item label='Создан'>
+                <Form.Item label={<FormattedMessage id='profile_card.created_at' />}>
                     {
                         profile.createdAt
                     }
@@ -96,7 +97,7 @@ const ProfileCard = ({
                             type='primary' htmlType='submit'
                             className='login-form-button'
                         >
-                            Сохранить
+                            <FormattedMessage id='profile_card.save_button' />
                         </Button>
                     </Form.Item>
                 }

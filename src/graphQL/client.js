@@ -69,7 +69,6 @@ const refreshToken = async () => {
             mutation: authMutationsGQL.REFRESH_TOKEN,
         })
         const accessToken = refreshResolverResponse.data?.Refresh.accessToken
-        console.log(accessToken)
         localStorage.setItem('token', accessToken || '')
         return accessToken
     } catch (err) {

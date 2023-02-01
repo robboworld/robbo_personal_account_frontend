@@ -32,7 +32,7 @@ const Clients = ({
                 </Col>
                 <Col span={1}>
                     <Button type='primary' onClick={() => setOpenAddClients(true)}>
-                        Добавить родителя
+                        <FormattedMessage id='clients.add_parent_button' />
                     </Button>
                 </Col>
             </Row>

@@ -13,6 +13,7 @@ import robboUnits from './robboUnits'
 import robboUnit from './robboUnit'
 import robboGroup from './robboGroup'
 import robboGroups from './robboGroups'
+import app from './app'
 
 export const rootReducer = combineReducers({
   login,
@@ -28,4 +29,5 @@ export const rootReducer = combineReducers({
   robboUnit,
   robboGroup,
   robboGroups,
+  app,
 })
