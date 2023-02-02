@@ -7,8 +7,6 @@ import ruRU from 'antd/locale/ru_RU'
 
 import RuMessages from '@/lang/ru.json'
 import EngMessages from '@/lang/en.json'
-
-
 import { getAppState } from '@/reducers/app'
 
 const defaultData = {

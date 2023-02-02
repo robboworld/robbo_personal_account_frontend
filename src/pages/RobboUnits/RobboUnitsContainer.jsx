@@ -1,4 +1,5 @@
 import React from 'react'
+import { notification } from 'antd'
 import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams } from 'react-router-dom'
 import { compose } from 'redux'
@@ -37,6 +38,9 @@ const WithGraphQLComponent = compose(
                         page: props.currentPage,
                         pageSize: props.pageSize,
                     },
+                    onError: error => {
+                        notification.error({ message: 'Ошибка', description: error?.message })
+                    },
                 }
             },
             skip: props => props.userRole === UNIT_ADMIN,
@@ -50,6 +54,9 @@ const WithGraphQLComponent = compose(
                     variables: {
                         page: props.currentPage,
                         pageSize: props.pageSize,
+                    },
+                    onError: error => {
+                        notification.error({ message: 'Ошибка', description: error?.message })
                     },
                 }
             },

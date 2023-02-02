@@ -3,10 +3,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Button, Row, Col, Modal, Typography, Avatar } from 'antd'
 
-import { Description } from './components'
-
 import PageLayout from '@/components/PageLayout'
-import Flex from '@/components/Flex'
 import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { checkAccess, courseDescriptionParser } from '@/helpers'

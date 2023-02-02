@@ -1,4 +1,5 @@
 import React from 'react'
+import { notification } from 'antd'
 import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams } from 'react-router-dom'
 
@@ -32,6 +33,9 @@ const WithGraphQLComponent = graphql(
                 variables: {
                     page: props.currentPage,
                     pageSize: props.pageSize,
+                },
+                onError: error => {
+                    notification.error({ message: 'Ошибка', description: error?.message })
                 },
             }
         },

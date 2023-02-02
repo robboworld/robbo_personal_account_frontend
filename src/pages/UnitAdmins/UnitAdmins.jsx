@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, memo } from "react"
 import { Modal, Button, Typography, Row, Col, List } from "antd"
 
 import PageLayout from '@/components/PageLayout'
@@ -11,7 +11,7 @@ import { deleteUnitAdmin } from '@/actions'
 
 const { Title } = Typography
 
-const UnitAdmins = ({
+const UnitAdmins = memo(({
     data: {
         GetAllUnitAdmins,
         loading,
@@ -82,6 +82,6 @@ const UnitAdmins = ({
             </Row>
         </PageLayout>
     )
-}
+})
 
 export default UnitAdmins

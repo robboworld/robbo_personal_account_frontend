@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { Modal, Button, Row, Col, Typography, List } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
@@ -12,7 +12,7 @@ import { deleteTeacher } from '@/actions'
 
 const { Title } = Typography
 
-const Teachers = ({
+const Teachers = memo(({
     data: {
         GetAllTeachers,
         loading,
@@ -82,6 +82,6 @@ const Teachers = ({
             </Row>
         </PageLayout >
     )
-}
+})
 
 export default Teachers

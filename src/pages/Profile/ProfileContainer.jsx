@@ -70,7 +70,12 @@ const ProfileContainer = ({
         switch (userRole) {
             case STUDENT:
                 Profile = compose(
-                    graphql(profileGQL.GET_USER),
+                    graphql(profileGQL.GET_USER,
+                        {
+                            onError: error => {
+                                notification.error({ message: 'Ошибка', description: error?.message })
+                            },
+                        }),
                     graphql(studentMutationsGQL.UPDATE_STUDENT,
                         {
                             name: 'UpdateStudent',
@@ -88,7 +93,11 @@ const ProfileContainer = ({
                 return <Profile />
             case SUPER_ADMIN:
                 Profile = compose(
-                    graphql(profileGQL.GET_USER),
+                    graphql(profileGQL.GET_USER, {
+                        onError: error => {
+                            notification.error({ message: 'Ошибка', description: error?.message })
+                        },
+                    }),
                     graphql(superAdminMutationsGQL.UPDATE_SUPER_ADMIN,
                         {
                             name: 'UpdateSuperAdmin',
@@ -106,7 +115,12 @@ const ProfileContainer = ({
                 return <Profile />
             case UNIT_ADMIN:
                 Profile = compose(
-                    graphql(profileGQL.GET_USER),
+                    graphql(profileGQL.GET_USER,
+                        {
+                            onError: error => {
+                                notification.error({ message: 'Ошибка', description: error?.message })
+                            },
+                        }),
                     graphql(unitAdminMutationsGQL.UPDATE_UNIT_ADMIN,
                         {
                             name: 'UpdateUnitAdmin',
@@ -124,7 +138,11 @@ const ProfileContainer = ({
                 return <Profile />
             case TEACHER:
                 Profile = compose(
-                    graphql(profileGQL.GET_USER),
+                    graphql(profileGQL.GET_USER, {
+                        onError: error => {
+                            notification.error({ message: 'Ошибка', description: error?.message })
+                        },
+                    }),
                     graphql(teacherMutationsGQL.UPDATE_TEACHER,
                         {
                             name: 'UpdateTeacher',
@@ -142,7 +160,13 @@ const ProfileContainer = ({
                 return <Profile />
             case PARENT:
                 Profile = compose(
-                    graphql(profileGQL.GET_USER, { name: 'GetUser' }),
+                    graphql(profileGQL.GET_USER,
+                        {
+                            name: 'GetUser',
+                            onError: error => {
+                                notification.error({ message: 'Ошибка', description: error?.message })
+                            },
+                        }),
                     graphql(
                         studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID,
                         {
@@ -150,6 +174,9 @@ const ProfileContainer = ({
                                 return {
                                     variables: {
                                         parentId: props.userId,
+                                    },
+                                    onError: error => {
+                                        notification.error({ message: 'Ошибка', description: error?.message })
                                     },
                                 }
                             },
@@ -185,6 +212,9 @@ const WithGraphQLParentProfile = compose(
                         peekUserId: props.peekUserId,
                         peekUserRole: props.peekUserRole,
                     },
+                    onError: error => {
+                        notification.error({ message: 'Ошибка', description: error?.message })
+                    },
                 }
             },
         },
@@ -196,6 +226,9 @@ const WithGraphQLParentProfile = compose(
                 return {
                     variables: {
                         parentId: props.peekUserId,
+                    },
+                    onError: error => {
+                        notification.error({ message: 'Ошибка', description: error?.message })
                     },
                 }
             },
@@ -227,6 +260,9 @@ const WithGraphQLStudentPeekProfile = compose(
                         peekUserId: props.peekUserId,
                         peekUserRole: props.peekUserRole,
                     },
+                    onError: error => {
+                        notification.error({ message: 'Ошибка', description: error?.message })
+                    },
                 }
             },
         },
@@ -256,6 +292,9 @@ const WithGraphQLSTeacherPeekProfile = compose(
                         peekUserId: props.peekUserId,
                         peekUserRole: props.peekUserRole,
                     },
+                    onError: error => {
+                        notification.error({ message: 'Ошибка', description: error?.message })
+                    },
                 }
             },
         },
@@ -284,6 +323,9 @@ const WithGraphQLSUnitAdminPeekProfile = compose(
                     variables: {
                         peekUserId: props.peekUserId,
                         peekUserRole: props.peekUserRole,
+                    },
+                    onError: error => {
+                        notification.error({ message: 'Ошибка', description: error?.message })
                     },
                 }
             },

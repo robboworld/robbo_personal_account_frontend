@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Modal, Button, Row, Col, List, Typography } from 'antd'
 
@@ -12,7 +12,7 @@ import { deleteParentRequest } from '@/actions'
 
 const { Title } = Typography
 
-const Clients = ({
+const Clients = memo(({
     data: {
         GetAllParents,
         loading,
@@ -85,6 +85,6 @@ const Clients = ({
             </Modal>
         </PageLayout>
     )
-}
+})
 
 export default Clients
