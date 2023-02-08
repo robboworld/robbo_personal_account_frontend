@@ -1,24 +1,36 @@
 import React, { memo } from 'react'
-import { Col } from 'antd'
+import { graphql } from '@apollo/client/react/hoc'
+import { Col, notification } from 'antd'
 
 import SignUpForm from '@/components/SignUpForm'
-import { useActions } from '@/helpers/useActions'
-import { createParentRequest } from '@/actions'
+import { parentMutationsGQL } from '@/graphQL'
 
-const AddPrent = memo(() => {
-    const actions = useActions({ createParentRequest }, [])
+const AddParent = memo(({
+    CreateParent,
+}) => {
     return (
         <Col span={24}>
-            <SignUpForm
-                margin='0'
-                handleSubmit={parent => actions.createParentRequest(parent)}
-                buttonOption={{
-                    content: 'Добавить',
-                    padding: '10px',
-                }}
-            />
+            <SignUpForm handleSubmit={CreateParent} />
         </Col>
     )
 })
 
-export default AddPrent
+const AddParentContainer = () => {
+    const WithGraphQL = graphql(
+        parentMutationsGQL.CREATE_PARENT,
+        {
+            name: 'CreateParent',
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: 'Клиент успешно добавлен!' })
+                },
+                onError: error => {
+                    notification.error({ message: 'Ошибка', description: error?.message })
+                },
+            },
+        },
+    )(AddParent)
+    return <WithGraphQL />
+}
+
+export default AddParentContainer

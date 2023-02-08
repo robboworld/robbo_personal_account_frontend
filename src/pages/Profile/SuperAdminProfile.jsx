@@ -1,4 +1,5 @@
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Row, Skeleton, Typography } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
@@ -17,7 +18,7 @@ const SuperAdminProfile = ({
     return (
         <PageLayout>
             <Row align='middle'>
-                <Title>Super Admin Профиль</Title>
+                <Title><FormattedMessage id='profile.title' /></Title>
             </Row>
             <Row>
                 <Skeleton active loading={loading}>

@@ -40,23 +40,23 @@ const retryLink = new RetryLink({
     },
 })
 
-const errorLink = onError(
-    async ({ graphQLErrors, networkError, operation, forward }) => {
-        if (networkError.statusCode === 401 && networkError.result.ExpiredBy) {
-            localStorage.removeItem('token')
-            const accessToken = await refreshToken()
-            const oldHeaders = operation.getContext().headers
-            operation.setContext({
-                headers: {
-                    ...oldHeaders,
-                    authorization: accessToken ? `Bearer ${accessToken}` : "",
-                },
-            })
-            console.log(operation)
-            return forward(operation)
-        }
-    },
-)
+// const errorLink = onError(
+//     async ({ graphQLErrors, networkError, operation, forward }) => {
+//         if (networkError.statusCode === 401 && networkError.result.ExpiredBy) {
+//             localStorage.removeItem('token')
+//             const accessToken = await refreshToken()
+//             const oldHeaders = operation.getContext().headers
+//             operation.setContext({
+//                 headers: {
+//                     ...oldHeaders,
+//                     authorization: accessToken ? `Bearer ${accessToken}` : "",
+//                 },
+//             })
+//             console.log(operation)
+//             return forward(operation)
+//         }
+//     },
+// )
 
 export const graphQLClient = new ApolloClient({
     link: from([retryLink, authLink, httpLink]),

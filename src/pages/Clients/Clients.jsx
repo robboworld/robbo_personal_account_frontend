@@ -5,7 +5,7 @@ import { Modal, Button, Row, Col, List, Typography } from 'antd'
 import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
 import ParentContentContainer from '@/components/ParentContent'
-import AddParent from '@/components/AddParent/AddParent'
+import AddParent from '@/components/AddParent'
 import { DragResize } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { deleteParentRequest } from '@/actions'
@@ -75,7 +75,7 @@ const Clients = memo(({
                 </Col>
             </Row>
             <Modal
-                title='Заполните данные клиента'
+                title={<FormattedMessage id='clients.add_parent_title' />}
                 centered
                 open={openAddClients}
                 onCancel={() => setOpenAddClients(false)}

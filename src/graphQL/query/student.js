@@ -85,8 +85,8 @@ export const studentQuerysGQL = {
     }`,
 
     SEARCH_STUDENTS_BY_EMAIL: gql`
-        query SearchStudentsByEmail($email: String!, $parentId: String!) {
-            SearchStudentsByEmail(email: $email, parentId: $parentId) {
+        query SearchStudentsByEmail($email: String!, $page: String!, $pageSize: String!) {
+            SearchStudentsByEmail(email: $email, page: $page, pageSize: $pageSize) {
                 ... on StudentHttpList{
                     students {
                         userHttp{

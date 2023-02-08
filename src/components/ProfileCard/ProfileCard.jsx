@@ -19,7 +19,6 @@ const ProfileCard = ({
             span: 16,
         },
     }
-    console.log(accessUpdate)
     const [form] = Form.useForm()
     const isFormDisable = accessUpdate
 
@@ -67,8 +66,7 @@ const ProfileCard = ({
                 <Form.Item
                     name='firstname' label={<FormattedMessage id='profile_card.firstname' />}
                 >
-                    <Input
-                        placeholder={profile.firstname} size='large' />
+                    <Input placeholder={profile.firstname} size='large' />
                 </Form.Item>
                 <Form.Item
                     name='lastname' label={<FormattedMessage id='profile_card.lastname' />}

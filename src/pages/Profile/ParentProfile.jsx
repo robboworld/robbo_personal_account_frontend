@@ -1,4 +1,5 @@
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Row, Col, Typography, Skeleton, List } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
@@ -15,7 +16,7 @@ const ParentProfile = ({
     return (
         <PageLayout>
             <Row align='middle'>
-                <Title>Parent Профиль</Title>
+                <Title><FormattedMessage id='profile.title' /></Title>
             </Row>
             <Row justify='start'>
                 <Col span={8}>
@@ -29,7 +30,7 @@ const ParentProfile = ({
                 </Col>
                 <Col span={12}>
                     <List
-                        header='Дети'
+                        header={<FormattedMessage id='parent_profile.header_children_list' />}
                         bordered
                         loading={GetStudents?.loading}
                         dataSource={GetStudents.GetStudentsByParentId?.students}

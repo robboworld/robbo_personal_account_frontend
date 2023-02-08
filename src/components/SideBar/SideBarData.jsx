@@ -1,4 +1,5 @@
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
 import * as FaIcons from 'react-icons/fa'
 
 import {
@@ -28,13 +29,13 @@ import {
 export const SidebarDataStudent = [
   {
     key: '1',
-    label: 'Профиль',
+    label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
   {
     key: '2',
-    label: 'Мои проекты',
+    label: <FormattedMessage id='sidebar_data.my_projects' />,
     pathname: MY_PROJECTS_ROUTE,
     icon: <ProjectOutlined />,
   },
@@ -46,13 +47,13 @@ export const SidebarDataStudent = [
   },
   {
     key: '4',
-    label: 'Программа',
+    label: <FormattedMessage id='sidebar_data.programm' />,
     pathname: '/program',
     icon: <FaIcons.FaTasks />,
   },
   {
     key: '5',
-    label: 'Мои курсы',
+    label: <FormattedMessage id='sidebar_data.my_courses' />,
     pathname: MY_COURSES_ROUTE,
     icon: <BookOutlined />,
   },
@@ -64,7 +65,7 @@ export const SidebarDataStudent = [
   },
   {
     key: '7',
-    label: 'Выйти',
+    label: <FormattedMessage id='sidebar_data.logout' />,
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,
   },
@@ -73,8 +74,8 @@ export const SidebarDataStudent = [
 export const SidebarDataParent = [
   {
     key: '1',
-    label: 'Профиль',
-    pathname: '/profile',
+    label: <FormattedMessage id='sidebar_data.profile' />,
+    pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
   {
@@ -85,13 +86,13 @@ export const SidebarDataParent = [
   },
   {
     key: '3',
-    label: 'Программа',
+    label: <FormattedMessage id='sidebar_data.programm' />,
     pathname: '/program',
     icon: <FaIcons.FaTasks />,
   },
   {
     key: '4',
-    label: 'Мои курсы',
+    label: <FormattedMessage id='sidebar_data.my_courses' />,
     pathname: MY_COURSES_ROUTE,
     icon: <BookOutlined />,
   },
@@ -103,7 +104,7 @@ export const SidebarDataParent = [
   },
   {
     key: '6',
-    label: 'Выйти',
+    label: <FormattedMessage id='sidebar_data.logout' />,
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,
   },
@@ -112,8 +113,8 @@ export const SidebarDataParent = [
 export const SidebarDataSuperAdmin = [
   {
     key: '1',
-    label: 'Профиль',
-    pathname: '/profile',
+    label: <FormattedMessage id='sidebar_data.profile' />,
+    pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
   {
@@ -136,36 +137,36 @@ export const SidebarDataSuperAdmin = [
   },
   {
     key: '5',
-    label: 'Клиенты',
+    label: <FormattedMessage id='sidebar_data.clients' />,
     pathname: CLIENTS_ROUTE,
     icon: <TeamOutlined />,
   },
   {
     key: '6',
-    label: 'Robbo Units',
+    label: <FormattedMessage id='sidebar_data.robbo_units' />,
     pathname: ROBBO_UNITS_ROUTE,
     icon: <RobotOutlined />,
   }, {
     key: '7',
-    label: 'Robbo Groups',
+    label: <FormattedMessage id='sidebar_data.robbo_groups' />,
     pathname: ROBBO_GROUPS_ROUTE,
     icon: <RobotOutlined />,
   },
   {
     key: '8',
-    label: 'Курсы',
+    label: <FormattedMessage id='sidebar_data.my_courses' />,
     pathname: MY_COURSES_ROUTE,
     icon: <BookOutlined />,
   },
   {
     key: '9',
-    label: 'Unit Админы',
+    label: <FormattedMessage id='sidebar_data.unit_admins' />,
     pathname: UNIT_ADMINS_ROUTE,
     icon: <FaIcons.FaInfo />,
   },
   {
     key: '10',
-    label: 'Педагоги',
+    label: <FormattedMessage id='sidebar_data.teachers' />,
     pathname: TEACHERS_PAGE_ROUTE,
     icon: <FaIcons.FaInfo />,
   },
@@ -213,7 +214,7 @@ export const SidebarDataSuperAdmin = [
   },
   {
     key: '18',
-    label: 'Выйти',
+    label: <FormattedMessage id='sidebar_data.logout' />,
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,
   },
@@ -222,13 +223,13 @@ export const SidebarDataSuperAdmin = [
 export const SidebarDataTeacher = [
   {
     key: '1',
-    label: 'Профиль',
+    label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
   {
     key: '2',
-    label: 'Обучение',
+    label: <FormattedMessage id='sidebar_data.study' />,
     pathname: STUDY_PAGE_ROUTE,
     icon: <FaIcons.FaTasks />,
   },
@@ -252,7 +253,7 @@ export const SidebarDataTeacher = [
   },
   {
     key: '6',
-    label: 'Выйти',
+    label: <FormattedMessage id='sidebar_data.logout' />,
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,
   },
@@ -261,7 +262,7 @@ export const SidebarDataTeacher = [
 export const SidebarDataFreeListener = [
   {
     key: '1',
-    label: 'Профиль',
+    label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
@@ -273,13 +274,13 @@ export const SidebarDataFreeListener = [
   },
   {
     key: '3',
-    label: 'Программа',
+    label: <FormattedMessage id='sidebar_data.programm' />,
     pathname: '/program',
     icon: <FaIcons.FaTasks />,
   },
   {
     key: '4',
-    label: 'Мои курсы',
+    label: <FormattedMessage id='sidebar_data.my_courses' />,
     pathname: MY_COURSES_ROUTE,
     icon: <BookOutlined />,
   },
@@ -291,7 +292,7 @@ export const SidebarDataFreeListener = [
   },
   {
     key: '6',
-    label: 'Выйти',
+    label: <FormattedMessage id='sidebar_data.logout' />,
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,
   },
@@ -300,37 +301,37 @@ export const SidebarDataFreeListener = [
 export const SidebarDataUnitAdmin = [
   {
     key: '1',
-    label: 'Профиль',
-    pathname: '/profile',
+    label: <FormattedMessage id='sidebar_data.profile' />,
+    pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
   {
     key: '2',
-    label: 'Robbo Units',
+    label: <FormattedMessage id='sidebar_data.robbo_units' />,
     pathname: ROBBO_UNITS_ROUTE,
     icon: <RobotOutlined />,
   },
   {
     key: '3',
-    label: 'Курсы',
+    label: <FormattedMessage id='sidebar_data.my_courses' />,
     pathname: MY_COURSES_ROUTE,
     icon: <BookOutlined />,
   },
   {
     key: '4',
-    label: 'Педагоги',
+    label: <FormattedMessage id='sidebar_data.teachers' />,
     pathname: TEACHERS_PAGE_ROUTE,
     icon: <FaIcons.FaTasks />,
   },
   {
     key: '5',
-    label: 'Клиенты',
+    label: <FormattedMessage id='sidebar_data.clients' />,
     pathname: '/program',
     icon: <FaIcons.FaTasks />,
   },
   {
     key: '6',
-    label: 'Robbo Groups',
+    label: <FormattedMessage id='sidebar_data.robbo_groups' />,
     pathname: ROBBO_GROUPS_ROUTE,
     icon: <RobotOutlined />,
   },
@@ -354,7 +355,7 @@ export const SidebarDataUnitAdmin = [
   },
   {
     key: '10',
-    label: 'Выйти',
+    label: <FormattedMessage id='sidebar_data.logout' />,
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,
   },

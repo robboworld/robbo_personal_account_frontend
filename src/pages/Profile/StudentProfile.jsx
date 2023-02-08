@@ -1,4 +1,5 @@
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Row, Typography, Skeleton } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
@@ -17,7 +18,7 @@ const StudentProfile = ({
     return (
         <PageLayout>
             <Row align='middle'>
-                <Title>Student Профиль</Title>
+                <Title><FormattedMessage id='profile.title' /></Title>
             </Row>
             <Row>
                 <Skeleton active loading={loading}>
