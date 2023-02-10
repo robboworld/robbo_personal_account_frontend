@@ -1,11 +1,13 @@
 import React from "react"
+import { Typography } from "antd"
+import { FormattedMessage } from "react-intl"
 
-import { Title, Code } from './components'
+import { Code } from './components'
 
 import PageLayout from '@/components/PageLayout'
-
 import Flex from "@/components/Flex"
 
+const { Title } = Typography
 
 export default () => {
     return (
@@ -17,7 +19,9 @@ export default () => {
                 direction='column'
             >
                 <Code>🤖</Code>
-                <Title>Что-то пошло не так</Title>
+                <Title>
+                    <FormattedMessage id='error_fallback.title' />
+                </Title>
             </Flex>
         </PageLayout >
     )

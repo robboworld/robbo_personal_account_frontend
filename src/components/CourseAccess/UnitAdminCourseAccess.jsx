@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Row, Button, Col, List, Input } from 'antd'
 
 import ListItem from "@/components/ListItem"
@@ -9,6 +10,7 @@ import { useActions } from '@/helpers'
 const { Search } = Input
 
 const UnitAdminCourseAccess = ({ courseId }) => {
+    const intl = useIntl()
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchItems, setSearchResult] = useState([])
     const actions = useActions({ createCourseAccessRelationUnitAdminRequest }, [])
@@ -25,7 +27,7 @@ const UnitAdminCourseAccess = ({ courseId }) => {
                     type='primary'
                     onClick={() => setOpenSearchSection(!openSearchSection)}
                 >
-                    Добавить Unit Админа
+                    <FormattedMessage id='unit_admin_course_access.add' />
                 </Button>
             </Col>
             <Col span={24}>
@@ -33,7 +35,9 @@ const UnitAdminCourseAccess = ({ courseId }) => {
                     openSearchSection &&
                     <Row gutter={[0, 8]}>
                         <Col span={24}>
-                            <Search placeholder='Введите email' onSearch={SearchUnitAdmins}
+                            <Search
+                                placeholder={intl.formatMessage({ id: 'unit_admin_course_access.search_placeholder' })}
+                                onSearch={SearchUnitAdmins}
                                 enterButton />
                         </Col>
                         <Col span={24}>

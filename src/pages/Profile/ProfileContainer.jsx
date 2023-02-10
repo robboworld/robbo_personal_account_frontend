@@ -3,6 +3,7 @@ import { notification } from 'antd'
 import { compose } from 'redux'
 import { useLocation } from 'react-router-dom'
 import { graphql } from '@apollo/client/react/hoc'
+import { useIntl } from 'react-intl'
 
 import StudentProfile from './StudentProfile'
 import SuperAdminProfile from './SuperAdminProfile'
@@ -32,6 +33,7 @@ const ProfileContainer = ({
     userId,
     userRole,
 }) => {
+    const intl = useIntl()
     const location = useLocation()
     const peekUserId = location?.state?.userId
     const peekUserRole = location?.state?.userRole
@@ -42,24 +44,28 @@ const ProfileContainer = ({
         switch (peekUserRole) {
             case STUDENT:
                 return <WithGraphQLStudentPeekProfile
+                    intl={intl}
                     peekUserId={peekUserId}
                     peekUserRole={peekUserRole}
                     accessUpdate={!checkAccess(userRole, [SUPER_ADMIN])}
                 />
             case UNIT_ADMIN:
                 return <WithGraphQLSUnitAdminPeekProfile
+                    intl={intl}
                     peekUserId={peekUserId}
                     peekUserRole={peekUserRole}
                     accessUpdate={!checkAccess(userRole, [SUPER_ADMIN])}
                 />
             case TEACHER:
                 return <WithGraphQLSTeacherPeekProfile
+                    intl={intl}
                     peekUserId={peekUserId}
                     peekUserRole={peekUserRole}
                     accessUpdate={!checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])}
                 />
             case PARENT:
                 return <WithGraphQLParentProfile
+                    intl={intl}
                     peekUserId={peekUserId}
                     peekUserRole={peekUserRole}
                     accessUpdate={!checkAccess(userRole, [SUPER_ADMIN])}
@@ -73,7 +79,10 @@ const ProfileContainer = ({
                     graphql(profileGQL.GET_USER,
                         {
                             onError: error => {
-                                notification.error({ message: 'Ошибка', description: error?.message })
+                                notification.error({
+                                    message: intl.formatMessage({ id: 'notification.error_message' }),
+                                    description: error?.message,
+                                })
                             },
                         }),
                     graphql(studentMutationsGQL.UPDATE_STUDENT,
@@ -81,10 +90,13 @@ const ProfileContainer = ({
                             name: 'UpdateStudent',
                             options: {
                                 onCompleted: () => {
-                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                    notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
                                 },
                                 onError: error => {
-                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                    notification.error({
+                                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                                        description: error?.message,
+                                    })
                                 },
                             },
                         },
@@ -95,7 +107,10 @@ const ProfileContainer = ({
                 Profile = compose(
                     graphql(profileGQL.GET_USER, {
                         onError: error => {
-                            notification.error({ message: 'Ошибка', description: error?.message })
+                            notification.error({
+                                message: intl.formatMessage({ id: 'notification.error_message' }),
+                                description: error?.message,
+                            })
                         },
                     }),
                     graphql(superAdminMutationsGQL.UPDATE_SUPER_ADMIN,
@@ -103,10 +118,13 @@ const ProfileContainer = ({
                             name: 'UpdateSuperAdmin',
                             options: {
                                 onCompleted: () => {
-                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                    notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
                                 },
                                 onError: error => {
-                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                    notification.error({
+                                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                                        description: error?.message,
+                                    })
                                 },
                             },
                         },
@@ -118,7 +136,10 @@ const ProfileContainer = ({
                     graphql(profileGQL.GET_USER,
                         {
                             onError: error => {
-                                notification.error({ message: 'Ошибка', description: error?.message })
+                                notification.error({
+                                    message: intl.formatMessage({ id: 'notification.error_message' }),
+                                    description: error?.message,
+                                })
                             },
                         }),
                     graphql(unitAdminMutationsGQL.UPDATE_UNIT_ADMIN,
@@ -126,10 +147,13 @@ const ProfileContainer = ({
                             name: 'UpdateUnitAdmin',
                             options: {
                                 onCompleted: () => {
-                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                    notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
                                 },
                                 onError: error => {
-                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                    notification.error({
+                                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                                        description: error?.message,
+                                    })
                                 },
                             },
                         },
@@ -140,7 +164,10 @@ const ProfileContainer = ({
                 Profile = compose(
                     graphql(profileGQL.GET_USER, {
                         onError: error => {
-                            notification.error({ message: 'Ошибка', description: error?.message })
+                            notification.error({
+                                message: intl.formatMessage({ id: 'notification.error_message' }),
+                                description: error?.message,
+                            })
                         },
                     }),
                     graphql(teacherMutationsGQL.UPDATE_TEACHER,
@@ -148,10 +175,13 @@ const ProfileContainer = ({
                             name: 'UpdateTeacher',
                             options: {
                                 onCompleted: () => {
-                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                    notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
                                 },
                                 onError: error => {
-                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                    notification.error({
+                                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                                        description: error?.message,
+                                    })
                                 },
                             },
                         },
@@ -164,7 +194,10 @@ const ProfileContainer = ({
                         {
                             name: 'GetUser',
                             onError: error => {
-                                notification.error({ message: 'Ошибка', description: error?.message })
+                                notification.error({
+                                    message: intl.formatMessage({ id: 'notification.error_message' }),
+                                    description: error?.message,
+                                })
                             },
                         }),
                     graphql(
@@ -176,7 +209,10 @@ const ProfileContainer = ({
                                         parentId: props.userId,
                                     },
                                     onError: error => {
-                                        notification.error({ message: 'Ошибка', description: error?.message })
+                                        notification.error({
+                                            message: intl.formatMessage({ id: 'notification.error_message' }),
+                                            description: error?.message,
+                                        })
                                     },
                                 }
                             },
@@ -188,10 +224,13 @@ const ProfileContainer = ({
                             name: 'UpdateParent',
                             options: {
                                 onCompleted: () => {
-                                    notification.success({ description: 'Профиль успешно обновлен!' })
+                                    notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
                                 },
                                 onError: error => {
-                                    notification.error({ message: 'Ошибка', description: error?.message })
+                                    notification.error({
+                                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                                        description: error?.message,
+                                    })
                                 },
                             },
                         },
@@ -213,7 +252,10 @@ const WithGraphQLParentProfile = compose(
                         peekUserRole: props.peekUserRole,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },
@@ -228,7 +270,10 @@ const WithGraphQLParentProfile = compose(
                         parentId: props.peekUserId,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },
@@ -238,13 +283,18 @@ const WithGraphQLParentProfile = compose(
         {
             name: 'UpdateParent',
             skip: props => props.userRole !== SUPER_ADMIN,
-            options: {
-                onCompleted: () => {
-                    notification.success({ description: 'Профиль успешно обновлен!' })
-                },
-                onError: error => {
-                    notification.error({ message: 'Ошибка', description: error?.message })
-                },
+            options: props => {
+                return {
+                    onCompleted: () => {
+                        notification.success({ description: props.intl.formatMessage({ id: 'notification.update_profile_success' }) })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
             },
         },
     ),
@@ -261,7 +311,10 @@ const WithGraphQLStudentPeekProfile = compose(
                         peekUserRole: props.peekUserRole,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },
@@ -270,13 +323,18 @@ const WithGraphQLStudentPeekProfile = compose(
     graphql(studentMutationsGQL.UPDATE_STUDENT,
         {
             name: 'UpdateStudent',
-            options: {
-                onCompleted: () => {
-                    notification.success({ description: 'Профиль успешно обновлен!' })
-                },
-                onError: error => {
-                    notification.error({ message: 'Ошибка', description: error?.message })
-                },
+            options: props => {
+                return {
+                    onCompleted: () => {
+                        notification.success({ description: 'Профиль успешно обновлен!' })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
             },
         },
     ),
@@ -293,7 +351,10 @@ const WithGraphQLSTeacherPeekProfile = compose(
                         peekUserRole: props.peekUserRole,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },
@@ -302,13 +363,18 @@ const WithGraphQLSTeacherPeekProfile = compose(
     graphql(teacherMutationsGQL.UPDATE_TEACHER,
         {
             name: 'UpdateTeacher',
-            options: {
-                onCompleted: () => {
-                    notification.success({ description: 'Профиль успешно обновлен!' })
-                },
-                onError: error => {
-                    notification.error({ message: 'Ошибка', description: error?.message })
-                },
+            options: props => {
+                return {
+                    onCompleted: () => {
+                        notification.success({ description: props.intl.formatMessage({ id: 'notification.update_profile_success' }) })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
             },
         },
     ),
@@ -325,7 +391,10 @@ const WithGraphQLSUnitAdminPeekProfile = compose(
                         peekUserRole: props.peekUserRole,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },
@@ -334,13 +403,18 @@ const WithGraphQLSUnitAdminPeekProfile = compose(
     graphql(unitAdminMutationsGQL.UPDATE_UNIT_ADMIN,
         {
             name: 'UpdateUnitAdmin',
-            options: {
-                onCompleted: () => {
-                    notification.success({ description: 'Профиль успешно обновлен!' })
-                },
-                onError: error => {
-                    notification.error({ message: 'Ошибка', description: error?.message })
-                },
+            options: props => {
+                return {
+                    onCompleted: () => {
+                        notification.success({ description: props.intl.formatMessage({ id: 'notification.update_profile_success' }) })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
             },
         },
     ),

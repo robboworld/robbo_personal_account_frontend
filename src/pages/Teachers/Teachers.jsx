@@ -1,5 +1,6 @@
 import React, { useState, memo } from 'react'
 import { Modal, Button, Row, Col, Typography, List } from 'antd'
+import { FormattedMessage, useIntl } from "react-intl"
 
 import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
@@ -21,13 +22,13 @@ const Teachers = memo(({
     currentPage,
     onChangePage,
 }) => {
-
+    const intl = useIntl()
     const actions = useActions({ deleteTeacher }, [])
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
     return (
         <PageLayout>
             <Modal
-                title='Заполните данные педагога'
+                title={intl.formatMessage({ id: 'teachers.modal_title' })}
                 open={openAddTeacher}
                 footer={[]}
                 onCancel={() => setOpenAddTeacher(false)}
@@ -36,11 +37,13 @@ const Teachers = memo(({
             </Modal>
             <Row align='middle'>
                 <Col span={22}>
-                    <Title>Педагоги</Title>
+                    <Title>
+                        <FormattedMessage id='teachers.title' />
+                    </Title>
                 </Col>
                 <Col span={1}>
                     <Button type='primary' onClick={() => setOpenAddTeacher(true)}>
-                        Добавить педагога
+                        <FormattedMessage id='teachers.create_teacher' />
                     </Button>
                 </Col>
             </Row>

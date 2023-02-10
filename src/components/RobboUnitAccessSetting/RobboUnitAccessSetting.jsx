@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import styled from "styled-components"
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { Button, Space, Input, List } from "antd"
 import { useQuery } from "@apollo/client"
@@ -20,6 +20,7 @@ import { PROFILE_PAGE_ROUTE, UNIT_ADMIN } from "@/constants"
 const { Search } = Input
 
 export default ({ robboUnitId }) => {
+    const intl = useIntl()
     const [searchItems, setSearchResult] = useState([])
     const navigate = useNavigate()
     const actions = useActions({
@@ -50,30 +51,31 @@ export default ({ robboUnitId }) => {
 
     return (
         <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
-            Unit Админы
-            {
-                getUnitAdminsByRobboUnitIdResult?.loading
-                    ? <Loader />
-                    : <List
-                        bordered
-                        dataSource={getUnitAdminsByRobboUnitIdResult.data?.GetUnitAdminsByRobboUnitId?.unitAdmins}
-                        renderItem={({ userHttp }, index) => (
-                            <ListItem
-                                itemIndex={index}
-                                key={index}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                render={() => { }}
-                                handleClick={() => openProfileUnitAdmin(userHttp.id)}
-                                handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(userHttp.id, robboUnitId)}
-                            />
-                        )}
+            <FormattedMessage id='robbo_unit_access.title' />
+            <List
+                loading={getUnitAdminsByRobboUnitIdResult?.loading}
+                bordered
+                dataSource={getUnitAdminsByRobboUnitIdResult.data?.GetUnitAdminsByRobboUnitId?.unitAdmins}
+                renderItem={({ userHttp }, index) => (
+                    <ListItem
+                        itemIndex={index}
+                        key={index}
+                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                        render={() => { }}
+                        handleClick={() => openProfileUnitAdmin(userHttp.id)}
+                        handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(userHttp.id, robboUnitId)}
                     />
-            }
-            <Button type='primary' onClick={() => setOpenSearchSection(!openSearchSection)}>Назначить</Button>
+                )}
+            />
+            <Button type='primary' onClick={() => setOpenSearchSection(!openSearchSection)}>
+                <FormattedMessage id='robbo_unit_access.add_access' />
+            </Button>
             {
                 openSearchSection &&
                 <React.Fragment>
-                    <Search placeholder='Введите email' onSearch={SearchUnitAdmins}
+                    <Search
+                        placeholder={intl.formatMessage({ id: 'robbo_group_card.student_search_placeholder' })}
+                        onSearch={SearchUnitAdmins}
                         enterButton />
                     <List
                         bordered
@@ -93,13 +95,3 @@ export default ({ robboUnitId }) => {
         </Space>
     )
 }
-
-export const Title = styled.h1`
-    display: flex;
-    align-items: center;
-    justify-content: center
-    width: 100%;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-`

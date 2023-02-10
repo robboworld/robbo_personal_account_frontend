@@ -6,11 +6,20 @@ export const projectPageGQL = {
     GET_PROJECT_PAGE_BY_STUDENT_ID: gql`
         query {
             GetAllProjectPagesByAccessToken{
-                title
-                linkScratch
-                lastModified
-                projectId
-                projectPageId
+               ... on ProjectPageHttpList
+                {
+                   projectPages
+                   { 
+                        title
+                        linkScratch
+                        lastModified
+                        projectId
+                        projectPageId
+                    }
+                }
+                ... on Error {
+                    message
+                }
             }
         }
     `,

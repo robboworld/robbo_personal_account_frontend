@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Space } from 'antd'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 import { ProjectPageItem, ScratchLink, LastModified, RemoveProjectPage } from './components'
 
@@ -10,7 +11,7 @@ import Flex from '@/components/Flex'
 import { deleteProjectPage } from '@/actions'
 
 export default ({ projectPageIndex, projectPage }) => {
-
+    const intl = useIntl()
     const actions = useActions({ deleteProjectPage }, [])
     const history = useNavigate()
     const token = localStorage.getItem('token')
@@ -28,16 +29,16 @@ export default ({ projectPageIndex, projectPage }) => {
             <Space direction='vertical'>
                 <ScratchLink onClick={toProjectPageHandler}> {projectPage.title}</ScratchLink>
                 <LastModified>
-                    {'Последние изменение: ' + projectPage.lastModified}
+                    {intl.formatMessage({ id: 'my_courses.last_changes' }) + projectPage.lastModified}
                 </LastModified>
                 <Button type='primary' onClick={seeInsideHandler}>
-                    Перейти
+                    <FormattedMessage id='my_courses.open' />
                 </Button>
             </Space>
             <Flex width='58%' justify='flex-end'
                 align='center'>
                 <RemoveProjectPage onClick={() => actions.deleteProjectPage(token, projectPage.projectPageId, projectPageIndex)}>
-                    удалить
+                    <FormattedMessage id='my_courses.delete' />
                 </RemoveProjectPage>
             </Flex>
         </ProjectPageItem>

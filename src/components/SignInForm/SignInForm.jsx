@@ -3,6 +3,7 @@ import { Button, Select, Form, Input, notification } from 'antd'
 import { PropTypes } from 'prop-types'
 import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
 
@@ -17,11 +18,12 @@ import {
 } from '@/constants'
 import { authMutationsGQL } from '@/graphQL'
 
+
 const SignInForm = memo(({
     handleSubmit,
     needSelectRole,
 }) => {
-
+    const intl = useIntl()
     const roles = [
         { value: STUDENT, label: userRole[STUDENT] },
         { value: TEACHER, label: userRole[TEACHER] },
@@ -40,7 +42,10 @@ const SignInForm = memo(({
             navigate('/')
         },
         onError: error => {
-            notification.error({ message: 'Ошибка', description: error?.message })
+            notification.error({
+                message: intl.formatMessage({ id: 'notification.error_message' }),
+                description: error?.message,
+            })
         },
     })
 
@@ -67,12 +72,13 @@ const SignInForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваш Email!',
+                        message: <FormattedMessage id='sign_up_form.email_rule' />,
                     },
                 ]}
             >
                 <Input
-                    prefix={<MailOutlined className='site-form-item-icon' />} placeholder='Email'
+                    prefix={<MailOutlined className='site-form-item-icon' />}
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.email_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -81,24 +87,25 @@ const SignInForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваш Пароль!',
+                        message: <FormattedMessage id='sign_up_form.password_rule' />,
                     },
                 ]}
             >
                 <Input
                     prefix={<LockOutlined className='site-form-item-icon' />}
                     type='password'
-                    placeholder='Пароль'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.password_placeholder' })}
                     size='large'
                 />
             </Form.Item>
 
             <Form.Item
-                label='Выберите роль' name='role'
+                label={intl.formatMessage({ id: 'sign_in_form.select_role' })}
+                name='role'
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите вашу роль!',
+                        message: <FormattedMessage id='sign_in_form.role_rule' />,
                     },
                 ]}
             >
@@ -119,7 +126,7 @@ const SignInForm = memo(({
                                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
                             }
                         >
-                            Войти
+                            <FormattedMessage id='sign_in_form.sign_in' />
                         </Button>
                     )
                 }

@@ -1,5 +1,6 @@
 import React, { useState, memo } from "react"
 import { Modal, Button, Typography, Row, Col, List } from "antd"
+import { FormattedMessage, useIntl } from "react-intl"
 
 import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
@@ -20,6 +21,7 @@ const UnitAdmins = memo(({
     onChangePage,
     pageSize,
 }) => {
+    const intl = useIntl()
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const actions = useActions({ deleteUnitAdmin }, [])
 
@@ -27,17 +29,19 @@ const UnitAdmins = memo(({
         <PageLayout>
             <Row align='middle'>
                 <Col span={21}>
-                    <Title>Unit Админы</Title>
+                    <Title>
+                        <FormattedMessage id='unit_admins.title' />
+                    </Title>
                 </Col>
                 <Col span={1}>
                     <Button type='primary' onClick={() => setOpenAddUnitAdmin(true)}>
-                        Добавить Unit Admin
+                        <FormattedMessage id='unit_admins.create_unit_admin' />
                     </Button>
                 </Col>
             </Row>
             <Modal
                 centered
-                title='Заполните данные Unit Admin'
+                title={intl.formatMessage({ id: 'unit_admins.modal_title' })}
                 open={openAddUnitAdmin}
                 onCancel={() => setOpenAddUnitAdmin(false)}
                 footer={[]}

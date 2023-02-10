@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { Button, Row, Col, Modal, Typography, Avatar } from 'antd'
+import { Button, Row, Col, Modal, Typography, Avatar, Spin } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import PageLayout from '@/components/PageLayout'
-import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { checkAccess, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
@@ -21,7 +21,7 @@ const { Title } = Typography
 
 export default ({ userRole }) => {
     const [open, setOpen] = useState(false)
-
+    const intl = useIntl()
     const token = localStorage.getItem('token')
     const { coursePageId } = useParams()
     const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
@@ -44,7 +44,7 @@ export default ({ userRole }) => {
         <PageLayout>
             {
                 loading
-                    ? <Loader />
+                    ? <Spin />
                     : (
                         <React.Fragment>
                             <Row align='middle'>
@@ -64,14 +64,14 @@ export default ({ userRole }) => {
                                             type='primary' size='large'
                                             onClick={openCourseButtonHandler}
                                         >
-                                            Открыть курс
+                                            <FormattedMessage id='course_page.open_course' />
                                         </Button>
                                     </Row>
                                     <Row>
                                         <Button
                                             type='primary' size='large'
                                         >
-                                            Прогресс
+                                            <FormattedMessage id='course_page.progress' />
                                         </Button>
                                     </Row>
                                     <Row>
@@ -81,7 +81,7 @@ export default ({ userRole }) => {
                                                 type='primary' size='large'
                                                 onClick={() => setOpen(true)}
                                             >
-                                                Доступ
+                                                <FormattedMessage id='course_page.access' />
                                             </Button>
                                         }
                                     </Row>
@@ -89,21 +89,21 @@ export default ({ userRole }) => {
                                         <Button
                                             type='primary' size='large'
                                         >
-                                            Внешние источники
+                                            <FormattedMessage id='course_page.external_sources' />
                                         </Button>
                                     </Row>
                                     <Row>
                                         <Button
                                             type='primary' size='large'
                                         >
-                                            Связь с преподавателем
+                                            <FormattedMessage id='course_page.communication_with_the_teacher' />
                                         </Button>
                                     </Row>
                                 </Col>
                                 <Col span={20}>
                                     <Row>
                                         <Title level={3}>
-                                            Описание курса
+                                            <FormattedMessage id='robbo_group_card.course_description' />
                                         </Title>
                                     </Row>
                                     <Row>
@@ -114,8 +114,10 @@ export default ({ userRole }) => {
                                 </Col>
                             </Row>
                             <Modal
-                                title='Доступ к курсу' centered
-                                open={open} onOk={() => setOpen(true)}
+                                title={intl.formatMessage({ id: 'course_page.course_access' })}
+                                centered
+                                open={open}
+                                onOk={() => setOpen(true)}
                                 // confirmLoading={ }
                                 onCancel={() => setOpen(false)}
                                 width='50%'

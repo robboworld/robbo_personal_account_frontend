@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Row, Button, Col, List, Input } from 'antd'
 
 import ListItem from "@/components/ListItem"
@@ -9,6 +10,8 @@ import { useActions } from '@/helpers'
 const { Search } = Input
 
 const RobboUnitCourseAccess = ({ courseId }) => {
+
+    const intl = useIntl()
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchItems, setSearchResult] = useState([])
     const actions = useActions({ createCourseAccessRelationRobboUnitRequest }, [])
@@ -25,7 +28,7 @@ const RobboUnitCourseAccess = ({ courseId }) => {
                     type='primary'
                     onClick={() => setOpenSearchSection(!openSearchSection)}
                 >
-                    Добавить Robbo Unit
+                    <FormattedMessage id='robbo_unit_course_access.add' />
                 </Button>
             </Col>
             <Col span={24}>
@@ -33,7 +36,9 @@ const RobboUnitCourseAccess = ({ courseId }) => {
                     openSearchSection &&
                     <Row gutter={[0, 8]}>
                         <Col span={24}>
-                            <Search placeholder='Введите название' onSearch={SearchRobboUnits}
+                            <Search
+                                placeholder={intl.formatMessage({ id: 'robbo_unit_course_access.search_placeholder' })}
+                                onSearch={SearchRobboUnits}
                                 enterButton />
                         </Col>
                         <Col span={24}>

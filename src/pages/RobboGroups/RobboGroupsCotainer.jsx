@@ -3,6 +3,7 @@ import { notification } from 'antd'
 import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams } from 'react-router-dom'
 import { compose } from 'redux'
+import { useIntl } from 'react-intl'
 
 import RobboGroups from './RobboGroups'
 
@@ -10,6 +11,7 @@ import { robboGroupQuerysGQL } from '@/graphQL'
 import { SUPER_ADMIN, UNIT_ADMIN } from '@/constants'
 
 const RobboGroupsContainer = ({ userRole }) => {
+    const intl = useIntl()
     const [searchParams, setSearchParams] = useSearchParams()
     const currentPage = searchParams.get('page') || '1'
     const pageSize = '10'
@@ -20,6 +22,7 @@ const RobboGroupsContainer = ({ userRole }) => {
 
     return (
         <WithGraphQLComponent
+            intl={intl}
             userRole={userRole}
             pageSize={pageSize}
             currentPage={currentPage}
@@ -39,7 +42,10 @@ const WithGraphQLComponent = compose(
                         pageSize: props.pageSize,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },
@@ -56,7 +62,10 @@ const WithGraphQLComponent = compose(
                         pageSize: props.pageSize,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },
@@ -73,7 +82,10 @@ const WithGraphQLComponent = compose(
                         pageSize: props.pageSize,
                     },
                     onError: error => {
-                        notification.error({ message: 'Ошибка', description: error?.message })
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
                     },
                 }
             },

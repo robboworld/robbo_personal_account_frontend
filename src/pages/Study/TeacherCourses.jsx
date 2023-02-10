@@ -1,9 +1,8 @@
 import React, { useEffect } from "react"
-import { Col, Row } from "antd"
+import { Col, Row, Spin } from "antd"
 import { useSelector } from "react-redux"
 
 import { useActions } from "@/helpers/useActions"
-import Loader from "@/components/Loader"
 import {
     getCoursePagesByUserRequest,
     clearAllCoursePagesState,
@@ -29,7 +28,7 @@ const TeacherCourses = () => {
             <Col span={24} >
                 {
                     loading
-                        ? <Loader />
+                        ? <Spin />
                         : coursePages?.map((coursePage, index) => {
                             return (
                                 <ListItem

@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react'
 import { Skeleton, Tabs } from 'antd'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import ChildrenTabContainer from "./ChildrenTabContainer"
 
@@ -14,9 +14,10 @@ const ParentContent = ({
     },
     UpdateParent,
 }) => {
+    const intl = useIntl()
     return (
         <Tabs
-            title='Карточка родителя'
+            title={intl.formatMessage({ id: 'parent_content.title' })}
             defaultActiveKey='1'
             items={[
                 {

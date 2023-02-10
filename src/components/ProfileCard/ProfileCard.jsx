@@ -3,7 +3,6 @@ import { PropTypes } from 'prop-types'
 import { Button, Form, Input } from 'antd'
 import { FormattedMessage } from 'react-intl'
 
-import Flex from '@/components/Flex'
 import { userRole } from '@/constants'
 
 const ProfileCard = ({
@@ -23,84 +22,82 @@ const ProfileCard = ({
     const isFormDisable = accessUpdate
 
     return (
-        <Flex margin='0.5rem' width='100%'>
-            <Form
-                name='normal_profile'
-                className='profile-form'
-                onFinish={({ email, nickname, middlename, firstname, lastname }) => {
-                    updateHandle(
-                        {
-                            variables: {
-                                input: {
-                                    id: profile.id,
-                                    email,
-                                    middlename,
-                                    firstname,
-                                    lastname,
-                                    nickname,
-                                },
+        <Form
+            name='normal_profile'
+            className='profile-form'
+            onFinish={({ email, nickname, middlename, firstname, lastname }) => {
+                updateHandle(
+                    {
+                        variables: {
+                            input: {
+                                id: profile.id,
+                                email,
+                                middlename,
+                                firstname,
+                                lastname,
+                                nickname,
                             },
-                        })
-                }}
-                {...layout}
-                form={form}
-                initialValues={{
-                    email: profile.email,
-                    nickname: profile.nickname,
-                    firstname: profile.firstname,
-                    lastname: profile.lastname,
-                    middlename: profile.middlename,
-                }}
-                disabled={isFormDisable}
+                        },
+                    })
+            }}
+            {...layout}
+            form={form}
+            initialValues={{
+                email: profile.email,
+                nickname: profile.nickname,
+                firstname: profile.firstname,
+                lastname: profile.lastname,
+                middlename: profile.middlename,
+            }}
+            disabled={isFormDisable}
+        >
+            <Form.Item
+                name='email' label={<FormattedMessage id='profile_card.email' />}
             >
-                <Form.Item
-                    name='email' label={<FormattedMessage id='profile_card.email' />}
-                >
-                    <Input placeholder={profile.email} size='large' />
-                </Form.Item>
-                <Form.Item
-                    name='nickname' label={<FormattedMessage id='profile_card.nickname' />}
-                >
-                    <Input placeholder={profile.nickname} size='large' />
-                </Form.Item>
-                <Form.Item
-                    name='firstname' label={<FormattedMessage id='profile_card.firstname' />}
-                >
-                    <Input placeholder={profile.firstname} size='large' />
-                </Form.Item>
-                <Form.Item
-                    name='lastname' label={<FormattedMessage id='profile_card.lastname' />}
-                >
-                    <Input placeholder={profile.lastname} size='large' />
-                </Form.Item>
-                <Form.Item
-                    name='middlename' label={<FormattedMessage id='profile_card.middlename' />}
-                >
-                    <Input placeholder={profile.middlename} size='large' />
-                </Form.Item>
-                <Form.Item label={<FormattedMessage id='profile_card.role' />}>
-                    {
-                        userRole[profile.role]
-                    }
-                </Form.Item>
-                <Form.Item label={<FormattedMessage id='profile_card.created_at' />}>
-                    {
-                        profile.createdAt
-                    }
-                </Form.Item>
+                <Input placeholder={profile.email} size='large' />
+            </Form.Item>
+            <Form.Item
+                name='nickname' label={<FormattedMessage id='profile_card.nickname' />}
+            >
+                <Input placeholder={profile.nickname} size='large' />
+            </Form.Item>
+            <Form.Item
+                name='firstname' label={<FormattedMessage id='profile_card.firstname' />}
+            >
+                <Input placeholder={profile.firstname} size='large' />
+            </Form.Item>
+            <Form.Item
+                name='lastname' label={<FormattedMessage id='profile_card.lastname' />}
+            >
+                <Input placeholder={profile.lastname} size='large' />
+            </Form.Item>
+            <Form.Item
+                name='middlename' label={<FormattedMessage id='profile_card.middlename' />}
+            >
+                <Input placeholder={profile.middlename} size='large' />
+            </Form.Item>
+            <Form.Item label={<FormattedMessage id='profile_card.role' />}>
                 {
-                    !isFormDisable &&
-                    <Form.Item >
-                        <Button
-                            type='primary' htmlType='submit'
-                            className='login-form-button'
-                        >
-                            <FormattedMessage id='profile_card.save_button' />
-                        </Button>
-                    </Form.Item>
+                    userRole[profile.role]
                 }
-            </Form>
-        </Flex >
+            </Form.Item>
+            <Form.Item label={<FormattedMessage id='profile_card.created_at' />}>
+                {
+                    profile.createdAt
+                }
+            </Form.Item>
+            {
+                !isFormDisable &&
+                <Form.Item >
+                    <Button
+                        type='primary' htmlType='submit'
+                        className='login-form-button'
+                    >
+                        <FormattedMessage id='profile_card.save_button' />
+                    </Button>
+                </Form.Item>
+            }
+        </Form>
     )
 }
 

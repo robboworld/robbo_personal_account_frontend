@@ -1,4 +1,6 @@
 {
+    "///////////////////CHILDERN_TAB//////////////////////////////": "",
+    "children_tab.modal_title": "",
     "//////////////////////CLIENTS/////////////////////////////////": "",
     "clients.title": "Clients",
     "clients.add_parent_button": "Add parent",
@@ -33,6 +35,7 @@
     "sidebar_data.unit_admins": "Unit admins",
     "sidebar_data.teachers": "Teachers",
     "sidebar_data.study": "Study",
+    "notification.child_create_success": "Child added successfully!",
     "////////////////////////MODAL_WINDOW////////////////////////": "",
     "modal_window.add": ""
 }

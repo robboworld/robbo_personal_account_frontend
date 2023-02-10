@@ -1,43 +1,73 @@
-import React, { memo, useState } from 'react'
-import { Button } from 'antd'
-
-import { Input } from '@/components/UI'
-import Flex from '@/components/Flex'
+import React, { memo } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Button, Form, Input } from 'antd'
 
 export default memo(({
-    margin,
     handleSubmit,
-    buttonOption,
 }) => {
-
-    const [name, setName] = useState('')
-    const [city, setCity] = useState('')
-
+    const intl = useIntl()
+    const [form] = Form.useForm()
 
     return (
-        <Flex
-            direction='column' justify='space-around'
-            align='center' width='100%'
+        <Form
+            className='robbo-unit-form'
+            onFinish={(
+                {
+                    name,
+                    city,
+                }) => {
+                handleSubmit({
+                    variables: {
+                        input: {
+                            name,
+                            city,
+                        },
+                    },
+                })
+            }}
+            form={form}
         >
-            <Input type='text' placeholder='Название'
-                value={name} handleInput={name => setName(name)}
-                margin={margin}
-            />
-            <Input type='text' placeholder='Город'
-                value={city} handleInput={city => setCity(city)}
-                margin={margin}
-            />
-
-            <Flex
-                justify='center' align='center'
-                width='100%' margin='1rem 0 2rem 0'
+            <Form.Item
+                name='name'
+                rules={[
+                    {
+                        required: true,
+                        message: <FormattedMessage id='robbo_unit_form.name_rule' />,
+                    },
+                ]}
             >
+                <Input
+                    placeholder={intl.formatMessage({ id: 'robbo_unit_card.name' })}
+                    size='large'
+                />
+            </Form.Item>
+            <Form.Item
+                name='city'
+                rules={[
+                    {
+                        required: true,
+                        message: <FormattedMessage id='robbo_unit_form.city_rule' />,
+                    },
+                ]}
+            >
+                <Input
+                    placeholder={intl.formatMessage({ id: 'robbo_unit_card.city' })}
+                    size='large'
+                />
+            </Form.Item>
+            <Form.Item >
+
                 <Button
-                    type='primary' onClick={() => handleSubmit({ name, city })}
+                    type='primary' htmlType='submit'
+                    className='login-form-button'
+                    disabled={
+                        !form.isFieldsTouched(true) ||
+                        !!form.getFieldsError().filter(({ errors }) => errors.length).length
+                    }
                 >
-                    Создать
+                    <FormattedMessage id='robbo_unit_form.add' />
                 </Button>
-            </Flex>
-        </Flex>
+            </Form.Item>
+        </Form>
     )
 })

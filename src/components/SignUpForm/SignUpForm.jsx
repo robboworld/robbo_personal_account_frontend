@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, Form, Input } from 'antd'
 import { PropTypes } from 'prop-types'
 
@@ -9,7 +9,7 @@ const SignUpForm = memo(({
     robboUnitId,
 }) => {
     const [form] = Form.useForm()
-
+    const intl = useIntl()
     return (
         <Form
             className='signup-form'
@@ -47,7 +47,7 @@ const SignUpForm = memo(({
                 ]}
             >
                 <Input
-                    placeholder='Email'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.email_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -62,7 +62,7 @@ const SignUpForm = memo(({
             >
                 <Input
                     type='password'
-                    placeholder='Пароль'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.password_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -76,7 +76,7 @@ const SignUpForm = memo(({
                 ]}
             >
                 <Input
-                    placeholder='Nickname'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.nickname_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -90,7 +90,7 @@ const SignUpForm = memo(({
                 ]}
             >
                 <Input
-                    placeholder='Имя'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.firstname_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -104,7 +104,7 @@ const SignUpForm = memo(({
                 ]}
             >
                 <Input
-                    placeholder='Фамилия'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.lastname_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -118,7 +118,7 @@ const SignUpForm = memo(({
                 ]}
             >
                 <Input
-                    placeholder='Отчество'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.middlename_placeholder' })}
                     size='large'
                 />
             </Form.Item>

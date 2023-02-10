@@ -4,13 +4,13 @@ import { notification } from 'antd'
 import { compose } from 'redux'
 import { graphql } from '@apollo/client/react/hoc'
 
-import ChildrenTab from './ChildrenTab'
+import RobboUnitStudentsTab from './RobboUnitStudentsTab'
 
 import { studentQuerysGQL } from '@/graphQL'
 
 
-const ChildrenTabContainer = ({
-    parentId,
+const RobboUnitStudentsTabContainer = ({
+    robboUnitId,
 }) => {
     const [email, setEmail] = useState('')
     const SearchStudent = value => {
@@ -20,12 +20,12 @@ const ChildrenTabContainer = ({
 
     const WithGraphQLComponent = compose(
         graphql(
-            studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID,
+            studentQuerysGQL.GET_STUDENTS_BY_ROBBO_UNIT_ID,
             {
                 options: props => {
                     return {
                         variables: {
-                            parentId: props.parentId,
+                            robboUnitId: props.robboUnitId,
                         },
                         onError: error => {
                             notification.error({
@@ -45,8 +45,8 @@ const ChildrenTabContainer = ({
                     return {
                         variables: {
                             email: props.email || 'undenfined',
-                            // page: "1",
-                            // pageSize: "5",
+                            page: "1",
+                            pageSize: "5",
                             parentId: props.parentId,
                         },
                         onError: error => {
@@ -59,14 +59,14 @@ const ChildrenTabContainer = ({
                 },
                 name: 'SearchStudentsResult',
             },
-        ))(ChildrenTab)
+        ))(RobboUnitStudentsTab)
 
     return <WithGraphQLComponent
-        parentId={parentId}
+        robboUnitId={robboUnitId}
         email={email}
         SearchStudent={SearchStudent}
     />
 }
 
 
-export default ChildrenTabContainer
+export default RobboUnitStudentsTabContainer

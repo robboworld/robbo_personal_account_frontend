@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { Space, Button, Col, List, Input, Row, Modal } from 'antd'
 
@@ -17,6 +18,7 @@ const ChildrenTab = ({
     SearchStudent,
     SearchStudentsResult,
 }) => {
+    const intl = useIntl()
     const actions = useActions({ createStudentParentRelationRequest, deleteChildRequest }, [])
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
@@ -50,10 +52,17 @@ const ChildrenTab = ({
             />
             <Row gutter={[8, 8]}>
                 <Col span={12}>
-                    <Button type='primary' onClick={() => setOpenSearchSection(!openSearchSection)}>Добавить</Button>
+                    <Button
+                        type='primary'
+                        onClick={() => setOpenSearchSection(!openSearchSection)}
+                    >
+                        <FormattedMessage id='parent_content.add_child' />
+                    </Button>
                 </Col>
                 <Col span={12}>
-                    <Button type='primary' onClick={setOpenAddChildren}>Создать </Button>
+                    <Button type='primary' onClick={setOpenAddChildren}>
+                        <FormattedMessage id='parent_content.create_child' />
+                    </Button>
                 </Col>
 
             </Row>
@@ -62,7 +71,7 @@ const ChildrenTab = ({
                 <Row gutter={[0, 8]}>
                     <Col span={24}>
                         <Search
-                            placeholder='Введите Email'
+                            placeholder={intl.formatMessage({ id: 'parent_content.student_search_placeholder' })}
                             onSearch={SearchStudent}
                             enterButton
                         />
@@ -86,7 +95,7 @@ const ChildrenTab = ({
                 </Row>
             }
             <Modal
-                title='Заполните данные ученика'
+                title={intl.formatMessage({ id: 'parent_content.modal_title' })}
                 centered
                 open={openAddChildren}
                 onCancel={() => setOpenAddChildren(false)}

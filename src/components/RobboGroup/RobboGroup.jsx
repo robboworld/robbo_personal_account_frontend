@@ -1,56 +1,54 @@
 import React from "react"
 import { Tabs } from "antd"
 import { PropTypes } from 'prop-types'
+import { FormattedMessage, useIntl } from 'react-intl'
 
-import RobboGroupStudentsTab from "./RobboGroupStudentsTab"
 import RobboGroupCard from "./RobboGroupCard"
 import RobboGroupCourses from "./RobboGroupCourses"
 import RobboGroupTeachersTab from "./RobboGroupTeachersTab"
+import RobboStudentsTabContainer from "./RobboGroupStudentsTabContainer"
 
-import Flex from '@/components/Flex'
-
-const RobboGroup = ({ robboUnitId, robboGroupId, disableСhanges }) => {
+const RobboGroup = ({
+    robboUnitId,
+    robboGroupId,
+    disableСhanges,
+}) => {
+    const intl = useIntl()
     return (
-        <Flex width='100%'>
-            <Flex
-                direction='column' width='100%'
-                padding='0.5rem'
-            >
-                Группа
-                <Tabs
-                    defaultActiveKey='1'
-                    items={[
-                        {
-                            label: 'Карточка',
-                            key: '1',
-                            children:
-                                <RobboGroupCard
-                                    robboGroupId={robboGroupId} disableСhanges={disableСhanges}
-                                />,
-                        },
-                        {
-                            label: 'Ученики',
-                            key: '2',
-                            children:
-                                <RobboGroupStudentsTab
-                                    robboGroupId={robboGroupId} robboUnitId={robboUnitId}
-                                    disableСhanges={disableСhanges}
-                                />,
-                        },
-                        {
-                            label: 'Педагоги',
-                            key: '3',
-                            children: <RobboGroupTeachersTab robboGroupId={robboGroupId} />,
-                        },
-                        {
-                            label: 'Курсы',
-                            key: '4',
-                            children: <RobboGroupCourses robboGroupId={robboGroupId} />,
-                        },
-                    ]}
-                />
-            </Flex >
-        </Flex>
+        <Tabs
+            title={intl.formatMessage({ id: 'robbo_group.card_title' })}
+            defaultActiveKey='1'
+            items={[
+                {
+                    label: <FormattedMessage id='robbo_group.card_item' />,
+                    key: '1',
+                    children:
+                        <RobboGroupCard
+                            robboGroupId={robboGroupId} disableСhanges={disableСhanges}
+                        />,
+                },
+                {
+                    label: <FormattedMessage id='robbo_group.students_item' />,
+                    key: '2',
+                    children:
+                        <RobboStudentsTabContainer
+                            robboGroupId={robboGroupId}
+                            robboUnitId={robboUnitId}
+                            disableСhanges={disableСhanges}
+                        />,
+                },
+                {
+                    label: <FormattedMessage id='robbo_group.teachers_item' />,
+                    key: '3',
+                    children: <RobboGroupTeachersTab robboGroupId={robboGroupId} />,
+                },
+                {
+                    label: <FormattedMessage id='robbo_group.courses_item' />,
+                    key: '4',
+                    children: <RobboGroupCourses robboGroupId={robboGroupId} />,
+                },
+            ]}
+        />
     )
 }
 

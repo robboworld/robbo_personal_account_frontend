@@ -1,40 +1,58 @@
-import React, { memo, useState } from 'react'
-
-import { Input, Button } from '@/components/UI'
-import Flex from '@/components/Flex'
+import React, { memo } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Button, Form, Input } from 'antd'
 
 export default memo(({
-    margin,
+    robboUnitId,
     handleSubmit,
-    buttonOption,
 }) => {
-
-    const [name, setName] = useState('')
-
-
+    const intl = useIntl()
+    const [form] = Form.useForm()
     return (
-        <Flex
-            direction='column' justify='space-around'
-            align='center' width='100%'
-        >
-            <Input type='text' placeholder='Название'
-                value={name} handleInput={name => setName(name)}
-                margin={margin}
-            />
-
-            <Flex
-                justify='center' align='center'
-                width='100%' margin='1rem 0 2rem 0'
-            >
-                <Button
-                    content={buttonOption.content}
-                    handleSubmit={
-                        () => handleSubmit({
+        <Form
+            className='robbo-group-form'
+            onFinish={(
+                {
+                    name,
+                }) => {
+                handleSubmit({
+                    variables: {
+                        input: {
                             name,
-                        })}
-                    padding={buttonOption.padding}
+                            robboUnitId: String(robboUnitId),
+                        },
+                    },
+                })
+            }}
+            form={form}
+        >
+            <Form.Item
+                name='name'
+                rules={[
+                    {
+                        required: true,
+                        message: <FormattedMessage id='robbo_group_form.name_rule' />,
+                    },
+                ]}
+            >
+                <Input
+                    placeholder={intl.formatMessage({ id: 'robbo_group_card.name' })}
+                    size='large'
                 />
-            </Flex>
-        </Flex>
+            </Form.Item>
+            <Form.Item >
+
+                <Button
+                    type='primary' htmlType='submit'
+                    className='login-form-button'
+                    disabled={
+                        !form.isFieldsTouched(true) ||
+                        !!form.getFieldsError().filter(({ errors }) => errors.length).length
+                    }
+                >
+                    <FormattedMessage id='robbo_group_form.add' />
+                </Button>
+            </Form.Item>
+        </Form>
     )
 })

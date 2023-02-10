@@ -1,5 +1,6 @@
 import React from 'react'
 import { Skeleton, Tabs } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import GroupsTab from './GroupsTab'
 
@@ -13,24 +14,28 @@ const TeacherContent = ({
     },
     UpdateTeacher,
 }) => {
+    const intl = useIntl()
     return (
         <Tabs
-            title='Карточка педагога'
+            title={intl.formatMessage({ id: 'teacher_content.title' })}
             defaultActiveKey='1'
             items={[
                 {
-                    label: 'Профиль',
+                    label: <FormattedMessage id='teacher_content.profile' />,
                     key: '1',
                     children: loading ? <Skeleton active loading={loading} />
-                        : <ProfileCard updateHandle={UpdateTeacher} profile={GetTeacherById?.userHttp} />,
+                        : <ProfileCard
+                            updateHandle={UpdateTeacher}
+                            profile={GetTeacherById?.userHttp}
+                        />,
                 },
                 {
-                    label: 'Группы',
+                    label: <FormattedMessage id='teacher_content.robbo_groups_item' />,
                     key: '2',
                     children: <GroupsTab teacherId={teacherId} />,
                 },
                 {
-                    label: 'Курсы',
+                    label: <FormattedMessage id='teacher_content.courses_item' />,
                     key: '3',
                     children: 'Курсы',
                 },

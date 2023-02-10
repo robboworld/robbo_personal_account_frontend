@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Row, Button, Col, List, Input } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import ListItem from "@/components/ListItem"
 import { robboGroupsQuerysGraphQL } from '@/graphQL'
@@ -9,6 +10,7 @@ import { useActions } from '@/helpers'
 const { Search } = Input
 
 const RobboGroupCourseAccess = ({ courseId }) => {
+    const intl = useIntl()
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [searchItems, setSearchResult] = useState([])
     const actions = useActions({ createCourseAccessRelationRobboGroupRequest }, [])
@@ -25,7 +27,7 @@ const RobboGroupCourseAccess = ({ courseId }) => {
                     type='primary'
                     onClick={() => setOpenSearchSection(!openSearchSection)}
                 >
-                    Добавить Robbo Group
+                    <FormattedMessage id='robbo_group_course_access.add' />
                 </Button>
             </Col>
             <Col span={24}>
@@ -33,7 +35,9 @@ const RobboGroupCourseAccess = ({ courseId }) => {
                     openSearchSection &&
                     <Row gutter={[0, 8]}>
                         <Col span={24}>
-                            <Search placeholder='Введите название' onSearch={SearchRobboGroups}
+                            <Search
+                                placeholder={intl.formatMessage({ id: 'robbo_group_course_access.search_placeholder' })}
+                                onSearch={SearchRobboGroups}
                                 enterButton />
                         </Col>
                         <Col span={24}>

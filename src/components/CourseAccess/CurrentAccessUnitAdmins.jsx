@@ -1,22 +1,23 @@
 import React from 'react'
 import { Row, Col, List, notification } from 'antd'
-import { useQuery } from '@apollo/client'
-import { useNavigate } from 'react-router-dom'
+import { useIntl } from 'react-intl'
+import { graphql } from '@apollo/client/react/hoc'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 
 import ListItem from '@/components/ListItem'
-import Loader from '@/components/Loader'
 import { coursePageQuerysGQL } from '@/graphQL'
 import { PROFILE_PAGE_ROUTE, UNIT_ADMIN } from "@/constants"
 
-const CurrentCourseAccessUnitAdmins = ({ courseId }) => {
-
-    const { loading, error, data } = useQuery(coursePageQuerysGQL.GET_UNIT_ADMINS_ADMITTED_TO_THE_COURSE, {
-        variables: { courseId, page: "1", pageSize: "10" },
-        notifyOnNetworkStatusChange: true,
-    })
-    if (error)
-        notification.error({ message: 'Ошибка', description: error.message })
-
+const CurrentCourseAccessUnitAdmins = ({
+    courseId,
+    data: {
+        GetUnitAdminsAdmittedToTheCourse,
+        loading,
+    },
+    pageSize,
+    currentPage,
+    onChangePage,
+}) => {
     const navigate = useNavigate()
     const openProfileUnitAdmin = userId => {
         navigate(PROFILE_PAGE_ROUTE, {
@@ -30,25 +31,70 @@ const CurrentCourseAccessUnitAdmins = ({ courseId }) => {
     return (
         <Row gutter={[0, 8]}>
             <Col span={24}>
-                {loading ? <Loader /> : (
-                    <List
-                        bordered
-                        dataSource={data.GetUnitAdminsAdmittedToTheCourse.unitAdmins}
-                        renderItem={({ userHttp }, index) => (
-                            <ListItem
-                                itemIndex={index}
-                                key={index}
-                                render={() => { }}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => openProfileUnitAdmin(userHttp.id)}
-                            />
-                        )}
-                    />
-                )}
-
+                <List
+                    loading={loading}
+                    bordered
+                    dataSource={GetUnitAdminsAdmittedToTheCourse?.unitAdmins}
+                    pagination={{
+                        onChange: onChangePage,
+                        total: GetUnitAdminsAdmittedToTheCourse?.countRows,
+                        current: +currentPage,
+                        defaultCurrent: 1,
+                        defaultPageSize: pageSize,
+                        responsive: true,
+                    }}
+                    renderItem={({ userHttp }, index) => (
+                        <ListItem
+                            itemIndex={index}
+                            key={index}
+                            render={() => { }}
+                            label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                            handleClick={() => openProfileUnitAdmin(userHttp.id)}
+                        />
+                    )}
+                />
             </Col>
         </Row>
     )
 }
 
-export default CurrentCourseAccessUnitAdmins
+const CurrentCourseAccessUnitAdminsContainer = ({ courseId }) => {
+    const intl = useIntl()
+    const WithGraphQL = graphql(
+        coursePageQuerysGQL.GET_UNIT_ADMINS_ADMITTED_TO_THE_COURSE,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        courseId: props.courseId,
+                        page: props.currentPage,
+                        pageSize: props.pageSize,
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+        },
+    )(CurrentCourseAccessUnitAdmins)
+
+    const [searchParams, setSearchParams] = useSearchParams()
+    const currentPage = searchParams.get('page') || '1'
+    const pageSize = '10'
+
+    const onChangePage = page => {
+        setSearchParams({ page })
+    }
+
+    return <WithGraphQL
+        courseId={courseId}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onChangePage={onChangePage}
+    />
+}
+
+export default CurrentCourseAccessUnitAdminsContainer

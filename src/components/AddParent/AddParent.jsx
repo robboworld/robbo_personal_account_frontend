@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import { graphql } from '@apollo/client/react/hoc'
 import { Col, notification } from 'antd'
+import { useIntl } from 'react-intl'
 
 import SignUpForm from '@/components/SignUpForm'
 import { parentMutationsGQL } from '@/graphQL'
@@ -16,16 +17,20 @@ const AddParent = memo(({
 })
 
 const AddParentContainer = () => {
+    const intl = useIntl()
     const WithGraphQL = graphql(
         parentMutationsGQL.CREATE_PARENT,
         {
             name: 'CreateParent',
             options: {
                 onCompleted: () => {
-                    notification.success({ description: 'Клиент успешно добавлен!' })
+                    notification.success({ description: intl.formatMessage({ id: 'notification.client_create_success' }) })
                 },
                 onError: error => {
-                    notification.error({ message: 'Ошибка', description: error?.message })
+                    notification.error({
+                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                        description: error?.message,
+                    })
                 },
             },
         },

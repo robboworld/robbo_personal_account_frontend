@@ -4,13 +4,14 @@ import { notification } from 'antd'
 import { compose } from 'redux'
 import { graphql } from '@apollo/client/react/hoc'
 
-import ChildrenTab from './ChildrenTab'
+import RobboGroupStudentsTab from './RobboGroupStudentsTab'
 
 import { studentQuerysGQL } from '@/graphQL'
 
 
-const ChildrenTabContainer = ({
-    parentId,
+const RobboGroupStudentsTabContainer = ({
+    robboGroupId,
+    robboUnitId,
 }) => {
     const [email, setEmail] = useState('')
     const SearchStudent = value => {
@@ -20,12 +21,12 @@ const ChildrenTabContainer = ({
 
     const WithGraphQLComponent = compose(
         graphql(
-            studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID,
+            studentQuerysGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID,
             {
                 options: props => {
                     return {
                         variables: {
-                            parentId: props.parentId,
+                            robboGroupId: props.robboGroupId,
                         },
                         onError: error => {
                             notification.error({
@@ -45,8 +46,8 @@ const ChildrenTabContainer = ({
                     return {
                         variables: {
                             email: props.email || 'undenfined',
-                            // page: "1",
-                            // pageSize: "5",
+                            page: "1",
+                            pageSize: "5",
                             parentId: props.parentId,
                         },
                         onError: error => {
@@ -59,14 +60,15 @@ const ChildrenTabContainer = ({
                 },
                 name: 'SearchStudentsResult',
             },
-        ))(ChildrenTab)
+        ))(RobboGroupStudentsTab)
 
     return <WithGraphQLComponent
-        parentId={parentId}
+        robboUnitId={robboUnitId}
+        robboGroupId={robboGroupId}
         email={email}
         SearchStudent={SearchStudent}
     />
 }
 
 
-export default ChildrenTabContainer
+export default RobboGroupStudentsTabContainer

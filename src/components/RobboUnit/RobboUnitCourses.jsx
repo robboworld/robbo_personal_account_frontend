@@ -1,43 +1,81 @@
 import React from "react"
+import { useIntl } from 'react-intl'
 import { Col, Row, List, notification } from "antd"
-import { useQuery } from "@apollo/client"
+import { graphql } from '@apollo/client/react/hoc'
+import { useSearchParams } from 'react-router-dom'
 
 import ListItem from "@/components/ListItem"
-import Loader from "@/components/Loader"
 import { coursePageQuerysGQL } from "@/graphQL"
 
-const RobboUnitCourses = ({ robboUnitId }) => {
-    const { loading, error, data } = useQuery(coursePageQuerysGQL.GET_COURSES_BY_ROBBO_UNIT_ID, {
-        variables: { robboUnitId, page: "1", pageSize: "10" },
-        notifyOnNetworkStatusChange: true,
-    })
-    console.log(data)
-    if (error)
-        notification.error({ message: 'Ошибка', description: error.message })
+const RobboUnitCourses = ({
+    data: {
+        GetCoursesByRobboUnitId,
+        loading,
+    },
+    pageSize,
+    currentPage,
+    onChangePage,
+}) => {
     return (
         <Row>
             <Col span={24}>
-                {
-                    loading
-                        ? <Loader />
-                        : (
-                            <List
-                                bordered
-                                dataSource={data?.GetCoursesByRobboUnitId.results}
-                                renderItem={(coursePage, index) => (
-                                    <ListItem
-                                        itemIndex={index}
-                                        label={`${coursePage.name}`}
-                                        key={index}
-                                        render={() => { }}
-                                    />
-                                )}
-                            />
-                        )
-                }
+                <List
+                    loading={loading}
+                    bordered
+                    dataSource={GetCoursesByRobboUnitId?.results}
+                    renderItem={(coursePage, index) => (
+                        <ListItem
+                            itemIndex={index}
+                            label={`${coursePage.name}`}
+                            key={index}
+                            render={() => { }}
+                        />
+                    )}
+                />
             </Col>
         </Row>
     )
 }
 
-export default RobboUnitCourses
+const RobboUnitCoursesContainer = ({
+    robboUnitId,
+}) => {
+    const intl = useIntl()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const currentPage = searchParams.get('page') || '1'
+    const pageSize = '10'
+
+    const onChangePage = page => {
+        setSearchParams({ page })
+    }
+    const WithGraphQLComponent = graphql(
+        coursePageQuerysGQL.GET_COURSES_BY_ROBBO_UNIT_ID,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        robboUnitId: props.robboUnitId,
+                        page: props.page,
+                        pageSize: props.pageSize,
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+        })
+        (RobboUnitCourses)
+    return (
+        <WithGraphQLComponent
+            robboUnitId={robboUnitId}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onChangePage={onChangePage}
+        />
+    )
+}
+
+export default RobboUnitCoursesContainer
