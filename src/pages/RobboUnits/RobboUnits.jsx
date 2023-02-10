@@ -31,9 +31,6 @@ const RobboUnits = ({
 
     return (
         <PageLayout>
-            <Title>
-                <FormattedMessage id='robbo_units.title' />
-            </Title>
             <Modal
                 title={intl.formatMessage({ id: 'robbo_units.modal_title' })}
                 centered
@@ -44,14 +41,16 @@ const RobboUnits = ({
                 <AddRobboUnit />
             </Modal>
             <Row align='middle'>
-                <Col span={21}>
-                    <Title>Robbo Units</Title>
+                <Col span={20}>
+                    <Title>
+                        <FormattedMessage id='robbo_units.title' />
+                    </Title>
                 </Col>
                 <Col span={1}>
                     <Button
                         onClick={() => setOpenAddRobboUnit(true)} type='primary'
                     >
-                        <FormattedMessage id='robbo_units.create_robbo_group' />
+                        <FormattedMessage id='robbo_units.create_robbo_unit' />
                     </Button>
                 </Col>
             </Row>

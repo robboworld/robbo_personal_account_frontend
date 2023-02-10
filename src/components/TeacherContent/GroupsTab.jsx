@@ -12,7 +12,6 @@ import {
     deleteTeacherForRobboGroupRequest,
 } from '@/actions'
 
-
 const { Search } = Input
 
 const GroupsTab = ({ teacherId }) => {

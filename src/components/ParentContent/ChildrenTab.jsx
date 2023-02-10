@@ -64,7 +64,6 @@ const ChildrenTab = ({
                         <FormattedMessage id='parent_content.create_child' />
                     </Button>
                 </Col>
-
             </Row>
             {
                 openSearchSection &&
