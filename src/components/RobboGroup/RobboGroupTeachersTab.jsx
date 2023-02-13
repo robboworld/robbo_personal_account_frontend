@@ -20,7 +20,7 @@ const RobboGroupTeachersTab = ({
     intl,
     GetTeachers,
     email,
-    SearchStudent,
+    SearchTeacher,
     SearchTeachersResult,
     robboGroupId,
 }) => {
@@ -69,7 +69,7 @@ const RobboGroupTeachersTab = ({
                     <Col span={24}>
                         <Search
                             placeholder={intl.formatMessage({ id: 'parent_content.student_search_placeholder' })}
-                            onSearch={SearchStudent}
+                            onSearch={SearchTeacher}
                             enterButton
                         />
                     </Col>
@@ -98,7 +98,7 @@ const RobboGroupTeachersTab = ({
 const RobboGroupTeachersTabContainer = ({ robboGroupId }) => {
     const intl = useIntl()
     const [email, setEmail] = useState('')
-    const SearchStudent = value => {
+    const SearchTeacher = value => {
         setEmail(value)
     }
 
@@ -107,7 +107,7 @@ const RobboGroupTeachersTabContainer = ({ robboGroupId }) => {
             intl={intl}
             robboGroupId={robboGroupId}
             email={email}
-            SearchStudent={SearchStudent}
+            SearchTeacher={SearchTeacher}
         />
     )
 }

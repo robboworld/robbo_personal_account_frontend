@@ -1,6 +1,6 @@
 import React from 'react'
 import { Skeleton, Tabs } from 'antd'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 
 import ChildrenTabContainer from "./ChildrenTabContainer"
 
@@ -13,8 +13,8 @@ const ParentContent = ({
         loading,
     },
     UpdateParent,
+    intl,
 }) => {
-    const intl = useIntl()
     return (
         <Tabs
             title={intl.formatMessage({ id: 'parent_content.title' })}
@@ -29,7 +29,7 @@ const ParentContent = ({
                 {
                     label: <FormattedMessage id='parent_content.children' />,
                     key: '2',
-                    children: <ChildrenTabContainer parentId={parentId} />,
+                    children: <ChildrenTabContainer intl={intl} parentId={parentId} />,
                 },
             ]}
         />

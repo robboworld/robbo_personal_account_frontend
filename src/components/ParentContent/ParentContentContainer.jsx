@@ -12,42 +12,44 @@ const ParentContentContainer = ({
     parentId,
 }) => {
     const intl = useIntl()
-    const WithGraphQLComponent = compose(
-        graphql(
-            parentQuerysGQL.GET_PARENT_BY_ID,
-            {
-                options: props => {
-                    return {
-                        variables: {
-                            parentId: props.parentId,
-                        },
-                    }
-                },
-            }),
-        graphql(parentMutationsGQL.UPDATE_PARENT,
-            {
-                name: 'UpdateParent',
-                options: {
-                    onCompleted: () => {
-                        notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
-                    },
-                    onError: error => {
-                        notification.error({
-                            message: intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                },
-            },
-        ))
-        (ParentContent)
     return (
         <WithGraphQLComponent
+            intl={intl}
             parentId={parentId}
         />
     )
 }
 
-
+const WithGraphQLComponent = compose(
+    graphql(
+        parentQuerysGQL.GET_PARENT_BY_ID,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        parentId: props.parentId,
+                    },
+                }
+            },
+        }),
+    graphql(parentMutationsGQL.UPDATE_PARENT,
+        {
+            name: 'UpdateParent',
+            options: props => {
+                return {
+                    onCompleted: () => {
+                        notification.success({ description: props.intl.formatMessage({ id: 'notification.update_profile_success' }) })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+        },
+    ))
+    (ParentContent)
 
 export default ParentContentContainer

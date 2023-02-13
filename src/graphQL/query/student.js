@@ -96,6 +96,7 @@ export const studentQuerysGQL = {
                             middlename
                         }
                     }
+                    countRows
                 }
                 ... on Error{
                     message

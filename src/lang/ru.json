@@ -40,6 +40,7 @@
     "notification.error_message": "Ошибка",
     "notification.update_profile_success": "Профиль успешно обновлен!",
     "notification.child_create_success": "Ребенок успешно добавлен!",
+    "notification.child_delete_success": "Ребенок успешно удален!",
     "notification.client_create_success": "Клиент успешно добавлен!",
     "notification.robbo_group_create_success": "Роббо группа успешно добавлена!",
     "notification.robbo_unit_create_success": "Роббо юнит успешно добавлен!",

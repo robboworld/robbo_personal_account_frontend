@@ -1,36 +1,30 @@
 import React, { useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { FormattedMessage } from 'react-intl'
 import { Space, Button, Col, List, Input, Row, Modal } from 'antd'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
-import { useActions } from '@/helpers'
-import { createStudentParentRelationRequest, deleteChildRequest } from '@/actions'
-import { STUDENT, PROFILE_PAGE_ROUTE } from '@/constants'
 
 const { Search } = Input
 
 const ChildrenTab = ({
+    intl,
     parentId,
-    GetStudents,
     email,
+    GetStudents,
     SearchStudent,
     SearchStudentsResult,
+    CreateStudentParentRelation,
+    DeleteStudent,
+    openProfileStudent,
 }) => {
-    const intl = useIntl()
-    const actions = useActions({ createStudentParentRelationRequest, deleteChildRequest }, [])
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
-    const navigate = useNavigate()
-    const openProfileStudent = userId => {
-        navigate(PROFILE_PAGE_ROUTE, {
-            state: {
-                userId,
-                userRole: STUDENT,
-            },
-        })
+    console.log(SearchStudentsResult?.SearchStudentsByEmail?.countRows)
+    const loadMoreData = () => {
+        SearchStudent(email)
     }
 
     return (
@@ -46,7 +40,12 @@ const ChildrenTab = ({
                         render={() => { }}
                         label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
                         handleClick={() => openProfileStudent(userHttp.id)}
-                        handleDelete={childIndex => actions.deleteChildRequest(userHttp.id, childIndex)}
+                        handleDelete={() => DeleteStudent({
+                            variables: {
+                                studentId: userHttp.id,
+                            },
+                        },
+                        )}
                     />
                 )}
             />
@@ -76,21 +75,34 @@ const ChildrenTab = ({
                         />
                     </Col>
                     <Col span={24}>
-                        < List
-                            bordered
-                            dataSource={SearchStudentsResult?.SearchStudentsByEmail?.students}
-                            renderItem={({ userHttp }, index) => (
-                                <ListItem
-                                    itemIndex={index}
-                                    key={index}
-                                    render={() => { }}
-                                    label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                    handleClick={() => actions.createStudentParentRelationRequest(parentId, userHttp.id)}
-                                />
-                            )}
-                        />
+                        <InfiniteScroll
+                            dataLength={SearchStudentsResult?.SearchStudentsByEmail?.countRows}
+                            next={loadMoreData}
+                            hasMore={SearchStudentsResult?.SearchStudentsByEmail?.countRows < 50}
+                            loader={SearchStudentsResult?.loading}
+                            scrollableTarget='scrollableDiv'
+                        >
+                            <List
+                                // loading={SearchStudentsResult?.loading}
+                                bordered
+                                dataSource={SearchStudentsResult?.SearchStudentsByEmail?.students}
+                                renderItem={({ userHttp }, index) => (
+                                    <ListItem
+                                        itemIndex={index}
+                                        key={index}
+                                        render={() => { }}
+                                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                        handleClick={() => CreateStudentParentRelation({
+                                            variables: {
+                                                parentId: parentId,
+                                                childId: userHttp.id,
+                                            },
+                                        })}
+                                    />
+                                )}
+                            />
+                        </InfiniteScroll>
                     </Col>
-
                 </Row>
             }
             <Modal
