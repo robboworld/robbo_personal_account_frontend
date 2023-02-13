@@ -1,9 +1,13 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import { Row, Col, Typography, Skeleton, List } from 'antd'
+
 
 import PageLayout from '@/components/PageLayout'
 import ProfileCard from '@/components/ProfileCard'
+import { PROFILE_PAGE_ROUTE } from '@/constants'
+import ListItem from '@/components/ListItem'
 
 const { Title } = Typography
 
@@ -13,12 +17,22 @@ const ParentProfile = ({
     UpdateParent,
     accessUpdate,
 }) => {
+    const navigate = useNavigate()
+    const openProfileStudent = userId => {
+        navigate(PROFILE_PAGE_ROUTE, {
+            state: {
+                userId,
+                userRole: 0,
+            },
+        })
+    }
+
     return (
         <PageLayout>
             <Row align='middle'>
                 <Title><FormattedMessage id='profile.title' /></Title>
             </Row>
-            <Row justify='start'>
+            <Row justify='start' gutter={[8, 8]}>
                 <Col span={8}>
                     <Skeleton active loading={GetUser?.loading}>
                         <ProfileCard
@@ -35,11 +49,12 @@ const ParentProfile = ({
                         loading={GetStudents?.loading}
                         dataSource={GetStudents.GetStudentsByParentId?.students}
                         renderItem={({ userHttp }) => (
-                            <List.Item
+                            <ListItem
                                 key={userHttp.email}
-                            >
-                                {`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                            </List.Item>
+                                handleClick={() => openProfileStudent(userHttp.id)}
+                                render={() => { }}
+                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                            />
                         )}
                     />
                 </Col>
