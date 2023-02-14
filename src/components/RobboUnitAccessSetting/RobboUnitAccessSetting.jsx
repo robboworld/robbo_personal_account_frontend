@@ -1,15 +1,14 @@
 import React, { useState } from "react"
+import { compose } from 'redux'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import { Button, Space, Input, List } from "antd"
-import { useQuery } from "@apollo/client"
+import { Button, Space, Input, List, notification } from "antd"
+import { graphql } from '@apollo/client/react/hoc'
 
 import ListItem from "@/components/ListItem"
-import Loader from "@/components/Loader"
 import { useActions } from "@/helpers/useActions"
 import {
     unitAdminQuerysGQL,
-    unitAdminQuerysGraphQL,
 } from "@/graphQL/query"
 import {
     setNewUnitAdminForRobboUnitRequest,
@@ -19,9 +18,13 @@ import { PROFILE_PAGE_ROUTE, UNIT_ADMIN } from "@/constants"
 
 const { Search } = Input
 
-export default ({ robboUnitId }) => {
-    const intl = useIntl()
-    const [searchItems, setSearchResult] = useState([])
+const RobboUnitAccessSetting = ({
+    intl,
+    robboUnitId,
+    GetUnitAdmins,
+    SearchUnitAdmins,
+    SearchUnitAdminsResults,
+}) => {
     const navigate = useNavigate()
     const actions = useActions({
         setNewUnitAdminForRobboUnitRequest,
@@ -29,16 +32,6 @@ export default ({ robboUnitId }) => {
     }, [])
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
-
-    const SearchUnitAdmins = async value => {
-        const result = await unitAdminQuerysGraphQL.SearchUnitAdminByEmail(value, robboUnitId)
-        setSearchResult(result.data.SearchUnitAdminsByEmail.unitAdmins)
-    }
-
-    const getUnitAdminsByRobboUnitIdResult = useQuery(unitAdminQuerysGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID, {
-        variables: { robboUnitId },
-        notifyOnNetworkStatusChange: true,
-    })
 
     const openProfileUnitAdmin = userId => {
         navigate(PROFILE_PAGE_ROUTE, {
@@ -53,9 +46,9 @@ export default ({ robboUnitId }) => {
         <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             <FormattedMessage id='robbo_unit_access.title' />
             <List
-                loading={getUnitAdminsByRobboUnitIdResult?.loading}
+                loading={GetUnitAdmins?.loading}
                 bordered
-                dataSource={getUnitAdminsByRobboUnitIdResult.data?.GetUnitAdminsByRobboUnitId?.unitAdmins}
+                dataSource={GetUnitAdmins?.GetUnitAdminsByRobboUnitId?.unitAdmins}
                 renderItem={({ userHttp }, index) => (
                     <ListItem
                         itemIndex={index}
@@ -79,7 +72,7 @@ export default ({ robboUnitId }) => {
                         enterButton />
                     <List
                         bordered
-                        dataSource={searchItems}
+                        dataSource={SearchUnitAdminsResults?.SearchUnitAdminsByEmail?.unitAdmins}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}
@@ -95,3 +88,67 @@ export default ({ robboUnitId }) => {
         </Space>
     )
 }
+
+const RobboUnitAccessSettingContainer = ({
+    robboUnitId,
+}) => {
+    const intl = useIntl()
+    const [email, setEmail] = useState('')
+    const SearchUnitAdmins = value => {
+        setEmail(value)
+    }
+
+    return (
+        <WithGraphQLComponent
+            intl={intl}
+            robboUnitId={robboUnitId}
+            email={email}
+            SearchUnitAdmins={SearchUnitAdmins}
+        />
+    )
+}
+
+const WithGraphQLComponent = compose(
+    graphql(
+        unitAdminQuerysGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        robboUnitId: props.robboUnitId,
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+            name: 'GetUnitAdmins',
+        },
+    ),
+    graphql(
+        unitAdminQuerysGQL.SEARCH_UNIT_ADMINS_BY_EMAIL,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        email: props.email,
+                        page: "1",
+                        pageSize: "5",
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+            name: 'SearchUnitAdminsResults',
+        },
+    ),
+)(RobboUnitAccessSetting)
+
+export default RobboUnitAccessSettingContainer

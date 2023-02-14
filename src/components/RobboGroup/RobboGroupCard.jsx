@@ -80,43 +80,47 @@ const RobboGroupCardContainer = ({
 
 }) => {
     const intl = useIntl()
-    const WithGraphQLComponent = compose(
-        graphql(
-            robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID,
-            {
-                options: props => {
-                    return {
-                        variables: {
-                            id: robboGroupId,
-                        },
-                    }
-                },
-            }),
-        graphql(
-            robboGroupMutationsGQL.UPDATE_ROBBO_GROUP,
-            {
-                name: 'UpdateRobboGroup',
-                options: {
-                    onCompleted: () => {
-                        notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
-                    },
-                    onError: error => {
-                        notification.error({
-                            message: intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                },
-            },
-        ))
-        (RobboGroupCard)
     return (
         <WithGraphQLComponent
+            intl={intl}
             robboGroupId={robboGroupId}
             disableСhanges={disableСhanges}
         />
     )
 }
+
+const WithGraphQLComponent = compose(
+    graphql(
+        robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        id: props.robboGroupId,
+                    },
+                }
+            },
+        }),
+    graphql(
+        robboGroupMutationsGQL.UPDATE_ROBBO_GROUP,
+        {
+            name: 'UpdateRobboGroup',
+            options: props => {
+                return {
+                    onCompleted: () => {
+                        notification.success({ description: props.intl.formatMessage({ id: 'notification.update_profile_success' }) })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+        },
+    ))
+    (RobboGroupCard)
 
 RobboGroupCard.propTypes = {
     robboGroupId: PropTypes.string.isRequired,

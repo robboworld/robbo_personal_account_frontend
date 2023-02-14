@@ -48,28 +48,10 @@ const RobboUnitCoursesContainer = ({
     const onChangePage = page => {
         setSearchParams({ page })
     }
-    const WithGraphQLComponent = graphql(
-        coursePageQuerysGQL.GET_COURSES_BY_ROBBO_UNIT_ID,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        robboUnitId: props.robboUnitId,
-                        page: props.page,
-                        pageSize: props.pageSize,
-                    },
-                    onError: error => {
-                        notification.error({
-                            message: intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                }
-            },
-        })
-        (RobboUnitCourses)
+
     return (
         <WithGraphQLComponent
+            intl={intl}
             robboUnitId={robboUnitId}
             pageSize={pageSize}
             currentPage={currentPage}
@@ -77,5 +59,26 @@ const RobboUnitCoursesContainer = ({
         />
     )
 }
+
+const WithGraphQLComponent = graphql(
+    coursePageQuerysGQL.GET_COURSES_BY_ROBBO_UNIT_ID,
+    {
+        options: props => {
+            return {
+                variables: {
+                    robboUnitId: props.robboUnitId,
+                    page: props.page,
+                    pageSize: props.pageSize,
+                },
+                onError: error => {
+                    notification.error({
+                        message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                        description: error?.message,
+                    })
+                },
+            }
+        },
+    })
+    (RobboUnitCourses)
 
 export default RobboUnitCoursesContainer

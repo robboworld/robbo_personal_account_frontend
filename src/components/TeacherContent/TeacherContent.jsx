@@ -32,7 +32,8 @@ const TeacherContent = ({
                 {
                     label: <FormattedMessage id='teacher_content.robbo_groups_item' />,
                     key: '2',
-                    children: <GroupsTab teacherId={teacherId} />,
+                    children: loading ? <Skeleton active loading={loading} />
+                        : <GroupsTab teacherId={teacherId} />,
                 },
                 {
                     label: <FormattedMessage id='teacher_content.courses_item' />,
