@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "NODE_OPTIONS=--openssl-legacy-provider node server.js",
+    "start": "node server.js",
     "dev": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --open --config webpack.dev.js",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.prod.js",
+    "build": "webpack --config webpack.prod.js",
     "eslint:test": "eslint src --ext .js,.jsx",
     "eslint:fix": "eslint --fix src --ext .js,.jsx",
     "cypress": "start-server-and-test start http://localhost:3000 cypress:open",

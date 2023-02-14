@@ -21,7 +21,7 @@ const UnitAdminContent = ({
             title={intl.formatMessage({ id: 'unit_admin_content.title' })}
             items={[
                 {
-                    label: <FormattedMessage id='unit_admin_content.card_item' />,
+                    label: <FormattedMessage id='unit_admin_content.profile' />,
                     key: '1',
                     children: loading ? <Skeleton active loading={loading} />
                         : <ProfileCard updateHandle={UpdateUnitAdmin} profile={GetUnitAdminById?.userHttp} />,
