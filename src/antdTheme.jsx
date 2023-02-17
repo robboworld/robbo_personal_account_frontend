@@ -4,9 +4,11 @@ import { useSelector } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import enUS from 'antd/locale/en_US'
 import ruRU from 'antd/locale/ru_RU'
+import zhCN from 'antd/locale/zh_CN'
 
 import RuMessages from '@/lang/ru.json'
 import EngMessages from '@/lang/en.json'
+import ZhMessages from '@/lang/zh.json'
 import { getAppState } from '@/reducers/app'
 
 const defaultData = {
@@ -26,6 +28,9 @@ const AppConfigProvider = ({ children }) => {
             configLocale = enUS
             intlMessages = EngMessages
             break
+        case 'zh':
+            configLocale = zhCN
+            intlMessages = ZhMessages
     }
     return (
         <IntlProvider

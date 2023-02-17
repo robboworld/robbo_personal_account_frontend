@@ -15,6 +15,7 @@ const SelectLanguage = () => {
     const languages = [
         { value: 'ru', label: 'Русский' },
         { value: 'en', label: 'English' },
+        { value: 'zh', label: '中文' },
     ]
 
     return (

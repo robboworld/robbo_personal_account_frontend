@@ -52,7 +52,7 @@ export default ({ userRole }) => {
                                     <Title>{coursePage.name}</Title>
                                 </Col>
                             </Row>
-                            <Row>
+                            <Row gutter={[8, 8]}>
                                 <Col span={4}>
                                     <Row gutter={[0, 8]}>
                                         <Avatar shape='square' size={128}
