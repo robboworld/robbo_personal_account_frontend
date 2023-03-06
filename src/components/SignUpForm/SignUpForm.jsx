@@ -5,6 +5,7 @@ import { PropTypes } from 'prop-types'
 
 const SignUpForm = memo(({
     handleSubmit,
+    parentId,
     robboGroupId,
     robboUnitId,
 }) => {
@@ -31,6 +32,9 @@ const SignUpForm = memo(({
                             lastname,
                             firstname,
                             middlename,
+                            robboUnitId,
+                            robboGroupId,
+                            parentId,
                         },
                     },
                 })
@@ -146,6 +150,7 @@ const SignUpForm = memo(({
 
 SignUpForm.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
+    parentId: PropTypes.string,
     robboGroupId: PropTypes.string,
     robboUnitId: PropTypes.string,
 }

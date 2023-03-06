@@ -73,7 +73,11 @@ const RobboGroupStudentsTab = ({
                 onCancel={() => setOpenAddChildren(false)}
                 footer={[]}
             >
-                <AddChildren parentId='' />
+                <AddChildren
+                    robboUnitId={robboUnitId}
+                    robboGroupId={robboGroupId}
+                    parentId=''
+                />
             </Modal>
             {
                 openSearchSection &&

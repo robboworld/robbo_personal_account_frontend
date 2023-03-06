@@ -11,8 +11,7 @@ const AddTeacher = memo(({
     CreateTeacher,
 }) => {
     return (
-        <Col span={24}
-        >
+        <Col span={24}>
             <SignUpForm handleSubmit={CreateTeacher} />
         </Col>
     )

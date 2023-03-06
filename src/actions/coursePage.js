@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions'
-import { toast } from 'react-toastify'
 
 import {
     GET_ALL_COURSE_PAGES,
@@ -55,7 +54,6 @@ export const getAllCoursePagesSuccess = createAction(GET_ALL_COURSE_PAGES_SUCCES
 })
 
 export const getAllCoursePagesFailed = createAction(GET_ALL_COURSE_PAGES_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }
@@ -76,7 +74,6 @@ export const getCoursePageByIdSuccess = createAction(GET_COURSE_PAGE_BY_ID_SUCCE
 })
 
 export const getCoursePageByIdFailed = createAction(GET_COURSE_PAGE_BY_ID_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }

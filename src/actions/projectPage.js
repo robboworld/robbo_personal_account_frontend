@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions'
-import { toast } from 'react-toastify'
 
 import {
     GET_ALL_PROJECT_PAGES,
@@ -39,7 +38,6 @@ export const getAllProjectPagesSuccess = createAction(GET_ALL_PROJECT_PAGES_SUCC
 })
 
 export const getAllProjectPagesFailed = createAction(GET_ALL_PROJECT_PAGES_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }
@@ -60,7 +58,6 @@ export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUC
 })
 
 export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }
@@ -79,7 +76,6 @@ export const createProjectPageSuccess = createAction(CREATE_PROJECT_PAGE_SUCCESS
 })
 
 export const createProjectPageFailed = createAction(CREATE_PROJECT_PAGE_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }
@@ -100,7 +96,6 @@ export const updateProjectPageSuccess = createAction(UPDATE_PROJECT_PAGE_SUCCESS
 })
 
 export const updateProjectPageFailed = createAction(UPDATE_PROJECT_PAGE_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }
@@ -115,14 +110,12 @@ export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (token, proje
 })
 
 export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, projectPageIndex => {
-    toast.success("deleted successfully")
     return {
         projectPageIndex,
     }
 })
 
 export const deleteProjectPageFailed = createAction(DELETE_PROJECT_PAGE_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }
@@ -143,7 +136,6 @@ export const getProjectPageByAccessTokenSuccess = createAction(GET_PROJECT_PAGE_
 })
 
 export const getProjectPageByAccessTokenFailed = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN_FAILED, err => {
-    toast.error(err)
     return {
         err,
     }

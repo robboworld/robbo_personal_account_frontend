@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Modal, Button, Pagination, Typography } from "antd"
+import { Modal, Button, Pagination, Typography, Spin } from "antd"
 import { useParams, useSearchParams } from "react-router-dom"
 import { FormattedMessage, useIntl } from "react-intl"
 
@@ -79,7 +79,7 @@ export default ({ userRole }) => {
                 </Button>
             </Flex>
             {
-                loading ? <Loader />
+                loading ? <Spin />
                     : (
                         <Flex
                             widht='100%' direction='column'

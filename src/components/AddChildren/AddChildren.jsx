@@ -16,6 +16,7 @@ const AddChild = memo(({
         <Col span={24}>
             <SignUpForm
                 handleSubmit={CreateStudent}
+                parentId={parentId}
                 robboGroupId={robboGroupId}
                 robboUnitId={robboUnitId}
             />

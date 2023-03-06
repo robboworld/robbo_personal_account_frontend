@@ -44,15 +44,14 @@ export default () => {
     const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
 
     const seeInsideHandler = () => {
-        window.location.replace(config.scratchURL + `?#${projectPageId}`)
+        window.open(config.scratchURL + `?#${projectPageId}`)
     }
 
     return (
         <PageLayout>
-            {loading
-                ? <Spin />
+            {loading ? <Spin />
                 : (
-                    <Row align='start' >
+                    <Row align='start'>
                         <Col span={12}>
                             <Form
                                 name='normal_project-page'
@@ -130,15 +129,12 @@ export default () => {
                                     </Button>
                                 </Form.Item>
                             </Form>
-                        </Col>
-                        <Col span={12}>
                             <Button
                                 type='primary' onClick={seeInsideHandler}
                             >
                                 <FormattedMessage id='project_page.open_in_scratch' />
                             </Button>
                         </Col>
-
                     </Row>
                 )
             }

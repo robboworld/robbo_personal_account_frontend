@@ -54,50 +54,52 @@ export default ({ userRole }) => {
                             </Row>
                             <Row gutter={[8, 8]}>
                                 <Col span={4}>
-                                    <Row gutter={[0, 8]}>
-                                        <Avatar shape='square' size={128}
-                                            src={coursePage?.media?.image?.large}
-                                        />
-                                    </Row>
-                                    <Row>
-                                        <Button
-                                            type='primary' size='large'
-                                            onClick={openCourseButtonHandler}
-                                        >
-                                            <FormattedMessage id='course_page.open_course' />
-                                        </Button>
-                                    </Row>
-                                    <Row>
-                                        <Button
-                                            type='primary' size='large'
-                                        >
-                                            <FormattedMessage id='course_page.progress' />
-                                        </Button>
-                                    </Row>
-                                    <Row>
-                                        {
-                                            checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN, TEACHER]) &&
+                                    <Row gutter={[0, 16]}>
+                                        <Col span={24}>
+                                            <Avatar shape='square' size={128}
+                                                src={coursePage?.media?.image?.large}
+                                            />
+                                        </Col>
+                                        <Col span={24}>
                                             <Button
                                                 type='primary' size='large'
-                                                onClick={() => setOpen(true)}
+                                                onClick={openCourseButtonHandler}
                                             >
-                                                <FormattedMessage id='course_page.access' />
+                                                <FormattedMessage id='course_page.open_course' />
                                             </Button>
-                                        }
-                                    </Row>
-                                    <Row>
-                                        <Button
-                                            type='primary' size='large'
-                                        >
-                                            <FormattedMessage id='course_page.external_sources' />
-                                        </Button>
-                                    </Row>
-                                    <Row>
-                                        <Button
-                                            type='primary' size='large'
-                                        >
-                                            <FormattedMessage id='course_page.communication_with_the_teacher' />
-                                        </Button>
+                                        </Col>
+                                        <Col span={24}>
+                                            <Button
+                                                type='primary' size='large'
+                                            >
+                                                <FormattedMessage id='course_page.progress' />
+                                            </Button>
+                                        </Col>
+                                        <Col span={24}>
+                                            {
+                                                checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN, TEACHER]) &&
+                                                <Button
+                                                    type='primary' size='large'
+                                                    onClick={() => setOpen(true)}
+                                                >
+                                                    <FormattedMessage id='course_page.access' />
+                                                </Button>
+                                            }
+                                        </Col>
+                                        <Col span={24}>
+                                            <Button
+                                                type='primary' size='large'
+                                            >
+                                                <FormattedMessage id='course_page.external_sources' />
+                                            </Button>
+                                        </Col>
+                                        <Col span={24}>
+                                            <Button
+                                                type='primary' size='large'
+                                            >
+                                                <FormattedMessage id='course_page.communication_with_the_teacher' />
+                                            </Button>
+                                        </Col>
                                     </Row>
                                 </Col>
                                 <Col span={20}>
