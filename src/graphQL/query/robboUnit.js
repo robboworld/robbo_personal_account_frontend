@@ -73,8 +73,8 @@ export const robboUnitQuerysGQL = {
     `,
 
     SEARCH_ROBBO_UNITS_BY_NAME: gql`
-        query SearchRobboUnitsByName($name: String!) {
-            SearchRobboUnitsByName(name: $name) {
+        query SearchRobboUnitsByName($name: String!,$page: String!, $pageSize: String!) {
+            SearchRobboUnitsByName(name: $name, page: $page, pageSize: $pageSize) {
                 ... on RobboUnitHttpList {
                     robboUnits{
                         id

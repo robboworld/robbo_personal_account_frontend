@@ -1,49 +1,48 @@
 import React from 'react'
-import { useQuery } from "@apollo/client"
-import { Tabs } from 'antd'
+import { Skeleton, Tabs } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import GroupsTab from './GroupsTab'
 
-import Loader from '@/components//Loader'
-import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
-import { useActions } from '@/helpers/useActions'
-import { updateProfile } from '@/actions'
-import { teacherQuerysGQL } from '@/graphQL'
 
-export default ({ teacherId }) => {
-    const actions = useActions({ updateProfile }, [])
-
-    const { loading, error, data } = useQuery(teacherQuerysGQL.GET_TEACHER_BY_ID, {
-        variables: { teacherId },
-    })
-
+const TeacherContent = ({
+    teacherId,
+    data: {
+        GetTeacherById,
+        loading,
+    },
+    UpdateTeacher,
+}) => {
+    const intl = useIntl()
     return (
-        <Flex direction='column' width='100%'>
-            <Flex padding='0 1rem' direction='column'
-            >
-                Карточка педагога
-                <Tabs
-                    defaultActiveKey='1'
-                    items={[
-                        {
-                            label: 'Профиль',
-                            key: '1',
-                            children: loading ? <Loader /> : <ProfileCard updateHandle={actions.updateProfile} profile={data.GetTeacherById?.userHttp} />,
-                        },
-                        {
-                            label: 'Группы',
-                            key: '2',
-                            children: <GroupsTab teacherId={teacherId} />,
-                        },
-                        {
-                            label: 'Курсы',
-                            key: '3',
-                            children: 'Курсы',
-                        },
-                    ]}
-                />
-            </Flex>
-        </Flex>
+        <Tabs
+            title={intl.formatMessage({ id: 'teacher_content.title' })}
+            defaultActiveKey='1'
+            items={[
+                {
+                    label: <FormattedMessage id='teacher_content.profile' />,
+                    key: '1',
+                    children: loading ? <Skeleton active loading={loading} />
+                        : <ProfileCard
+                            updateHandle={UpdateTeacher}
+                            profile={GetTeacherById?.userHttp}
+                        />,
+                },
+                {
+                    label: <FormattedMessage id='teacher_content.robbo_groups_item' />,
+                    key: '2',
+                    children: loading ? <Skeleton active loading={loading} />
+                        : <GroupsTab teacherId={teacherId} />,
+                },
+                {
+                    label: <FormattedMessage id='teacher_content.courses_item' />,
+                    key: '3',
+                    children: 'Курсы',
+                },
+            ]}
+        />
     )
 }
+
+export default TeacherContent

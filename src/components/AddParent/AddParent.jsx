@@ -1,25 +1,41 @@
 import React, { memo } from 'react'
+import { graphql } from '@apollo/client/react/hoc'
+import { Col, notification } from 'antd'
+import { useIntl } from 'react-intl'
 
-import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
-import { useActions } from '@/helpers/useActions'
-import { createParentRequest } from '@/actions'
+import { parentMutationsGQL } from '@/graphQL'
 
-export default memo(() => {
-    const actions = useActions({ createParentRequest }, [])
+const AddParent = memo(({
+    CreateParent,
+}) => {
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
-            <SignUpForm
-                margin='0 0 0 0'
-                handleSubmit={parent => actions.createParentRequest(parent)}
-                buttonOption={{
-                    content: 'Добавить',
-                    padding: '10px',
-                }}
-            />
-        </Flex>
+        <Col span={24}>
+            <SignUpForm handleSubmit={CreateParent} />
+        </Col>
     )
 })
+
+const AddParentContainer = () => {
+    const intl = useIntl()
+    const WithGraphQL = graphql(
+        parentMutationsGQL.CREATE_PARENT,
+        {
+            name: 'CreateParent',
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: intl.formatMessage({ id: 'notification.client_create_success' }) })
+                },
+                onError: error => {
+                    notification.error({
+                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                        description: error?.message,
+                    })
+                },
+            },
+        },
+    )(AddParent)
+    return <WithGraphQL />
+}
+
+export default AddParentContainer

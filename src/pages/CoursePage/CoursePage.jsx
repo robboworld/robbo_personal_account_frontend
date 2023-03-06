@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate, useParams } from 'react-router-dom'
-import { Button, Row, Col, Modal } from 'antd'
-
-import { Title, Avatar, Description } from './components'
+import { useParams } from 'react-router-dom'
+import { Button, Row, Col, Modal, Typography, Avatar, Spin } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import PageLayout from '@/components/PageLayout'
-import Flex from '@/components/Flex'
-import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { checkAccess, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
@@ -20,9 +17,11 @@ import {
 } from '@/constants'
 import CourseAccess from '@/components/CourseAccess'
 
+const { Title } = Typography
+
 export default ({ userRole }) => {
     const [open, setOpen] = useState(false)
-
+    const intl = useIntl()
     const token = localStorage.getItem('token')
     const { coursePageId } = useParams()
     const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
@@ -45,77 +44,89 @@ export default ({ userRole }) => {
         <PageLayout>
             {
                 loading
-                    ? <Loader />
+                    ? <Spin />
                     : (
-                        <Flex padding='2rem' direction='column'>
-                            <Title>{coursePage.name}</Title>
-                            <Flex direction='row'>
-                                <Flex direction='column' margin='0 1rem 0 0'
-                                    style={{ maxWidth: '250px' }}>
-                                    <Avatar src={coursePage?.media?.image?.large} />
-                                    <Row gutter={[8, 8]}>
+                        <React.Fragment>
+                            <Row align='middle'>
+                                <Col span={22}>
+                                    <Title>{coursePage.name}</Title>
+                                </Col>
+                            </Row>
+                            <Row gutter={[8, 8]}>
+                                <Col span={4}>
+                                    <Row gutter={[0, 16]}>
+                                        <Col span={24}>
+                                            <Avatar shape='square' size={128}
+                                                src={coursePage?.media?.image?.large}
+                                            />
+                                        </Col>
                                         <Col span={24}>
                                             <Button
                                                 type='primary' size='large'
                                                 onClick={openCourseButtonHandler}
                                             >
-                                                Открыть курс
+                                                <FormattedMessage id='course_page.open_course' />
                                             </Button>
                                         </Col>
                                         <Col span={24}>
                                             <Button
                                                 type='primary' size='large'
                                             >
-                                                Прогресс
+                                                <FormattedMessage id='course_page.progress' />
                                             </Button>
                                         </Col>
-                                        {
-                                            checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN, TEACHER]) &&
-                                            <Col span={24}>
+                                        <Col span={24}>
+                                            {
+                                                checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN, TEACHER]) &&
                                                 <Button
                                                     type='primary' size='large'
                                                     onClick={() => setOpen(true)}
                                                 >
-                                                    Доступ
+                                                    <FormattedMessage id='course_page.access' />
                                                 </Button>
-                                            </Col>
-                                        }
-                                        <Col>
+                                            }
+                                        </Col>
+                                        <Col span={24}>
                                             <Button
                                                 type='primary' size='large'
                                             >
-                                                Внешние источники
+                                                <FormattedMessage id='course_page.external_sources' />
                                             </Button>
                                         </Col>
-                                        <Col>
+                                        <Col span={24}>
                                             <Button
                                                 type='primary' size='large'
                                             >
-                                                Связь с преподавателем
+                                                <FormattedMessage id='course_page.communication_with_the_teacher' />
                                             </Button>
                                         </Col>
                                     </Row>
-                                </Flex>
-                                <Flex direction='column'>
-                                    <Flex direction='column'>
-                                        <h4>Описание курса</h4>
-                                        <Description>
+                                </Col>
+                                <Col span={20}>
+                                    <Row>
+                                        <Title level={3}>
+                                            <FormattedMessage id='robbo_group_card.course_description' />
+                                        </Title>
+                                    </Row>
+                                    <Row>
+                                        <Title level={5}>
                                             {courseDescriptionParser(coursePage)}
-                                        </Description>
-
-                                    </Flex>
-                                </Flex>
-                                <Modal
-                                    title='Доступ к курсу' centered
-                                    open={open} onOk={() => setOpen(true)}
-                                    // confirmLoading={ }
-                                    onCancel={() => setOpen(false)}
-                                    width='50%'
-                                >
-                                    <CourseAccess courseId={coursePage.id} userRole={userRole} />
-                                </Modal>
-                            </Flex>
-                        </Flex >
+                                        </Title>
+                                    </Row>
+                                </Col>
+                            </Row>
+                            <Modal
+                                title={intl.formatMessage({ id: 'course_page.course_access' })}
+                                centered
+                                open={open}
+                                onOk={() => setOpen(true)}
+                                // confirmLoading={ }
+                                onCancel={() => setOpen(false)}
+                                width='50%'
+                            >
+                                <CourseAccess courseId={coursePage.id} userRole={userRole} />
+                            </Modal>
+                        </React.Fragment>
                     )
 
             }

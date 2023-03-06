@@ -1,34 +1,62 @@
 import React, { memo } from 'react'
-import styled from 'styled-components'
+import { Col, notification } from 'antd'
+import { useIntl } from 'react-intl'
+import { graphql } from '@apollo/client/react/hoc'
 
-import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
-import { useActions } from '@/helpers'
-import { createChildrenRequest } from '@/actions'
+import { studentMutationsGQL } from '@/graphQL'
 
-export default memo(({ parentId, robboGroupId, robboUnitId }) => {
-    const actions = useActions({ createChildrenRequest }, [])
+const AddChild = memo(({
+    parentId,
+    robboGroupId,
+    robboUnitId,
+    CreateStudent,
+}) => {
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
-            <Text>Создание ребенка</Text>
+        <Col span={24}>
             <SignUpForm
-                margin='0 0 10px 0'
-                handleSubmit={child => actions.createChildrenRequest(child, parentId.toString())}
-                buttonOption={{
-                    content: 'Создать',
-                    padding: '10px',
-                }}
+                handleSubmit={CreateStudent}
+                parentId={parentId}
                 robboGroupId={robboGroupId}
                 robboUnitId={robboUnitId}
             />
-        </Flex>
+        </Col >
     )
 })
 
-const Text = styled.p`
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-`
+const AddChildContainer = ({
+    parentId,
+    robboGroupId,
+    robboUnitId,
+}) => {
+    const intl = useIntl()
+    const WithGraphQL = graphql(
+        studentMutationsGQL.CREATE_STUDENT,
+        {
+            name: 'CreateStudent',
+            options: props => {
+                return {
+                    variables: {
+                        parentId: props.parentId,
+                    },
+                    onCompleted: () => {
+                        notification.success({ description: intl.formatMessage({ id: 'notification.child_create_success' }) })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+        },
+    )(AddChild)
+    return <WithGraphQL
+        parentId={parentId}
+        robboGroupId={robboGroupId}
+        robboUnitId={robboUnitId}
+    />
+}
+
+export default AddChildContainer

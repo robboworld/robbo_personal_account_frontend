@@ -30,14 +30,14 @@ export const parentQuerysGQL = {
         GetParentById(parentId: $parentId) {
             ... on ParentHttp{
                 userHttp{
-                id
-                lastname
-                firstname
-                middlename
-                nickname
-                email
-                createdAt
-                role
+                    id
+                    lastname
+                    firstname
+                    middlename
+                    nickname
+                    email
+                    createdAt
+                    role
                 }
             }
             ... on Error{
@@ -48,8 +48,8 @@ export const parentQuerysGQL = {
     `,
 
     SEARCH_PARENT_BY_EMAIL: gql`
-     query SearchParentsByEmail($email: String!) {
-        SearchParentsByEmail(email: $email) {
+     query SearchParentsByEmail($email: String!, $page: String!, $pageSize: String!) {
+        SearchParentsByEmail(email: $email, page: $page, pageSize: $pageSize) {
                 ... on ParentHttpList{
                     parents {
                         userHttp{

@@ -66,8 +66,8 @@ export const unitAdminQuerysGQL = {
     `,
 
     SEARCH_UNIT_ADMINS_BY_EMAIL: gql`
-    query SearchUnitAdminsByEmail($email: String!, $robboUnitId: String!){
-        SearchUnitAdminsByEmail(email: $email, robboUnitId: $robboUnitId){
+    query SearchUnitAdminsByEmail($email: String!, $page: String!, $pageSize: String!){
+        SearchUnitAdminsByEmail(email: $email, page: $page, pageSize: $pageSize){
             ... on UnitAdminHttpList{
                 unitAdmins {
                     userHttp{

@@ -10,5 +10,11 @@ module.exports = merge(common, {
     hot: true,
     inline: true,
     historyApiFallback: true,
+    // https: {
+    //   key: './cert/key.key',
+    //   cert: './cert/cert.crt',
+    //   passphrase: 'webpack-dev-server',
+    //   requestCert: true,
+    // },
   },
 })

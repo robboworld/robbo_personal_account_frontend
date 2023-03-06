@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { Modal, Button, Row, Col, Typography, List } from 'antd'
+import { FormattedMessage, useIntl } from "react-intl"
 
 import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
@@ -12,7 +13,7 @@ import { deleteTeacher } from '@/actions'
 
 const { Title } = Typography
 
-const Teachers = ({
+const Teachers = memo(({
     data: {
         GetAllTeachers,
         loading,
@@ -21,13 +22,13 @@ const Teachers = ({
     currentPage,
     onChangePage,
 }) => {
-
+    const intl = useIntl()
     const actions = useActions({ deleteTeacher }, [])
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
     return (
         <PageLayout>
             <Modal
-                title='Заполните данные педагога'
+                title={intl.formatMessage({ id: 'teachers.modal_title' })}
                 open={openAddTeacher}
                 footer={[]}
                 onCancel={() => setOpenAddTeacher(false)}
@@ -36,17 +37,20 @@ const Teachers = ({
             </Modal>
             <Row align='middle'>
                 <Col span={22}>
-                    <Title>Педагоги</Title>
+                    <Title>
+                        <FormattedMessage id='teachers.title' />
+                    </Title>
                 </Col>
                 <Col span={1}>
                     <Button type='primary' onClick={() => setOpenAddTeacher(true)}>
-                        Добавить педагога
+                        <FormattedMessage id='teachers.create_teacher' />
                     </Button>
                 </Col>
             </Row>
             <Row>
                 <Col span={24}>
                     <List
+                        className='teachersList'
                         loading={loading}
                         bordered
                         size='large'
@@ -81,6 +85,6 @@ const Teachers = ({
             </Row>
         </PageLayout >
     )
-}
+})
 
 export default Teachers

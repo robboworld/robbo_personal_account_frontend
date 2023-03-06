@@ -1,22 +1,24 @@
 import React, { useState } from 'react'
-import { Row, Button, Col, List, Input } from 'antd'
+import { compose } from 'redux'
+import { graphql } from '@apollo/client/react/hoc'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Row, Button, Col, List, Input, notification } from 'antd'
 
 import ListItem from "@/components/ListItem"
-import { robboUnitQuerysGraphQL } from '@/graphQL'
+import { robboUnitQuerysGQL } from '@/graphQL'
 import { createCourseAccessRelationRobboUnitRequest } from '@/actions'
 import { useActions } from '@/helpers'
 
 const { Search } = Input
 
-const RobboUnitCourseAccess = ({ courseId }) => {
+const RobboUnitCourseAccess = ({
+    intl,
+    courseId,
+    SearchRobboUnits,
+    SearchRobboUnitsResult,
+}) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
-    const [searchItems, setSearchResult] = useState([])
     const actions = useActions({ createCourseAccessRelationRobboUnitRequest }, [])
-
-    const SearchRobboUnits = async value => {
-        const result = await robboUnitQuerysGraphQL.SearchRobboUnitsByName(value)
-        setSearchResult(result.data.SearchRobboUnitsByName.robboUnits)
-    }
 
     return (
         <Row gutter={[0, 8]}>
@@ -25,7 +27,7 @@ const RobboUnitCourseAccess = ({ courseId }) => {
                     type='primary'
                     onClick={() => setOpenSearchSection(!openSearchSection)}
                 >
-                    Добавить Robbo Unit
+                    <FormattedMessage id='robbo_unit_course_access.add' />
                 </Button>
             </Col>
             <Col span={24}>
@@ -33,13 +35,15 @@ const RobboUnitCourseAccess = ({ courseId }) => {
                     openSearchSection &&
                     <Row gutter={[0, 8]}>
                         <Col span={24}>
-                            <Search placeholder='Введите название' onSearch={SearchRobboUnits}
+                            <Search
+                                placeholder={intl.formatMessage({ id: 'robbo_unit_course_access.search_placeholder' })}
+                                onSearch={SearchRobboUnits}
                                 enterButton />
                         </Col>
                         <Col span={24}>
                             <List
                                 bordered
-                                dataSource={searchItems}
+                                dataSource={SearchRobboUnitsResult?.SearchRobboUnitsByName?.robboUnits}
                                 renderItem={(robboUnit, index) => (
                                     <ListItem
                                         itemIndex={index}
@@ -58,4 +62,47 @@ const RobboUnitCourseAccess = ({ courseId }) => {
     )
 }
 
-export default RobboUnitCourseAccess
+const RobboUnitCourseAccessContainer = ({
+    courseId,
+}) => {
+    const intl = useIntl()
+    const [name, setName] = useState('')
+    const SearchRobboUnits = value => {
+        setName(value)
+    }
+
+    return (
+        <WithGraphQLComponent
+            intl={intl}
+            courseId={courseId}
+            name={name}
+            SearchRobboGroups={SearchRobboUnits}
+        />
+    )
+}
+
+const WithGraphQLComponent = compose(
+    graphql(
+        robboUnitQuerysGQL.SEARCH_ROBBO_UNITS_BY_NAME,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        name: props.name,
+                        page: "1",
+                        pageSize: "5",
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+            name: 'SearchRobboUnitsResult',
+        },
+    ),
+)(RobboUnitCourseAccess)
+
+export default RobboUnitCourseAccessContainer

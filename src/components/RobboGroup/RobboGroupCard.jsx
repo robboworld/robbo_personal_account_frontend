@@ -1,12 +1,21 @@
-import React from "react"
-import { useQuery, useMutation } from "@apollo/client"
-import { Button, Form, Input } from 'antd'
+import React from 'react'
+import { compose } from 'redux'
 import { PropTypes } from 'prop-types'
+import { graphql } from '@apollo/client/react/hoc'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Button, Form, Input, notification, Spin } from 'antd'
 
 import { robboGroupQuerysGQL, robboGroupMutationsGQL } from "@/graphQL"
-import Loader from "@/components/Loader"
 
-const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
+const RobboGroupCard = ({
+    robboGroupId,
+    disableСhanges,
+    data: {
+        GetRobboGroupById,
+        loading,
+    },
+    UpdateRobboGroup,
+}) => {
     const layout = {
         labelCol: {
             span: 8,
@@ -17,25 +26,8 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     }
     const [form] = Form.useForm()
 
-    const { data, loading } = useQuery(robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID, {
-        variables: { id: robboGroupId },
-        notifyOnNetworkStatusChange: true,
-    })
-
-    const [updateRobboGroup, updateMutation] = useMutation(
-        robboGroupMutationsGQL.UPDATE_ROBBO_GROUP,
-        {
-            refetchQueries: [
-                {
-                    query: robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID,
-                    variables: { id: robboGroupId },
-                },
-            ],
-        },
-    )
-
     return (
-        loading ? <Loader />
+        loading ? <Spin />
             : (
                 <Form
                     name='normal_robbo_group_card'
@@ -45,24 +37,28 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
                     {...layout}
                     form={form}
                     initialValues={{
-                        name: data.GetRobboGroupById.name,
+                        name: GetRobboGroupById?.name,
                     }}
                     onFinish={({ name }) => {
-                        updateRobboGroup({
+                        UpdateRobboGroup({
                             variables: {
-                                input: { id: data.GetRobboGroupById.id, robboUnitId: data.GetRobboGroupById.robboUnitId, name: name },
+                                input: {
+                                    id: GetRobboGroupById?.id,
+                                    robboUnitId: GetRobboGroupById?.robboUnitId,
+                                    name: name,
+                                },
                             },
                         })
                     }}
                 >
                     <Form.Item
-                        name='name' label='Название'
+                        name='name' label={<FormattedMessage id='robbo_group_card.name' />}
                     >
-                        <Input placeholder={data.GetRobboGroupById.name} size='large' />
+                        <Input placeholder={GetRobboGroupById?.name} size='large' />
                     </Form.Item>
-                    <Form.Item label='Последнее изменение'>
+                    <Form.Item label={<FormattedMessage id='robbo_group_card.last_change' />}>
                         {
-                            data.GetRobboGroupById.lastModified
+                            GetRobboGroupById?.lastModified
                         }
                     </Form.Item>
                     <Form.Item >
@@ -70,7 +66,7 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
                             type='primary' htmlType='submit'
                             className='login-form-button'
                         >
-                            Сохранить
+                            <FormattedMessage id='robbo_group_card.save' />
                         </Button>
                     </Form.Item>
                 </Form>
@@ -78,10 +74,57 @@ const RobboGroupCard = ({ robboGroupId, disableСhanges }) => {
     )
 }
 
+const RobboGroupCardContainer = ({
+    robboGroupId,
+    disableСhanges,
+
+}) => {
+    const intl = useIntl()
+    return (
+        <WithGraphQLComponent
+            intl={intl}
+            robboGroupId={robboGroupId}
+            disableСhanges={disableСhanges}
+        />
+    )
+}
+
+const WithGraphQLComponent = compose(
+    graphql(
+        robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID,
+        {
+            options: props => {
+                return {
+                    variables: {
+                        id: props.robboGroupId,
+                    },
+                }
+            },
+        }),
+    graphql(
+        robboGroupMutationsGQL.UPDATE_ROBBO_GROUP,
+        {
+            name: 'UpdateRobboGroup',
+            options: props => {
+                return {
+                    onCompleted: () => {
+                        notification.success({ description: props.intl.formatMessage({ id: 'notification.update_profile_success' }) })
+                    },
+                    onError: error => {
+                        notification.error({
+                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            description: error?.message,
+                        })
+                    },
+                }
+            },
+        },
+    ))
+    (RobboGroupCard)
 
 RobboGroupCard.propTypes = {
     robboGroupId: PropTypes.string.isRequired,
     disableСhanges: PropTypes.bool,
 }
 
-export default RobboGroupCard
+export default RobboGroupCardContainer

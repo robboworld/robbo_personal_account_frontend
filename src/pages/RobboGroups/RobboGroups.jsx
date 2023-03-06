@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { Modal, Button, Pagination } from "antd"
-import { Navigate, useParams, useSearchParams } from "react-router-dom"
-
-import { WelcomeText } from "./components"
+import { Modal, Button, Pagination, Typography, Spin } from "antd"
+import { useParams, useSearchParams } from "react-router-dom"
+import { FormattedMessage, useIntl } from "react-intl"
 
 import PageLayout from '@/components/PageLayout'
 import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
-import AddStudentGroup from "@/components/AddStudentGroup"
+import AddStudentGroup from "@/components/AddRobboGroup"
 import RobboGroup from "@/components/RobboGroup"
 import ListItem from "@/components/ListItem"
-import { useUserIdentity, checkAccess } from "@/helpers"
+import { checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
 import { DragResize } from "@/components/UI"
 import {
-    HOME_PAGE_ROUTE,
-    LOGIN_PAGE_ROUTE,
     SUPER_ADMIN,
-    UNIT_ADMIN,
 } from "@/constants"
 import {
     getRobboGroupsByRobboUnitIdRequest,
@@ -29,7 +25,10 @@ import {
     clearRobboGroupsPage,
 } from '@/actions'
 
+const { Title } = Typography
+
 export default ({ userRole }) => {
+    const intl = useIntl()
     const [openAddGroup, setOpenAddGroup] = useState(false)
     const actions = useActions({
         getRobboGroupsByRobboUnitIdRequest,
@@ -59,9 +58,12 @@ export default ({ userRole }) => {
 
     return (
         <PageLayout>
-            <WelcomeText>Группы</WelcomeText>
+            <Title>
+                <FormattedMessage id='robbo_groups.title' />
+            </Title>
             <Modal
                 centered
+                title={intl.formatMessage({ id: 'robbo_groups.modal_title' })}
                 open={openAddGroup}
                 onCancel={() => setOpenAddGroup(false)}
                 footer={[]}
@@ -72,11 +74,12 @@ export default ({ userRole }) => {
                 align='flex-start'>
                 <Button
                     onClick={() => setOpenAddGroup(true)} type='primary'
-                >Создать группу
+                >
+                    <FormattedMessage id='robbo_groups.create_robbo_group' />
                 </Button>
             </Flex>
             {
-                loading ? <Loader />
+                loading ? <Spin />
                     : (
                         <Flex
                             widht='100%' direction='column'

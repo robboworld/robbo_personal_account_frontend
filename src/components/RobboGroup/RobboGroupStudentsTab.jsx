@@ -1,102 +1,106 @@
-import React, { useState } from "react"
-import { Button, Space, Input, List, Modal } from "antd"
-import { useQuery } from "@apollo/client"
+import React, { useState } from 'react'
+import { Button, Space, Input, List, Modal } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { PropTypes } from 'prop-types'
 
-import ListItem from "@/components/ListItem"
-import Loader from "@/components/Loader"
-import AddChildren from "@/components/AddChildren"
-import { useActions } from "@/helpers/useActions"
-import { studentQuerysGQL, studentQuerysGraphQL } from "@/graphQL/query"
-import { PEEK_PROFILE_PAGE } from "@/constants"
+import ListItem from '@/components/ListItem'
+import AddChildren from '@/components/AddChildren'
+import { useActions } from '@/helpers/useActions'
+import { PROFILE_PAGE_ROUTE } from '@/constants'
 import { addStudentToRobboGroupRequest } from '@/actions'
 
 const { Search } = Input
 
 const RobboGroupStudentsTab = ({
-    robboGroupId, robboUnitId,
+    robboGroupId,
+    robboUnitId,
     disableСhanges,
+    GetStudents,
+    email,
+    SearchStudent,
+    SearchStudentsResult,
 }) => {
-    const [searchItems, setSearchResult] = useState([])
-    const history = useNavigate()
+    const intl = useIntl()
+    const navigate = useNavigate()
     const actions = useActions({ addStudentToRobboGroupRequest }, [])
 
     const [openSearchSection, setOpenSearchSection] = useState(false)
     const [openAddChildren, setOpenAddChildren] = useState(false)
 
-    const SearchStudents = async value => {
-        const result = await studentQuerysGraphQL.SearchStudentsByEmail(value, "0")
-        setSearchResult(result.data.SearchStudentsByEmail.students)
-    }
-
-    const getStudentsByRobboGroupIdResult = useQuery(studentQuerysGQL.GET_STUDENTS_BY_ROBBO_GROUP_ID, {
-        variables: { robboGroupId },
-        notifyOnNetworkStatusChange: true,
-    })
-
     const openProfileStudent = userId => {
-        history(PEEK_PROFILE_PAGE, { state: { studentId: userId } })
+        navigate(PROFILE_PAGE_ROUTE, {
+            state: {
+                userId,
+                userRole: 0,
+            },
+        })
     }
 
     return (
         <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
-            Ученики
-            {
-                getStudentsByRobboGroupIdResult?.loading
-                    ? <Loader />
-                    : <List
-                        bordered
-                        dataSource={getStudentsByRobboGroupIdResult.data.GetStudentsByRobboGroup.students}
-                        renderItem={({ userHttp }, index) => (
-                            <ListItem
-                                itemIndex={index}
-                                key={index}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                render={() => { }}
-                                handleClick={() => openProfileStudent(userHttp.id)}
-                                handleDelete={childIndex => actions.addStudentToRobboGroupRequest({ id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
-                            />
-                        )}
+            <List
+                bordered
+                loading={GetStudents?.loading}
+                dataSource={GetStudents?.GetStudentsByRobboGroup?.students}
+                renderItem={({ userHttp }, index) => (
+                    <ListItem
+                        itemIndex={index}
+                        key={index}
+                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                        render={() => { }}
+                        handleClick={() => openProfileStudent(userHttp.id)}
+                        handleDelete={childIndex => actions.addStudentToRobboGroupRequest({ id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
                     />
-            }
+                )}
+            />
             <Button
                 type='primary' disabled={disableСhanges}
                 onClick={() => setOpenSearchSection(!openSearchSection)}
             >
-                Добавить ученика
+                <FormattedMessage id='robbo_group_card.add_student' />
             </Button>
             <Button
                 type='primary' disabled={disableСhanges}
                 onClick={setOpenAddChildren}
             >
-                Создать
+                <FormattedMessage id='robbo_group_card.create_student' />
             </Button>
             <Modal
-                title='Заполните данные ученика'
+                title={intl.formatMessage({ id: 'robbo_group_card.modal_create_child_title' })}
                 centered
                 open={openAddChildren}
                 onCancel={() => setOpenAddChildren(false)}
                 footer={[]}
             >
-                <AddChildren parentId='' />
+                <AddChildren
+                    robboUnitId={robboUnitId}
+                    robboGroupId={robboGroupId}
+                    parentId=''
+                />
             </Modal>
             {
                 openSearchSection &&
                 <React.Fragment>
-                    <Search placeholder='Введите email' onSearch={SearchStudents}
-                        enterButton />
+                    <Search
+                        placeholder={intl.formatMessage({ id: 'robbo_group_card.student_search_placeholder' })}
+                        onSearch={SearchStudent}
+                        enterButton
+                    />
                     <List
                         bordered
-                        dataSource={searchItems}
+                        dataSource={SearchStudentsResult?.SearchStudentsByEmail?.students}
                         renderItem={({ userHttp }, index) => (
                             <ListItem
                                 itemIndex={index}
                                 key={index}
                                 render={() => { }}
                                 label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
-                                handleClick={() => actions.addStudentToRobboGroupRequest({ id: robboGroupId + "", robboUnitId: robboUnitId + "" }, userHttp.id)}
-                                handleDelete={false}
+                                handleClick={() => actions.addStudentToRobboGroupRequest(
+                                    {
+                                        id: robboGroupId + "", robboUnitId: robboUnitId + "",
+                                    },
+                                    userHttp.id)}
                             />
                         )}
                     />

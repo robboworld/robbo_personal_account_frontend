@@ -140,6 +140,7 @@ export const coursePageQuerysGQL = {
                     id
                     name
                 }  
+                countRows
             }
             ... on Error {
                 message

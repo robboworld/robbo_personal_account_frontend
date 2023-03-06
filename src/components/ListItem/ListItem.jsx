@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { PropTypes } from 'prop-types'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Modal } from 'antd'
@@ -15,16 +16,17 @@ const ListItem = ({
     render,
     additionalIcons,
 }) => {
+    const intl = useIntl()
     const [contentOpen, setContentOpen] = useState(false)
     const [additionalContentOpen, setAdditionalContentOpen] = useState(false)
 
     const showDeleteConfirm = () => {
         confirm({
-            title: 'Вы точно хотите удалить?',
+            title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
             icon: <ExclamationCircleOutlined />,
-            okText: 'Да',
+            okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
             okType: 'danger',
-            cancelText: 'Отмена',
+            cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
             onOk() {
                 handleDelete(itemIndex)
             },

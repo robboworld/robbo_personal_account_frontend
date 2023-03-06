@@ -1,47 +1,40 @@
 import React from 'react'
-import { Tabs } from "antd"
-import { useQuery } from '@apollo/client'
+import { Skeleton, Tabs } from "antd"
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import UnitsOfAdmin from './UnitsOfAdmin'
 
-import Loader from '@/components/Loader'
-import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
-import { useActions } from '@/helpers/useActions'
-import { unitAdminQuerysGQL } from '@/graphQL'
-import { updateProfile } from '@/actions'
 
-export default ({ unitAdminId }) => {
-
-    const actions = useActions({ updateProfile }, [])
-
-    const { data, loading } = useQuery(unitAdminQuerysGQL.GET_UNIT_ADMIN_BY_ID, {
-        variables: { unitAdminId },
-        notifyOnNetworkStatusChange: true,
-    })
-
+const UnitAdminContent = ({
+    unitAdminId,
+    data: {
+        GetUnitAdminById,
+        loading,
+    },
+    UpdateUnitAdmin,
+}) => {
+    const intl = useIntl()
     return (
-        <Flex direction='column' width='100%'>
-            <Flex padding='0 1rem' direction='column'
-            >
-                <Tabs
-                    defaultActiveKey='1'
-                    items={[
-                        {
-                            label: 'Карточка',
-                            key: '1',
-                            children: loading
-                                ? <Loader />
-                                : <ProfileCard profile={data.GetUnitAdminById.userHttp} updateHandle={actions.updateProfile} />,
-                        },
-                        {
-                            label: 'Units',
-                            key: '2',
-                            children: <UnitsOfAdmin unitAdminId={unitAdminId} />,
-                        },
-                    ]}
-                />
-            </Flex>
-        </Flex>
+        <Tabs
+            defaultActiveKey='1'
+            title={intl.formatMessage({ id: 'unit_admin_content.title' })}
+            items={[
+                {
+                    label: <FormattedMessage id='unit_admin_content.profile' />,
+                    key: '1',
+                    children: loading ? <Skeleton active loading={loading} />
+                        : <ProfileCard updateHandle={UpdateUnitAdmin} profile={GetUnitAdminById?.userHttp} />,
+                },
+                {
+                    label: <FormattedMessage id='unit_admin_content.robbo_units_item' />,
+                    key: '2',
+                    children: <UnitsOfAdmin unitAdminId={unitAdminId} />,
+                },
+            ]}
+        />
+
     )
 }
+
+export default UnitAdminContent

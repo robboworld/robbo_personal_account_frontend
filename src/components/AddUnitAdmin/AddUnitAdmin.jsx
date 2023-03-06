@@ -1,30 +1,43 @@
 import React, { memo } from 'react'
+import { graphql } from '@apollo/client/react/hoc'
+import { Col, notification } from 'antd'
+import { useIntl } from 'react-intl'
 
-import { Text } from './components'
-
-import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
-import { useActions } from '@/helpers/useActions'
-import { createUnitAdmin } from '@/actions'
+import { unitAdminMutationsGQL } from '@/graphQL'
 
-export default memo(() => {
-    const actions = useActions({ createUnitAdmin }, [])
 
+
+const AddUnitAdmin = memo(({
+    CreateUnitAdmin,
+}) => {
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
-            <Text>Добавление Unit Админа</Text>
-            <SignUpForm
-                margin='0 0 10px 0'
-                handleSubmit={unitAdmin => actions.createUnitAdmin(unitAdmin)}
-                buttonOption={{
-                    content: 'Добавить',
-                    padding: '10px',
-                }}
-            />
-
-        </Flex>
+        <Col span={24}>
+            <SignUpForm handleSubmit={CreateUnitAdmin} />
+        </Col>
     )
 })
+
+const AddUnitAdminContainer = () => {
+    const intl = useIntl()
+    const WithGraphQL = graphql(
+        unitAdminMutationsGQL.CREATE_UNIT_ADMIN,
+        {
+            name: 'CreateUnitAdmin',
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: intl.formatMessage({ id: 'notification.unit_admin_create_success' }) })
+                },
+                onError: error => {
+                    notification.error({
+                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                        description: error?.message,
+                    })
+                },
+            },
+        },
+    )(AddUnitAdmin)
+    return <WithGraphQL />
+}
+
+export default AddUnitAdminContainer

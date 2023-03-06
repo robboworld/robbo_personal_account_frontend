@@ -1,48 +1,42 @@
-import React, { memo, useState, useEffect } from 'react'
-import { Button, Select, Form, Input } from 'antd'
+import React, { memo } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Button, Form, Input } from 'antd'
 import { PropTypes } from 'prop-types'
-
-import {
-    FREE_LISTENER, PARENT,
-    STUDENT, TEACHER,
-    userRole,
-} from '@/constants'
 
 const SignUpForm = memo(({
     handleSubmit,
-    needSelectRole,
+    parentId,
     robboGroupId,
     robboUnitId,
 }) => {
-    const roles = [
-        { value: STUDENT, label: userRole[STUDENT] },
-        { value: TEACHER, label: userRole[TEACHER] },
-        { value: PARENT, label: userRole[PARENT] },
-        { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
-    ]
-
     const [form] = Form.useForm()
-    const [, forceUpdate] = useState({})
-    useEffect(() => {
-        forceUpdate({})
-    }, [])
-
+    const intl = useIntl()
     return (
         <Form
-            name='normal_login'
             className='signup-form'
             onFinish={(
                 {
                     email,
                     password,
-                    role,
                     nickname,
                     lastname,
                     firstname,
                     middlename,
                 }) => {
-                return handleSubmit({
-                    email, password, role, nickname, lastname, firstname, middlename,
+                handleSubmit({
+                    variables: {
+                        input: {
+                            email,
+                            password,
+                            nickname,
+                            lastname,
+                            firstname,
+                            middlename,
+                            robboUnitId,
+                            robboGroupId,
+                            parentId,
+                        },
+                    },
                 })
             }}
             form={form}
@@ -52,12 +46,12 @@ const SignUpForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваш Email!',
+                        message: <FormattedMessage id='sign_up_form.email_rule' />,
                     },
                 ]}
             >
                 <Input
-                    placeholder='Email'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.email_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -66,13 +60,13 @@ const SignUpForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваш Пароль!',
+                        message: <FormattedMessage id='sign_up_form.password_rule' />,
                     },
                 ]}
             >
                 <Input
                     type='password'
-                    placeholder='Пароль'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.password_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -81,12 +75,12 @@ const SignUpForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваш Nickname!',
+                        message: <FormattedMessage id='sign_up_form.nickname_rule' />,
                     },
                 ]}
             >
                 <Input
-                    placeholder='Nickname'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.nickname_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -95,12 +89,12 @@ const SignUpForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваше Имя!',
+                        message: <FormattedMessage id='sign_up_form.firstname_rule' />,
                     },
                 ]}
             >
                 <Input
-                    placeholder='Имя'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.firstname_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -109,12 +103,12 @@ const SignUpForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите вашу Фамилию!',
+                        message: <FormattedMessage id='sign_up_form.lastname_rule' />,
                     },
                 ]}
             >
                 <Input
-                    placeholder='Фамилия'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.lastname_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -123,33 +117,15 @@ const SignUpForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваше Отчество!',
+                        message: <FormattedMessage id='sign_up_form.middlename_rule' />,
                     },
                 ]}
             >
                 <Input
-                    placeholder='Отчество'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.middlename_placeholder' })}
                     size='large'
                 />
             </Form.Item>
-            {
-                needSelectRole &&
-                <Form.Item
-                    label='Выберите роль' name='role'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Пожалуйста, введите вашу роль!',
-                        },
-                    ]}
-                >
-                    <Select
-                        options={roles}
-                        size='large'
-                    />
-                </Form.Item>
-            }
-
             <Form.Item shouldUpdate>
                 {
                     () => (
@@ -161,7 +137,7 @@ const SignUpForm = memo(({
                                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
                             }
                         >
-                            Зарегистрироваться
+                            <FormattedMessage id='sign_up_form.add' />
                         </Button>
                     )
                 }
@@ -174,7 +150,7 @@ const SignUpForm = memo(({
 
 SignUpForm.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
-    needSelectRole: PropTypes.bool,
+    parentId: PropTypes.string,
     robboGroupId: PropTypes.string,
     robboUnitId: PropTypes.string,
 }

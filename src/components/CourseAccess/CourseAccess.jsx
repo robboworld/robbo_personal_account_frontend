@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Dropdown, Tabs, Space } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import { PropTypes } from 'prop-types'
@@ -14,16 +15,15 @@ import CurrentCourseAccessRobboUnits from './CurrentAccessRobboUnits'
 import CurrentCourseAccessUnitAdmins from './CurrentAccessUnitAdmins'
 import CurrentCourseAccessTeachers from './CurrentAccessTeachers'
 
-import { checkAccess } from '@/helpers'
 import { TEACHER, UNIT_ADMIN } from '@/constants'
 
 const items = [
     {
-        label: 'Текущий доступ',
+        label: <FormattedMessage id='course_access.items_current_access' />,
         key: '0',
     },
     {
-        label: 'Создать новый',
+        label: <FormattedMessage id='course_access.items_create_new' />,
         key: '1',
     },
 ]
@@ -44,7 +44,7 @@ const CourseAccess = ({ courseId, userRole }) => {
                     }}
                 >
                     <Space>
-                        Robbo Units
+                        <FormattedMessage id='course_access.tabs_items_robbo_units' />
                         <DownOutlined />
                     </Space>
                 </Dropdown>,
@@ -65,7 +65,7 @@ const CourseAccess = ({ courseId, userRole }) => {
                     }}
                 >
                     <Space>
-                        Robbo Group
+                        <FormattedMessage id='course_access.tabs_items_robbo_groups' />
                         <DownOutlined />
                     </Space>
                 </Dropdown>,
@@ -86,7 +86,7 @@ const CourseAccess = ({ courseId, userRole }) => {
                     }}
                 >
                     <Space>
-                        Unit Admins
+                        <FormattedMessage id='course_access.tabs_items_unit_admins' />
                         <DownOutlined />
                     </Space>
                 </Dropdown>,
@@ -107,7 +107,7 @@ const CourseAccess = ({ courseId, userRole }) => {
                     }}
                 >
                     <Space>
-                        Педагоги
+                        <FormattedMessage id='course_access.tabs_items_teachers' />
                         <DownOutlined />
                     </Space>
                 </Dropdown>,
@@ -128,7 +128,7 @@ const CourseAccess = ({ courseId, userRole }) => {
                     }}
                 >
                     <Space>
-                        Ученики
+                        <FormattedMessage id='course_access.tabs_items_students' />
                         <DownOutlined />
                     </Space>
                 </Dropdown>,

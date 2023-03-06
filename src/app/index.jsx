@@ -9,7 +9,6 @@ import {
   MY_COURSES_ROUTE,
   COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
-  PEEK_PROFILE_PAGE,
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
   UNIT_ADMINS_ROUTE,
@@ -33,15 +32,14 @@ const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const MyCourses = lazy(() => import('@/pages/MyCourses'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
-const PeekProfilePage = lazy(() => import('@/pages/PeekProfile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
-const ClientsPageContainer = lazy(() => import('@/pages/Clients'))
+const ClientsPageContainer = lazy(() => import('@/containers/ClientsContainer'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const Study = lazy(() => import('@/pages/Study'))
 
-const App = () => {
+const Application = () => {
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
@@ -115,14 +113,6 @@ const App = () => {
           }
         />
         <Route
-          path={PEEK_PROFILE_PAGE}
-          element={
-            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <PeekProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path={UNIT_ADMINS_ROUTE}
           element={
             <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
@@ -167,8 +157,8 @@ const App = () => {
           element={<Navigate to={HOME_PAGE_ROUTE} replace />}
         />
       </Routes>
-    </Suspense >
+    </Suspense>
   )
 }
 
-export default App
+export default Application

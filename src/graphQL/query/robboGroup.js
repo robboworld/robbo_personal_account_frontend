@@ -20,8 +20,8 @@ export const robboGroupQuerysGQL = {
     }
     `,
     SEARCH_GROUPS_BY_NAME: gql`
-    query SearchGroupsByName($name: String!) {
-        SearchGroupsByName(name: $name) {
+    query SearchGroupsByName($name: String!, $page: String!, $pageSize: String!) {
+        SearchGroupsByName(name: $name, page: $page, pageSize: $pageSize) {
             ... on RobboGroupHttpList {
                 robboGroups {
                     id

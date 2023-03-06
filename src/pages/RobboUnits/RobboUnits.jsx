@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { Modal, Button, Typography, Row, Col, List } from "antd"
+import { FormattedMessage, useIntl } from "react-intl"
 
 import PageLayout from '@/components/PageLayout'
 import RobboUnit from "@/components/RobboUnit"
@@ -18,6 +19,7 @@ const RobboUnits = ({
     pageSize,
     onChangePage,
 }) => {
+    const intl = useIntl()
     let data
     GetRobboUnitsSuperAdmin
         ? data = GetRobboUnitsSuperAdmin?.GetAllRobboUnits
@@ -30,6 +32,7 @@ const RobboUnits = ({
     return (
         <PageLayout>
             <Modal
+                title={intl.formatMessage({ id: 'robbo_units.modal_title' })}
                 centered
                 open={openAddRobboUnit}
                 onCancel={() => setOpenAddRobboUnit(false)}
@@ -38,14 +41,16 @@ const RobboUnits = ({
                 <AddRobboUnit />
             </Modal>
             <Row align='middle'>
-                <Col span={21}>
-                    <Title>Robbo Units</Title>
+                <Col span={20}>
+                    <Title>
+                        <FormattedMessage id='robbo_units.title' />
+                    </Title>
                 </Col>
                 <Col span={1}>
                     <Button
                         onClick={() => setOpenAddRobboUnit(true)} type='primary'
                     >
-                        Добавить Robbo Unit
+                        <FormattedMessage id='robbo_units.create_robbo_unit' />
                     </Button>
                 </Col>
             </Row>

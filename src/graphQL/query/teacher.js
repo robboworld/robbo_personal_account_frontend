@@ -67,8 +67,8 @@ export const teacherQuerysGQL = {
     `,
 
     SEARCH_TEACHERS_BY_EMAIL: gql`
-        query SearchTeachersByEmail($email: String!) {
-            SearchTeachersByEmail(email: $email) {
+        query SearchTeachersByEmail($email: String!, $page: String!, $pageSize: String!) {
+            SearchTeachersByEmail(email: $email, page: $page, pageSize: $pageSize) {
                 ... on TeacherHttpList{
                     teachers {
                         userHttp {

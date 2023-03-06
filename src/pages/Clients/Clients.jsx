@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { Modal, Button, Row, Col, List, Typography } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
 import ParentContentContainer from '@/components/ParentContent'
-import AddParent from '@/components/AddParent/AddParent'
+import AddParent from '@/components/AddParent'
 import { DragResize } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { deleteParentRequest } from '@/actions'
 
 const { Title } = Typography
 
-const Clients = ({
+const Clients = memo(({
     data: {
         GetAllParents,
         loading,
@@ -27,26 +28,18 @@ const Clients = ({
         <PageLayout>
             <Row align='middle'>
                 <Col span={22}>
-                    <Title>Клиенты</Title>
+                    <Title><FormattedMessage id='clients.title' /></Title>
                 </Col>
                 <Col span={1}>
                     <Button type='primary' onClick={() => setOpenAddClients(true)}>
-                        Добавить родителя
+                        <FormattedMessage id='clients.add_parent_button' />
                     </Button>
                 </Col>
             </Row>
-            <Modal
-                title='Заполните данные клиента'
-                centered
-                open={openAddClients}
-                onCancel={() => setOpenAddClients(false)}
-                footer={[]}
-            >
-                <AddParent />
-            </Modal>
             <Row>
                 <Col span={24}>
                     <List
+                        className='clientsList'
                         loading={loading}
                         bordered
                         size='large'
@@ -81,8 +74,17 @@ const Clients = ({
                     />
                 </Col>
             </Row>
-        </PageLayout >
+            <Modal
+                title={<FormattedMessage id='clients.add_parent_title' />}
+                centered
+                open={openAddClients}
+                onCancel={() => setOpenAddClients(false)}
+                footer={[]}
+            >
+                <AddParent />
+            </Modal>
+        </PageLayout>
     )
-}
+})
 
 export default Clients

@@ -1,28 +1,43 @@
 import React, { memo } from 'react'
+import { Col, notification } from 'antd'
+import { useIntl } from 'react-intl'
+import { graphql } from '@apollo/client/react/hoc'
 
-import { Text } from './components'
-
-import Flex from '@/components/Flex'
 import RobboUnitForm from '@/components/RobboUnitForm'
-import { useActions } from '@/helpers/useActions'
-import { createRobboUnitRequest } from '@/actions'
+import { robboUnitMutationsGQL } from '@/graphQL'
 
-export default memo(() => {
-    const actions = useActions({ createRobboUnitRequest }, [])
+const AddRobboUnit = memo(({
+    CreateRobboUnit,
+}) => {
     return (
-        <Flex
-            direction='column' width='100%'
-            align='center'
-        >
-            <Text>Добавление Robbo Unit</Text>
+        <Col span={24}>
             <RobboUnitForm
-                margin='0 0 10px 0'
-                handleSubmit={robboUnit => actions.createRobboUnitRequest(robboUnit)}
-                buttonOption={{
-                    content: 'Добавить',
-                    padding: '10px',
-                }}
+                handleSubmit={CreateRobboUnit}
             />
-        </Flex>
+        </Col>
     )
 })
+
+const AddRobboUnitContainer = () => {
+    const intl = useIntl()
+    const WithGraphQL = graphql(
+        robboUnitMutationsGQL.CREATE_ROBBO_UNIT,
+        {
+            name: 'CreateRobboUnit',
+            options: {
+                onCompleted: () => {
+                    notification.success({ description: intl.formatMessage({ id: 'notification.robbo_unit_create_success' }) })
+                },
+                onError: error => {
+                    notification.error({
+                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                        description: error?.message,
+                    })
+                },
+            },
+        },
+    )(AddRobboUnit)
+    return <WithGraphQL />
+}
+
+export default AddRobboUnitContainer

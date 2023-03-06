@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useState, memo } from "react"
 import { Modal, Button, Typography, Row, Col, List } from "antd"
+import { FormattedMessage, useIntl } from "react-intl"
 
 import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
@@ -11,7 +12,7 @@ import { deleteUnitAdmin } from '@/actions'
 
 const { Title } = Typography
 
-const UnitAdmins = ({
+const UnitAdmins = memo(({
     data: {
         GetAllUnitAdmins,
         loading,
@@ -20,6 +21,7 @@ const UnitAdmins = ({
     onChangePage,
     pageSize,
 }) => {
+    const intl = useIntl()
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
     const actions = useActions({ deleteUnitAdmin }, [])
 
@@ -27,16 +29,19 @@ const UnitAdmins = ({
         <PageLayout>
             <Row align='middle'>
                 <Col span={21}>
-                    <Title>Unit Админы</Title>
+                    <Title>
+                        <FormattedMessage id='unit_admins.title' />
+                    </Title>
                 </Col>
                 <Col span={1}>
                     <Button type='primary' onClick={() => setOpenAddUnitAdmin(true)}>
-                        Добавить Unit Admin
+                        <FormattedMessage id='unit_admins.create_unit_admin' />
                     </Button>
                 </Col>
             </Row>
             <Modal
                 centered
+                title={intl.formatMessage({ id: 'unit_admins.modal_title' })}
                 open={openAddUnitAdmin}
                 onCancel={() => setOpenAddUnitAdmin(false)}
                 footer={[]}
@@ -46,6 +51,7 @@ const UnitAdmins = ({
             <Row>
                 <Col span={24}>
                     <List
+                        className='unitAdminsList'
                         loading={loading}
                         bordered
                         size='large'
@@ -80,6 +86,6 @@ const UnitAdmins = ({
             </Row>
         </PageLayout>
     )
-}
+})
 
 export default UnitAdmins

@@ -1,10 +1,10 @@
 import React from 'react'
 import { Col, Row, Typography, List } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { FormattedMessage } from 'react-intl'
 
 import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
-
 
 const { Title } = Typography
 
@@ -23,7 +23,9 @@ const MyCourses = ({
         <PageLayout>
             <Row align='middle'>
                 <Col span={24}>
-                    <Title>Курсы</Title>
+                    <Title>
+                        <FormattedMessage id='my_courses.title' />
+                    </Title>
                 </Col>
             </Row>
             <Row>
