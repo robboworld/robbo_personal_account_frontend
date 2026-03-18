@@ -7,12 +7,13 @@ import { FormattedMessage, useIntl } from "react-intl"
 import PageLayout from '@/components/PageLayout'
 import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
-import AddStudentGroup from "@/components/AddRobboGroup"
+import AddRobboGroupWithUnitSelect from "@/components/AddRobboGroup/AddRobboGroupWithUnitSelect"
 import RobboGroup from "@/components/RobboGroup"
 import ListItem from "@/components/ListItem"
 import { checkAccess } from "@/helpers"
 import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
+import { getRobboUnitsState } from "@/reducers/robboUnits"
 import { DragResize } from "@/components/UI"
 import {
     SUPER_ADMIN,
@@ -23,6 +24,8 @@ import {
     getAllRobboGroupsRequest,
     getAllRobboGroupsForUnitAdminRequest,
     clearRobboGroupsPage,
+    getRobboUnitsRequest,
+    getRobboUnitsByUnitAdminIdRequest,
 } from '@/actions'
 
 const { Title } = Typography
@@ -36,25 +39,42 @@ export default ({ userRole }) => {
         getAllRobboGroupsRequest,
         getAllRobboGroupsForUnitAdminRequest,
         clearRobboGroupsPage,
+        getRobboUnitsRequest,
+        getRobboUnitsByUnitAdminIdRequest,
     }, [])
 
     const { robboUnitId } = useParams()
     const [searchParams, setSearchParams] = useSearchParams()
     const currentPage = searchParams.get('page') || '1'
 
+    const { robboGroups, countRows, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
+    const { robboUnits } = useSelector(({ robboUnits }) => getRobboUnitsState(robboUnits))
+
     useEffect(() => {
         if (robboUnitId)
             actions.getRobboGroupsByRobboUnitIdRequest(robboUnitId)
         else if (checkAccess(userRole, [SUPER_ADMIN]))
-            actions.getAllRobboGroupsRequest(currentPage, "10") // Только для Super Admin
+            actions.getAllRobboGroupsRequest(currentPage, "10")
         else
-            actions.getAllRobboGroupsForUnitAdminRequest(currentPage, "10") // For UnitAdmin
+            actions.getAllRobboGroupsForUnitAdminRequest(currentPage, "10")
+
+        if (!robboUnitId && (!robboUnits || robboUnits.length === 0)) {
+            if (checkAccess(userRole, [SUPER_ADMIN])) {
+                actions.getRobboUnitsRequest("1", "100")
+            } else {
+                actions.getRobboUnitsByUnitAdminIdRequest("1", "100")
+            }
+        }
+
         return () => {
             actions.clearRobboGroupsPage()
         }
-    }, [currentPage])
+    }, [currentPage, robboUnitId])
 
-    const { robboGroups, countRows, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
+    const handleDeleteGroup = (robboGroup, index) => {
+        const groupRobboUnitId = robboGroup.robboUnitId || robboUnitId
+        actions.deleteRobboGroupRequest(groupRobboUnitId, robboGroup.id, index)
+    }
 
     return (
         <PageLayout>
@@ -68,7 +88,7 @@ export default ({ userRole }) => {
                 onCancel={() => setOpenAddGroup(false)}
                 footer={[]}
             >
-                <AddStudentGroup robboUnitId={robboUnitId} />
+                <AddRobboGroupWithUnitSelect robboUnitId={robboUnitId} />
             </Modal>
             <Flex direction='row' justify='flex-end'
                 align='flex-start'>
@@ -89,6 +109,7 @@ export default ({ userRole }) => {
                             <Flex direction='column'>
                                 {
                                     robboGroups?.map((robboGroup, index) => {
+                                        const groupRobboUnitId = robboGroup.robboUnitId || robboUnitId
                                         return (
                                             <ListItem
                                                 itemIndex={index}
@@ -98,21 +119,15 @@ export default ({ userRole }) => {
                                                     <DragResize
                                                         open={open} setOpen={setOpen}
                                                         content={() => (
-                                                            // refactor in robboGroup useQuery
                                                             <RobboGroup
-                                                                robboUnitId={robboGroup.robboUnitId}
+                                                                robboUnitId={groupRobboUnitId}
                                                                 robboGroupId={robboGroup.id}
                                                             />
                                                         )}
                                                     />
                                                 )}
                                                 handleDelete={
-                                                    robboGroupIndex =>
-                                                        actions.deleteRobboGroupRequest(
-                                                            robboUnitId,
-                                                            robboGroup.id,
-                                                            robboGroupIndex,
-                                                        )
+                                                    () => handleDeleteGroup(robboGroup, index)
                                                 }
                                             />
                                         )

@@ -1,8 +1,8 @@
-FROM node:16-alpine
+FROM node:18-alpine
 WORKDIR /app
 COPY package.json /app/package.json
-RUN yarn install
+RUN yarn install --network-timeout 100000
 COPY . /app
-RUN yarn build
+RUN NODE_OPTIONS=--openssl-legacy-provider yarn build
 
-ENTRYPOINT ["yarn", "start", "--port", "3000"]
+ENTRYPOINT ["yarn", "start", "--port", "3030"]

@@ -27,7 +27,7 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getRobboUnitsSuccess](state, action) {
-        return { ...state, robboUnits: action.payload.response, loading: false }
+        return { ...state, robboUnits: action.payload, loading: false }
     },
     [getRobboUnitsFailed](state, action) {
         return { ...state, loading: false }

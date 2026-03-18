@@ -24,3 +24,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .env
+
+# Local certs / secrets (never commit)
+/cert/*.pem
+/cert/*.key
+/cert/key.key
