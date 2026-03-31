@@ -55,6 +55,7 @@ function* updateProjectPageSaga(action) {
         const response = yield call(projectPageAPI.updateProjectPage, token, projectPage)
         console.log(response)
         yield put(updateProjectPageSuccess(response))
+        yield put(getProjectPageById(token, projectPage.projectPageId))
     } catch (e) {
         yield put(updateProjectPageFailed(e.message))
     }

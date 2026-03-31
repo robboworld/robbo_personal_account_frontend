@@ -63,15 +63,16 @@ export default () => {
                                     title: projectPage.title,
                                     instruction: projectPage.instruction,
                                     notes: projectPage.notes,
+                                    isShared: projectPage.isShared,
                                 }}
-                                onFinish={({ title, instruction, notes }) => {
-                                    actions.updateProjectPage({
-                                        projectPageId: projectPageId,
+                                onFinish={({ title, instruction, notes, isShared }) => {
+                                    actions.updateProjectPage(token, {
+                                        projectPageId,
                                         projectId: projectPage.projectId,
-                                        title: title,
-                                        instruction: instruction,
-                                        notes: notes,
-                                        isShared: projectPage.isShared,
+                                        title,
+                                        instruction,
+                                        notes,
+                                        isShared,
                                     })
                                 }}
                             >
@@ -107,7 +108,7 @@ export default () => {
                                                 label={<FormattedMessage id='project_page.close_access' />}
                                                 valuePropName='checked'
                                             >
-                                                <Switch defaultChecked onChange={() => { }} />
+                                                <Switch />
                                             </Form.Item>
                                         )
                                         : (
@@ -116,7 +117,7 @@ export default () => {
                                                 label={<FormattedMessage id='project_page.open_access' />}
                                                 valuePropName='checked'
                                             >
-                                                <Switch onChange={() => { }} />
+                                                <Switch />
                                             </Form.Item>
                                         )
                                 }
