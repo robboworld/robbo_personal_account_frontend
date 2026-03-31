@@ -36,9 +36,10 @@ export const signInFailed = createAction(SIGN_IN_FAILED, error => {
     }
 })
 
-export const signUpRequest = createAction(SIGN_UP, user => {
+export const signUpRequest = createAction(SIGN_UP, ({ user, role }) => {
     return {
         user,
+        role,
     }
 })
 

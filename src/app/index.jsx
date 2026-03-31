@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import {
   HOME_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
+  REGISTER_PAGE_ROUTE,
   PROJECT_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
@@ -27,6 +28,8 @@ import { ProtectedRoute } from '@/helpers'
 
 const HomePage = lazy(() => import('@/pages/Home'))
 const LoginPage = lazy(() => import('@/pages/Login'))
+const Landing = lazy(() => import('@/pages/Landing'))
+const RegisterPage = lazy(() => import('@/pages/Register'))
 const MyProjects = lazy(() => import('@/pages/MyProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const MyCourses = lazy(() => import('@/pages/MyCourses'))
@@ -44,6 +47,10 @@ const Application = () => {
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route
+          path='/'
+          element={<Landing />}
+        />
+        <Route
           path={HOME_PAGE_ROUTE}
           element={
             <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
@@ -54,6 +61,10 @@ const Application = () => {
         <Route
           path={LOGIN_PAGE_ROUTE}
           element={<LoginPage />}
+        />
+        <Route
+          path={REGISTER_PAGE_ROUTE}
+          element={<RegisterPage />}
         />
         <Route
           path={MY_PROJECTS_ROUTE}
