@@ -5,7 +5,18 @@ import { useSelector } from 'react-redux'
 
 import { useActions } from '@/helpers'
 import { signUpRequest } from '@/actions'
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, userRole, STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN } from '@/constants'
+import {
+  HOME_PAGE_ROUTE,
+  LANDING_PAGE_ROUTE,
+  LOGIN_PAGE_ROUTE,
+  userRole,
+  STUDENT,
+  TEACHER,
+  PARENT,
+  FREE_LISTENER,
+  UNIT_ADMIN,
+  SUPER_ADMIN,
+} from '@/constants'
 
 const { Content } = Layout
 
@@ -53,7 +64,10 @@ const Register = () => {
         <div style={{ width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
             <h1 style={{ margin: 0, fontSize: 28 }}>Регистрация</h1>
-            <Button type='link' onClick={() => navigate(LOGIN_PAGE_ROUTE)}>Уже есть аккаунт? Войти</Button>
+            <div>
+              <Button type='link' onClick={() => navigate(LANDING_PAGE_ROUTE)}>Назад на лэндинг</Button>
+              <Button type='link' onClick={() => navigate(LOGIN_PAGE_ROUTE)}>Уже есть аккаунт? Войти</Button>
+            </div>
           </div>
 
           <Form
