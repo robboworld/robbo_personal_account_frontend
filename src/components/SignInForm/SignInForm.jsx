@@ -9,6 +9,7 @@ import { LockOutlined, MailOutlined } from '@ant-design/icons'
 
 import {
     FREE_LISTENER,
+    HOME_PAGE_ROUTE,
     PARENT,
     STUDENT,
     TEACHER,
@@ -39,7 +40,7 @@ const SignInForm = memo(({
     const [login] = useMutation(authMutationsGQL.SIGN_IN, {
         onCompleted: ({ SingIn }) => {
             localStorage.setItem('token', SingIn.accessToken)
-            navigate('/')
+            navigate(HOME_PAGE_ROUTE)
         },
         onError: error => {
             notification.error({

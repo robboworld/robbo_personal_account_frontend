@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl'
 import * as FaIcons from 'react-icons/fa'
 
 import {
+  HomeOutlined,
   UserOutlined,
   BookOutlined,
   CreditCardOutlined,
@@ -14,6 +15,7 @@ import {
 } from '@ant-design/icons'
 
 import {
+  HOME_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
@@ -27,6 +29,12 @@ import {
 } from '@/constants'
 
 export const SidebarDataStudent = [
+  {
+    key: 'home',
+    label: 'Главная',
+    pathname: HOME_PAGE_ROUTE,
+    icon: <HomeOutlined />,
+  },
   {
     key: '1',
     label: <FormattedMessage id='sidebar_data.profile' />,
@@ -73,6 +81,12 @@ export const SidebarDataStudent = [
 
 export const SidebarDataParent = [
   {
+    key: 'home',
+    label: 'Главная',
+    pathname: HOME_PAGE_ROUTE,
+    icon: <HomeOutlined />,
+  },
+  {
     key: '1',
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
@@ -111,6 +125,12 @@ export const SidebarDataParent = [
 ]
 
 export const SidebarDataSuperAdmin = [
+  {
+    key: 'home',
+    label: 'Главная',
+    pathname: HOME_PAGE_ROUTE,
+    icon: <HomeOutlined />,
+  },
   {
     key: '1',
     label: <FormattedMessage id='sidebar_data.profile' />,
@@ -222,6 +242,12 @@ export const SidebarDataSuperAdmin = [
 
 export const SidebarDataTeacher = [
   {
+    key: 'home',
+    label: 'Главная',
+    pathname: HOME_PAGE_ROUTE,
+    icon: <HomeOutlined />,
+  },
+  {
     key: '1',
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
@@ -261,6 +287,12 @@ export const SidebarDataTeacher = [
 
 export const SidebarDataFreeListener = [
   {
+    key: 'home',
+    label: 'Главная',
+    pathname: HOME_PAGE_ROUTE,
+    icon: <HomeOutlined />,
+  },
+  {
     key: '1',
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
@@ -299,6 +331,12 @@ export const SidebarDataFreeListener = [
 ]
 
 export const SidebarDataUnitAdmin = [
+  {
+    key: 'home',
+    label: 'Главная',
+    pathname: HOME_PAGE_ROUTE,
+    icon: <HomeOutlined />,
+  },
   {
     key: '1',
     label: <FormattedMessage id='sidebar_data.profile' />,
