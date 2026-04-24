@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Col, Layout, Row } from 'antd'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Layout } from 'antd'
 import { useLocation } from 'react-router-dom'
 
 import {
@@ -9,6 +9,8 @@ import {
 
 import SideBar from '@/components/SideBar'
 import SelectLanguage from '@/components/SelectLanguage'
+import NotificationBell from '@/components/NotificationBell/NotificationBell'
+import { parseJwt, getSelectedNavBarKeyFromPath } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
 
 const { Header, Sider, Content } = Layout
@@ -17,6 +19,26 @@ const SIDEBAR_COLLAPSED_STORAGE_KEY = 'lk_sidebar_collapsed'
 const PageLayout = ({ children }) => {
     const location = useLocation()
     const [collapsed, setCollapsed] = useState(() => localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === 'true')
+
+    const selectedNavBarKey = useMemo(() => {
+        const fromState = location.state?.selectedNavBarKey
+        if (fromState != null && fromState !== '') {
+            return fromState
+        }
+        if (location.pathname === HOME_PAGE_ROUTE) {
+            return 'home'
+        }
+        let role
+        try {
+            const token = localStorage.getItem('token')
+            if (token) {
+                role = parseJwt(token).Role
+            }
+        } catch (_) {
+            /* ignore */
+        }
+        return getSelectedNavBarKeyFromPath(role, location.pathname)
+    }, [location.pathname, location.state])
 
     useEffect(() => {
         localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(collapsed))
@@ -27,24 +49,39 @@ const PageLayout = ({ children }) => {
                 trigger={null} collapsible
                 collapsed={collapsed} theme='light'
             >
-                <SideBar selectedNavBarKey={location.state?.selectedNavBarKey || (location.pathname === HOME_PAGE_ROUTE ? 'home' : undefined)} />
+                <SideBar selectedNavBarKey={selectedNavBarKey} />
             </Sider>
             <Layout>
-                <Header style={{ backgroundColor: '#00af41' }}>
-                    <Row justify='space-between' align='middle'>
-                        <Col span={12}>
-                            {
-                                React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                                    className: 'trigger',
-                                    onClick: () => setCollapsed(!collapsed),
-                                })
-                            }
-                        </Col>
-                        <Col span={12}>
-                            <SelectLanguage />
-                        </Col>
-                    </Row>
-
+                <Header
+                    style={{
+                        backgroundColor: '#00af41',
+                        display: 'flex',
+                        alignItems: 'center',
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                        lineHeight: 1,
+                    }}
+                >
+                    <div style={{ flexShrink: 0 }}>
+                        {
+                            React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                                className: 'trigger',
+                                onClick: () => setCollapsed(!collapsed),
+                            })
+                        }
+                    </div>
+                    <div
+                        style={{
+                            marginLeft: 'auto',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 12,
+                            flexShrink: 0,
+                        }}
+                    >
+                        <SelectLanguage />
+                        <NotificationBell />
+                    </div>
                 </Header>
                 <Content style={{ padding: '0 1rem' }}>
                     {

@@ -9,6 +9,7 @@ import {
     unitAdminMutationsGQL,
     superAdminMutationsGQL,
 } from "@/graphQL"
+import { freeListenerMutationsGQL } from '@/graphQL/mutation/freeListener'
 import {
     FREE_LISTENER,
     PARENT,
@@ -52,7 +53,7 @@ export const profileMutationsGraphQL = {
                 ]
                 break
             case FREE_LISTENER:
-
+                gqlString = freeListenerMutationsGQL.UPDATE_FREE_LISTENER
                 break
             case UNIT_ADMIN:
                 gqlString = unitAdminMutationsGQL.UPDATE_UNIT_ADMIN

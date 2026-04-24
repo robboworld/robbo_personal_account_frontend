@@ -5,7 +5,7 @@ import config from '@/config'
 const instance = axios.create()
 const [backendURL] = config.backendURL
 instance.defaults.baseURL = backendURL
-instance.defaults.timeout = 1000
+instance.defaults.timeout = 30000
 instance.defaults.headers = {
   'Access-Control-Allow-Credentials': true,
   'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Z-Key, Authorization',

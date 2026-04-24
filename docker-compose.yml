@@ -1,3 +1,7 @@
+# Стабильное имя проекта; после docker compose build нужен up --build, иначе контейнер
+# остаётся на старом image id.
+name: robbo_personal_account_frontend
+
 services:
   web:
     build: .

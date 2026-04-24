@@ -3,62 +3,25 @@ import { Button, Card, Col, Empty, Row, Space, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
 import PageLayout from '@/components/PageLayout'
-import { parseJwt } from '@/helpers'
+import { parseJwt, openLms, getSelectedNavBarKeyFromPath } from '@/helpers'
 import {
-  CLIENTS_ROUTE,
-  MY_COURSES_ROUTE,
   MY_PROJECTS_ROUTE,
   PROFILE_PAGE_ROUTE,
-  ROBBO_GROUPS_ROUTE,
-  ROBBO_UNITS_ROUTE,
-  STUDY_PAGE_ROUTE,
   TEACHERS_PAGE_ROUTE,
+  ROBBO_UNITS_ROUTE,
+  ROBBO_GROUPS_ROUTE,
   UNIT_ADMINS_ROUTE,
+  CLIENTS_ROUTE,
   userRole,
   UNIT_ADMIN,
   SUPER_ADMIN,
   TEACHER,
   STUDENT,
   PARENT,
+  FREE_LISTENER,
 } from '@/constants'
 
 const { Title, Paragraph, Text } = Typography
-
-const getSelectedNavBarKey = (role, path) => {
-  const keyByRoleAndPath = {
-    [STUDENT]: {
-      [PROFILE_PAGE_ROUTE]: '1',
-      [MY_PROJECTS_ROUTE]: '2',
-      [MY_COURSES_ROUTE]: '5',
-    },
-    [PARENT]: {
-      [PROFILE_PAGE_ROUTE]: '1',
-      [MY_COURSES_ROUTE]: '4',
-    },
-    [TEACHER]: {
-      [PROFILE_PAGE_ROUTE]: '1',
-      [STUDY_PAGE_ROUTE]: '2',
-    },
-    [UNIT_ADMIN]: {
-      [PROFILE_PAGE_ROUTE]: '1',
-      [ROBBO_UNITS_ROUTE]: '2',
-      [MY_COURSES_ROUTE]: '3',
-      [TEACHERS_PAGE_ROUTE]: '4',
-      [ROBBO_GROUPS_ROUTE]: '6',
-    },
-    [SUPER_ADMIN]: {
-      [PROFILE_PAGE_ROUTE]: '1',
-      [CLIENTS_ROUTE]: '5',
-      [ROBBO_UNITS_ROUTE]: '6',
-      [ROBBO_GROUPS_ROUTE]: '7',
-      [MY_COURSES_ROUTE]: '8',
-      [UNIT_ADMINS_ROUTE]: '9',
-      [TEACHERS_PAGE_ROUTE]: '10',
-    },
-  }
-
-  return keyByRoleAndPath[role]?.[path] || '1'
-}
 
 const Home = () => {
   const navigate = useNavigate()
@@ -82,9 +45,8 @@ const Home = () => {
 
   const quickActions = [
     { title: 'Профиль', description: 'Проверьте и обновите персональные данные.', path: PROFILE_PAGE_ROUTE },
-    { title: 'Мои курсы', description: 'Продолжите обучение и следите за прогрессом.', path: MY_COURSES_ROUTE },
-    { title: 'Мои проекты', description: 'Откройте проекты и продолжите работу.', path: MY_PROJECTS_ROUTE },
-    { title: 'Занятия', description: 'Перейдите к расписанию и текущим задачам.', path: STUDY_PAGE_ROUTE, roles: [TEACHER] },
+    { title: 'LMS', description: 'Перейдите в LMS без повторного логина.', external: 'lms' },
+    { title: 'Мои проекты', description: 'Откройте проекты и продолжите работу.', path: MY_PROJECTS_ROUTE, roles: [STUDENT] },
     { title: 'Преподаватели', description: 'Управляйте списком преподавателей.', path: TEACHERS_PAGE_ROUTE, roles: [UNIT_ADMIN, SUPER_ADMIN] },
     { title: 'Юниты', description: 'Перейдите к списку Robbo Unit и их настройкам.', path: ROBBO_UNITS_ROUTE, roles: [UNIT_ADMIN, SUPER_ADMIN] },
     { title: 'Группы', description: 'Работа со студенческими группами юнитов.', path: ROBBO_GROUPS_ROUTE, roles: [UNIT_ADMIN, SUPER_ADMIN] },
@@ -110,12 +72,23 @@ style={{ width: '100%', padding: '24px 8px' }}>
             <Row gutter={[16, 16]}>
               {quickActions.map(action => (
                 <Col xs={24} md={12}
-xl={8} key={action.path}>
+xl={8} key={action.path || action.external}>
                   <Card size='small' title={action.title}>
                     <Paragraph>{action.description}</Paragraph>
                     <Button
                       type='primary'
-                      onClick={() => navigate(action.path, { state: { selectedNavBarKey: getSelectedNavBarKey(role, action.path) } })}
+                      onClick={() => {
+                        if (action.external === 'lms') {
+                          openLms()
+                          return
+                        }
+
+                        navigate(action.path, {
+                          state: {
+                            selectedNavBarKey: getSelectedNavBarKeyFromPath(role, action.path) ?? '1',
+                          },
+                        })
+                      }}
                     >
                       Перейти
                     </Button>
@@ -131,7 +104,7 @@ xl={8} key={action.path}>
         <Card title='Что делать дальше'>
           <Space direction='vertical' size={4}>
             <Text>1. Проверьте профиль и актуальность контактных данных.</Text>
-            <Text>2. Откройте курсы или проекты и продолжите работу с места остановки.</Text>
+            <Text>2. Откройте LMS или проекты и продолжите работу с места остановки.</Text>
             <Text>3. Для административных ролей доступны разделы управления пользователями и юнитами.</Text>
           </Space>
         </Card>

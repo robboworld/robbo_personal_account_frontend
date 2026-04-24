@@ -1,4 +1,5 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import { authAPI } from '@/api'
 import {
@@ -31,7 +32,21 @@ function* signUpSaga(action) {
         yield put(signUpSuccess(response))
     } catch (e) {
         console.log(e.response)
-        yield put(signUpFailed(e.response.data))
+        const errorData = e?.response?.data
+        const errorText = typeof errorData === 'string' ? errorData : e?.message
+        const duplicatedEmailError =
+            typeof errorText === 'string' &&
+            (errorText.toLowerCase().includes('email is already used') ||
+                errorText.toLowerCase().includes('user already exist'))
+
+        notification.error({
+            message: 'Ошибка',
+            description: duplicatedEmailError
+                ? 'Пользователь с таким email уже зарегистрирован'
+                : (errorText || 'Не удалось выполнить регистрацию'),
+        })
+
+        yield put(signUpFailed(errorData))
     }
 }
 

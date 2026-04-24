@@ -19,13 +19,14 @@ const SelectLanguage = () => {
     ]
 
     return (
-        <Row align='middle'>
-            <Col span={3}>
-                <Title level={5}>
+        <Row align='middle' wrap={false}
+style={{ width: 'auto', maxWidth: '100%' }}>
+            <Col flex='none' style={{ marginRight: 8 }}>
+                <Title level={5} style={{ margin: 0, color: '#fff', whiteSpace: 'nowrap' }}>
                     <FormattedMessage id='header.select_language' />
                 </Title>
             </Col>
-            <Col span={2}>
+            <Col flex='none'>
                 <Select
                     style={{ width: 120 }}
                     defaultValue='ru'
@@ -34,9 +35,7 @@ const SelectLanguage = () => {
                     onChange={value => actions.changeLanguage(value)}
                 />
             </Col>
-
         </Row>
-
     )
 }
 

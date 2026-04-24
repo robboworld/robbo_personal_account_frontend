@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import SignInForm from '@/components/SignInForm'
 import { useActions } from '@/helpers'
 import { signInRequest, signUpRequest } from '@/actions'
-import { LANDING_PAGE_ROUTE } from '@/constants'
+import { LANDING_PAGE_ROUTE, REGISTER_PAGE_ROUTE } from '@/constants'
 
 const { Content } = Layout
 
@@ -18,9 +18,12 @@ const PageLayoutLogin = () => {
         <Layout style={{ background: 'linear-gradient(to bottom, #008000, #f0fff0)', margin: '5rem 10rem' }}>
             <Content style={{ display: 'flex', justifyContent: 'center', background: 'white', padding: '5rem 10rem' }}>
                 <div style={{ width: '100%' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
                         <Button type='link' onClick={() => navigate(LANDING_PAGE_ROUTE)}>
                             Назад на лэндинг
+                        </Button>
+                        <Button type='link' onClick={() => navigate(REGISTER_PAGE_ROUTE)}>
+                            Зарегистрироваться
                         </Button>
                     </div>
                     <Tabs

@@ -14,8 +14,6 @@ import {
   TEACHER,
   PARENT,
   FREE_LISTENER,
-  UNIT_ADMIN,
-  SUPER_ADMIN,
 } from '@/constants'
 
 const { Content } = Layout
@@ -44,8 +42,6 @@ const Register = () => {
     { value: TEACHER, label: userRole[TEACHER] },
     { value: PARENT, label: userRole[PARENT] },
     { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
-    { value: UNIT_ADMIN, label: userRole[UNIT_ADMIN] },
-    { value: SUPER_ADMIN, label: userRole[SUPER_ADMIN] },
   ]
 
   return (
