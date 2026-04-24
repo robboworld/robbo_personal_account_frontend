@@ -67,6 +67,18 @@ export const profileGQL = {
                         role
                     }
                 }
+                ... on FreeListenerHttp {
+                    userHttp {
+                        id
+                        lastname
+                        firstname
+                        middlename
+                        nickname
+                        email
+                        createdAt
+                        role
+                    }
+                }
             }
         }
     `,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 import { parseJwt } from './jwtParser'
 
@@ -10,13 +10,18 @@ export const ProtectedRoute = ({
     redirectPath = LOGIN_PAGE_ROUTE,
     children,
 }) => {
+    const location = useLocation()
     const token = localStorage.getItem('token')
     if (!token) {
         return <Navigate to={LOGIN_PAGE_ROUTE} replace />
     } else {
         const { Role } = parseJwt(token)
-        if (!allowedRoles.includes(Role))
+        if (!allowedRoles.includes(Role)) {
+            if (location.pathname === HOME_PAGE_ROUTE) {
+                return <Navigate to={LOGIN_PAGE_ROUTE} replace />
+            }
             return <Navigate to={HOME_PAGE_ROUTE} replace />
+        }
     }
 
     const childrenWithProps = React.Children.map(children, child => {

@@ -8,6 +8,7 @@ import {
   PROJECT_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
+  OIDC_CALLBACK_ROUTE,
   COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
   TEACHERS_PAGE_ROUTE,
@@ -15,15 +16,17 @@ import {
   UNIT_ADMINS_ROUTE,
   ROBBO_UNITS_ROUTE,
   ROBBO_UNIT_STUDENT_GROUPS_PAGE,
-  STUDY_PAGE_ROUTE,
   ROBBO_GROUPS_ROUTE,
+  SEND_NOTIFICATION_ROUTE,
   SUPER_ADMIN,
   STUDENT,
   UNIT_ADMIN,
   TEACHER,
   PARENT,
+  FREE_LISTENER,
 } from '@/constants'
 import Loader from '@/components/Loader'
+import HelpButton from '@/components/HelpButton/HelpButton'
 import { ProtectedRoute } from '@/helpers'
 
 const HomePage = lazy(() => import('@/pages/Home'))
@@ -32,7 +35,8 @@ const Landing = lazy(() => import('@/pages/Landing'))
 const RegisterPage = lazy(() => import('@/pages/Register'))
 const MyProjects = lazy(() => import('@/pages/MyProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
-const MyCourses = lazy(() => import('@/pages/MyCourses'))
+const LmsRedirect = lazy(() => import('@/pages/LmsRedirect'))
+const OidcCallback = lazy(() => import('@/pages/OidcCallback'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
@@ -40,134 +44,141 @@ const ClientsPageContainer = lazy(() => import('@/containers/ClientsContainer'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
-const Study = lazy(() => import('@/pages/Study'))
+const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
 
 const Application = () => {
   return (
     <Suspense fallback={<Loader />}>
-      <Routes>
-        <Route
-          path='/'
-          element={<Landing />}
-        />
-        <Route
-          path={HOME_PAGE_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={LOGIN_PAGE_ROUTE}
-          element={<LoginPage />}
-        />
-        <Route
-          path={REGISTER_PAGE_ROUTE}
-          element={<RegisterPage />}
-        />
-        <Route
-          path={MY_PROJECTS_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
-              <MyProjects />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={PROJECT_PAGE_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
-              <ProjectPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={MY_COURSES_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
-              <MyCourses />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={COURSE_PAGE_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
-              <CoursePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={CLIENTS_ROUTE}
-          element={
-            <ProtectedRoute
-              allowedRoles={[SUPER_ADMIN]} >
-              <ClientsPageContainer />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={TEACHERS_PAGE_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <TeachersPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={PROFILE_PAGE_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, UNIT_ADMIN, SUPER_ADMIN]}>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={UNIT_ADMINS_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
-              <UnitAdminsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROBBO_UNITS_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <RobboUnitsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
-          element={
-            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <RobboGroups />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={STUDY_PAGE_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[TEACHER]}>
-              <Study />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROBBO_GROUPS_ROUTE}
-          element={
-            <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
-              <RobboGroups />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/*'
-          element={<Navigate to={HOME_PAGE_ROUTE} replace />}
-        />
-      </Routes>
+      <React.Fragment>
+        <Routes>
+          <Route
+            path='/'
+            element={<Landing />}
+          />
+          <Route
+            path={HOME_PAGE_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]}>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={LOGIN_PAGE_ROUTE}
+            element={<LoginPage />}
+          />
+          <Route
+            path={OIDC_CALLBACK_ROUTE}
+            element={<OidcCallback />}
+          />
+          <Route
+            path={REGISTER_PAGE_ROUTE}
+            element={<RegisterPage />}
+          />
+          <Route
+            path={MY_PROJECTS_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[STUDENT]}>
+                <MyProjects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={PROJECT_PAGE_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[STUDENT]}>
+                <ProjectPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={MY_COURSES_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]}>
+                <LmsRedirect />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={COURSE_PAGE_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]}>
+                <CoursePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={CLIENTS_ROUTE}
+            element={
+              <ProtectedRoute
+                allowedRoles={[SUPER_ADMIN]} >
+                <ClientsPageContainer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={TEACHERS_PAGE_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+                <TeachersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={PROFILE_PAGE_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]}>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={UNIT_ADMINS_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
+                <UnitAdminsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROBBO_UNITS_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+                <RobboUnitsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
+            element={
+              <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+                <RobboGroups />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROBBO_GROUPS_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+                <RobboGroups />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={SEND_NOTIFICATION_ROUTE}
+            element={
+              <ProtectedRoute allowedRoles={[SUPER_ADMIN, UNIT_ADMIN]}>
+                <SendNotificationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/*'
+            element={<Navigate to={HOME_PAGE_ROUTE} replace />}
+          />
+        </Routes>
+        <HelpButton />
+      </React.Fragment>
     </Suspense>
   )
 }

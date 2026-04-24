@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
-import { Input, Button, Form, Switch, Spin, Col, Row } from 'antd'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Input, Button, Form, Switch, Spin, Col, Row, Space } from 'antd'
+import { ArrowLeftOutlined } from '@ant-design/icons'
+import { FormattedMessage } from 'react-intl'
 
 import PageLayout from '@/components/PageLayout'
 import config from '@/config'
+import { MY_PROJECTS_ROUTE } from '@/constants'
 import { useActions } from '@/helpers/useActions'
 import { getProjectPageState } from '@/reducers/projectPage'
 import {
@@ -16,6 +18,7 @@ import {
 const { TextArea } = Input
 
 export default () => {
+    const navigate = useNavigate()
     const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
@@ -39,7 +42,7 @@ export default () => {
         return () => {
             actions.clearProjectPageState()
         }
-    }, [])
+    }, [projectPageId, token])
 
     const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
 
@@ -49,6 +52,17 @@ export default () => {
 
     return (
         <PageLayout>
+            <Row style={{ margin: '0.5rem 0 1rem' }}>
+                <Col span={24}>
+                    <Button
+                        type='default'
+                        icon={<ArrowLeftOutlined />}
+                        onClick={() => navigate(MY_PROJECTS_ROUTE)}
+                    >
+                        <FormattedMessage id='project_page.back_to_projects' />
+                    </Button>
+                </Col>
+            </Row>
             {loading ? <Spin />
                 : (
                     <Row align='start'>
@@ -122,19 +136,21 @@ export default () => {
                                         )
                                 }
                                 <Form.Item >
-                                    <Button
-                                        type='primary' htmlType='submit'
-                                        className='login-form-button'
-                                    >
-                                        <FormattedMessage id='project_page.save' />
-                                    </Button>
+                                    <Space wrap>
+                                        <Button
+                                            type='primary' htmlType='submit'
+                                            className='login-form-button'
+                                        >
+                                            <FormattedMessage id='project_page.save' />
+                                        </Button>
+                                        <Button
+                                            type='primary' onClick={seeInsideHandler}
+                                        >
+                                            <FormattedMessage id='project_page.open_in_scratch' />
+                                        </Button>
+                                    </Space>
                                 </Form.Item>
                             </Form>
-                            <Button
-                                type='primary' onClick={seeInsideHandler}
-                            >
-                                <FormattedMessage id='project_page.open_in_scratch' />
-                            </Button>
                         </Col>
                     </Row>
                 )

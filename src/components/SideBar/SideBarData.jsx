@@ -12,20 +12,20 @@ import {
   LogoutOutlined,
   ProjectOutlined,
   LineChartOutlined,
+  NotificationOutlined,
 } from '@ant-design/icons'
 
 import {
   HOME_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
-  MY_COURSES_ROUTE,
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
   UNIT_ADMINS_ROUTE,
   ROBBO_UNITS_ROUTE,
-  STUDY_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
   ROBBO_GROUPS_ROUTE,
+  SEND_NOTIFICATION_ROUTE,
 } from '@/constants'
 
 export const SidebarDataStudent = [
@@ -61,8 +61,9 @@ export const SidebarDataStudent = [
   // },
   {
     key: '5',
-    label: <FormattedMessage id='sidebar_data.my_courses' />,
-    pathname: MY_COURSES_ROUTE,
+    label: <FormattedMessage id='sidebar_data.lms' />,
+    pathname: '#lms',
+    external: 'lms',
     icon: <BookOutlined />,
   },
   // {
@@ -106,8 +107,9 @@ export const SidebarDataParent = [
   // },
   {
     key: '4',
-    label: <FormattedMessage id='sidebar_data.my_courses' />,
-    pathname: MY_COURSES_ROUTE,
+    label: <FormattedMessage id='sidebar_data.lms' />,
+    pathname: '#lms',
+    external: 'lms',
     icon: <BookOutlined />,
   },
   // {
@@ -174,8 +176,9 @@ export const SidebarDataSuperAdmin = [
   },
   {
     key: '8',
-    label: <FormattedMessage id='sidebar_data.my_courses' />,
-    pathname: MY_COURSES_ROUTE,
+    label: <FormattedMessage id='sidebar_data.lms' />,
+    pathname: '#lms',
+    external: 'lms',
     icon: <BookOutlined />,
   },
   {
@@ -189,6 +192,12 @@ export const SidebarDataSuperAdmin = [
     label: <FormattedMessage id='sidebar_data.teachers' />,
     pathname: TEACHERS_PAGE_ROUTE,
     icon: <FaIcons.FaInfo />,
+  },
+  {
+    key: 'send_notification',
+    label: <FormattedMessage id='sidebar_data.send_notification' />,
+    pathname: SEND_NOTIFICATION_ROUTE,
+    icon: <NotificationOutlined />,
   },
   // {
   //   key: '11',
@@ -255,9 +264,10 @@ export const SidebarDataTeacher = [
   },
   {
     key: '2',
-    label: <FormattedMessage id='sidebar_data.study' />,
-    pathname: STUDY_PAGE_ROUTE,
-    icon: <FaIcons.FaTasks />,
+    label: <FormattedMessage id='sidebar_data.lms' />,
+    pathname: '#lms',
+    external: 'lms',
+    icon: <BookOutlined />,
   },
   // {
   //   key: '3',
@@ -312,8 +322,9 @@ export const SidebarDataFreeListener = [
   },
   {
     key: '4',
-    label: <FormattedMessage id='sidebar_data.my_courses' />,
-    pathname: MY_COURSES_ROUTE,
+    label: <FormattedMessage id='sidebar_data.lms' />,
+    pathname: '#lms',
+    external: 'lms',
     icon: <BookOutlined />,
   },
   {
@@ -351,8 +362,9 @@ export const SidebarDataUnitAdmin = [
   },
   {
     key: '3',
-    label: <FormattedMessage id='sidebar_data.my_courses' />,
-    pathname: MY_COURSES_ROUTE,
+    label: <FormattedMessage id='sidebar_data.lms' />,
+    pathname: '#lms',
+    external: 'lms',
     icon: <BookOutlined />,
   },
   {
@@ -372,6 +384,12 @@ export const SidebarDataUnitAdmin = [
     label: <FormattedMessage id='sidebar_data.robbo_groups' />,
     pathname: ROBBO_GROUPS_ROUTE,
     icon: <RobotOutlined />,
+  },
+  {
+    key: 'send_notification',
+    label: <FormattedMessage id='sidebar_data.send_notification' />,
+    pathname: SEND_NOTIFICATION_ROUTE,
+    icon: <NotificationOutlined />,
   },
   // {
   //   key: '7',

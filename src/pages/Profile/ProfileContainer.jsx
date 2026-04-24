@@ -6,6 +6,7 @@ import { graphql } from '@apollo/client/react/hoc'
 import { useIntl } from 'react-intl'
 
 import StudentProfile from './StudentProfile'
+import FreeListenerProfile from './FreeListenerProfile'
 import SuperAdminProfile from './SuperAdminProfile'
 import UnitAdminProfile from './UnitAdminProfile'
 import ParentProfile from './ParentProfile'
@@ -21,12 +22,14 @@ import {
     unitAdminMutationsGQL,
 } from '@/graphQL'
 import {
+    FREE_LISTENER,
     PARENT,
     STUDENT,
     SUPER_ADMIN,
     TEACHER,
     UNIT_ADMIN,
 } from '@/constants'
+import { freeListenerMutationsGQL } from '@/graphQL/mutation/freeListener'
 import { checkAccess } from '@/helpers'
 
 const ProfileContainer = ({
@@ -187,6 +190,32 @@ const ProfileContainer = ({
                         },
                     ),
                 )(TeacherProfile)
+                return <Profile />
+            case FREE_LISTENER:
+                Profile = compose(
+                    graphql(profileGQL.GET_USER, {
+                        onError: error => {
+                            notification.error({
+                                message: intl.formatMessage({ id: 'notification.error_message' }),
+                                description: error?.message,
+                            })
+                        },
+                    }),
+                    graphql(freeListenerMutationsGQL.UPDATE_FREE_LISTENER, {
+                        name: 'UpdateFreeListener',
+                        options: {
+                            onCompleted: () => {
+                                notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
+                            },
+                            onError: error => {
+                                notification.error({
+                                    message: intl.formatMessage({ id: 'notification.error_message' }),
+                                    description: error?.message,
+                                })
+                            },
+                        },
+                    }),
+                )(FreeListenerProfile)
                 return <Profile />
             case PARENT:
                 Profile = compose(
