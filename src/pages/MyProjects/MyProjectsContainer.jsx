@@ -25,6 +25,7 @@ const MyProjectsContainer = () => {
             {
                 options: props => {
                     return {
+                        fetchPolicy: 'network-only',
                         variables: {
                             page: props.currentPage,
                             pageSize: props.pageSize,

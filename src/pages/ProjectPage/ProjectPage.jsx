@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Input, Button, Form, Switch, Spin, Col, Row, Space } from 'antd'
-import { ArrowLeftOutlined } from '@ant-design/icons'
-import { FormattedMessage } from 'react-intl'
+import { Input, Button, Form, Switch, Spin, Col, Row, Space, message, Typography } from 'antd'
+import { ArrowLeftOutlined, CloudDownloadOutlined } from '@ant-design/icons'
+import { FormattedMessage, useIntl } from 'react-intl'
 
+import { downloadProjectSb3 } from '@/api/projectPage'
 import PageLayout from '@/components/PageLayout'
 import config from '@/config'
 import { MY_PROJECTS_ROUTE } from '@/constants'
@@ -15,9 +16,13 @@ import {
     clearProjectPageState,
     updateProjectPage,
 } from '@/actions'
+
 const { TextArea } = Input
+const { Text } = Typography
 
 export default () => {
+    const intl = useIntl()
+    const [downloadBusy, setDownloadBusy] = useState(false)
     const navigate = useNavigate()
     const actions = useActions({
         getProjectPageById,
@@ -46,8 +51,41 @@ export default () => {
 
     const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
 
+    useEffect(() => {
+        if (loading || !projectPage?.projectPageId) return
+        form.setFieldsValue({
+            title: projectPage.title,
+            instruction: projectPage.instruction,
+            notes: projectPage.notes,
+            isShared: projectPage.isShared,
+        })
+    }, [
+        loading,
+        form,
+        projectPage?.projectPageId,
+        projectPage?.lastModified,
+        projectPage?.title,
+        projectPage?.instruction,
+        projectPage?.notes,
+        projectPage?.isShared,
+    ])
+
     const seeInsideHandler = () => {
         window.open(config.scratchURL + `?#${projectPageId}`)
+    }
+
+    const handleDownloadSb3 = async () => {
+        if (!token || !projectPageId)
+            return
+        setDownloadBusy(true)
+        try {
+            await downloadProjectSb3(token, projectPageId, projectPage?.title)
+            message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'project_page.download_sb3_error' }))
+        } finally {
+            setDownloadBusy(false)
+        }
     }
 
     return (
@@ -65,8 +103,8 @@ export default () => {
             </Row>
             {loading ? <Spin />
                 : (
-                    <Row align='start'>
-                        <Col span={12}>
+                    <Row align='start' gutter={[16, 8]}>
+                        <Col xs={24} lg={18}>
                             <Form
                                 name='normal_project-page'
                                 className='project-page-form'
@@ -135,20 +173,40 @@ export default () => {
                                             </Form.Item>
                                         )
                                 }
-                                <Form.Item >
-                                    <Space wrap>
+                                <Form.Item label={<FormattedMessage id='project_page.actions_group' />}>
+                                    <Space
+                                        wrap
+                                        size='middle'
+                                        align='start'
+                                    >
                                         <Button
-                                            type='primary' htmlType='submit'
+                                            type='primary'
+                                            htmlType='submit'
                                             className='login-form-button'
                                         >
                                             <FormattedMessage id='project_page.save' />
                                         </Button>
                                         <Button
-                                            type='primary' onClick={seeInsideHandler}
+                                            type='primary'
+                                            onClick={seeInsideHandler}
                                         >
                                             <FormattedMessage id='project_page.open_in_scratch' />
                                         </Button>
+                                        <Button
+                                            type='default'
+                                            htmlType='button'
+                                            icon={<CloudDownloadOutlined />}
+                                            loading={downloadBusy}
+                                            onClick={handleDownloadSb3}
+                                        >
+                                            <FormattedMessage id='project_page.download_sb3' />
+                                        </Button>
                                     </Space>
+                                    <div style={{ marginTop: 8 }}>
+                                        <Text type='secondary'>
+                                            <FormattedMessage id='project_page.download_sb3_hint' />
+                                        </Text>
+                                    </div>
                                 </Form.Item>
                             </Form>
                         </Col>

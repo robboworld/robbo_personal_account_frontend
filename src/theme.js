@@ -10,6 +10,12 @@ const primary = '#c06c84'
 const secondary = '#6c5b7b'
 const secondaryLight = '#6a6b7b'
 
+/** Акцентный зелёный (scratch.ru / ЛК) */
+const accentGreen = '#00AF41'
+const accentGreenHover = '#009036'
+/** Светлый зелёный для контраста на тёмном фоне (Ant dark / лэндинг night) */
+const accentGreenOnDark = '#4ade80'
+
 const boxShadows = [
   'box-shadow: 0px 4px 24px -8px rgba(0,0,0,0.75)',
 ]
@@ -53,5 +59,8 @@ export default {
     black,
     white,
     error,
+    accentGreen,
+    accentGreenHover,
+    accentGreenOnDark,
   },
 }

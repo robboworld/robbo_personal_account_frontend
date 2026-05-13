@@ -10,14 +10,15 @@ import RuMessages from '@/lang/ru.json'
 import EngMessages from '@/lang/en.json'
 import ZhMessages from '@/lang/zh.json'
 import { getAppState } from '@/reducers/app'
+import theme from '@/theme'
 
 const defaultData = {
     borderRadius: 6,
-    colorPrimary: '#00af41',
+    colorPrimary: theme.colors.accentGreen,
 }
 
 const AppConfigProvider = ({ children }) => {
-    const { language, locale } = useSelector(({ app }) => getAppState(app))
+    const { language } = useSelector(({ app }) => getAppState(app))
     let configLocale, intlMessages
     switch (language) {
         case 'ru':
