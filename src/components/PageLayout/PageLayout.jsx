@@ -12,6 +12,7 @@ import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
 import { parseJwt, getSelectedNavBarKeyFromPath } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
+import theme from '@/theme'
 
 const { Header, Sider, Content } = Layout
 const SIDEBAR_COLLAPSED_STORAGE_KEY = 'lk_sidebar_collapsed'
@@ -54,7 +55,7 @@ const PageLayout = ({ children }) => {
             <Layout>
                 <Header
                     style={{
-                        backgroundColor: '#00af41',
+                        backgroundColor: theme.colors.accentGreen,
                         display: 'flex',
                         alignItems: 'center',
                         paddingLeft: 16,

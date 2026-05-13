@@ -62,6 +62,8 @@ export const projectPageQueryGraphQL = {
             {
                 query: projectPageQueryGQL.GET_PROJECT_PAGE_BY_ID,
                 variables: projectPageID,
+                // По умолчанию cache-first: при закрытии вкладки/возврате показывает устаревшие данные.
+                fetchPolicy: 'network-only',
             },
         )
     },

@@ -66,6 +66,11 @@ module.exports = {
     extensions: ['*', '.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      // Webpack 4: use prebundled UMD (CJS entry still pulls popmotion .mjs).
+      'framer-motion': path.resolve(
+        __dirname,
+        'node_modules/framer-motion/dist/framer-motion.js',
+      ),
     },
   },
 }

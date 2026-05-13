@@ -62,7 +62,7 @@ const MyProjects = ({
                                 }
                                 label={`${projectPage.title}`}
                                 handleClick={() => toProjectPageHandler(projectPage)}
-                                key={index}
+                                key={projectPage.projectPageId}
                                 render={() => { }}
                             />
                         )}

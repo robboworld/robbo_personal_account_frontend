@@ -7,6 +7,7 @@ import SignInForm from '@/components/SignInForm'
 import { useActions } from '@/helpers'
 import { signInRequest, signUpRequest } from '@/actions'
 import { LANDING_PAGE_ROUTE, REGISTER_PAGE_ROUTE } from '@/constants'
+import theme from '@/theme'
 
 const { Content } = Layout
 
@@ -15,7 +16,12 @@ const PageLayoutLogin = () => {
     const navigate = useNavigate()
     const actions = useActions({ signInRequest, signUpRequest }, [])
     return (
-        <Layout style={{ background: 'linear-gradient(to bottom, #008000, #f0fff0)', margin: '5rem 10rem' }}>
+        <Layout
+          style={{
+            background: `linear-gradient(to bottom, ${theme.colors.accentGreen}, #f0fff0)`,
+            margin: '5rem 10rem',
+          }}
+        >
             <Content style={{ display: 'flex', justifyContent: 'center', background: 'white', padding: '5rem 10rem' }}>
                 <div style={{ width: '100%' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>

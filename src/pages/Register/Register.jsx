@@ -15,6 +15,7 @@ import {
   PARENT,
   FREE_LISTENER,
 } from '@/constants'
+import theme from '@/theme'
 
 const { Content } = Layout
 
@@ -45,7 +46,11 @@ const Register = () => {
   ]
 
   return (
-    <Layout style={{ background: 'linear-gradient(to bottom, #008000, #f0fff0)' }}>
+    <Layout
+      style={{
+        background: `linear-gradient(to bottom, ${theme.colors.accentGreen}, #f0fff0)`,
+      }}
+    >
       <Content
         style={{
           display: 'flex',

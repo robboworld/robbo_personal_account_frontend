@@ -11,7 +11,10 @@
     "cypress": "start-server-and-test start http://localhost:3000 cypress:open",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:test": "start-server-and-test start http://localhost:3000 cypress:run"
+    "cypress:test": "start-server-and-test start http://localhost:3000 cypress:run",
+    "landing:restore": "sh scripts/restore-landing.sh",
+    "landing:restore:legacy": "sh scripts/restore-landing-legacy.sh",
+    "docker:rebuild": "docker compose build web && docker compose up -d --force-recreate web"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
@@ -23,6 +26,7 @@
     "eslint-plugin-import": "^2.26.0",
     "express": "^4.17.1",
     "formik": "^2.0.3",
+    "framer-motion": "6.5.1",
     "graphql": "^16.6.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
