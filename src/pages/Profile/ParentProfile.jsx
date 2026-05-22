@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { Row, Col, Typography, Skeleton, List } from 'antd'
 
 
+import { getProfileFromQuery } from './profileQuery'
+
 import PageLayout from '@/components/PageLayout'
 import ProfileCard from '@/components/ProfileCard'
 import { PROFILE_PAGE_ROUTE } from '@/constants'
@@ -12,12 +14,14 @@ import ListItem from '@/components/ListItem'
 const { Title } = Typography
 
 const ParentProfile = ({
+    data,
     GetUser,
     GetStudents,
     UpdateParent,
     accessUpdate,
 }) => {
     const navigate = useNavigate()
+    const { profile, loading: profileLoading } = getProfileFromQuery(data ?? GetUser)
     const openProfileStudent = userId => {
         navigate(PROFILE_PAGE_ROUTE, {
             state: {
@@ -34,9 +38,9 @@ const ParentProfile = ({
             </Row>
             <Row justify='start' gutter={[8, 8]}>
                 <Col span={8}>
-                    <Skeleton active loading={GetUser?.loading}>
+                    <Skeleton active loading={profileLoading}>
                         <ProfileCard
-                            profile={GetUser?.GetUser?.userHttp}
+                            profile={profile}
                             updateHandle={UpdateParent}
                             accessUpdate={accessUpdate}
                         />
@@ -47,7 +51,7 @@ const ParentProfile = ({
                         header={<FormattedMessage id='parent_profile.header_children_list' />}
                         bordered
                         loading={GetStudents?.loading}
-                        dataSource={GetStudents.GetStudentsByParentId?.students}
+                        dataSource={GetStudents?.GetStudentsByParentId?.students ?? []}
                         renderItem={({ userHttp }) => (
                             <ListItem
                                 key={userHttp.email}

@@ -100,6 +100,7 @@
     "profile_card.email": "Email",
     "profile_card.password": "Пароль",
     "profile_card.nickname": "Никнейм",
+    "profile_card.username": "Логин (нельзя изменить)",
     "profile_card.firstname": "Имя",
     "profile_card.lastname": "Фамилия",
     "profile_card.middlename": "Отчество",
