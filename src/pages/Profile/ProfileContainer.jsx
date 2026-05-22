@@ -1,5 +1,5 @@
 import React from 'react'
-import { notification } from 'antd'
+import { Alert, notification } from 'antd'
 import { compose } from 'redux'
 import { useLocation } from 'react-router-dom'
 import { graphql } from '@apollo/client/react/hoc'
@@ -31,6 +31,7 @@ import {
 } from '@/constants'
 import { freeListenerMutationsGQL } from '@/graphQL/mutation/freeListener'
 import { checkAccess } from '@/helpers'
+import PageLayout from '@/components/PageLayout'
 
 const ProfileContainer = ({
     userId,
@@ -266,8 +267,26 @@ const ProfileContainer = ({
                     ),
                 )(ParentProfile)
                 return <Profile userId={userId} />
+            default:
+                return (
+                    <PageLayout>
+                        <Alert
+                            type='warning'
+                            showIcon
+                            message='Профиль для этой роли пока недоступен'
+                            description={`role=${String(userRole)}`}
+                        />
+                    </PageLayout>
+                )
         }
     }
+
+    return (
+        <PageLayout>
+            <Alert type='info' showIcon
+message='Выберите пользователя для просмотра профиля' />
+        </PageLayout>
+    )
 }
 
 const WithGraphQLParentProfile = compose(

@@ -1,0 +1,955 @@
+import React, { useEffect, useMemo, useState } from 'react'
+import { Button, ConfigProvider, theme } from 'antd'
+import styled, { createGlobalStyle } from 'styled-components'
+import { Link } from 'react-router-dom'
+import { FaChartLine, FaMicrochip, FaMoon, FaRocket, FaSun } from 'react-icons/fa'
+
+const LANDING_THEME_KEY = 'scratch-landing-theme'
+
+const LandingGlobal = createGlobalStyle`
+  html.landing-page-active,
+  html.landing-page-active body {
+    background: var(--landing-html-bg, #f4f7fb);
+  }
+`
+
+const PageRoot = styled.div`
+  /* Палитра: один зелёный акцент (как раньше #00a896 / изумруд), нейтрали с лёгким зелёным тинтом — impeccable OKLCH + taste «Emerald, не lila» */
+  --landing-html-bg: oklch(0.97 0.012 155);
+  --landing-page-bg: linear-gradient(
+    155deg,
+    oklch(0.96 0.018 148) 0%,
+    oklch(0.97 0.01 155) 45%,
+    oklch(0.96 0.016 160) 100%
+  );
+  --landing-header-bg: color-mix(in oklch, oklch(0.99 0.008 152) 88%, transparent);
+  --landing-border: oklch(0.55 0.035 155 / 0.16);
+  --landing-surface: color-mix(in oklch, oklch(0.995 0.006 150) 91%, transparent);
+  --landing-surface-2: oklch(0.96 0.022 152 / 0.82);
+  --landing-text: oklch(0.29 0.028 155);
+  --landing-muted: oklch(0.48 0.035 152);
+  --landing-accent: oklch(0.5 0.12 158);
+  --landing-accent-hover: oklch(0.42 0.11 158);
+  --landing-glow: oklch(0.55 0.11 158 / 0.22);
+  --landing-grid: oklch(0.5 0.03 155 / 0.06);
+  --landing-video-bg: oklch(0.18 0.03 155);
+
+  min-height: 100vh;
+  width: 100%;
+  color: var(--landing-text);
+  background: var(--landing-page-bg);
+  position: relative;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &::before {
+    content: '';
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--landing-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--landing-grid) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 78% 58% at 18% 0%, black 22%, transparent 72%);
+    opacity: 0.9;
+    z-index: 0;
+  }
+
+  &[data-theme='dark'] {
+    --landing-html-bg: oklch(0.15 0.022 155);
+    --landing-page-bg: linear-gradient(
+      155deg,
+      oklch(0.14 0.025 152) 0%,
+      oklch(0.16 0.02 158) 50%,
+      oklch(0.14 0.028 155) 100%
+    );
+    --landing-header-bg: color-mix(in oklch, oklch(0.2 0.03 155) 92%, transparent);
+    --landing-border: oklch(0.72 0.06 158 / 0.14);
+    --landing-surface: oklch(0.22 0.028 155 / 0.94);
+    --landing-surface-2: oklch(0.26 0.032 155 / 0.78);
+    --landing-text: oklch(0.94 0.02 155);
+    --landing-muted: oklch(0.72 0.04 155);
+    --landing-accent: oklch(0.74 0.14 158);
+    --landing-accent-hover: oklch(0.82 0.12 158);
+    --landing-glow: oklch(0.65 0.12 158 / 0.28);
+    --landing-grid: oklch(0.55 0.04 158 / 0.08);
+    --landing-video-bg: oklch(0.12 0.03 155);
+  }
+`
+
+const HeaderBar = styled.header`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--landing-border);
+  background: var(--landing-header-bg);
+  box-shadow: 0 2px 20px var(--landing-glow);
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--landing-accent) 35%,
+      oklch(0.58 0.1 158) 65%,
+      transparent 100%
+    );
+    opacity: 0.85;
+    pointer-events: none;
+  }
+`
+
+const NavCluster = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+`
+
+const ThemeToggle = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--landing-border);
+  background: var(--landing-surface-2);
+  color: var(--landing-text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--landing-accent);
+    box-shadow: 0 0 0 3px var(--landing-glow);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`
+
+const StyledRouterLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+`
+
+const StyledExternalAnchor = styled.a`
+  color: var(--landing-accent);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    border-bottom-color: var(--landing-accent);
+    color: var(--landing-accent-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--landing-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+`
+
+const Container = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  padding: 96px 20px 72px;
+  position: relative;
+  z-index: 1;
+`
+
+const HeroBand = styled.div`
+  max-width: 1200px;
+  margin: 0 auto 48px;
+  padding: 36px 32px 32px;
+  border-radius: 20px;
+  border: 1px solid var(--landing-border);
+  background: var(--landing-surface);
+  box-shadow: 0 14px 50px var(--landing-glow);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -35%;
+    right: -18%;
+    width: 62%;
+    height: 130%;
+    background: radial-gradient(
+      closest-side,
+      var(--landing-glow),
+      transparent 72%
+    );
+    pointer-events: none;
+  }
+`
+
+const HeroTitle = styled.h1`
+  font-size: clamp(28px, 4.2vw, 42px);
+  line-height: 1.1;
+  margin: 0 0 16px;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  max-width: 18ch;
+
+  &::after {
+    content: '';
+    display: block;
+    width: min(96px, 28vw);
+    height: 4px;
+    margin-top: 16px;
+    border-radius: 2px;
+    background: var(--landing-accent);
+  }
+`
+
+const HeroTagline = styled.p`
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--landing-muted);
+  margin: 0 0 8px;
+  max-width: 52ch;
+  position: relative;
+  z-index: 1;
+`
+
+/* Асимметричный hero (taste: anti-center bias), без трёх одинаковых «metric cards» */
+const HeroSplit = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  position: relative;
+  z-index: 1;
+  margin-top: 8px;
+  align-items: start;
+
+  @media (min-width: 920px) {
+    grid-template-columns: 1.2fr 0.88fr;
+    gap: 40px;
+  }
+`
+
+const HeroMainCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`
+
+const SignalColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--landing-border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--landing-surface-2);
+  box-shadow: inset 0 1px 0 color-mix(in oklch, oklch(0.99 0.01 150) 40%, transparent);
+`
+
+const SignalRow = styled.div`
+  padding: 16px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+
+  &:first-child {
+    padding: 20px 18px 18px;
+  }
+
+  &:not(:first-child) {
+    border-top: 1px solid var(--landing-border);
+  }
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--landing-accent);
+    font-size: 20px;
+  }
+`
+
+const SignalLabel = styled.div`
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--landing-muted);
+  margin-bottom: 4px;
+`
+
+const SignalText = styled.div`
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--landing-text);
+`
+
+const Section = styled.section`
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 30px 26px;
+  background: var(--landing-surface);
+  border-radius: 18px;
+  border: 1px solid var(--landing-border);
+  box-shadow: 0 10px 36px var(--landing-glow);
+  position: relative;
+  z-index: 1;
+
+  &:nth-of-type(2) {
+    margin-bottom: 52px;
+    padding: 32px 28px;
+  }
+
+  &:nth-of-type(4) {
+    margin-bottom: 56px;
+  }
+`
+
+const SectionTitle = styled.h2`
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+`
+
+const Subtitle = styled.h3`
+  font-size: 19px;
+  line-height: 1.25;
+  margin: 20px 0 10px;
+  color: var(--landing-text);
+`
+
+const Lead = styled.p`
+  font-size: 16px;
+  line-height: 1.55;
+  margin-bottom: 12px;
+  color: var(--landing-muted);
+`
+
+const MediaRow = styled.div`
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+  margin: 16px 0 18px;
+  flex-wrap: wrap;
+`
+
+const VideoCard = styled.div`
+  flex: 1 1 260px;
+  min-width: 240px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--landing-video-bg);
+  border: 1px solid var(--landing-border);
+  box-shadow: 0 10px 32px var(--landing-glow);
+
+  video {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+`
+
+const FrameVideoCard = styled.div`
+  flex: 1 1 260px;
+  min-width: 240px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--landing-video-bg);
+  position: relative;
+  border: 1px solid var(--landing-border);
+  box-shadow: 0 10px 32px var(--landing-glow);
+
+  .mainVideo {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .frameVideo {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 46%;
+    height: 46%;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    object-fit: cover;
+    display: block;
+  }
+`
+
+const GalleryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+const GalleryCard = styled.button`
+  appearance: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  text-align: left;
+  border-radius: 14px;
+
+  img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+    border: 1px solid var(--landing-border);
+    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  &:hover img {
+    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px var(--landing-glow);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--landing-accent);
+    outline-offset: 3px;
+  }
+`
+
+const CopyCard = styled.div`
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--landing-muted);
+`
+
+const ActionRow = styled.div`
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+`
+
+/* Шаги через divide-y, без цветной полосы слева (impeccable: side-stripe accent) */
+const StepStack = styled.div`
+  margin: 18px 0 0;
+  border: 1px solid var(--landing-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--landing-surface-2);
+`
+
+const StepRow = styled.div`
+  position: relative;
+  padding: 14px 18px 14px 52px;
+  color: var(--landing-muted);
+  font-size: 15px;
+  line-height: 1.5;
+
+  &:not(:first-child) {
+    border-top: 1px solid var(--landing-border);
+  }
+`
+
+const StepIndex = styled.span`
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  color: oklch(0.99 0.01 150);
+  background: var(--landing-accent);
+`
+
+const TechStrip = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 8px;
+`
+
+const TechPill = styled.span`
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--landing-accent) 35%, var(--landing-border));
+  background: color-mix(in oklch, var(--landing-accent) 8%, var(--landing-surface-2));
+  color: var(--landing-muted);
+`
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5)
+}
+
+const VideoLoop = ({ src, muted = true, className }) => (
+  <video
+    src={src}
+    autoPlay
+    muted={muted}
+    loop
+    playsInline
+    preload='metadata'
+    className={className}
+  />
+)
+
+const Landing = () => {
+  const [dark, setDark] = useState(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      const v = localStorage.getItem(LANDING_THEME_KEY)
+      if (v === 'dark' || v === 'light') return v === 'dark'
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+    } catch {
+      return false
+    }
+  })
+
+  useEffect(() => {
+    document.title = 'Scratch.ru – визуальное программирование на русском языке!'
+  }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LANDING_THEME_KEY, dark ? 'dark' : 'light')
+    } catch {
+      /* ignore */
+    }
+    document.documentElement.classList.add('landing-page-active')
+    return () => {
+      document.documentElement.classList.remove('landing-page-active')
+    }
+  }, [dark])
+
+  const materialsBase = '/materials'
+
+  const [v1to3, setV1to3] = useState([])
+  const [v4to6, setV4to6] = useState([])
+
+  const galleryItems = useMemo(() => {
+    const imgs = ['img1.jpg', 'img2.jpg', 'img3.jpg']
+    return shuffle(imgs).map((file, idx) => ({
+      file,
+      url: `https://scratch.ru/example${idx + 1}`,
+    }))
+  }, [])
+
+  useEffect(() => {
+    setV1to3(shuffle(['vid1.mp4', 'vid2.mp4', 'vid3.mp4']))
+    setV4to6(shuffle(['vid4.mp4', 'vid5.mp4', 'vid6.mp4']))
+  }, [])
+
+  const v7 = `${materialsBase}/vid7.mp4`
+
+  const antdTheme = {
+    algorithm: dark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+    token: {
+      colorPrimary: dark ? '#4ade80' : '#0d9488',
+      colorLink: dark ? '#4ade80' : '#0f766e',
+      borderRadius: 10,
+    },
+  }
+
+  return (
+    <ConfigProvider theme={antdTheme}>
+      <LandingGlobal />
+      <PageRoot data-theme={dark ? 'dark' : 'light'}>
+        <HeaderBar>
+          <NavCluster>
+            <StyledRouterLink to='/login'>
+              <Button>Войти</Button>
+            </StyledRouterLink>
+            <StyledRouterLink to='/register'>
+              <Button type='default'>Регистрация</Button>
+            </StyledRouterLink>
+            <Button
+              type='primary'
+              href='https://scratch.ru'
+              target='_blank'
+              rel='noreferrer'
+            >
+              Создавать
+            </Button>
+          </NavCluster>
+          <ThemeToggle
+            type='button'
+            onClick={() => setDark(d => !d)}
+            aria-label={dark ? 'Светлая тема' : 'Тёмная тема'}
+          >
+            {dark ? <FaSun size={16} /> : <FaMoon size={16} />}
+            {dark ? 'Светлая тема' : 'Тёмная тема'}
+          </ThemeToggle>
+        </HeaderBar>
+
+        <Container>
+          <HeroBand>
+            <HeroSplit>
+              <HeroMainCol>
+                <TechStrip>
+                  <TechPill>Визуальная среда</TechPill>
+                  <TechPill>Робототехника</TechPill>
+                  <TechPill>Олимпиады</TechPill>
+                  <TechPill>Платформа</TechPill>
+                </TechStrip>
+                <HeroTitle>
+                  Scratch.ru — визуальное программирование на русском языке
+                </HeroTitle>
+                <HeroTagline>
+                  Российская онлайн-платформа для творческих проектов: игры,
+                  викторины, анимация и управление роботами РОББО в одной
+                  образовательной экосистеме.
+                </HeroTagline>
+              </HeroMainCol>
+              <SignalColumn>
+                <SignalRow>
+                  <FaMicrochip aria-hidden />
+                  <div>
+                    <SignalLabel>Инженерный фокус</SignalLabel>
+                    <SignalText>
+                      От блок-схем к реальным исполнителям: цифровая среда и
+                      железо РОББО в одной цепочке.
+                    </SignalText>
+                  </div>
+                </SignalRow>
+                <SignalRow>
+                  <FaRocket aria-hidden />
+                  <div>
+                    <SignalLabel>Развитие продукта</SignalLabel>
+                    <SignalText>
+                      Методики и среда обновляются под школы, олимпиады и STEM.
+                    </SignalText>
+                  </div>
+                </SignalRow>
+                <SignalRow>
+                  <FaChartLine aria-hidden />
+                  <div>
+                    <SignalLabel>Траектория</SignalLabel>
+                    <SignalText>
+                      От первого проекта в Scratch до международных номинаций
+                      и экспертного жюри.
+                    </SignalText>
+                  </div>
+                </SignalRow>
+              </SignalColumn>
+            </HeroSplit>
+          </HeroBand>
+
+          <Section>
+            <CopyCard>
+              Scratch.ru — российская суверенная онлайн-платформа для
+              визуального программирования и язык программирования для детей и
+              взрослых
+            </CopyCard>
+            <SectionTitle>
+              Scratch.ru – визуальное программирование на русском языке!
+            </SectionTitle>
+
+            <Subtitle>1.1. о программировании Виртуальных исполнителей алгоритмов</Subtitle>
+            <Lead>
+              Scratch.ru - среда для создания проектов игр, викторин,
+              мультфильмов, анимационных историй. (Это для взрослых, поэтому мы
+              сознательно перечисляем типы проектов, которые мы ждем на
+              Олимпиаде.)
+            </Lead>
+
+            <MediaRow>
+              {v1to3.map(file => (
+                <VideoCard key={file}>
+                  <VideoLoop src={`${materialsBase}/${file}`} />
+                </VideoCard>
+              ))}
+            </MediaRow>
+
+            <Button
+              type='primary'
+              size='large'
+              href='https://scratch.ru/'
+              target='_blank'
+              rel='noreferrer'
+            >
+              НАЧАТЬ ПРОГРАММИРОВАТЬ
+            </Button>
+
+            <Subtitle>1.2. о программировании РОБОТОВ - реальных исполнителей алгоритмов</Subtitle>
+            <Lead>Scratch.ru среда для программирования роботов РОББО</Lead>
+
+            <MediaRow>
+              {v4to6.map(file => (
+                <FrameVideoCard key={file}>
+                  <VideoLoop
+                    src={`${materialsBase}/${file}`}
+                    className='mainVideo'
+                  />
+                  <VideoLoop
+                    src={`${materialsBase}/${file}`}
+                    className='frameVideo'
+                  />
+                </FrameVideoCard>
+              ))}
+            </MediaRow>
+
+            <Button
+              type='primary'
+              size='large'
+              href='https://scratch.ru/'
+              target='_blank'
+              rel='noreferrer'
+            >
+              НАЧАТЬ ПРОГРАММИРОВАТЬ РОБОТА РОББО
+            </Button>
+          </Section>
+
+          <Section>
+            <SectionTitle>2. Scratch-олимпиада</SectionTitle>
+            <Lead>
+              Ежегодная международная олимпиада, 2 номинации, даты и примеры
+              работ в виде гифок победителей
+            </Lead>
+
+            <Subtitle>2.1. Краткая Лента времени с ключевыми датами</Subtitle>
+            <StepStack>
+              <StepRow>
+                <StepIndex>1</StepIndex>
+                дата 1
+              </StepRow>
+              <StepRow>
+                <StepIndex>2</StepIndex>
+                дата 2
+              </StepRow>
+              <StepRow>
+                <StepIndex>3</StepIndex>
+                дата 3
+              </StepRow>
+              <StepRow>
+                <StepIndex>4</StepIndex>
+                дата 4
+              </StepRow>
+              <StepRow>
+                <StepIndex>5</StepIndex>
+                дата 5
+              </StepRow>
+            </StepStack>
+
+            <CopyCard style={{ marginTop: 18 }}>
+              прием заявок на российский межрегиональный отборочный тур
+              <br />
+              прием заявок на российский отборочный тур
+              <br />
+              прием заявок на международный этап
+              <br />
+              международный этап
+              <br />
+              награждение победителей международный этап
+            </CopyCard>
+
+            <ActionRow>
+              <Button type='link' disabled>
+                Подробнее
+              </Button>
+              <Button type='link' disabled>
+                Подробнее
+              </Button>
+              <Button type='link' disabled>
+                Подробнее
+              </Button>
+              <Button type='link' disabled>
+                Подробнее
+              </Button>
+            </ActionRow>
+
+            <Subtitle style={{ marginTop: 26 }}>2.2. Трейлер Олимпиады</Subtitle>
+            <VideoCard style={{ margin: '14px 0 18px', maxWidth: 520 }}>
+              <VideoLoop src={v7} />
+            </VideoCard>
+
+            <ActionRow>
+              <Button
+                type='primary'
+                href='https://creativeprogramming.org/'
+                target='_blank'
+                rel='noreferrer'
+              >
+                УЗНАТЬ БОЛЬШЕ про МЕЖДУНАРОДНУЮ Scratch-Олимпиаду
+              </Button>
+              <Button
+                href='https://robbo.ru/olymp/'
+                target='_blank'
+                rel='noreferrer'
+              >
+                УЗНАТЬ БОЛЬШЕ про Российский этап Scratch - ОЛИМПИАДЫ
+              </Button>
+            </ActionRow>
+
+            <Subtitle style={{ marginTop: 26 }}>Примеры проектов</Subtitle>
+            <Lead>
+              Галерея с привлекательными картинками-скриншотами (гифками ). При
+              клике на картинку открывается проект.
+            </Lead>
+            <GalleryGrid>
+              {galleryItems.map(({ file, url }) => (
+                <GalleryCard
+                  key={file}
+                  type='button'
+                  onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
+                >
+                  <img src={`${materialsBase}/${file}`} alt='Example project' />
+                </GalleryCard>
+              ))}
+            </GalleryGrid>
+          </Section>
+
+          <Section>
+            <SectionTitle>3. Педагогам</SectionTitle>
+
+            <Subtitle>3.1 Изучаем Скретч</Subtitle>
+            <Lead>
+              Курс Секреты Scratch предназначен для детей от 7 лет и старше.
+              Участники разработают свою анимационную историю и смогут отправить
+              ее на Scratch Олимпиаду. В основном дети могут пройти курс
+              самостоятельно.
+            </Lead>
+            <Lead>
+              Роль родителей и педагогов заключается в помощи детям в соблюдении
+              безопасности при работе за компьютером. Поддержка взрослых может
+              понадобиться при установке ROBBO Scratch на устройство ребенка.
+            </Lead>
+            <Button
+              type='primary'
+              size='large'
+              href='https://lms2.robbo.world/courses/course-v1:Robbo+AC002+June/about'
+              target='_blank'
+              rel='noreferrer'
+            >
+              НАЧНИ бесплатно ИЗУЧЕНИЕ Scratch
+            </Button>
+
+            <Subtitle>3.2 Изучаем критерии оценки олимпиадных работ в дисциплине Scratch</Subtitle>
+            <Lead>
+              Курс предназначен для членов жюри дисциплины Scratch в рамках
+              Российского национального отборочного этапа Международной
+              Scratch-Олимпиады по креативному программированию.
+            </Lead>
+            <Lead>В состав жюри могут войти только педагоги с опытом преподавания Scratch.</Lead>
+            <ActionRow>
+              <Button
+                type='primary'
+                href='#'
+                disabled
+              >
+                СТАТЬ ЭКСПЕРТОМ ПРОВЕРКИ РАБОТ В в дисциплине Scratch
+              </Button>
+            </ActionRow>
+
+            <Subtitle>3.3 Изучаем критерии оценки олимпиадных работ в дисциплине RobboScratch</Subtitle>
+            <Lead>
+              Курс предназначен для членов жюри дисциплины RobboScratch —
+              креативное программирование на RobboScratch с использованием
+              мобильных роботов и цифровых лабораторий РОББО.
+            </Lead>
+            <Lead>В состав жюри могут войти только педагоги с опытом работы на оборудовании РОББО.</Lead>
+            <ActionRow>
+              <Button
+                type='primary'
+                href='#'
+                disabled
+              >
+                СТАТЬ ЭКСПЕРТОМ ПРОВЕРКИ РАБОТ В в дисциплине RobboScratch
+              </Button>
+            </ActionRow>
+          </Section>
+
+          <Section>
+            <SectionTitle>4. О РОББО</SectionTitle>
+
+            <Subtitle>О компании</Subtitle>
+            <Lead>
+              Модернизация урока &quot;Технология&quot;. Инженерный инновационный
+              РОББО Класс{' '}
+              <StyledExternalAnchor
+                href='https://innoclass.ru/'
+                target='_blank'
+                rel='noreferrer'
+              >
+                innoclass.ru
+              </StyledExternalAnchor>
+            </Lead>
+
+            <Subtitle>4.2. Методика преподавания</Subtitle>
+            <Lead>
+              Тут еще раз говорим про то что скретч.ру поддерживает традиц
+              ценности, потом напоминаем инструкцию по использованию, потом текст
+              про уникальные возможности при обучении программированию и далее
+              про ЭУМК РОББО.
+            </Lead>
+            <Lead>Квик-гайд</Lead>
+
+            <Subtitle style={{ marginTop: 18 }}>Это первоначальный список:</Subtitle>
+            <CopyCard>
+              <div style={{ marginBottom: 10 }}>
+                Инструкция для педагогов - как открыть, как сохранить
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                <StyledExternalAnchor
+                  href='https://scratch.ru'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  Начать работу
+                </StyledExternalAnchor>{' '}
+                — переход на нынешний scratch.ru
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                Кнопки как в футере - на Секреты Скретч, Заявки на покупку
+                оборудования Иннокласс, заявка на участие в Scratch-Олимпиаде,
+                заявка на обучение педагогов
+              </div>
+              <div style={{ marginBottom: 10 }}>Ссылки на Протокол с работами - #</div>
+              <div style={{ marginBottom: 10 }}>
+                Видео лучших работ в номинации RobboScratch - #
+              </div>
+            </CopyCard>
+          </Section>
+        </Container>
+      </PageRoot>
+    </ConfigProvider>
+  )
+}
+
+export default Landing

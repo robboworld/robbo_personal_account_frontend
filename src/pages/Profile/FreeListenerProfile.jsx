@@ -1,6 +1,8 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import { Row, Typography, Skeleton } from 'antd'
+import { Alert, Row, Typography, Skeleton } from 'antd'
+
+import { getProfileFromQuery } from './profileQuery'
 
 import PageLayout from '@/components/PageLayout'
 import ProfileCard from '@/components/ProfileCard'
@@ -8,22 +10,29 @@ import ProfileCard from '@/components/ProfileCard'
 const { Title } = Typography
 
 const FreeListenerProfile = ({
-  data: {
-    GetUser,
-    loading,
-  },
+  data,
   UpdateFreeListener,
   accessUpdate,
 }) => {
+  const { profile, loading, error } = getProfileFromQuery(data)
+
   return (
     <PageLayout>
       <Row align='middle'>
         <Title><FormattedMessage id='profile.title' /></Title>
       </Row>
       <Row>
+        {error && (
+          <Alert
+            type='error'
+            showIcon
+            message={error.message || String(error)}
+            style={{ marginBottom: 16, width: '100%' }}
+          />
+        )}
         <Skeleton active loading={loading}>
           <ProfileCard
-            profile={GetUser?.userHttp}
+            profile={profile}
             updateHandle={UpdateFreeListener}
             accessUpdate={accessUpdate}
           />

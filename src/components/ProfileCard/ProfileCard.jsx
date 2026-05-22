@@ -1,6 +1,6 @@
 import React from 'react'
 import { PropTypes } from 'prop-types'
-import { Button, Form, Input } from 'antd'
+import { Button, Empty, Form, Input } from 'antd'
 import { FormattedMessage } from 'react-intl'
 
 import { userRole } from '@/constants'
@@ -21,11 +21,19 @@ const ProfileCard = ({
     const [form] = Form.useForm()
     const isFormDisable = accessUpdate
 
+    if (!profile) {
+        return (
+            <Empty
+                description={<FormattedMessage id='profile_card.not_loaded' defaultMessage='Профиль недоступен или ещё загружается' />}
+            />
+        )
+    }
+
     return (
         <Form
             name='normal_profile'
             className='profile-form'
-            onFinish={({ email, nickname, middlename, firstname, lastname }) => {
+            onFinish={({ email, middlename, firstname, lastname }) => {
                 updateHandle(
                     {
                         variables: {
@@ -35,7 +43,7 @@ const ProfileCard = ({
                                 middlename,
                                 firstname,
                                 lastname,
-                                nickname,
+                                nickname: profile.nickname,
                             },
                         },
                     })
@@ -57,9 +65,11 @@ const ProfileCard = ({
                 <Input placeholder={profile.email} size='large' />
             </Form.Item>
             <Form.Item
-                name='nickname' label={<FormattedMessage id='profile_card.nickname' />}
+                name='nickname'
+                label={<FormattedMessage id='profile_card.username' defaultMessage='Логин' />}
             >
-                <Input placeholder={profile.nickname} size='large' />
+                <Input placeholder={profile.nickname} size='large'
+readOnly />
             </Form.Item>
             <Form.Item
                 name='firstname' label={<FormattedMessage id='profile_card.firstname' />}

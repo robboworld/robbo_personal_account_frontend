@@ -9,6 +9,7 @@ import {
     checkAuthRequest, checkAuthSuccess, checkAuthFailed,
 } from '@/actions'
 import { authMutationsGraphQL, graphQLClient } from '@/graphQL'
+import { redirectToOidcStart } from '@/helpers/oidcSession'
 
 function* signInSaga(action) {
     try {
@@ -19,6 +20,11 @@ function* signInSaga(action) {
         yield put(signInSucces(response.data.SingIn))
     } catch (e) {
         console.log(e.response)
+        const errText = String(e?.response?.data?.error || e?.response?.data || '')
+        if (errText.includes('legacy sign-in disabled') && !errText.includes('sign-up disabled')) {
+            redirectToOidcStart('/home', 'login')
+            return
+        }
         yield put(signInFailed(e.response.data))
     }
 }

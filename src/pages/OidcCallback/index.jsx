@@ -3,6 +3,7 @@ import { Alert, Button, Card, Space, Typography } from 'antd'
 
 import PageLayoutLogin from '@/components/PageLayoutLogin'
 import { HOME_PAGE_ROUTE, LMS_URL } from '@/constants'
+import config from '@/config'
 import {
   clearPkceFromSession,
   exchangeCodeForTokens,
@@ -30,6 +31,18 @@ const toReasonMessage = reason => {
   }
 
   return reasonMap[reason] || 'Ошибка OAuth/OIDC авторизации.'
+}
+
+const backendBase = () => {
+  const url = config.backendURL && config.backendURL[0]
+  return url ? url.replace(/\/$/, '') : 'http://localhost:8080'
+}
+
+const buildLoginAgainUrl = () => {
+  const startUrl = new URL(`${backendBase()}/auth/oidc/start`)
+  startUrl.searchParams.set('prompt', 'login')
+  startUrl.searchParams.set('return_to', HOME_PAGE_ROUTE)
+  return startUrl.toString()
 }
 
 const OidcCallback = () => {
@@ -128,10 +141,11 @@ const OidcCallback = () => {
           <Alert message='Не удалось завершить SSO' description={toReasonMessage(reason)}
 type='error' showIcon />
           {!!details && <Text type='secondary'>{details}</Text>}
-          <Space>
-            <Button type='primary' href={LMS_URL}>
-              Открыть LMS
+          <Space wrap>
+            <Button type='primary' href={buildLoginAgainUrl()}>
+              Войти снова
             </Button>
+            <Button href={LMS_URL}>Открыть LMS</Button>
             <Button href={HOME_PAGE_ROUTE}>Вернуться в ЛК</Button>
           </Space>
         </Space>

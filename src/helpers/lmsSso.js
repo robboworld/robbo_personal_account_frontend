@@ -101,17 +101,30 @@ const buildAuthorizeUrl = async () => {
   return authorizeUrl.toString()
 }
 
+const openLmsDirect = () => {
+  window.open(LMS_URL, '_blank', 'noopener,noreferrer')
+}
+
 export const openLms = async () => {
   if (!LK_SSO_WITH_LMS_ENABLED || !isOAuthConfigured()) {
     const status = getOidcConfigStatus()
     logAuthEvent('fallback_lms_direct_open_new_tab', status)
-    window.open(LMS_URL, '_blank', 'noopener,noreferrer')
+    openLmsDirect()
     return
   }
 
-  logAuthEvent('authorize_redirect_started', { mode: 'new_tab' })
-  const url = await buildAuthorizeUrl()
-  window.open(url, '_blank', 'noopener,noreferrer')
+  try {
+    logAuthEvent('authorize_redirect_started', { mode: 'new_tab' })
+    const url = await buildAuthorizeUrl()
+    const popup = window.open(url, '_blank', 'noopener,noreferrer')
+    if (!popup) {
+      logAuthEvent('fallback_lms_popup_blocked')
+      openLmsDirect()
+    }
+  } catch (error) {
+    logAuthEvent('fallback_lms_oidc_error', { error: String(error?.message || error) })
+    openLmsDirect()
+  }
 }
 
 /** Редирект в LMS в текущей вкладке (маршрут /mycourses и прямые ссылки). */
@@ -123,9 +136,14 @@ export const navigateToLmsSameTab = async () => {
     return
   }
 
-  logAuthEvent('authorize_redirect_started', { mode: 'same_tab' })
-  const url = await buildAuthorizeUrl()
-  window.location.assign(url)
+  try {
+    logAuthEvent('authorize_redirect_started', { mode: 'same_tab' })
+    const url = await buildAuthorizeUrl()
+    window.location.assign(url)
+  } catch (error) {
+    logAuthEvent('fallback_lms_oidc_error_same_tab', { error: String(error?.message || error) })
+    window.location.replace(LMS_URL)
+  }
 }
 
 export const readPkceFromSession = () => ({
