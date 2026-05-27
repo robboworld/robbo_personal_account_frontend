@@ -1,45 +1,31 @@
 import React from 'react'
-import { FormattedMessage } from 'react-intl'
-import { Alert, Row, Typography, Skeleton } from 'antd'
 
 import { getProfileFromQuery } from './profileQuery'
 
-import PageLayout from '@/components/PageLayout'
+import ProfilePageShell from '@/components/ProfilePageShell'
 import ProfileCard from '@/components/ProfileCard'
 
-const { Title } = Typography
-
 const TeacherProfile = ({
-    data,
-    UpdateTeacher,
-    accessUpdate,
+  data,
+  UpdateTeacher,
+  accessUpdate,
 }) => {
-    const { profile, loading, error } = getProfileFromQuery(data)
+  const { profile, loading, error } = getProfileFromQuery(data)
 
-    return (
-        <PageLayout>
-            <Row align='middle'>
-                <Title><FormattedMessage id='profile.title' /></Title>
-            </Row>
-            <Row>
-                {error && (
-                    <Alert
-                        type='error'
-                        showIcon
-                        message={error.message || String(error)}
-                        style={{ marginBottom: 16, width: '100%' }}
-                    />
-                )}
-                <Skeleton active loading={loading}>
-                    <ProfileCard
-                        profile={profile}
-                        updateHandle={UpdateTeacher}
-                        accessUpdate={accessUpdate}
-                    />
-                </Skeleton>
-            </Row>
-        </PageLayout>
-    )
+  return (
+    <ProfilePageShell
+      profile={profile}
+      loading={loading}
+      error={error}
+      accessUpdate={accessUpdate}
+    >
+      <ProfileCard
+        profile={profile}
+        updateHandle={UpdateTeacher}
+        accessUpdate={accessUpdate}
+      />
+    </ProfilePageShell>
+  )
 }
 
 export default TeacherProfile
