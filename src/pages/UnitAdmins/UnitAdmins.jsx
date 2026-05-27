@@ -9,6 +9,7 @@ import UnitAdminContent from "@/components/UnitAdminContent"
 import { DragResize } from '@/components/UI'
 import { useActions } from "@/helpers/useActions"
 import { deleteUnitAdmin } from '@/actions'
+import { formatUserDisplayName } from '@/helpers'
 
 const { Title } = Typography
 
@@ -69,7 +70,7 @@ const UnitAdmins = memo(({
                             <ListItem
                                 itemIndex={index}
                                 handleDelete={unitAdminIndex => actions.deleteUnitAdmin(userHttp.id, unitAdminIndex)}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                label={formatUserDisplayName(userHttp)}
                                 key={index}
                                 render={(open, setOpen) => (
                                     <DragResize

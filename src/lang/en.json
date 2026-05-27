@@ -15,7 +15,7 @@
     "profile_card.email": "Email",
     "profile_card.password": "Password",
     "profile_card.nickname": "Nickname",
-    "profile_card.username": "Username (read-only)",
+    "profile_card.username": "Login",
     "profile_card.firstname": "Firstname",
     "profile_card.middlename": "Middlename",
     "profile_card.lastname": "Lastname",

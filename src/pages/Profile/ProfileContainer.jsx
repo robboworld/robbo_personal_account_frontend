@@ -93,6 +93,8 @@ const ProfileContainer = ({
                         {
                             name: 'UpdateStudent',
                             options: {
+                                refetchQueries: [{ query: profileGQL.GET_USER }],
+                                awaitRefetchQueries: true,
                                 onCompleted: () => {
                                     notification.success({ description: intl.formatMessage({ id: 'notification.update_profile_success' }) })
                                 },

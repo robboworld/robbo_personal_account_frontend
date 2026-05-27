@@ -1,9 +1,34 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { PropTypes } from 'prop-types'
 import { Button, Empty, Form, Input } from 'antd'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { userRole } from '@/constants'
+
+const normalizeProfileField = value => (value ?? '').trim()
+
+const profileFieldsUnchanged = (profile, { email, firstname, lastname }) => (
+    normalizeProfileField(email) === normalizeProfileField(profile.email) &&
+    normalizeProfileField(firstname) === normalizeProfileField(profile.firstname) &&
+    normalizeProfileField(lastname) === normalizeProfileField(profile.lastname)
+)
+
+const formatProfileDateTime = (value, locale) => {
+    if (!value) {
+        return '—'
+    }
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) {
+        return value
+    }
+    return new Intl.DateTimeFormat(locale, {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    }).format(date)
+}
 
 const ProfileCard = ({
     updateHandle,
@@ -18,8 +43,20 @@ const ProfileCard = ({
             span: 16,
         },
     }
+    const intl = useIntl()
     const [form] = Form.useForm()
     const isFormDisable = accessUpdate
+
+    useEffect(() => {
+        if (!profile) {
+            return
+        }
+        form.setFieldsValue({
+            email: profile.email,
+            firstname: profile.firstname,
+            lastname: profile.lastname,
+        })
+    }, [profile, form])
 
     if (!profile) {
         return (
@@ -33,17 +70,20 @@ const ProfileCard = ({
         <Form
             name='normal_profile'
             className='profile-form'
-            onFinish={({ email, middlename, firstname, lastname }) => {
+            onFinish={({ email, firstname, lastname }) => {
+                if (profileFieldsUnchanged(profile, { email, firstname, lastname })) {
+                    return
+                }
                 updateHandle(
                     {
                         variables: {
                             input: {
                                 id: profile.id,
                                 email,
-                                middlename,
                                 firstname,
                                 lastname,
                                 nickname: profile.nickname,
+                                middlename: '',
                             },
                         },
                     })
@@ -52,10 +92,8 @@ const ProfileCard = ({
             form={form}
             initialValues={{
                 email: profile.email,
-                nickname: profile.nickname,
                 firstname: profile.firstname,
                 lastname: profile.lastname,
-                middlename: profile.middlename,
             }}
             disabled={isFormDisable}
         >
@@ -64,12 +102,8 @@ const ProfileCard = ({
             >
                 <Input placeholder={profile.email} size='large' />
             </Form.Item>
-            <Form.Item
-                name='nickname'
-                label={<FormattedMessage id='profile_card.username' defaultMessage='Логин' />}
-            >
-                <Input placeholder={profile.nickname} size='large'
-readOnly />
+            <Form.Item label={<FormattedMessage id='profile_card.username' defaultMessage='Логин' />}>
+                {profile.nickname || '—'}
             </Form.Item>
             <Form.Item
                 name='firstname' label={<FormattedMessage id='profile_card.firstname' />}
@@ -81,20 +115,13 @@ readOnly />
             >
                 <Input placeholder={profile.lastname} size='large' />
             </Form.Item>
-            <Form.Item
-                name='middlename' label={<FormattedMessage id='profile_card.middlename' />}
-            >
-                <Input placeholder={profile.middlename} size='large' />
-            </Form.Item>
             <Form.Item label={<FormattedMessage id='profile_card.role' />}>
                 {
                     userRole[profile.role]
                 }
             </Form.Item>
             <Form.Item label={<FormattedMessage id='profile_card.created_at' />}>
-                {
-                    profile.createdAt
-                }
+                {formatProfileDateTime(profile.createdAt, intl.locale)}
             </Form.Item>
             {
                 !isFormDisable &&
@@ -118,7 +145,6 @@ ProfileCard.propTypes = {
         nickname: PropTypes.string,
         lastname: PropTypes.string,
         firstname: PropTypes.string,
-        middlename: PropTypes.string,
         role: PropTypes.number,
         createdAt: PropTypes.string,
     }),

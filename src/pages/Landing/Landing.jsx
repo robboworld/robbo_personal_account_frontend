@@ -16,9 +16,8 @@ import {
 
 import appTheme from '@/theme'
 
-/** Логотип в шапке — тот же файл, что на scratch.ru (статика). */
-const SCRATCH_RU_HEADER_LOGO_URL =
-  'https://scratch.ru/static/assets/5cfab8ad77067bdc0fa535ef6a992491.svg'
+/** Логотип в шапке — локальный файл из `static/logo.png`. */
+const HEADER_LOGO_URL = '/static/logo.png'
 
 const ACCENT = appTheme.colors.accentGreen
 const ACCENT_HOVER = appTheme.colors.accentGreenHover
@@ -238,7 +237,7 @@ const BrandMark = styled.span`
 
 const BrandLogoImg = styled.img`
   display: block;
-  height: 26px;
+  height: 38px;
   width: auto;
 `
 
@@ -770,7 +769,7 @@ const Landing = () => {
     )
   }, [dark])
 
-  const materialsBase = '/materials'
+  const staticBase = '/static'
 
   const [v1to3, setV1to3] = useState([])
   const [v4to6, setV4to6] = useState([])
@@ -788,7 +787,7 @@ const Landing = () => {
     setV4to6(shuffle(['vid4.mp4', 'vid5.mp4', 'vid6.mp4']))
   }, [])
 
-  const v7 = `${materialsBase}/vid7.mp4`
+  const v7 = `${staticBase}/vid7.mp4`
 
   /** Всегда defaultAlgorithm: darkAlgorithm перекрашивает primary в более светлый оттенок. Цвет кнопок/ссылок — тот же #00AF41 в обеих темах. */
   const antdTheme = {
@@ -821,7 +820,7 @@ const Landing = () => {
           <NavCluster>
             <BrandMark>
               <BrandLogoImg
-                src={SCRATCH_RU_HEADER_LOGO_URL}
+                src={HEADER_LOGO_URL}
                 alt=''
                 decoding='async'
               />
@@ -933,7 +932,7 @@ const Landing = () => {
             <MediaRow>
               {v1to3.map(file => (
                 <MotionVideoCard key={file} {...videoReveal}>
-                  <VideoLoop src={`${materialsBase}/${file}`} />
+                  <VideoLoop src={`${staticBase}/${file}`} />
                 </MotionVideoCard>
               ))}
             </MediaRow>
@@ -961,11 +960,11 @@ const Landing = () => {
               {v4to6.map(file => (
                 <MotionFrameVideoCard key={file} {...videoReveal}>
                   <VideoLoop
-                    src={`${materialsBase}/${file}`}
+                    src={`${staticBase}/${file}`}
                     className='mainVideo'
                   />
                   <VideoLoop
-                    src={`${materialsBase}/${file}`}
+                    src={`${staticBase}/${file}`}
                     className='frameVideo'
                   />
                 </MotionFrameVideoCard>
@@ -1092,7 +1091,7 @@ const Landing = () => {
                   viewport={{ once: true, margin: '-20px' }}
                   transition={{ duration: 0.4, ease: easeOutExpo }}
                 >
-                  <img src={`${materialsBase}/${file}`} alt='Example project' />
+                  <img src={`${staticBase}/${file}`} alt='Example project' />
                 </MotionGalleryCard>
               ))}
             </GalleryGrid>

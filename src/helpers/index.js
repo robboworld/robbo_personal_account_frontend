@@ -1,3 +1,4 @@
+export * from './formatUserDisplayName'
 export * from './useUserIdentity'
 export * from './useActions'
 export * from './courseDescriptionParser'

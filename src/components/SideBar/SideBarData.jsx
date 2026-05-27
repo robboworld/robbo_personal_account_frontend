@@ -10,7 +10,6 @@ import {
   RobotOutlined,
   TeamOutlined,
   LogoutOutlined,
-  ProjectOutlined,
   LineChartOutlined,
   NotificationOutlined,
 } from '@ant-design/icons'
@@ -18,7 +17,6 @@ import {
 import {
   HOME_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
-  MY_PROJECTS_ROUTE,
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
   UNIT_ADMINS_ROUTE,
@@ -41,12 +39,12 @@ export const SidebarDataStudent = [
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
-  {
-    key: '2',
-    label: <FormattedMessage id='sidebar_data.my_projects' />,
-    pathname: MY_PROJECTS_ROUTE,
-    icon: <ProjectOutlined />,
-  },
+  // {
+  //   key: '2',
+  //   label: <FormattedMessage id='sidebar_data.my_projects' />,
+  //   pathname: MY_PROJECTS_ROUTE,
+  //   icon: <ProjectOutlined />,
+  // },
   // {
   //   key: '3',
   //   label: 'Платежи',

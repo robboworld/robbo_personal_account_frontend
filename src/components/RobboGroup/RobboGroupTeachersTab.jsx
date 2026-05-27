@@ -8,7 +8,7 @@ import { compose } from 'redux'
 import ListItem from '@/components/ListItem'
 import { teacherQuerysGQL } from '@/graphQL/query'
 import { PROFILE_PAGE_ROUTE, TEACHER } from '@/constants'
-import { useActions } from '@/helpers'
+import { useActions , formatUserDisplayName } from '@/helpers'
 import {
     setTeacherForRobboGroupRequest,
     deleteTeacherForRobboGroupRequest,
@@ -46,7 +46,7 @@ const RobboGroupTeachersTab = ({
                     <ListItem
                         itemIndex={index}
                         key={index}
-                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                        label={formatUserDisplayName(userHttp)}
                         render={() => { }}
                         handleClick={() => openProfileTeacher(userHttp.id)}
                         handleDelete={() => actions.deleteTeacherForRobboGroupRequest(userHttp.id, robboGroupId)}
@@ -82,7 +82,7 @@ const RobboGroupTeachersTab = ({
                                     itemIndex={index}
                                     key={index}
                                     render={() => { }}
-                                    label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                    label={formatUserDisplayName(userHttp)}
                                     handleClick={() => actions.setTeacherForRobboGroupRequest(userHttp.id, robboGroupId)}
                                 />
                             )}

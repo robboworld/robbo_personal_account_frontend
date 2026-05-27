@@ -9,6 +9,7 @@ import AddTeacher from '@/components/AddTeacher'
 import { useActions } from '@/helpers/useActions'
 import { DragResize } from '@/components/UI'
 import { deleteTeacher } from '@/actions'
+import { formatUserDisplayName } from '@/helpers'
 
 
 const { Title } = Typography
@@ -68,7 +69,7 @@ const Teachers = memo(({
                             <ListItem
                                 itemIndex={index}
                                 handleDelete={teacherIndex => actions.deleteTeacher(userHttp.id, teacherIndex)}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                label={formatUserDisplayName(userHttp)}
                                 key={index}
                                 render={(open, setOpen) => (
                                     <DragResize
