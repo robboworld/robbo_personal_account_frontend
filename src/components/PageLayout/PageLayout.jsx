@@ -84,7 +84,7 @@ const PageLayout = ({ children }) => {
                         <NotificationBell />
                     </div>
                 </Header>
-                <Content style={{ padding: '0 1rem' }}>
+                <Content style={{ padding: '0 1rem', background: '#f4f8f4' }}>
                     {
                         children
                     }

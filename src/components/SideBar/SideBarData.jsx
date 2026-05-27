@@ -1,17 +1,19 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import * as FaIcons from 'react-icons/fa'
 
 import {
   HomeOutlined,
   UserOutlined,
   BookOutlined,
   CreditCardOutlined,
-  RobotOutlined,
   TeamOutlined,
   LogoutOutlined,
-  LineChartOutlined,
   NotificationOutlined,
+  SafetyCertificateOutlined,
+  ReadOutlined,
+  InfoCircleOutlined,
+  BankOutlined,
+  GroupOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -165,12 +167,12 @@ export const SidebarDataSuperAdmin = [
     key: '6',
     label: <FormattedMessage id='sidebar_data.robbo_units' />,
     pathname: ROBBO_UNITS_ROUTE,
-    icon: <RobotOutlined />,
+    icon: <BankOutlined />,
   }, {
     key: '7',
     label: <FormattedMessage id='sidebar_data.robbo_groups' />,
     pathname: ROBBO_GROUPS_ROUTE,
-    icon: <RobotOutlined />,
+    icon: <GroupOutlined />,
   },
   {
     key: '8',
@@ -183,13 +185,13 @@ export const SidebarDataSuperAdmin = [
     key: '9',
     label: <FormattedMessage id='sidebar_data.unit_admins' />,
     pathname: UNIT_ADMINS_ROUTE,
-    icon: <FaIcons.FaInfo />,
+    icon: <SafetyCertificateOutlined />,
   },
   {
     key: '10',
     label: <FormattedMessage id='sidebar_data.teachers' />,
     pathname: TEACHERS_PAGE_ROUTE,
-    icon: <FaIcons.FaInfo />,
+    icon: <TeamOutlined />,
   },
   {
     key: 'send_notification',
@@ -310,13 +312,13 @@ export const SidebarDataFreeListener = [
     key: '2',
     label: 'Платежи',
     pathname: '/program',
-    icon: <FaIcons.FaTasks />,
+    icon: <CreditCardOutlined />,
   },
   {
     key: '3',
     label: <FormattedMessage id='sidebar_data.programm' />,
     pathname: '/program',
-    icon: <FaIcons.FaTasks />,
+    icon: <ReadOutlined />,
   },
   {
     key: '4',
@@ -329,7 +331,7 @@ export const SidebarDataFreeListener = [
     key: '5',
     label: 'Информер',
     pathname: '/informer',
-    icon: <FaIcons.FaInfo />,
+    icon: <InfoCircleOutlined />,
   },
   {
     key: '6',
@@ -356,7 +358,7 @@ export const SidebarDataUnitAdmin = [
     key: '2',
     label: <FormattedMessage id='sidebar_data.robbo_units' />,
     pathname: ROBBO_UNITS_ROUTE,
-    icon: <RobotOutlined />,
+    icon: <BankOutlined />,
   },
   {
     key: '3',
@@ -369,7 +371,7 @@ export const SidebarDataUnitAdmin = [
     key: '4',
     label: <FormattedMessage id='sidebar_data.teachers' />,
     pathname: TEACHERS_PAGE_ROUTE,
-    icon: <FaIcons.FaTasks />,
+    icon: <TeamOutlined />,
   },
   // {
   //   key: '5',
@@ -381,7 +383,7 @@ export const SidebarDataUnitAdmin = [
     key: '6',
     label: <FormattedMessage id='sidebar_data.robbo_groups' />,
     pathname: ROBBO_GROUPS_ROUTE,
-    icon: <RobotOutlined />,
+    icon: <GroupOutlined />,
   },
   {
     key: 'send_notification',

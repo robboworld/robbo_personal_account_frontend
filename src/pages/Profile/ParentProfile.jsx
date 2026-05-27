@@ -1,71 +1,91 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import { Row, Col, Typography, Skeleton, List } from 'antd'
-
+import { List } from 'antd'
+import { motion } from 'framer-motion'
 
 import { getProfileFromQuery } from './profileQuery'
 
 import PageLayout from '@/components/PageLayout'
+import ProfilePageShell from '@/components/ProfilePageShell'
 import ProfileCard from '@/components/ProfileCard'
+import {
+  ChildrenListHeader,
+  ChildrenPanel,
+  PageContent,
+  ParentLayout,
+  staggerContainer,
+  staggerItem,
+} from '@/components/AccountShell'
 import { PROFILE_PAGE_ROUTE } from '@/constants'
 import ListItem from '@/components/ListItem'
 import { formatUserDisplayName } from '@/helpers'
 
-const { Title } = Typography
-
 const ParentProfile = ({
-    data,
-    GetUser,
-    GetStudents,
-    UpdateParent,
-    accessUpdate,
+  data,
+  GetUser,
+  GetStudents,
+  UpdateParent,
+  accessUpdate,
 }) => {
-    const navigate = useNavigate()
-    const { profile, loading: profileLoading } = getProfileFromQuery(data ?? GetUser)
-    const openProfileStudent = userId => {
-        navigate(PROFILE_PAGE_ROUTE, {
-            state: {
-                userId,
-                userRole: 0,
-            },
-        })
-    }
+  const navigate = useNavigate()
+  const { profile, loading: profileLoading } = getProfileFromQuery(data ?? GetUser)
 
-    return (
-        <PageLayout>
-            <Row align='middle'>
-                <Title><FormattedMessage id='profile.title' /></Title>
-            </Row>
-            <Row justify='start' gutter={[8, 8]}>
-                <Col span={8}>
-                    <Skeleton active loading={profileLoading}>
-                        <ProfileCard
-                            profile={profile}
-                            updateHandle={UpdateParent}
-                            accessUpdate={accessUpdate}
-                        />
-                    </Skeleton>
-                </Col>
-                <Col span={12}>
-                    <List
-                        header={<FormattedMessage id='parent_profile.header_children_list' />}
-                        bordered
-                        loading={GetStudents?.loading}
-                        dataSource={GetStudents?.GetStudentsByParentId?.students ?? []}
-                        renderItem={({ userHttp }) => (
-                            <ListItem
-                                key={userHttp.email}
-                                handleClick={() => openProfileStudent(userHttp.id)}
-                                render={() => { }}
-                                label={formatUserDisplayName(userHttp)}
-                            />
-                        )}
-                    />
-                </Col>
-            </Row>
-        </PageLayout>
-    )
+  const openProfileStudent = userId => {
+    navigate(PROFILE_PAGE_ROUTE, {
+      state: {
+        userId,
+        userRole: 0,
+      },
+    })
+  }
+
+  return (
+    <PageLayout>
+      <PageContent>
+        <ParentLayout
+          as={motion.div}
+          variants={staggerContainer}
+          initial='hidden'
+          animate='show'
+        >
+          <motion.div variants={staggerItem}>
+            <ProfilePageShell
+              profile={profile}
+              loading={profileLoading}
+              accessUpdate={accessUpdate}
+              embedded
+            >
+              <ProfileCard
+                profile={profile}
+                updateHandle={UpdateParent}
+                accessUpdate={accessUpdate}
+              />
+            </ProfilePageShell>
+          </motion.div>
+
+          <ChildrenPanel as={motion.section} variants={staggerItem}>
+            <ChildrenListHeader>
+              <FormattedMessage id='parent_profile.header_children_list' />
+            </ChildrenListHeader>
+            <List
+              loading={GetStudents?.loading}
+              dataSource={GetStudents?.GetStudentsByParentId?.students ?? []}
+              locale={{ emptyText: 'Список детей пока пуст' }}
+              renderItem={({ userHttp }) => (
+                <ListItem
+                  key={userHttp.email}
+                  handleClick={() => openProfileStudent(userHttp.id)}
+                  render={() => { }}
+                  label={formatUserDisplayName(userHttp)}
+                />
+              )}
+            />
+          </ChildrenPanel>
+        </ParentLayout>
+      </PageContent>
+    </PageLayout>
+  )
 }
 
 export default ParentProfile
