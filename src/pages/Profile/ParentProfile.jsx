@@ -10,6 +10,7 @@ import PageLayout from '@/components/PageLayout'
 import ProfileCard from '@/components/ProfileCard'
 import { PROFILE_PAGE_ROUTE } from '@/constants'
 import ListItem from '@/components/ListItem'
+import { formatUserDisplayName } from '@/helpers'
 
 const { Title } = Typography
 
@@ -57,7 +58,7 @@ const ParentProfile = ({
                                 key={userHttp.email}
                                 handleClick={() => openProfileStudent(userHttp.id)}
                                 render={() => { }}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                label={formatUserDisplayName(userHttp)}
                             />
                         )}
                     />

@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Button, Select, Form, Input, notification } from 'antd'
+import { Button, Form, Input, notification } from 'antd'
 import { PropTypes } from 'prop-types'
 import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
@@ -7,32 +7,12 @@ import { useIntl, FormattedMessage } from 'react-intl'
 
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
 
-import {
-    FREE_LISTENER,
-    HOME_PAGE_ROUTE,
-    PARENT,
-    STUDENT,
-    TEACHER,
-    UNIT_ADMIN,
-    SUPER_ADMIN,
-    userRole,
-} from '@/constants'
+import { HOME_PAGE_ROUTE } from '@/constants'
 import { authMutationsGQL } from '@/graphQL'
 
 
-const SignInForm = memo(({
-    handleSubmit,
-    needSelectRole,
-}) => {
+const SignInForm = memo(({ handleSubmit }) => {
     const intl = useIntl()
-    const roles = [
-        { value: STUDENT, label: userRole[STUDENT] },
-        { value: TEACHER, label: userRole[TEACHER] },
-        { value: PARENT, label: userRole[PARENT] },
-        { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
-        { value: UNIT_ADMIN, label: userRole[UNIT_ADMIN] },
-        { value: SUPER_ADMIN, label: userRole[SUPER_ADMIN] },
-    ]
 
     const [form] = Form.useForm()
     const navigate = useNavigate()
@@ -55,13 +35,13 @@ const SignInForm = memo(({
         <Form
             name='normal_login'
             className='login-form'
-            onFinish={({ email, password, role }) => {
+            onFinish={({ email, password }) => {
                 login({
                     variables: {
                         input: {
                             email,
                             password,
-                            userRole: role,
+                            userRole: 0,
                         },
                     },
                 })
@@ -100,22 +80,6 @@ const SignInForm = memo(({
                 />
             </Form.Item>
 
-            <Form.Item
-                label={intl.formatMessage({ id: 'sign_in_form.select_role' })}
-                name='role'
-                rules={[
-                    {
-                        required: true,
-                        message: <FormattedMessage id='sign_in_form.role_rule' />,
-                    },
-                ]}
-            >
-                <Select
-                    options={roles}
-                    size='large'
-                />
-            </Form.Item>
-
             <Form.Item shouldUpdate>
                 {
                     () => (
@@ -138,7 +102,6 @@ const SignInForm = memo(({
 
 SignInForm.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
-    needSelectRole: PropTypes.bool,
 }
 
 export default SignInForm

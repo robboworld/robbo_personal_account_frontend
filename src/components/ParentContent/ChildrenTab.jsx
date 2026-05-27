@@ -5,6 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import ListItem from '@/components/ListItem'
 import AddChildren from '@/components/AddChildren'
+import { formatUserDisplayName } from '@/helpers'
 
 const { Search } = Input
 
@@ -38,7 +39,7 @@ const ChildrenTab = ({
                         itemIndex={index}
                         key={index}
                         render={() => { }}
-                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                        label={formatUserDisplayName(userHttp)}
                         handleClick={() => openProfileStudent(userHttp.id)}
                         handleDelete={() => DeleteStudent({
                             variables: {
@@ -91,7 +92,7 @@ const ChildrenTab = ({
                                         itemIndex={index}
                                         key={index}
                                         render={() => { }}
-                                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                        label={formatUserDisplayName(userHttp)}
                                         handleClick={() => CreateStudentParentRelation({
                                             variables: {
                                                 parentId: parentId,

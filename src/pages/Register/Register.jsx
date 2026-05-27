@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Layout, Form, Input, Select, Button } from 'antd'
+import { Layout, Form, Input, Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -9,11 +9,7 @@ import {
   HOME_PAGE_ROUTE,
   LANDING_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
-  userRole,
   STUDENT,
-  TEACHER,
-  PARENT,
-  FREE_LISTENER,
 } from '@/constants'
 import theme from '@/theme'
 
@@ -37,13 +33,6 @@ const Register = () => {
       navigate(HOME_PAGE_ROUTE, { replace: true })
     }
   }, [isAuth, navigate])
-
-  const roleOptions = [
-    { value: STUDENT, label: userRole[STUDENT] },
-    { value: TEACHER, label: userRole[TEACHER] },
-    { value: PARENT, label: userRole[PARENT] },
-    { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
-  ]
 
   return (
     <Layout
@@ -73,7 +62,7 @@ const Register = () => {
 
           <Form
             layout='vertical'
-            onFinish={({ email, password, nickname, lastname, firstname, middlename, role }) => {
+            onFinish={({ email, password, nickname, lastname, firstname }) => {
               actions.signUpRequest({
                 user: {
                   email,
@@ -81,10 +70,10 @@ const Register = () => {
                   nickname,
                   lastname,
                   firstname,
-                  middlename,
-                  role,
+                  middlename: '',
+                  role: STUDENT,
                 },
-                role,
+                role: STUDENT,
               })
             }}
           >
@@ -128,22 +117,6 @@ const Register = () => {
               <Input size='large' />
             </Form.Item>
 
-            <Form.Item
-              label='Отчество'
-              name='middlename'
-              rules={[{ required: true, message: 'Введите отчество' }]}
-            >
-              <Input size='large' />
-            </Form.Item>
-
-            <Form.Item
-              label='Роль'
-              name='role'
-              rules={[{ required: true, message: 'Выберите роль' }]}
-            >
-              <Select options={roleOptions} size='large' />
-            </Form.Item>
-
             <Form.Item>
               <Button
                 type='primary'
@@ -162,4 +135,3 @@ const Register = () => {
 }
 
 export default Register
-

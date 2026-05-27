@@ -21,7 +21,6 @@ const SignUpForm = memo(({
                     nickname,
                     lastname,
                     firstname,
-                    middlename,
                 }) => {
                 handleSubmit({
                     variables: {
@@ -31,7 +30,7 @@ const SignUpForm = memo(({
                             nickname,
                             lastname,
                             firstname,
-                            middlename,
+                            middlename: '',
                             robboUnitId,
                             robboGroupId,
                             parentId,
@@ -109,20 +108,6 @@ const SignUpForm = memo(({
             >
                 <Input
                     placeholder={intl.formatMessage({ id: 'sign_up_form.lastname_placeholder' })}
-                    size='large'
-                />
-            </Form.Item>
-            <Form.Item
-                name='middlename'
-                rules={[
-                    {
-                        required: true,
-                        message: <FormattedMessage id='sign_up_form.middlename_rule' />,
-                    },
-                ]}
-            >
-                <Input
-                    placeholder={intl.formatMessage({ id: 'sign_up_form.middlename_placeholder' })}
                     size='large'
                 />
             </Form.Item>

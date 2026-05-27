@@ -9,6 +9,7 @@ import AddChildren from '@/components/AddChildren'
 import { useActions } from '@/helpers/useActions'
 import { PROFILE_PAGE_ROUTE } from '@/constants'
 import { addStudentToRobboGroupRequest } from '@/actions'
+import { formatUserDisplayName } from '@/helpers'
 
 const { Search } = Input
 
@@ -47,7 +48,7 @@ const RobboGroupStudentsTab = ({
                     <ListItem
                         itemIndex={index}
                         key={index}
-                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                        label={formatUserDisplayName(userHttp)}
                         render={() => { }}
                         handleClick={() => openProfileStudent(userHttp.id)}
                         handleDelete={childIndex => actions.addStudentToRobboGroupRequest({ id: 'NULL', robboUnitId: 'NULL' }, userHttp.id)}
@@ -95,7 +96,7 @@ const RobboGroupStudentsTab = ({
                                 itemIndex={index}
                                 key={index}
                                 render={() => { }}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                label={formatUserDisplayName(userHttp)}
                                 handleClick={() => actions.addStudentToRobboGroupRequest(
                                     {
                                         id: robboGroupId + "", robboUnitId: robboUnitId + "",

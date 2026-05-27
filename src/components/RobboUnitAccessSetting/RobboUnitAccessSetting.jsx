@@ -15,6 +15,7 @@ import {
     deleteUnitAdminForRobboUnitRequest,
 } from '@/actions'
 import { PROFILE_PAGE_ROUTE, UNIT_ADMIN } from "@/constants"
+import { formatUserDisplayName } from '@/helpers'
 
 const { Search } = Input
 
@@ -53,7 +54,7 @@ const RobboUnitAccessSetting = ({
                     <ListItem
                         itemIndex={index}
                         key={index}
-                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                        label={formatUserDisplayName(userHttp)}
                         render={() => { }}
                         handleClick={() => openProfileUnitAdmin(userHttp.id)}
                         handleDelete={childIndex => actions.deleteUnitAdminForRobboUnitRequest(userHttp.id, robboUnitId)}
@@ -78,7 +79,7 @@ const RobboUnitAccessSetting = ({
                                 itemIndex={index}
                                 key={index}
                                 render={() => { }}
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                label={formatUserDisplayName(userHttp)}
                                 handleClick={() => actions.setNewUnitAdminForRobboUnitRequest(userHttp.id, robboUnitId)}
                             />
                         )}

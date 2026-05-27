@@ -7,7 +7,7 @@ import { graphql } from '@apollo/client/react/hoc'
 import ListItem from "@/components/ListItem"
 import { studentQuerysGQL } from '@/graphQL'
 import { createCourseAccessRelationStudentRequest } from '@/actions'
-import { useActions } from '@/helpers'
+import { useActions , formatUserDisplayName } from '@/helpers'
 
 const { Search } = Input
 
@@ -49,7 +49,7 @@ const StudentCourseAccess = ({
                                         itemIndex={index}
                                         key={index}
                                         render={() => { }}
-                                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                        label={formatUserDisplayName(userHttp)}
                                         handleClick={() => actions.createCourseAccessRelationStudentRequest(courseId, userHttp.id)}
                                     />
                                 )}

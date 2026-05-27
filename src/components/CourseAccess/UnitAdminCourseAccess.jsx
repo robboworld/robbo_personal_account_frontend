@@ -7,7 +7,7 @@ import { graphql } from '@apollo/client/react/hoc'
 import ListItem from "@/components/ListItem"
 import { unitAdminQuerysGQL } from '@/graphQL'
 import { createCourseAccessRelationUnitAdminRequest } from '@/actions'
-import { useActions } from '@/helpers'
+import { useActions , formatUserDisplayName } from '@/helpers'
 
 const { Search } = Input
 
@@ -55,7 +55,7 @@ const UnitAdminCourseAccess = ({
                                         itemIndex={index}
                                         key={index}
                                         render={() => { }}
-                                        label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                        label={formatUserDisplayName(userHttp)}
                                         handleClick={() => actions.createCourseAccessRelationUnitAdminRequest(courseId, userHttp.id)}
                                     />
                                 )}

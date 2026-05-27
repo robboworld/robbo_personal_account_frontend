@@ -7,6 +7,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import ListItem from '@/components/ListItem'
 import { coursePageQuerysGQL } from '@/graphQL'
 import { PROFILE_PAGE_ROUTE, TEACHER } from "@/constants"
+import { formatUserDisplayName } from '@/helpers'
 
 const CurrentCourseAccessTeachers = ({
     courseId,
@@ -48,7 +49,7 @@ const CurrentCourseAccessTeachers = ({
                             itemIndex={index}
                             key={index}
                             render={() => { }}
-                            label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                            label={formatUserDisplayName(userHttp)}
                             handleClick={() => openProfileTeacher(userHttp.id)}
                         />
                     )}

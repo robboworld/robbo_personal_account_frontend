@@ -9,6 +9,7 @@ import AddParent from '@/components/AddParent'
 import { DragResize } from '@/components/UI'
 import { useActions } from '@/helpers/useActions'
 import { deleteParentRequest } from '@/actions'
+import { formatUserDisplayName } from '@/helpers'
 
 const { Title } = Typography
 
@@ -59,7 +60,7 @@ const Clients = memo(({
                                 handleDelete={
                                     parentIndex => actions.deleteParentRequest(userHttp.id, parentIndex)
                                 }
-                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                label={formatUserDisplayName(userHttp)}
                                 key={index}
                                 render={(open, setOpen) => (
                                     <DragResize

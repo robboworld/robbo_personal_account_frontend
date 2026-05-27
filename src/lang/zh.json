@@ -100,7 +100,7 @@
     "profile_card.email": "Email",
     "profile_card.password": "密码",
     "profile_card.nickname": "昵称",
-    "profile_card.username": "用户名（不可修改）",
+    "profile_card.username": "登录名",
     "profile_card.firstname": "名",
     "profile_card.lastname": "姓",
     "profile_card.middlename": "父名",

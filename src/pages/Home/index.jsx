@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import PageLayout from '@/components/PageLayout'
 import { parseJwt, openLms, getSelectedNavBarKeyFromPath } from '@/helpers'
 import {
-  MY_PROJECTS_ROUTE,
   PROFILE_PAGE_ROUTE,
   TEACHERS_PAGE_ROUTE,
   ROBBO_UNITS_ROUTE,
@@ -16,7 +15,6 @@ import {
   UNIT_ADMIN,
   SUPER_ADMIN,
   TEACHER,
-  STUDENT,
   PARENT,
   FREE_LISTENER,
 } from '@/constants'
@@ -46,7 +44,6 @@ const Home = () => {
   const quickActions = [
     { title: 'Профиль', description: 'Проверьте и обновите персональные данные.', path: PROFILE_PAGE_ROUTE },
     { title: 'LMS', description: 'Перейдите в LMS без повторного логина.', external: 'lms' },
-    { title: 'Мои проекты', description: 'Откройте проекты и продолжите работу.', path: MY_PROJECTS_ROUTE, roles: [STUDENT] },
     { title: 'Преподаватели', description: 'Управляйте списком преподавателей.', path: TEACHERS_PAGE_ROUTE, roles: [UNIT_ADMIN, SUPER_ADMIN] },
     { title: 'Юниты', description: 'Перейдите к списку Robbo Unit и их настройкам.', path: ROBBO_UNITS_ROUTE, roles: [UNIT_ADMIN, SUPER_ADMIN] },
     { title: 'Группы', description: 'Работа со студенческими группами юнитов.', path: ROBBO_GROUPS_ROUTE, roles: [UNIT_ADMIN, SUPER_ADMIN] },
