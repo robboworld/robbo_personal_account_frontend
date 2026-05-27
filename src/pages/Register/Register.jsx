@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react'
-import { Layout, Form, Input, Button } from 'antd'
+import { Form, Input, Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+import AuthLayout, { AuthFormStyles } from '@/components/AuthLayout'
 import { useActions } from '@/helpers'
 import { signUpRequest } from '@/actions'
 import {
   HOME_PAGE_ROUTE,
-  LANDING_PAGE_ROUTE,
-  LOGIN_PAGE_ROUTE,
   STUDENT,
 } from '@/constants'
-import theme from '@/theme'
-
-const { Content } = Layout
 
 const Register = () => {
   const navigate = useNavigate()
@@ -35,102 +31,85 @@ const Register = () => {
   }, [isAuth, navigate])
 
   return (
-    <Layout
-      style={{
-        background: `linear-gradient(to bottom, ${theme.colors.accentGreen}, #f0fff0)`,
-      }}
-    >
-      <Content
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          background: 'white',
-          padding: '4rem 2rem',
-          margin: '5rem auto',
-          width: 'min(720px, 100%)',
-          borderRadius: 16,
-        }}
-      >
-        <div style={{ width: '100%' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
-            <h1 style={{ margin: 0, fontSize: 28 }}>Регистрация</h1>
-            <div>
-              <Button type='link' onClick={() => navigate(LANDING_PAGE_ROUTE)}>Назад на лэндинг</Button>
-              <Button type='link' onClick={() => navigate(LOGIN_PAGE_ROUTE)}>Уже есть аккаунт? Войти</Button>
-            </div>
-          </div>
-
-          <Form
-            layout='vertical'
-            onFinish={({ email, password, nickname, lastname, firstname }) => {
-              actions.signUpRequest({
-                user: {
-                  email,
-                  password,
-                  nickname,
-                  lastname,
-                  firstname,
-                  middlename: '',
-                  role: STUDENT,
-                },
+    <AuthLayout activeTab='register'>
+      <AuthFormStyles className='mw-xs mt-3'>
+        <Form
+          layout='vertical'
+          requiredMark={false}
+          onFinish={({ email, password, nickname, fullName, company }) => {
+            actions.signUpRequest({
+              user: {
+                email,
+                password,
+                nickname,
+                fullName,
+                company,
+                firstname: '',
+                lastname: '',
+                middlename: '',
                 role: STUDENT,
-              })
-            }}
+              },
+              role: STUDENT,
+            })
+          }}
+        >
+          <Form.Item
+            label='Полное имя'
+            name='fullName'
+            rules={[{ required: true, message: 'Введите полное имя' }]}
           >
-            <Form.Item
-              label='Email'
-              name='email'
-              rules={[{ required: true, message: 'Введите email' }]}
-            >
-              <Input size='large' />
-            </Form.Item>
+            <Input size='large' autoComplete='name' />
+          </Form.Item>
 
-            <Form.Item
-              label='Пароль'
-              name='password'
-              rules={[{ required: true, message: 'Введите пароль' }]}
-            >
-              <Input.Password size='large' />
-            </Form.Item>
+          <Form.Item
+            label='Название компании'
+            name='company'
+            rules={[{ required: true, message: 'Введите название компании' }]}
+          >
+            <Input size='large' autoComplete='organization' />
+          </Form.Item>
 
-            <Form.Item
-              label='Никнейм'
-              name='nickname'
-              rules={[{ required: true, message: 'Введите никнейм' }]}
-            >
-              <Input size='large' />
-            </Form.Item>
+          <Form.Item
+            label='Email'
+            name='email'
+            rules={[
+              { required: true, message: 'Введите email' },
+              { type: 'email', message: 'Введите корректный email' },
+            ]}
+          >
+            <Input size='large' autoComplete='email' />
+          </Form.Item>
 
-            <Form.Item
-              label='Имя'
-              name='firstname'
-              rules={[{ required: true, message: 'Введите имя' }]}
-            >
-              <Input size='large' />
-            </Form.Item>
+          <Form.Item
+            label='Никнейм'
+            name='nickname'
+            rules={[{ required: true, message: 'Введите никнейм' }]}
+          >
+            <Input size='large' autoComplete='username' />
+          </Form.Item>
 
-            <Form.Item
-              label='Фамилия'
-              name='lastname'
-              rules={[{ required: true, message: 'Введите фамилию' }]}
-            >
-              <Input size='large' />
-            </Form.Item>
+          <Form.Item
+            label='Пароль'
+            name='password'
+            rules={[{ required: true, message: 'Введите пароль' }]}
+          >
+            <Input.Password size='large' autoComplete='new-password' />
+          </Form.Item>
 
-            <Form.Item>
-              <Button
-                type='primary'
-                htmlType='submit'
-                size='large'
-                block
-              >
-                Зарегистрироваться
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      </Content>
-    </Layout>
+          <Form.Item>
+            <Button
+              type='primary'
+              htmlType='submit'
+              size='large'
+              block
+              className='register-button'
+            >
+              Создать аккаунт бесплатно
+            </Button>
+          </Form.Item>
+        </Form>
+      </AuthFormStyles>
+    </AuthLayout>
   )
 }
 

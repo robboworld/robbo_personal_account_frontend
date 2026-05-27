@@ -19,8 +19,7 @@ const SignUpForm = memo(({
                     email,
                     password,
                     nickname,
-                    lastname,
-                    firstname,
+                    fullName,
                 }) => {
                 handleSubmit({
                     variables: {
@@ -28,8 +27,9 @@ const SignUpForm = memo(({
                             email,
                             password,
                             nickname,
-                            lastname,
-                            firstname,
+                            fullName,
+                            firstname: '',
+                            lastname: '',
                             middlename: '',
                             robboUnitId,
                             robboGroupId,
@@ -84,30 +84,16 @@ const SignUpForm = memo(({
                 />
             </Form.Item>
             <Form.Item
-                name='firstname'
+                name='fullName'
                 rules={[
                     {
                         required: true,
-                        message: <FormattedMessage id='sign_up_form.firstname_rule' />,
+                        message: <FormattedMessage id='sign_up_form.full_name_rule' defaultMessage='Введите полное имя' />,
                     },
                 ]}
             >
                 <Input
-                    placeholder={intl.formatMessage({ id: 'sign_up_form.firstname_placeholder' })}
-                    size='large'
-                />
-            </Form.Item>
-            <Form.Item
-                name='lastname'
-                rules={[
-                    {
-                        required: true,
-                        message: <FormattedMessage id='sign_up_form.lastname_rule' />,
-                    },
-                ]}
-            >
-                <Input
-                    placeholder={intl.formatMessage({ id: 'sign_up_form.lastname_placeholder' })}
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.full_name_placeholder', defaultMessage: 'Полное имя' })}
                     size='large'
                 />
             </Form.Item>

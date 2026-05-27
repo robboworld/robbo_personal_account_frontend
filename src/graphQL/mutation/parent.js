@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client"
 
 import { graphQLClient } from "@/graphQL"
+import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
 
 export const parentMutationsGQL = {
     CREATE_PARENT: gql`
@@ -37,14 +38,7 @@ export const parentMutationsGQL = {
         UpdateParent(input: $input) {
             ... on ParentHttp {
                 userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                    nickname
-                    email
-                    createdAt
-                    role
+                    ${USER_PROFILE_FIELDS}
                 }
             }
 

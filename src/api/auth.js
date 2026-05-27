@@ -2,13 +2,15 @@ import instance from './instance'
 
 export const authAPI = {
     signUp(user) {
-        const { email, password, nickname, lastname, firstname, middlename, role } = user
+        const { email, password, nickname, fullName, company, lastname, firstname, middlename, role } = user
         return instance.post('auth/sign-up',
             {
                 email: email,
                 password: password,
                 role: role,
                 nickname: nickname,
+                fullName: fullName,
+                company: company,
                 lastname: lastname,
                 firstname: firstname,
                 middlename: middlename,
