@@ -39,17 +39,34 @@ function* signUpSaga(action) {
     } catch (e) {
         console.log(e.response)
         const errorData = e?.response?.data
-        const errorText = typeof errorData === 'string' ? errorData : e?.message
-        const duplicatedEmailError =
-            typeof errorText === 'string' &&
-            (errorText.toLowerCase().includes('email is already used') ||
-                errorText.toLowerCase().includes('user already exist'))
+        const apiError = typeof errorData === 'string'
+            ? errorData
+            : (errorData?.error || '')
+        const field = typeof errorData === 'object' ? errorData?.field : undefined
+        const normalized = String(apiError).toLowerCase()
+
+        let description = 'Не удалось выполнить регистрацию'
+        if (
+            field === 'nickname' ||
+            normalized.includes('username already exists') ||
+            normalized.includes('username already exist')
+        ) {
+            description = 'Пользователь с таким никнеймом уже зарегистрирован'
+        } else if (
+            field === 'email' ||
+            normalized.includes('email already exists') ||
+            normalized.includes('email already exist') ||
+            normalized.includes('email is already used') ||
+            normalized.includes('user already exist')
+        ) {
+            description = 'Пользователь с таким email уже зарегистрирован'
+        } else if (apiError) {
+            description = apiError
+        }
 
         notification.error({
             message: 'Ошибка',
-            description: duplicatedEmailError
-                ? 'Пользователь с таким email уже зарегистрирован'
-                : (errorText || 'Не удалось выполнить регистрацию'),
+            description,
         })
 
         yield put(signUpFailed(errorData))

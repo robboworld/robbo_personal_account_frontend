@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client"
 
 import { graphQLClient } from "@/graphQL"
+import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
 
 export const unitAdminMutationsGQL = {
     CREATE_UNIT_ADMIN: gql`
@@ -27,14 +28,7 @@ export const unitAdminMutationsGQL = {
         UpdateUnitAdmin(input: $input) {
             ... on UnitAdminHttp {
                 userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                    nickname
-                    email
-                    createdAt
-                    role
+                    ${USER_PROFILE_FIELDS}
                 }
             }
 

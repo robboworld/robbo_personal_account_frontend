@@ -5,8 +5,6 @@ import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
 import { useIntl, FormattedMessage } from 'react-intl'
 
-import { LockOutlined, MailOutlined } from '@ant-design/icons'
-
 import { HOME_PAGE_ROUTE } from '@/constants'
 import { authMutationsGQL } from '@/graphQL'
 
@@ -58,9 +56,9 @@ const SignInForm = memo(({ handleSubmit }) => {
                 ]}
             >
                 <Input
-                    prefix={<MailOutlined className='site-form-item-icon' />}
                     placeholder={intl.formatMessage({ id: 'sign_up_form.email_placeholder' })}
                     size='large'
+                    autoComplete='username'
                 />
             </Form.Item>
             <Form.Item
@@ -72,11 +70,10 @@ const SignInForm = memo(({ handleSubmit }) => {
                     },
                 ]}
             >
-                <Input
-                    prefix={<LockOutlined className='site-form-item-icon' />}
-                    type='password'
+                <Input.Password
                     placeholder={intl.formatMessage({ id: 'sign_up_form.password_placeholder' })}
                     size='large'
+                    autoComplete='current-password'
                 />
             </Form.Item>
 
@@ -84,7 +81,10 @@ const SignInForm = memo(({ handleSubmit }) => {
                 {
                     () => (
                         <Button
-                            type='primary' htmlType='submit'
+                            type='primary'
+                            htmlType='submit'
+                            size='large'
+                            block
                             className='login-form-button'
                             disabled={
                                 !form.isFieldsTouched(true) ||

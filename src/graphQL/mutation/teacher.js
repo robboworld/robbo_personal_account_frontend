@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client"
 
 import { graphQLClient } from "@/graphQL"
+import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
 
 export const teacherMutationsGQL = {
     UPDATE_TEACHER: gql`
@@ -8,14 +9,7 @@ export const teacherMutationsGQL = {
         UpdateTeacher(input: $input) {
             ... on TeacherHttp {
                 userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                    nickname
-                    email
-                    createdAt
-                    role
+                    ${USER_PROFILE_FIELDS}
                 }
             }
 
@@ -32,6 +26,7 @@ export const teacherMutationsGQL = {
                 ... on TeacherHttp {
                     userHttp{
                     id
+                    fullName
                     lastname
                     firstname
                     middlename

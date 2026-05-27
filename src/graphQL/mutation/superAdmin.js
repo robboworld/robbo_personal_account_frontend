@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client"
 
 import { graphQLClient } from "@/graphQL"
+import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
 
 export const superAdminMutationsGQL = {
     UPDATE_SUPER_ADMIN: gql`
@@ -8,14 +9,7 @@ export const superAdminMutationsGQL = {
         UpdateSuperAdmin(input: $input) {
             ... on SuperAdminHttp {
                 userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                    nickname
-                    email
-                    createdAt
-                    role
+                    ${USER_PROFILE_FIELDS}
                 }
             }
 
