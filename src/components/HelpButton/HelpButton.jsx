@@ -1,9 +1,26 @@
 import React from 'react'
 import { Button } from 'antd'
+import { useIntl } from 'react-intl'
+import styled from 'styled-components'
+
+const HelpLinkButton = styled(Button)`
+  && {
+    text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &:visited {
+      text-decoration: none;
+    }
+  }
+`
 
 const HelpButton = () => {
+  const intl = useIntl()
+
   return (
-    <Button
+    <HelpLinkButton
       type='primary'
       href='https://support.robbo.world/'
       target='_blank'
@@ -15,8 +32,8 @@ const HelpButton = () => {
         zIndex: 1000,
       }}
     >
-      Помощь
-    </Button>
+      {intl.formatMessage({ id: 'header.help' })}
+    </HelpLinkButton>
   )
 }
 

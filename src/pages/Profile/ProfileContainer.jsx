@@ -275,7 +275,7 @@ const ProfileContainer = ({
                         <Alert
                             type='warning'
                             showIcon
-                            message='Профиль для этой роли пока недоступен'
+                            message={intl.formatMessage({ id: 'profile.unavailable' })}
                             description={`role=${String(userRole)}`}
                         />
                     </PageLayout>
@@ -286,7 +286,7 @@ const ProfileContainer = ({
     return (
         <PageLayout>
             <Alert type='info' showIcon
-message='Выберите пользователя для просмотра профиля' />
+message={intl.formatMessage({ id: 'profile.select_user' })} />
         </PageLayout>
     )
 }
@@ -376,7 +376,9 @@ const WithGraphQLStudentPeekProfile = compose(
             options: props => {
                 return {
                     onCompleted: () => {
-                        notification.success({ description: 'Профиль успешно обновлен!' })
+                        notification.success({
+                            description: props.intl.formatMessage({ id: 'notification.update_profile_success' }),
+                        })
                     },
                     onError: error => {
                         notification.error({

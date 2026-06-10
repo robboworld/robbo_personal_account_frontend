@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from 'redux-saga/effects'
+import { call, put, select, takeLatest } from 'redux-saga/effects'
 import { notification } from 'antd'
 
 import { profileAPI } from '@/api'
@@ -10,6 +10,7 @@ import {
     updateProfileFailed,
     updateProfileSuccess,
 } from '@/actions'
+import { formatMessageId } from '@/helpers/intl'
 import { profileMutationsGraphQL } from '@/graphQL/mutation'
 
 function* getProfileByAccessTokenSaga({ payload }) {
@@ -24,16 +25,22 @@ function* getProfileByAccessTokenSaga({ payload }) {
 }
 
 function* updateProfileSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { profile, role } = payload
         const response = yield call(profileMutationsGraphQL.UpdateProfile, { input: profile }, role)
         console.log(response)
 
         yield put(updateProfileSuccess(response))
-        notification.success({ message: 'Успешно обновлено!' })
+        notification.success({
+            message: formatMessageId(language, 'notification.profile_update_short'),
+        })
     } catch (e) {
         yield put(updateProfileFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({
+            message: formatMessageId(language, 'notification.error_message'),
+            description: e.message,
+        })
     }
 }
 

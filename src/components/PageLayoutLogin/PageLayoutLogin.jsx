@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Divider } from 'antd'
+import { FormattedMessage } from 'react-intl'
 
 import SignInForm from '@/components/SignInForm'
 import AuthLayout, {
@@ -29,13 +30,15 @@ const PageLayoutLogin = ({ showOidcLogin = false, hybridAuth = false }) => {
             block
             onClick={handleOidcLogin}
           >
-            Войти через LMS (OAuth)
+            <FormattedMessage id='auth_login.oidc_button' />
           </Button>
           {hybridAuth && (
             <React.Fragment>
-              <Divider plain>или</Divider>
+              <Divider plain>
+                <FormattedMessage id='auth_login.or_divider' />
+              </Divider>
               <OidcHint>
-                Если OAuth недоступен — войдите email и паролем из LMS (данные из базы openedx).
+                <FormattedMessage id='auth_login.oidc_hint' />
               </OidcHint>
             </React.Fragment>
           )}

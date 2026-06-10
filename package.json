@@ -8,6 +8,7 @@
     "build": "webpack --config webpack.prod.js",
     "eslint:test": "eslint src --ext .js,.jsx",
     "eslint:fix": "eslint --fix src --ext .js,.jsx",
+    "i18n:check": "node scripts/i18n-check.js",
     "cypress": "start-server-and-test start http://localhost:3000 cypress:open",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",

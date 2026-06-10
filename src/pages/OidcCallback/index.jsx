@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Alert, Button, Card, Space, Typography } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import PageLayoutLogin from '@/components/PageLayoutLogin'
 import { HOME_PAGE_ROUTE, LMS_URL } from '@/constants'
@@ -17,20 +18,16 @@ import {
 
 const { Paragraph, Text, Title } = Typography
 
-const toReasonMessage = reason => {
-  const reasonMap = {
-    access_denied: 'Провайдер отклонил авторизацию.',
-    invalid_state: 'Не совпадает state. Попробуйте вход заново.',
-    invalid_nonce: 'Не совпадает nonce. Повторите вход.',
-    expired_code: 'Код авторизации истек.',
-    network_error: 'Не удалось завершить обмен токена.',
-    invalid_issuer: 'Issuer не совпадает с ожидаемым.',
-    invalid_audience: 'Audience токена не совпадает с client_id.',
-    token_expired: 'Срок действия id_token истек.',
-    missing_sub: 'В id_token отсутствует обязательный claim sub.',
-  }
-
-  return reasonMap[reason] || 'Ошибка OAuth/OIDC авторизации.'
+const OIDC_REASON_IDS = {
+  access_denied: 'oidc_callback.reason.access_denied',
+  invalid_state: 'oidc_callback.reason.invalid_state',
+  invalid_nonce: 'oidc_callback.reason.invalid_nonce',
+  expired_code: 'oidc_callback.reason.expired_code',
+  network_error: 'oidc_callback.reason.network_error',
+  invalid_issuer: 'oidc_callback.reason.invalid_issuer',
+  invalid_audience: 'oidc_callback.reason.invalid_audience',
+  token_expired: 'oidc_callback.reason.token_expired',
+  missing_sub: 'oidc_callback.reason.missing_sub',
 }
 
 const backendBase = () => {
@@ -46,6 +43,7 @@ const buildLoginAgainUrl = () => {
 }
 
 const OidcCallback = () => {
+  const intl = useIntl()
   const [status, setStatus] = useState('loading')
   const [reason, setReason] = useState('')
   const [details, setDetails] = useState('')
@@ -55,6 +53,11 @@ const OidcCallback = () => {
   const state = search.get('state')
   const authError = search.get('error')
   const authErrorDescription = search.get('error_description') || ''
+
+  const reasonMessage = useMemo(() => {
+    const reasonId = OIDC_REASON_IDS[reason] || 'oidc_callback.reason.fallback'
+    return intl.formatMessage({ id: reasonId })
+  }, [intl, reason])
 
   useEffect(() => {
     const run = async () => {
@@ -69,7 +72,7 @@ const OidcCallback = () => {
       if (!authCode || !state) {
         setStatus('error')
         setReason('network_error')
-        setDetails('Callback не содержит code/state.')
+        setDetails(intl.formatMessage({ id: 'oidc_callback.missing_code_state' }))
         reportSsoError({ reason: 'network_error', details: 'missing_code_or_state' })
         return
       }
@@ -121,14 +124,18 @@ const OidcCallback = () => {
     }
 
     run()
-  }, [authCode, authError, authErrorDescription, state])
+  }, [authCode, authError, authErrorDescription, intl, state])
 
   if (status === 'loading') {
     return (
       <PageLayoutLogin title='SSO'>
         <Card>
-          <Title level={4}>Завершаем вход через LMS...</Title>
-          <Paragraph>Пожалуйста, подождите. Проверяем токен и создаем сессию.</Paragraph>
+          <Title level={4}>
+            <FormattedMessage id='oidc_callback.loading_title' />
+          </Title>
+          <Paragraph>
+            <FormattedMessage id='oidc_callback.loading_body' />
+          </Paragraph>
         </Card>
       </PageLayoutLogin>
     )
@@ -138,15 +145,23 @@ const OidcCallback = () => {
     <PageLayoutLogin title='SSO'>
       <Card>
         <Space direction='vertical' size={12}>
-          <Alert message='Не удалось завершить SSO' description={toReasonMessage(reason)}
-type='error' showIcon />
+          <Alert
+            message={<FormattedMessage id='oidc_callback.error_title' />}
+            description={reasonMessage}
+            type='error'
+            showIcon
+          />
           {!!details && <Text type='secondary'>{details}</Text>}
           <Space wrap>
             <Button type='primary' href={buildLoginAgainUrl()}>
-              Войти снова
+              <FormattedMessage id='oidc_callback.retry_login' />
             </Button>
-            <Button href={LMS_URL}>Открыть LMS</Button>
-            <Button href={HOME_PAGE_ROUTE}>Вернуться в ЛК</Button>
+            <Button href={LMS_URL}>
+              <FormattedMessage id='oidc_callback.open_lms' />
+            </Button>
+            <Button href={HOME_PAGE_ROUTE}>
+              <FormattedMessage id='oidc_callback.back_home' />
+            </Button>
           </Space>
         </Space>
       </Card>

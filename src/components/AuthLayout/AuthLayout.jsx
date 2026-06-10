@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import {
   AuthShell,
@@ -29,21 +30,28 @@ import {
 
 const AuthLayout = ({ activeTab, children }) => {
   const navigate = useNavigate()
+  const intl = useIntl()
 
   return (
     <AuthShell className='robbo-auth-standalone-shell'>
       <AuthMain id='main'>
         <AuthLayoutGrid className='layout'>
           <HeroColumn className='w-50 d-flex'>
-            <HeroLogoLink href={LANDING_PAGE_ROUTE} aria-label='РОББО'>
-              <img alt='РОББО' src='/static/logo.png' />
+            <HeroLogoLink
+              href={LANDING_PAGE_ROUTE}
+              aria-label={intl.formatMessage({ id: 'auth_layout.brand_aria' })}
+            >
+              <img
+                alt={intl.formatMessage({ id: 'auth_layout.brand_aria' })}
+                src='/static/logo.png'
+              />
             </HeroLogoLink>
             <HeroTitle className='display-2'>
               <HeroTitleLine className='auth-hero-title-line'>
-                Начни обучение
+                <FormattedMessage id='auth_layout.hero_line_1' />
               </HeroTitleLine>
               <HeroBrandLine className='auth-hero-brand-line text-accent-a'>
-                с РОББО
+                <FormattedMessage id='auth_layout.hero_line_2' />
               </HeroBrandLine>
             </HeroTitle>
           </HeroColumn>
@@ -52,7 +60,10 @@ const AuthLayout = ({ activeTab, children }) => {
             <ContentPanel>
               <AuthFormWrap className='authn-logistration'>
                 <div className='authn-logistration__inner'>
-                  <AuthTabs role='tablist' aria-label='Вход и регистрация'>
+                  <AuthTabs
+                    role='tablist'
+                    aria-label={intl.formatMessage({ id: 'auth_layout.tabs_aria' })}
+                  >
                     <AuthTabLink
                       role='tab'
                       $active={activeTab === 'register'}
@@ -63,7 +74,7 @@ const AuthLayout = ({ activeTab, children }) => {
                         navigate(REGISTER_PAGE_ROUTE)
                       }}
                     >
-                      Регистрация
+                      <FormattedMessage id='auth_layout.tab_register' />
                     </AuthTabLink>
                     <AuthTabLink
                       role='tab'
@@ -75,7 +86,7 @@ const AuthLayout = ({ activeTab, children }) => {
                         navigate(LOGIN_PAGE_ROUTE)
                       }}
                     >
-                      Вход
+                      <FormattedMessage id='auth_layout.tab_login' />
                     </AuthTabLink>
                   </AuthTabs>
 
@@ -85,7 +96,7 @@ const AuthLayout = ({ activeTab, children }) => {
 
                   <AuthFooterLinks>
                     <AuthTextLink type='button' onClick={() => navigate(LANDING_PAGE_ROUTE)}>
-                      Вернуться на лэндинг
+                      <FormattedMessage id='auth_layout.back_to_landing' />
                     </AuthTextLink>
                   </AuthFooterLinks>
                 </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { List } from 'antd'
 import { motion } from 'framer-motion'
@@ -29,6 +29,7 @@ const ParentProfile = ({
   accessUpdate,
 }) => {
   const navigate = useNavigate()
+  const intl = useIntl()
   const { profile, loading: profileLoading } = getProfileFromQuery(data ?? GetUser)
 
   const openProfileStudent = userId => {
@@ -71,7 +72,7 @@ const ParentProfile = ({
             <List
               loading={GetStudents?.loading}
               dataSource={GetStudents?.GetStudentsByParentId?.students ?? []}
-              locale={{ emptyText: 'Список детей пока пуст' }}
+              locale={{ emptyText: intl.formatMessage({ id: 'parent_profile.children_empty' }) }}
               renderItem={({ userHttp }) => (
                 <ListItem
                   key={userHttp.email}

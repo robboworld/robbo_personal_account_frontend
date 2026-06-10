@@ -1,4 +1,4 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import { notification } from 'antd'
 
 import { authAPI } from '@/api'
@@ -9,6 +9,7 @@ import {
     checkAuthRequest, checkAuthSuccess, checkAuthFailed,
 } from '@/actions'
 import { authMutationsGraphQL, graphQLClient } from '@/graphQL'
+import { formatMessageId } from '@/helpers/intl'
 import { redirectToOidcStart } from '@/helpers/oidcSession'
 
 function* signInSaga(action) {
@@ -38,6 +39,7 @@ function* signUpSaga(action) {
         yield put(signUpSuccess(response))
     } catch (e) {
         console.log(e.response)
+        const language = yield select(state => state.app.language)
         const errorData = e?.response?.data
         const apiError = typeof errorData === 'string'
             ? errorData
@@ -45,13 +47,13 @@ function* signUpSaga(action) {
         const field = typeof errorData === 'object' ? errorData?.field : undefined
         const normalized = String(apiError).toLowerCase()
 
-        let description = 'Не удалось выполнить регистрацию'
+        let description = formatMessageId(language, 'notification.sign_up_failed')
         if (
             field === 'nickname' ||
             normalized.includes('username already exists') ||
             normalized.includes('username already exist')
         ) {
-            description = 'Пользователь с таким никнеймом уже зарегистрирован'
+            description = formatMessageId(language, 'notification.nickname_taken')
         } else if (
             field === 'email' ||
             normalized.includes('email already exists') ||
@@ -59,13 +61,13 @@ function* signUpSaga(action) {
             normalized.includes('email is already used') ||
             normalized.includes('user already exist')
         ) {
-            description = 'Пользователь с таким email уже зарегистрирован'
+            description = formatMessageId(language, 'notification.email_taken')
         } else if (apiError) {
             description = apiError
         }
 
         notification.error({
-            message: 'Ошибка',
+            message: formatMessageId(language, 'notification.error_message'),
             description,
         })
 

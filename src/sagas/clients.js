@@ -1,5 +1,8 @@
-import { call, put, takeLatest } from 'redux-saga/effects'
+import { call, put, takeLatest, select } from 'redux-saga/effects'
+
 import { notification } from 'antd'
+
+import { formatMessageId } from '@/helpers/intl'
 
 import {
     createParentFailed,
@@ -39,6 +42,7 @@ import {
 } from '@/graphQL'
 
 function* getClientsSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { page, pageSize } = payload
         const response = yield call(parentQuerysGraphQL.GetAllParents, page, pageSize)
@@ -46,11 +50,12 @@ function* getClientsSaga({ payload }) {
         yield put(getClientsSuccess(response.data.GetAllParents))
     } catch (e) {
         yield put(getClientsFailed(e.message))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* getClientByIdSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { id } = payload
         const response = yield call(parentQuerysGraphQL.GetParentById, { parentId: id })
@@ -58,66 +63,71 @@ function* getClientByIdSaga({ payload }) {
         yield put(getClientPageByIdSuccess(response.data.GetParentById))
     } catch (e) {
         yield put(getClientPageByIdFailed(e.message))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* createParentSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { parent } = payload
         const response = yield call(parentMutationsGraphQL.CreateParent, { input: parent })
         console.log(response)
         yield put(createParentSuccess(response.data.CreateParent))
-        notification.success({ message: '', description: 'Родитель успешно создан!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.parent_create_success') })
     } catch (e) {
         yield put(createParentFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* deleteParentSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { parentId, parentIndex } = payload
         const response = yield call(parentMutationsGraphQL.DeleteParent, { parentId })
         console.log(response)
 
         yield put(deleteParentSuccess(response.data.DeleteParent, parentIndex))
-        notification.success({ message: '', description: 'Родитель успешно удален!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.parent_delete_success') })
     } catch (e) {
         yield put(deleteParentFailed)
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* createChildrenSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { child, parentId } = payload
         const response = yield call(studentMutationsGraphQL.CreateStudent, { input: { ...child, parentId } })
         console.log(response)
 
         yield put(createChildrenSuccess(response.data, child))
-        notification.success({ message: '', description: 'Ученик успешно создан!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.student_create_success') })
     } catch (e) {
         yield put(createChildrenFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* deleteChildSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { childId, childIndex } = payload
         const response = yield call(studentMutationsGraphQL.DeleteStudent, { studentId: childId })
         console.log(response)
 
         yield put(deleteChildSuccess(response.data.DeleteStudent, childIndex))
-        notification.success({ message: '', description: 'Ученик успешно удален!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.student_delete_success') })
     } catch (e) {
         yield put(deleteChildFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* getChildrenByParentIdSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { parentId } = payload
         const response = yield call(studentQuerysGraphQL.GetStudentsByParentId, { parentId: parentId })
@@ -126,11 +136,12 @@ function* getChildrenByParentIdSaga({ payload }) {
         yield put(getChildrenByParentIdSuccess(response.data.GetStudentsByParentId.students))
     } catch (e) {
         yield put(getChildrenByParentIdFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* searchStudentSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { input } = payload
         const response = yield call(studentQuerysGraphQL.SearchStudentsByEmail, { email: input })
@@ -139,21 +150,22 @@ function* searchStudentSaga({ payload }) {
         yield put(searchStudentSuccess(response.data.SearchStudentsByEmail.students))
     } catch (e) {
         yield put(searchStudentFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* createStudentParentRelationSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { parentId, childId } = payload
         const response = yield call(studentMutationsGraphQL.CreateStudentParentRelation, { parentId, childId })
         console.log(response)
 
         yield put(createRelationSuccess(response.data))
-        notification.success({ message: '', description: 'Ученик успешно добавлен!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.student_added_success') })
     } catch (e) {
         yield put(createRelationFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
