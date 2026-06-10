@@ -1,5 +1,8 @@
-import { call, takeLatest, put } from 'redux-saga/effects'
+import { call, takeLatest, put, select } from 'redux-saga/effects'
+
 import { notification } from 'antd'
+
+import { formatMessageId } from '@/helpers/intl'
 
 import {
     addStudentToRobboGroupFailed,
@@ -54,20 +57,22 @@ function* getRobboGroupByIdSaga(action) {
 }
 
 function* deleteRobboGroupSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { robboUnitId, robboGroupId, robboGroupIndex } = payload
         const response = yield call(robboGroupMutationsGraphQL.DeleteRobboGroup, robboGroupId)
         console.log(response)
 
         yield put(deleteRobboGroupSuccess(response.data.DeleteRobboGroup, robboGroupIndex))
-        notification.success({ message: '', description: 'Группа успешно удалена!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.group_delete_success') })
     } catch (e) {
         yield put(deleteRobboGroupFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* createRobboGroupSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { robboUnitId, robboGroup } = payload
         console.log(robboUnitId, robboGroup)
@@ -75,14 +80,15 @@ function* createRobboGroupSaga({ payload }) {
         console.log(response)
 
         yield put(createRobboGroupSuccess(response.data.CreateRobboGroup))
-        notification.success({ message: '', description: 'Группа успешно создана!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.robbo_group_create_success') })
     } catch (e) {
         yield put(createRobboGroupFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* getRobboGroupsByRobboUnitIdSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { robboUnitId, page, pageSize } = payload
         const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByRobboUnitId, page, pageSize, robboUnitId)
@@ -91,39 +97,42 @@ function* getRobboGroupsByRobboUnitIdSaga({ payload }) {
         yield put(getRobboGroupsByRobboUnitIdSuccess(response.data.GetRobboGroupsByRobboUnitId))
     } catch (e) {
         yield put(getRobboGroupsByRobboUnitIdFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* addStudentToRobboGroupSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { robboGroup, studentId } = payload
         const response = yield call(robboGroupMutationsGraphQL.SetRobboGroupIdForStudent, studentId, robboGroup.id, robboGroup.robboUnitId)
         console.log(response)
 
         yield put(addStudentToRobboGroupSuccess(response.data.SetRobboGroupIdForStudent))
-        notification.success({ message: '', description: 'Ученик успешно добавлен в группу!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.student_added_to_group_success') })
     } catch (e) {
         yield put(addStudentToRobboGroupFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* deleteStudentFromRobboGroupSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { robboGroup, studentId } = payload
         const response = yield call(robboGroupMutationsGraphQL.SetRobboGroupIdForStudent, studentId, robboGroup.id, robboGroup.robboUnitId)
         console.log(response)
 
         yield put(deleteStudentFromRobboGroupRequest(response.data))
-        notification.success({ message: '', description: 'Ученик успешно удален из группы!' })
+        notification.success({ message: '', description: formatMessageId(language, 'notification.student_removed_from_group_success') })
     } catch (e) {
         yield put(deleteStudentFromRobboGroupFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* searchRobboGroupsByTitleSaga(action) {
+    const language = yield select(state => state.app.language)
     try {
         const { title } = action.payload
         const response = yield call(robboGroupsQuerysGraphQL.SearchRobboGroupsByName, { name: title })
@@ -132,11 +141,12 @@ function* searchRobboGroupsByTitleSaga(action) {
         yield put(searchRobboGroupsByTitleSuccess(response.data.SearchGroupsByName.robboGroups))
     } catch (e) {
         yield put(searchRobboGroupsByTitleFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* getRobboGroupsByTeacherIdSaga(action) {
+    const language = yield select(state => state.app.language)
     try {
         const { teacherId, page, pageSize } = action.payload
         const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByTeacherId, teacherId, page, pageSize)
@@ -144,11 +154,12 @@ function* getRobboGroupsByTeacherIdSaga(action) {
         yield put(getRobboGroupsByTeacherIdSuccess(response.data.GetRobboGroupsByTeacherId.robboGroups))
     } catch (e) {
         yield put(getRobboGroupsByTeacherIdFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* getRobboGroupsByAccessTokenSaga() {
+    const language = yield select(state => state.app.language)
     try {
         const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByAccessToken, "1", "10")
         console.log(response)
@@ -156,11 +167,12 @@ function* getRobboGroupsByAccessTokenSaga() {
         yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken.robboGroups))
     } catch (e) {
         yield put(getRobboGroupsByAccessTokenFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* getAllRobboGroupsSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { page, pageSize } = payload
         const response = yield call(robboGroupsQuerysGraphQL.GetAllRobboGroups, page, pageSize)
@@ -169,11 +181,12 @@ function* getAllRobboGroupsSaga({ payload }) {
         yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups))
     } catch (e) {
         yield put(getAllRobboGroupsFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
 function* getAllRobboGroupsForUnitAdminSaga({ payload }) {
+    const language = yield select(state => state.app.language)
     try {
         const { page, pageSize } = payload
         const response = yield call(robboGroupsQuerysGraphQL.GetAllRobboGroupsForUnitAdmin, page, pageSize)
@@ -182,7 +195,7 @@ function* getAllRobboGroupsForUnitAdminSaga({ payload }) {
         yield put(getAllRobboGroupsForUnitAdminSuccess(response.data.GetAllRobboGroupsForUnitAdmin.robboGroups))
     } catch (e) {
         yield put(getAllRobboGroupsForUnitAdminFailed(e))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 

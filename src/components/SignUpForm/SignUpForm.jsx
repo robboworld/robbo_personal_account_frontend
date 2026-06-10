@@ -88,12 +88,12 @@ const SignUpForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: <FormattedMessage id='sign_up_form.full_name_rule' defaultMessage='Введите полное имя' />,
+                        message: <FormattedMessage id='sign_up_form.full_name_rule' />,
                     },
                 ]}
             >
                 <Input
-                    placeholder={intl.formatMessage({ id: 'sign_up_form.full_name_placeholder', defaultMessage: 'Полное имя' })}
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.full_name_placeholder' })}
                     size='large'
                 />
             </Form.Item>

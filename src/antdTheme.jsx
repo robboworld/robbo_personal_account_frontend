@@ -35,6 +35,8 @@ const AppConfigProvider = ({ children }) => {
     }
     return (
         <IntlProvider
+            key={language}
+            locale={language}
             defaultLocale='ru'
             messages={intlMessages}
         >

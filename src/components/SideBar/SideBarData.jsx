@@ -31,7 +31,7 @@ import {
 export const SidebarDataStudent = [
   {
     key: 'home',
-    label: 'Главная',
+    label: <FormattedMessage id='sidebar_data.home' />,
     pathname: HOME_PAGE_ROUTE,
     icon: <HomeOutlined />,
   },
@@ -83,7 +83,7 @@ export const SidebarDataStudent = [
 export const SidebarDataParent = [
   {
     key: 'home',
-    label: 'Главная',
+    label: <FormattedMessage id='sidebar_data.home' />,
     pathname: HOME_PAGE_ROUTE,
     icon: <HomeOutlined />,
   },
@@ -129,7 +129,7 @@ export const SidebarDataParent = [
 export const SidebarDataSuperAdmin = [
   {
     key: 'home',
-    label: 'Главная',
+    label: <FormattedMessage id='sidebar_data.home' />,
     pathname: HOME_PAGE_ROUTE,
     icon: <HomeOutlined />,
   },
@@ -252,7 +252,7 @@ export const SidebarDataSuperAdmin = [
 export const SidebarDataTeacher = [
   {
     key: 'home',
-    label: 'Главная',
+    label: <FormattedMessage id='sidebar_data.home' />,
     pathname: HOME_PAGE_ROUTE,
     icon: <HomeOutlined />,
   },
@@ -298,7 +298,7 @@ export const SidebarDataTeacher = [
 export const SidebarDataFreeListener = [
   {
     key: 'home',
-    label: 'Главная',
+    label: <FormattedMessage id='sidebar_data.home' />,
     pathname: HOME_PAGE_ROUTE,
     icon: <HomeOutlined />,
   },
@@ -310,7 +310,7 @@ export const SidebarDataFreeListener = [
   },
   {
     key: '2',
-    label: 'Платежи',
+    label: <FormattedMessage id='sidebar_data.payments' />,
     pathname: '/program',
     icon: <CreditCardOutlined />,
   },
@@ -329,7 +329,7 @@ export const SidebarDataFreeListener = [
   },
   {
     key: '5',
-    label: 'Информер',
+    label: <FormattedMessage id='sidebar_data.informer' />,
     pathname: '/informer',
     icon: <InfoCircleOutlined />,
   },
@@ -344,7 +344,7 @@ export const SidebarDataFreeListener = [
 export const SidebarDataUnitAdmin = [
   {
     key: 'home',
-    label: 'Главная',
+    label: <FormattedMessage id='sidebar_data.home' />,
     pathname: HOME_PAGE_ROUTE,
     icon: <HomeOutlined />,
   },

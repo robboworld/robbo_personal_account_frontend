@@ -47,10 +47,7 @@ const ProfilePageBody = ({
         </ProfileTitle>
         <ProfileSubtitle>
           {profile?.fullName || profile?.nickname || profile?.email || (
-            <FormattedMessage
-              id='profile_card.not_loaded'
-              defaultMessage='Профиль недоступен или ещё загружается'
-            />
+            <FormattedMessage id='profile.loading' />
           )}
         </ProfileSubtitle>
         {profile && (
@@ -59,7 +56,7 @@ const ProfilePageBody = ({
             {profile.email && <MetaChip>{profile.email}</MetaChip>}
             {accessUpdate && (
               <MetaChip>
-                <FormattedMessage id='profile.read_only' defaultMessage='Только просмотр' />
+                <FormattedMessage id='profile.read_only' />
               </MetaChip>
             )}
           </ProfileMeta>

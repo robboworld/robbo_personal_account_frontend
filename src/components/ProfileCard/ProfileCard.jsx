@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { PropTypes } from 'prop-types'
 import { Button, Empty, Form, Input, Select } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -9,13 +9,7 @@ import {
   FormSection,
   FormSectionLegend,
 } from '@/components/AccountShell'
-import {
-  COUNTRY_OPTIONS,
-  EDUCATION_LEVEL_OPTIONS,
-  GENDER_OPTIONS,
-  SPOKEN_LANGUAGE_OPTIONS,
-  YEAR_OF_BIRTH_OPTIONS,
-} from '@/constants/lmsProfileOptions'
+import { getLmsProfileOptions } from '@/helpers/lmsProfileOptions'
 
 const normalizeProfileField = value => (value ?? '').trim()
 
@@ -85,6 +79,13 @@ const ProfileCard = ({
   const intl = useIntl()
   const [form] = Form.useForm()
   const isFormDisable = accessUpdate
+  const {
+    countryOptions,
+    yearOfBirthOptions,
+    genderOptions,
+    spokenLanguageOptions,
+    educationLevelOptions,
+  } = useMemo(() => getLmsProfileOptions(intl), [intl])
 
   useEffect(() => {
     if (!profile) {
@@ -96,12 +97,7 @@ const ProfileCard = ({
   if (!profile) {
     return (
       <Empty
-        description={(
-          <FormattedMessage
-            id='profile_card.not_loaded'
-            defaultMessage='Профиль недоступен или ещё загружается'
-          />
-        )}
+        description={<FormattedMessage id='profile.loading' />}
       />
     )
   }
@@ -143,7 +139,7 @@ const ProfileCard = ({
     >
       <FormSection>
         <FormSectionLegend>
-          <FormattedMessage id='profile.section.account' defaultMessage='Аккаунт' />
+          <FormattedMessage id='profile.section.account' />
         </FormSectionLegend>
         <FormGrid>
           <Form.Item
@@ -152,14 +148,14 @@ const ProfileCard = ({
           >
             <Input placeholder={profile.email} size='large' />
           </Form.Item>
-          <Form.Item label={<FormattedMessage id='profile_card.username' defaultMessage='Логин' />}>
+          <Form.Item label={<FormattedMessage id='profile_card.username' />}>
             <Input value={profile.nickname || '—'} disabled
 size='large' />
           </Form.Item>
           <Form.Item
             className='profile-form-span-full'
             name='fullName'
-            label={<FormattedMessage id='profile_card.full_name' defaultMessage='Полное имя' />}
+            label={<FormattedMessage id='profile_card.full_name' />}
           >
             <Input placeholder={profile.fullName || '—'} size='large' />
           </Form.Item>
@@ -168,59 +164,59 @@ size='large' />
 
       <FormSection>
         <FormSectionLegend>
-          <FormattedMessage id='profile.section.personal' defaultMessage='Личные данные' />
+          <FormattedMessage id='profile.section.personal' />
         </FormSectionLegend>
         <FormGrid>
           <Form.Item
             name='country'
-            label={<FormattedMessage id='profile_card.country' defaultMessage='Страна' />}
+            label={<FormattedMessage id='profile_card.country' />}
           >
             <Select
               size='large'
               allowClear
               showSearch
               optionFilterProp='label'
-              options={COUNTRY_OPTIONS.filter(o => o.value !== '')}
-              placeholder={intl.formatMessage({ id: 'profile_card.country_placeholder', defaultMessage: 'Выбрать страну' })}
+              options={countryOptions.filter(o => o.value !== '')}
+              placeholder={intl.formatMessage({ id: 'profile_card.country_placeholder' })}
             />
           </Form.Item>
           <Form.Item
             name='yearOfBirth'
-            label={<FormattedMessage id='profile_card.year_of_birth' defaultMessage='Год рождения' />}
+            label={<FormattedMessage id='profile_card.year_of_birth' />}
           >
             <Select
               size='large'
               allowClear
               showSearch
               optionFilterProp='label'
-              options={YEAR_OF_BIRTH_OPTIONS.filter(o => o.value !== '')}
-              placeholder={intl.formatMessage({ id: 'profile_card.year_of_birth_placeholder', defaultMessage: 'Выбрать год рождения' })}
+              options={yearOfBirthOptions.filter(o => o.value !== '')}
+              placeholder={intl.formatMessage({ id: 'profile_card.year_of_birth_placeholder' })}
             />
           </Form.Item>
           <Form.Item
             name='gender'
-            label={<FormattedMessage id='profile_card.gender' defaultMessage='Пол' />}
+            label={<FormattedMessage id='profile_card.gender' />}
           >
             <Select
               size='large'
               allowClear
               showSearch
               optionFilterProp='label'
-              options={GENDER_OPTIONS.filter(o => o.value !== '')}
-              placeholder={intl.formatMessage({ id: 'profile_card.gender_placeholder', defaultMessage: 'Выбрать пол' })}
+              options={genderOptions.filter(o => o.value !== '')}
+              placeholder={intl.formatMessage({ id: 'profile_card.gender_placeholder' })}
             />
           </Form.Item>
           <Form.Item
             name='language'
-            label={<FormattedMessage id='profile_card.language' defaultMessage='Разговорный язык' />}
+            label={<FormattedMessage id='profile_card.language' />}
           >
             <Select
               size='large'
               allowClear
               showSearch
               optionFilterProp='label'
-              options={SPOKEN_LANGUAGE_OPTIONS.filter(o => o.value !== '')}
-              placeholder={intl.formatMessage({ id: 'profile_card.language_placeholder', defaultMessage: 'Выбрать язык' })}
+              options={spokenLanguageOptions.filter(o => o.value !== '')}
+              placeholder={intl.formatMessage({ id: 'profile_card.language_placeholder' })}
             />
           </Form.Item>
         </FormGrid>
@@ -228,21 +224,21 @@ size='large' />
 
       <FormSection>
         <FormSectionLegend>
-          <FormattedMessage id='profile.section.education' defaultMessage='Образование' />
+          <FormattedMessage id='profile.section.education' />
         </FormSectionLegend>
         <FormGrid>
           <Form.Item
             className='profile-form-span-full'
             name='levelOfEducation'
-            label={<FormattedMessage id='profile_card.level_of_education' defaultMessage='Образование' />}
+            label={<FormattedMessage id='profile_card.level_of_education' />}
           >
             <Select
               size='large'
               allowClear
               showSearch
               optionFilterProp='label'
-              options={EDUCATION_LEVEL_OPTIONS.filter(o => o.value !== '')}
-              placeholder={intl.formatMessage({ id: 'profile_card.level_of_education_placeholder', defaultMessage: 'Выбрать уровень образования' })}
+              options={educationLevelOptions.filter(o => o.value !== '')}
+              placeholder={intl.formatMessage({ id: 'profile_card.level_of_education_placeholder' })}
             />
           </Form.Item>
           <Form.Item

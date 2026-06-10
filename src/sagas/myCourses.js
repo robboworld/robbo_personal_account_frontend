@@ -1,5 +1,8 @@
-import { call, put, takeLatest } from 'redux-saga/effects'
+import { call, put, takeLatest, select } from 'redux-saga/effects'
+
 import { notification } from 'antd'
+
+import { formatMessageId } from '@/helpers/intl'
 
 import { coursePageAPI } from '@/api'
 import {
@@ -42,6 +45,7 @@ function* getCoursePageByIdSaga(action) {
 }
 
 function* getCoursePagesByUserSaga(action) {
+    const language = yield select(state => state.app.language)
     try {
         const response = yield call(coursePageQuerysGraphQL.GetCoursesByUser)
         console.log(response)
@@ -49,7 +53,7 @@ function* getCoursePagesByUserSaga(action) {
         yield put(getCoursePagesByUserSuccess(response.data?.GetCoursesByUser?.results))
     } catch (e) {
         yield put(getCoursePagesByUserFailed(e.message))
-        notification.error({ message: 'Ошибка', description: e.message })
+        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 

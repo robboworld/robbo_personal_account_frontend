@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Col, Row, Select, Typography } from 'antd'
 
 import { useActions } from '@/helpers'
@@ -10,13 +10,14 @@ import { getAppState } from '@/reducers/app'
 const { Title } = Typography
 
 const SelectLanguage = () => {
+    const intl = useIntl()
     const actions = useActions({ changeLanguage }, [])
-    const { language, locale } = useSelector(({ app }) => getAppState(app))
-    const languages = [
-        { value: 'ru', label: 'Русский' },
-        { value: 'en', label: 'English' },
-        { value: 'zh', label: '中文' },
-    ]
+    const { language } = useSelector(({ app }) => getAppState(app))
+    const languages = useMemo(() => ([
+        { value: 'ru', label: intl.formatMessage({ id: 'header.lang_ru' }) },
+        { value: 'en', label: intl.formatMessage({ id: 'header.lang_en' }) },
+        { value: 'zh', label: intl.formatMessage({ id: 'header.lang_zh' }) },
+    ]), [intl])
 
     return (
         <Row align='middle' wrap={false}
@@ -29,7 +30,6 @@ style={{ width: 'auto', maxWidth: '100%' }}>
             <Col flex='none'>
                 <Select
                     style={{ width: 120 }}
-                    defaultValue='ru'
                     value={language}
                     options={languages}
                     onChange={value => actions.changeLanguage(value)}

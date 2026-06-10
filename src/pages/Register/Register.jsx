@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Form, Input, Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import AuthLayout, { AuthFormStyles } from '@/components/AuthLayout'
 import { useActions } from '@/helpers'
@@ -13,6 +14,7 @@ import {
 
 const Register = () => {
   const navigate = useNavigate()
+  const intl = useIntl()
   const isAuth = useSelector(({ login }) => login.isAuth)
 
   const actions = useActions({ signUpRequest }, [])
@@ -54,17 +56,23 @@ const Register = () => {
           }}
         >
           <Form.Item
-            label='Полное имя'
+            label={intl.formatMessage({ id: 'register_page.full_name' })}
             name='fullName'
-            rules={[{ required: true, message: 'Введите полное имя' }]}
+            rules={[{
+              required: true,
+              message: intl.formatMessage({ id: 'register_page.full_name_rule' }),
+            }]}
           >
             <Input size='large' autoComplete='name' />
           </Form.Item>
 
           <Form.Item
-            label='Название компании'
+            label={intl.formatMessage({ id: 'register_page.company' })}
             name='company'
-            rules={[{ required: true, message: 'Введите название компании' }]}
+            rules={[{
+              required: true,
+              message: intl.formatMessage({ id: 'register_page.company_rule' }),
+            }]}
           >
             <Input size='large' autoComplete='organization' />
           </Form.Item>
@@ -73,25 +81,37 @@ const Register = () => {
             label='Email'
             name='email'
             rules={[
-              { required: true, message: 'Введите email' },
-              { type: 'email', message: 'Введите корректный email' },
+              {
+                required: true,
+                message: intl.formatMessage({ id: 'register_page.email_rule' }),
+              },
+              {
+                type: 'email',
+                message: intl.formatMessage({ id: 'register_page.email_invalid' }),
+              },
             ]}
           >
             <Input size='large' autoComplete='email' />
           </Form.Item>
 
           <Form.Item
-            label='Никнейм'
+            label={intl.formatMessage({ id: 'sign_up_form.nickname_placeholder' })}
             name='nickname'
-            rules={[{ required: true, message: 'Введите никнейм' }]}
+            rules={[{
+              required: true,
+              message: intl.formatMessage({ id: 'register_page.nickname_rule' }),
+            }]}
           >
             <Input size='large' autoComplete='username' />
           </Form.Item>
 
           <Form.Item
-            label='Пароль'
+            label={intl.formatMessage({ id: 'sign_up_form.password_placeholder' })}
             name='password'
-            rules={[{ required: true, message: 'Введите пароль' }]}
+            rules={[{
+              required: true,
+              message: intl.formatMessage({ id: 'register_page.password_rule' }),
+            }]}
           >
             <Input.Password size='large' autoComplete='new-password' />
           </Form.Item>
@@ -104,7 +124,7 @@ const Register = () => {
               block
               className='register-button'
             >
-              Создать аккаунт бесплатно
+              <FormattedMessage id='register_page.submit' />
             </Button>
           </Form.Item>
         </Form>
