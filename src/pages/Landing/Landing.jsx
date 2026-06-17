@@ -13,6 +13,8 @@ import {
   TbStars,
 } from 'react-icons/tb'
 
+import LandingFooter from './LandingFooter'
+
 import appTheme from '@/theme'
 import { useLandingTheme } from '@/helpers/landingTheme'
 
@@ -1166,6 +1168,8 @@ const Landing = () => {
             </ActionRow>
           </MotionSection>
         </Container>
+
+        <LandingFooter />
       </PageRoot>
     </ConfigProvider>
   )
