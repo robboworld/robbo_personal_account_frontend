@@ -1,7 +1,7 @@
 import React from 'react'
 import { notification } from 'antd'
 import { graphql } from '@apollo/client/react/hoc'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 import { compose } from 'redux'
 
@@ -11,6 +11,7 @@ import { projectPageMutationGQL, projectPageQueryGQL } from '@/graphQL'
 
 const MyProjectsContainer = () => {
     const intl = useIntl()
+    const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams()
     const currentPage = searchParams.get('page') || '1'
     const pageSize = '5'
@@ -64,8 +65,11 @@ const MyProjectsContainer = () => {
             {
                 options: props => {
                     return {
-                        onCompleted: () => {
-                            notification.success({ description: props.intl.formatMessage({ id: 'notification.project_page_created_success' }) })
+                        onCompleted: data => {
+                            const created = data?.CreateProjectPage
+                            if (created?.projectPageId) {
+                                navigate(`/projects/${created.projectPageId}`)
+                            }
                         },
                         onError: error => {
                             notification.error({
