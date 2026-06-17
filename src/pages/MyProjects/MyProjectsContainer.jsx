@@ -46,6 +46,15 @@ const MyProjectsContainer = () => {
             {
                 options: props => {
                     return {
+                        refetchQueries: [
+                            {
+                                query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN,
+                                variables: {
+                                    page: props.currentPage,
+                                    pageSize: props.pageSize,
+                                },
+                            },
+                        ],
                         onCompleted: () => {
                             notification.success({ description: props.intl.formatMessage({ id: 'notification.project_page_deleted_success' }) })
                         },
