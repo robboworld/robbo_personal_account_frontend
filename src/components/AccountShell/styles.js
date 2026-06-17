@@ -207,7 +207,13 @@ export const ActionTile = styled(motion.button).attrs({ type: 'button' })`
   background: ${surface.card};
   box-shadow: 0 12px 32px -24px rgba(108, 91, 123, 0.4);
 
-  ${({ $featured }) => $featured && css`
+  ${({ $gridSpan }) => $gridSpan && css`
+    ${theme.above.large`
+      grid-column: span ${$gridSpan};
+    `}
+  `}
+
+  ${({ $gridSpan, $featured }) => !$gridSpan && $featured && css`
     ${theme.above.large`
       grid-column: span 6;
       min-height: 168px;
@@ -215,13 +221,13 @@ export const ActionTile = styled(motion.button).attrs({ type: 'button' })`
     `}
   `}
 
-  ${({ $featured, $wide }) => !$featured && $wide && css`
+  ${({ $gridSpan, $featured, $wide }) => !$gridSpan && !$featured && $wide && css`
     ${theme.above.large`
       grid-column: span 6;
     `}
   `}
 
-  ${({ $featured, $wide }) => !$featured && !$wide && css`
+  ${({ $gridSpan, $featured, $wide }) => !$gridSpan && !$featured && !$wide && css`
     ${theme.above.large`
       grid-column: span 4;
     `}
@@ -567,6 +573,11 @@ export const SidebarShell = styled.div`
   padding: 0.5rem 0.35rem 1rem;
   background: linear-gradient(180deg, #fafcfa 0%, #f4f8f4 100%);
   border-inline-end: 1px solid rgba(108, 91, 123, 0.1);
+  overflow: hidden;
+
+  ${({ $collapsed }) => $collapsed && css`
+    padding: 0.5rem 0.375rem 0.75rem;
+  `}
 `
 
 export const SidebarAdminActions = styled.div`
@@ -577,75 +588,143 @@ export const SidebarMenu = styled(Menu)`
   flex: 1;
   background: transparent !important;
   border-inline-end: none !important;
-  padding: 0.25rem 0.35rem;
 
-  .ant-menu-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.75rem;
-    height: auto !important;
-    min-height: 2.75rem;
-    margin: 0.2rem 0 !important;
-    padding: 0.5rem 0.65rem !important;
-    line-height: 1.35 !important;
-    border-radius: 0.875rem;
-    color: ${colors.secondary};
-    transition:
-      background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
-      color 0.22s ease;
-  }
+  ${({ $collapsed }) => !$collapsed && css`
+    padding: 0.25rem 0.35rem;
 
-  .ant-menu-item .ant-menu-item-icon {
-    width: auto !important;
-    min-width: 2.5rem;
-    margin-inline-end: 0 !important;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .ant-menu-title-content {
-    font-size: 0.9375rem;
-    font-weight: 500;
-  }
-
-  .ant-menu-item:not(.ant-menu-item-selected):hover {
-    background: rgba(192, 108, 132, 0.08) !important;
-    color: ${colors.secondary} !important;
-  }
-
-  .ant-menu-item-selected {
-    background: rgba(0, 175, 65, 0.1) !important;
-    color: ${colors.secondary} !important;
-    font-weight: 600;
-  }
-
-  .ant-menu-item-selected .ant-menu-title-content {
-    font-weight: 600;
-  }
-
-  .ant-menu-item-selected ${SidebarIcon} {
-    color: ${colors.accentGreen};
-    background: rgba(0, 175, 65, 0.16);
-  }
-
-  .ant-menu-item-danger,
-  .ant-menu-item[data-menu-logout='true'] {
-    margin-top: 0.35rem !important;
-  }
-
-  &.ant-menu-inline-collapsed {
     .ant-menu-item {
-      padding-inline: 0.65rem !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.75rem;
+      height: auto !important;
+      min-height: 2.75rem;
+      margin: 0.2rem 0 !important;
+      padding: 0.5rem 0.65rem !important;
+      line-height: 1.35 !important;
+      border-radius: 0.875rem;
+      color: ${colors.secondary};
+      transition:
+        background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+        color 0.22s ease;
+    }
+
+    .ant-menu-item .ant-menu-item-icon {
+      width: auto !important;
+      min-width: 2.5rem;
+      margin-inline-end: 0 !important;
+      display: inline-flex !important;
+      align-items: center;
       justify-content: center;
     }
 
     .ant-menu-title-content {
-      display: none;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: nowrap;
     }
 
-    .ant-menu-item .ant-menu-item-icon {
-      min-width: 2.5rem;
+    .ant-menu-item:not(.ant-menu-item-selected):hover {
+      background: rgba(192, 108, 132, 0.08) !important;
+      color: ${colors.secondary} !important;
     }
-  }
+
+    .ant-menu-item-selected {
+      background: rgba(0, 175, 65, 0.1) !important;
+      color: ${colors.secondary} !important;
+      font-weight: 600;
+    }
+
+    .ant-menu-item-selected .ant-menu-title-content {
+      font-weight: 600;
+    }
+
+    .ant-menu-item-selected ${SidebarIcon} {
+      color: ${colors.accentGreen};
+      background: rgba(0, 175, 65, 0.16);
+    }
+
+    .ant-menu-item-danger,
+    .ant-menu-item[data-menu-logout='true'] {
+      margin-top: 0.35rem !important;
+    }
+  `}
+
+  ${({ $collapsed }) => $collapsed && css`
+    &&.ant-menu-inline-collapsed {
+      width: 100% !important;
+      padding: 0 !important;
+      border-inline-end: none !important;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 2.5rem !important;
+      min-height: 2.5rem !important;
+      margin: 0.125rem 0 !important;
+      padding: 0 !important;
+      padding-inline: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0 !important;
+      border-radius: 0.625rem;
+      line-height: 1 !important;
+      overflow: visible !important;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon {
+      width: auto !important;
+      height: auto !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: none !important;
+      border-radius: 0 !important;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem !important;
+      line-height: 1 !important;
+      color: ${colors.secondary} !important;
+      opacity: 1 !important;
+      transition: color 0.22s ease;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon .anticon {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem !important;
+      line-height: 1 !important;
+      color: inherit !important;
+      opacity: 1 !important;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-title-content {
+      display: none !important;
+      width: 0 !important;
+      opacity: 0 !important;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item:not(.ant-menu-item-selected):hover {
+      background: rgba(192, 108, 132, 0.1) !important;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item-selected {
+      background: rgba(0, 175, 65, 0.14) !important;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item-selected .ant-menu-item-icon,
+    &&.ant-menu-inline-collapsed > .ant-menu-item[data-icon-accent='green'] .ant-menu-item-icon {
+      color: ${colors.accentGreen} !important;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item[data-icon-accent='muted'] .ant-menu-item-icon,
+    &&.ant-menu-inline-collapsed > .ant-menu-item[data-menu-logout='true'] .ant-menu-item-icon {
+      color: ${colors.secondaryLight} !important;
+    }
+  `}
 `

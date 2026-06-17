@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl'
 import {
   HomeOutlined,
   UserOutlined,
+  ProjectOutlined,
   BookOutlined,
   CreditCardOutlined,
   TeamOutlined,
@@ -24,6 +25,7 @@ import {
   UNIT_ADMINS_ROUTE,
   ROBBO_UNITS_ROUTE,
   PROFILE_PAGE_ROUTE,
+  MY_PROJECTS_ROUTE,
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
 } from '@/constants'
@@ -41,12 +43,12 @@ export const SidebarDataStudent = [
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
-  // {
-  //   key: '2',
-  //   label: <FormattedMessage id='sidebar_data.my_projects' />,
-  //   pathname: MY_PROJECTS_ROUTE,
-  //   icon: <ProjectOutlined />,
-  // },
+  {
+    key: '2',
+    label: <FormattedMessage id='sidebar_data.my_projects' />,
+    pathname: MY_PROJECTS_ROUTE,
+    icon: <ProjectOutlined />,
+  },
   // {
   //   key: '3',
   //   label: 'Платежи',

@@ -25,7 +25,7 @@ import {
 } from '@/constants'
 import { SidebarAdminActions, SidebarMenu, SidebarShell } from '@/components/AccountShell'
 
-export default ({ selectedNavBarKey = '1' }) => {
+export default ({ selectedNavBarKey = '1', collapsed = false }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const token = localStorage.getItem('token')
@@ -61,8 +61,8 @@ export default ({ selectedNavBarKey = '1' }) => {
   }
 
   const menuItems = useMemo(
-    () => mapSidebarMenuItems(SideBarData),
-    [SideBarData],
+    () => mapSidebarMenuItems(SideBarData, collapsed),
+    [SideBarData, collapsed],
   )
 
   const [loginOut] = useMutation(authMutationsGQL.SING_OUT, {
@@ -102,7 +102,7 @@ export default ({ selectedNavBarKey = '1' }) => {
   }
 
   return (
-    <SidebarShell>
+    <SidebarShell $collapsed={collapsed}>
       {showAdminHomeShortcuts ? (
         <SidebarAdminActions>
           <Space direction='vertical' style={{ width: '100%' }}
@@ -117,6 +117,8 @@ onClick={onSendNotificationClick}>
       <SidebarMenu
         theme='light'
         mode='inline'
+        inlineCollapsed={collapsed}
+        $collapsed={collapsed}
         selectedKeys={[selectedNavBarKey]}
         onClick={onMenuClick}
         items={menuItems}

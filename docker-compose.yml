@@ -4,6 +4,7 @@ name: robbo_personal_account_frontend
 
 services:
   web:
+    restart: unless-stopped
     build: .
     command: yarn start
     stdin_open: true
