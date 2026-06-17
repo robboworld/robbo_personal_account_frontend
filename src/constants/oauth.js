@@ -6,7 +6,7 @@ const getEnv = (name, fallback = '') => {
   return fallback
 }
 
-export const LMS_URL = getEnv('LMS_URL', 'https://lms2.robbo.world')
+export const LMS_URL = getEnv('LMS_URL', 'https://lms.example.com')
 
 // Soft rollout switch for SSO in LK.
 export const LK_SSO_WITH_LMS_ENABLED = getEnv('LK_SSO_WITH_LMS_ENABLED', 'false') === 'true'

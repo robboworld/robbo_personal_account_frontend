@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, Input, Button } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import AuthLayout, { AuthFormStyles } from '@/components/AuthLayout'
+import Loader from '@/components/Loader'
 import { useActions } from '@/helpers'
+import { shouldRedirectAuthenticatedUserToHome } from '@/helpers/publicAuthGate'
 import { signUpRequest } from '@/actions'
 import {
   HOME_PAGE_ROUTE,
@@ -13,24 +15,38 @@ import {
 } from '@/constants'
 
 const Register = () => {
-  const navigate = useNavigate()
   const intl = useIntl()
   const isAuth = useSelector(({ login }) => login.isAuth)
+  const [redirectHome, setRedirectHome] = useState(null)
 
   const actions = useActions({ signUpRequest }, [])
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      navigate(HOME_PAGE_ROUTE, { replace: true })
-    }
-  }, [navigate])
-
-  useEffect(() => {
     if (isAuth) {
-      navigate(HOME_PAGE_ROUTE, { replace: true })
+      setRedirectHome(true)
+      return undefined
     }
-  }, [isAuth, navigate])
+
+    let cancelled = false
+
+    shouldRedirectAuthenticatedUserToHome().then(shouldRedirect => {
+      if (!cancelled) {
+        setRedirectHome(shouldRedirect)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isAuth])
+
+  if (redirectHome === null) {
+    return <Loader />
+  }
+
+  if (redirectHome) {
+    return <Navigate to={HOME_PAGE_ROUTE} replace />
+  }
 
   return (
     <AuthLayout activeTab='register'>

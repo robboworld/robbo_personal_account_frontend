@@ -10,12 +10,30 @@ import {
 import SideBar from '@/components/SideBar'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
+import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import { parseJwt, getSelectedNavBarKeyFromPath } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
 import theme from '@/theme'
+import robboGuestTokens from '@/theme/robboGuestTokens'
 
 const { Header, Sider, Content } = Layout
 const SIDEBAR_COLLAPSED_STORAGE_KEY = 'lk_sidebar_collapsed'
+
+const shellStyle = {
+    minHeight: '100dvh',
+}
+
+const innerLayoutStyle = {
+    minHeight: '100dvh',
+    display: 'flex',
+    flexDirection: 'column',
+}
+
+const contentStyle = {
+    flex: 1,
+    padding: '0 1rem',
+    background: robboGuestTokens.lkPageBg,
+}
 
 const PageLayout = ({ children }) => {
     const location = useLocation()
@@ -44,18 +62,21 @@ const PageLayout = ({ children }) => {
     useEffect(() => {
         localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(collapsed))
     }, [collapsed])
+
     return (
-        <Layout>
+        <Layout style={shellStyle}>
             <Sider
-                trigger={null} collapsible
-                collapsed={collapsed} theme='light'
+                trigger={null}
+                collapsible
+                collapsed={collapsed}
+                theme='light'
                 width={232}
                 collapsedWidth={80}
                 styles={{ body: { overflow: 'hidden', padding: 0 } }}
             >
                 <SideBar selectedNavBarKey={selectedNavBarKey} collapsed={collapsed} />
             </Sider>
-            <Layout>
+            <Layout style={innerLayoutStyle}>
                 <Header
                     style={{
                         backgroundColor: theme.colors.accentGreen,
@@ -64,6 +85,7 @@ const PageLayout = ({ children }) => {
                         paddingLeft: 16,
                         paddingRight: 16,
                         lineHeight: 1,
+                        flexShrink: 0,
                     }}
                 >
                     <div style={{ flexShrink: 0 }}>
@@ -87,13 +109,12 @@ const PageLayout = ({ children }) => {
                         <NotificationBell />
                     </div>
                 </Header>
-                <Content style={{ padding: '0 1rem', background: '#f4f8f4' }}>
-                    {
-                        children
-                    }
+                <Content style={contentStyle}>
+                    {children}
                 </Content>
+                <RobboSiteFooter />
             </Layout>
-        </Layout >
+        </Layout>
     )
 }
 

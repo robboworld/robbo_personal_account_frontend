@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import { Button, Row, Col, Modal, Typography, Avatar, Spin } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import PageLayout from '@/components/PageLayout'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
 import { checkAccess, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
@@ -41,12 +40,10 @@ export default ({ userRole }) => {
     }
 
     return (
-        <PageLayout>
-            {
-                loading
-                    ? <Spin />
-                    : (
-                        <React.Fragment>
+        loading
+            ? <Spin />
+            : (
+                <React.Fragment>
                             <Row align='middle'>
                                 <Col span={22}>
                                     <Title>{coursePage.name}</Title>
@@ -126,11 +123,8 @@ export default ({ userRole }) => {
                             >
                                 <CourseAccess courseId={coursePage.id} userRole={userRole} />
                             </Modal>
-                        </React.Fragment>
-                    )
-
-            }
-        </PageLayout >
+                </React.Fragment>
+            )
     )
 
 }

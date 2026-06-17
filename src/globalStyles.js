@@ -1,37 +1,41 @@
 import { createGlobalStyle } from 'styled-components'
 
 import theme from './theme'
+import robboGuestTokens from './theme/robboGuestTokens'
 
 export default createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
     font-family: ${theme.font};
   }
 
-  html, body {
+  html,
+  body {
     width: 100%;
-    height: 100%;
+    min-height: 100dvh;
   }
 
   body {
-    & > #root {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  body {
+    background: ${robboGuestTokens.lkPageBg};
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+
+    & > #root {
+      width: 100%;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   #root {
     display: flex;
-    background: linear-gradient(to bottom, ${theme.colors.accentGreen}, #f0fff0);
+    flex-direction: column;
+    min-height: 100dvh;
+    background: ${robboGuestTokens.lkPageBg};
     box-sizing: border-box;
   }
 `

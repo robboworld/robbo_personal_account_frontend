@@ -31,7 +31,6 @@ import {
 } from '@/constants'
 import { freeListenerMutationsGQL } from '@/graphQL/mutation/freeListener'
 import { checkAccess } from '@/helpers'
-import PageLayout from '@/components/PageLayout'
 
 const ProfileContainer = ({
     userId,
@@ -271,23 +270,19 @@ const ProfileContainer = ({
                 return <Profile userId={userId} />
             default:
                 return (
-                    <PageLayout>
                         <Alert
                             type='warning'
                             showIcon
                             message={intl.formatMessage({ id: 'profile.unavailable' })}
                             description={`role=${String(userRole)}`}
                         />
-                    </PageLayout>
                 )
         }
     }
 
     return (
-        <PageLayout>
             <Alert type='info' showIcon
 message={intl.formatMessage({ id: 'profile.select_user' })} />
-        </PageLayout>
     )
 }
 

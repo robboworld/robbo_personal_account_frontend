@@ -6,7 +6,6 @@ import { motion } from 'framer-motion'
 
 import { getProfileFromQuery } from './profileQuery'
 
-import PageLayout from '@/components/PageLayout'
 import ProfilePageShell from '@/components/ProfilePageShell'
 import ProfileCard from '@/components/ProfileCard'
 import {
@@ -42,7 +41,6 @@ const ParentProfile = ({
   }
 
   return (
-    <PageLayout>
       <PageContent>
         <ParentLayout
           as={motion.div}
@@ -85,7 +83,6 @@ const ParentProfile = ({
           </ChildrenPanel>
         </ParentLayout>
       </PageContent>
-    </PageLayout>
   )
 }
 

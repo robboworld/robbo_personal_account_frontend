@@ -27,9 +27,12 @@ import {
 } from '@/constants'
 import Loader from '@/components/Loader'
 import HelpButton from '@/components/HelpButton/HelpButton'
-import { ProtectedRoute, RequireAuth } from '@/helpers'
+import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
+import { ProtectedRoute } from '@/helpers'
 
-const HomePage = lazy(() => import('@/pages/Home'))
+import HomePage from '@/pages/Home'
+import ProfilePage from '@/pages/Profile'
+
 const LoginPage = lazy(() => import('@/pages/Login'))
 const Landing = lazy(() => import('@/pages/Landing'))
 const RegisterPage = lazy(() => import('@/pages/Register'))
@@ -38,7 +41,6 @@ const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const LmsRedirect = lazy(() => import('@/pages/LmsRedirect'))
 const OidcCallback = lazy(() => import('@/pages/OidcCallback'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
-const ProfilePage = lazy(() => import('@/pages/Profile'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
 const ClientsPageContainer = lazy(() => import('@/containers/ClientsContainer'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
@@ -46,73 +48,73 @@ const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
 
+const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
+
 const wrapProtected = (allowedRoles, element) => (
-  <RequireAuth>
-    <ProtectedRoute allowedRoles={allowedRoles}>{element}</ProtectedRoute>
-  </RequireAuth>
+  <ProtectedRoute allowedRoles={allowedRoles}>{element}</ProtectedRoute>
 )
 
-const Application = () => {
-  return (
+const AppRoutes = () => (
+  <Routes>
+    <Route path='/' element={<Landing />} />
+    <Route path={LOGIN_PAGE_ROUTE} element={<LoginPage />} />
+    <Route path={OIDC_CALLBACK_ROUTE} element={<OidcCallback />} />
+    <Route path={REGISTER_PAGE_ROUTE} element={<RegisterPage />} />
+
+    <Route element={<AuthenticatedShell />}>
+      <Route
+        path={HOME_PAGE_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <HomePage />)}
+      />
+      <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT], <MyProjects />)} />
+      <Route path={PROJECT_PAGE_ROUTE} element={wrapProtected([STUDENT], <ProjectPage />)} />
+      <Route
+        path={MY_COURSES_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <LmsRedirect />)}
+      />
+      <Route
+        path={COURSE_PAGE_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <CoursePage />)}
+      />
+      <Route path={CLIENTS_ROUTE} element={wrapProtected([SUPER_ADMIN], <ClientsPageContainer />)} />
+      <Route
+        path={TEACHERS_PAGE_ROUTE}
+        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <TeachersPage />)}
+      />
+      <Route
+        path={PROFILE_PAGE_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <ProfilePage />)}
+      />
+      <Route path={UNIT_ADMINS_ROUTE} element={wrapProtected([SUPER_ADMIN], <UnitAdminsPage />)} />
+      <Route
+        path={ROBBO_UNITS_ROUTE}
+        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboUnitsPage />)}
+      />
+      <Route
+        path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
+        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)}
+      />
+      <Route
+        path={ROBBO_GROUPS_ROUTE}
+        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)}
+      />
+      <Route
+        path={SEND_NOTIFICATION_ROUTE}
+        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <SendNotificationPage />)}
+      />
+    </Route>
+
+    <Route path='/*' element={<Navigate to={HOME_PAGE_ROUTE} replace />} />
+  </Routes>
+)
+
+const Application = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: '100dvh', width: '100%' }}>
     <Suspense fallback={<Loader />}>
-      <React.Fragment>
-        <Routes>
-          <Route
-            path='/'
-            element={<Landing />}
-          />
-          <Route
-            path={HOME_PAGE_ROUTE}
-            element={wrapProtected([STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN], <HomePage />)}
-          />
-          <Route
-            path={LOGIN_PAGE_ROUTE}
-            element={<LoginPage />}
-          />
-          <Route
-            path={OIDC_CALLBACK_ROUTE}
-            element={<OidcCallback />}
-          />
-          <Route
-            path={REGISTER_PAGE_ROUTE}
-            element={<RegisterPage />}
-          />
-          <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT], <MyProjects />)} />
-          <Route path={PROJECT_PAGE_ROUTE} element={wrapProtected([STUDENT], <ProjectPage />)} />
-          <Route
-            path={MY_COURSES_ROUTE}
-            element={wrapProtected([STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN], <LmsRedirect />)}
-          />
-          <Route
-            path={COURSE_PAGE_ROUTE}
-            element={wrapProtected([STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN], <CoursePage />)}
-          />
-          <Route path={CLIENTS_ROUTE} element={wrapProtected([SUPER_ADMIN], <ClientsPageContainer />)} />
-          <Route path={TEACHERS_PAGE_ROUTE} element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <TeachersPage />)} />
-          <Route
-            path={PROFILE_PAGE_ROUTE}
-            element={wrapProtected([STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN], <ProfilePage />)}
-          />
-          <Route path={UNIT_ADMINS_ROUTE} element={wrapProtected([SUPER_ADMIN], <UnitAdminsPage />)} />
-          <Route path={ROBBO_UNITS_ROUTE} element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboUnitsPage />)} />
-          <Route
-            path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
-            element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)}
-          />
-          <Route path={ROBBO_GROUPS_ROUTE} element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)} />
-          <Route
-            path={SEND_NOTIFICATION_ROUTE}
-            element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <SendNotificationPage />)}
-          />
-          <Route
-            path='/*'
-            element={<Navigate to={HOME_PAGE_ROUTE} replace />}
-          />
-        </Routes>
-        <HelpButton />
-      </React.Fragment>
+      <AppRoutes />
+      <HelpButton />
     </Suspense>
-  )
-}
+  </div>
+)
 
 export default Application

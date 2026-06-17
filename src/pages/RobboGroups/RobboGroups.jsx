@@ -4,7 +4,6 @@ import { Modal, Button, Pagination, Typography, Spin } from "antd"
 import { useParams, useSearchParams } from "react-router-dom"
 import { FormattedMessage, useIntl } from "react-intl"
 
-import PageLayout from '@/components/PageLayout'
 import Flex from "@/components/Flex"
 import Loader from "@/components/Loader"
 import AddRobboGroupWithUnitSelect from "@/components/AddRobboGroup/AddRobboGroupWithUnitSelect"
@@ -77,7 +76,7 @@ export default ({ userRole }) => {
     }
 
     return (
-        <PageLayout>
+        <React.Fragment>
             <Title>
                 <FormattedMessage id='robbo_groups.title' />
             </Title>
@@ -144,7 +143,6 @@ export default ({ userRole }) => {
                     setSearchParams({ page })
                 }}
             />
-
-        </PageLayout>
+        </React.Fragment>
     )
 }

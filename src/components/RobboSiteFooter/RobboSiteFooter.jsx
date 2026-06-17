@@ -4,38 +4,16 @@ import styled from 'styled-components'
 const FASIE_LOGO_URL = '/static/partners/fasie.png'
 
 const SiteFooter = styled.footer`
-  --footer-bg: rgba(255, 255, 255, 0.98);
-  --footer-heading: #383838;
-  --footer-muted: #989898;
-  --footer-accent: var(--landing-accent, #00af41);
-  --footer-logo-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-  --footer-partner-bg: transparent;
-  --footer-partner-pad: 0;
-
   position: relative;
   z-index: 1;
   box-sizing: border-box;
   width: 100%;
-  background: var(--footer-bg);
-  border-top: 3px solid var(--footer-accent);
+  background: #fff;
+  border-top: 3px solid #00af41;
   padding: clamp(28px, 4vw, 36px) 0;
-  color: var(--footer-heading);
-  font-family: 'Proxima Nova', 'ProximaNova', system-ui, -apple-system, 'Segoe UI',
+  color: #383838;
+  font-family: 'ProximaNova', 'Proxima Nova', system-ui, -apple-system, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
-  transition:
-    background 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-
-  [data-theme='dark'] & {
-    --footer-bg: var(--landing-surface, rgba(16, 20, 16, 0.97));
-    --footer-heading: var(--landing-text, #eef5ee);
-    --footer-muted: var(--landing-muted, #9cb09c);
-    --footer-logo-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
-    --footer-partner-bg: rgba(255, 255, 255, 0.96);
-    --footer-partner-pad: 6px;
-    box-shadow: inset 0 1px 0 var(--landing-inset-line, rgba(255, 255, 255, 0.07));
-  }
 
   @media screen and (max-width: 980px) {
     padding: 24px 0;
@@ -149,7 +127,7 @@ const FooterLogo = styled.span`
   padding: clamp(4px, 1.2vw, 6px) clamp(14px, 2.2vw, 21px) clamp(4px, 1.2vw, 6px)
     clamp(12px, 1.8vw, 15px);
   box-sizing: border-box;
-  background: var(--footer-accent);
+  background: #00af41;
   color: #fff;
   font-size: clamp(14px, 2vw, 24px);
   font-weight: 700;
@@ -157,7 +135,7 @@ const FooterLogo = styled.span`
   letter-spacing: 0.02em;
   text-transform: uppercase;
   text-align: center;
-  box-shadow: var(--footer-logo-shadow);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 `
 
 const FooterReg = styled.sup`
@@ -172,7 +150,7 @@ const FooterReg = styled.sup`
 const FooterTagline = styled.p`
   margin: 0;
   max-width: 22em;
-  color: var(--footer-muted);
+  color: #989898;
   font-size: clamp(11px, 1.1vw, 13px);
   line-height: 1.45;
   transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -183,7 +161,7 @@ const FooterCopyright = styled.p`
   max-width: 22em;
   font-size: clamp(11px, 1.1vw, 12px);
   line-height: 1.45;
-  color: var(--footer-muted);
+  color: #989898;
   transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 `
 
@@ -193,7 +171,7 @@ const PartnerLink = styled.a`
   border-radius: 4px;
 
   &:focus-visible {
-    outline: 2px solid var(--footer-accent);
+    outline: 2px solid #00af41;
     outline-offset: 3px;
   }
 `
@@ -203,17 +181,14 @@ const PartnerLogo = styled.img`
   width: auto;
   height: clamp(56px, 6.5vw, 76px);
   object-fit: contain;
-  background: var(--footer-partner-bg);
-  padding: var(--footer-partner-pad);
+  background: transparent;
+  padding: 0;
   border-radius: 4px;
-  transition:
-    background 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    padding 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 `
 
 const FooterHeading = styled.h2`
   margin: 0 0 12px;
-  color: var(--footer-heading);
+  color: #383838;
   font-size: 13px;
   font-weight: 800;
   line-height: 1.2;
@@ -226,7 +201,7 @@ const footerLinkStyles = `
   display: block;
   margin: 0;
   padding: 0;
-  color: var(--footer-muted);
+  color: #989898;
   font-size: clamp(11px, 1.1vw, 13px);
   line-height: 1.45;
   text-decoration: none;
@@ -235,12 +210,12 @@ const footerLinkStyles = `
 
   &:hover,
   &:focus {
-    color: var(--footer-accent);
+      color: #00af41;
     text-decoration: underline;
   }
 
   &:focus-visible {
-    outline: 2px solid var(--footer-accent);
+    outline: 2px solid #00af41;
     outline-offset: 2px;
   }
 `
@@ -311,7 +286,7 @@ const ContactsIcon = styled.span`
   justify-content: center;
   width: 18px;
   height: 18px;
-  color: var(--footer-muted);
+  color: #989898;
   transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 `
 
@@ -391,7 +366,7 @@ aria-hidden>
   </svg>
 )
 
-const LandingFooter = () => (
+const RobboSiteFooter = () => (
   <SiteFooter id='footer-guest' lang='ru'>
     <FooterInner>
       <FooterMain>
@@ -487,4 +462,4 @@ const LandingFooter = () => (
   </SiteFooter>
 )
 
-export default LandingFooter
+export default RobboSiteFooter

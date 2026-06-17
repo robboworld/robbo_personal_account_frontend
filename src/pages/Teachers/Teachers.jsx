@@ -2,7 +2,6 @@ import React, { useState, memo } from 'react'
 import { Modal, Button, Row, Col, Typography, List } from 'antd'
 import { FormattedMessage, useIntl } from "react-intl"
 
-import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
@@ -27,7 +26,7 @@ const Teachers = memo(({
     const actions = useActions({ deleteTeacher }, [])
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
     return (
-        <PageLayout>
+        <React.Fragment>
             <Modal
                 title={intl.formatMessage({ id: 'teachers.modal_title' })}
                 open={openAddTeacher}
@@ -84,7 +83,7 @@ const Teachers = memo(({
                     />
                 </Col>
             </Row>
-        </PageLayout >
+        </React.Fragment>
     )
 })
 

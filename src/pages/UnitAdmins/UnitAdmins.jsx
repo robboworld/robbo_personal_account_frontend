@@ -2,7 +2,6 @@ import React, { useState, memo } from "react"
 import { Modal, Button, Typography, Row, Col, List } from "antd"
 import { FormattedMessage, useIntl } from "react-intl"
 
-import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
 import AddUnitAdmin from "@/components/AddUnitAdmin"
 import UnitAdminContent from "@/components/UnitAdminContent"
@@ -27,7 +26,7 @@ const UnitAdmins = memo(({
     const actions = useActions({ deleteUnitAdmin }, [])
 
     return (
-        <PageLayout>
+        <React.Fragment>
             <Row align='middle'>
                 <Col span={21}>
                     <Title>
@@ -85,7 +84,7 @@ const UnitAdmins = memo(({
                     />
                 </Col>
             </Row>
-        </PageLayout>
+        </React.Fragment>
     )
 })
 

@@ -2,7 +2,6 @@ import React, { useState, memo } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Modal, Button, Row, Col, List, Typography } from 'antd'
 
-import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
 import ParentContentContainer from '@/components/ParentContent'
 import AddParent from '@/components/AddParent'
@@ -26,7 +25,7 @@ const Clients = memo(({
     const [openAddClients, setOpenAddClients] = useState(false)
 
     return (
-        <PageLayout>
+        <React.Fragment>
             <Row align='middle'>
                 <Col span={22}>
                     <Title><FormattedMessage id='clients.title' /></Title>
@@ -84,7 +83,7 @@ const Clients = memo(({
             >
                 <AddParent />
             </Modal>
-        </PageLayout>
+        </React.Fragment>
     )
 })
 
