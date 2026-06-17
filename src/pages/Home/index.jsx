@@ -15,7 +15,6 @@ import {
   CustomerServiceOutlined,
 } from '@ant-design/icons'
 
-import PageLayout from '@/components/PageLayout'
 import {
   ActionCta,
   ActionDescription,
@@ -183,7 +182,6 @@ const Home = () => {
   }
 
   return (
-    <PageLayout>
       <PageContent>
         <Stagger variants={staggerContainer} initial='hidden'
 animate='show'>
@@ -280,7 +278,6 @@ animate='show'>
           </motion.div>
         </Stagger>
       </PageContent>
-    </PageLayout>
   )
 }
 

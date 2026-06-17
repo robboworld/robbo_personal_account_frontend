@@ -6,7 +6,6 @@ import { ArrowLeftOutlined, CloudDownloadOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { downloadProjectSb3 } from '@/api/projectPage'
-import PageLayout from '@/components/PageLayout'
 import config from '@/config'
 import { MY_PROJECTS_ROUTE } from '@/constants'
 import { useActions } from '@/helpers/useActions'
@@ -89,7 +88,7 @@ export default () => {
     }
 
     return (
-        <PageLayout>
+        <React.Fragment>
             <Row style={{ margin: '0.5rem 0 1rem' }}>
                 <Col span={24}>
                     <Button
@@ -213,6 +212,6 @@ export default () => {
                     </Row>
                 )
             }
-        </PageLayout >
+        </React.Fragment>
     )
 }

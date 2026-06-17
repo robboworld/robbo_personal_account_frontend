@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { Modal, Button, Typography, Row, Col, List } from "antd"
 import { FormattedMessage, useIntl } from "react-intl"
 
-import PageLayout from '@/components/PageLayout'
 import RobboUnit from "@/components/RobboUnit"
 import ListItem from "@/components/ListItem"
 import AddRobboUnit from "@/components/AddRobboUnit"
@@ -30,7 +29,7 @@ const RobboUnits = ({
     }, [])
 
     return (
-        <PageLayout>
+        <React.Fragment>
             <Modal
                 title={intl.formatMessage({ id: 'robbo_units.modal_title' })}
                 centered
@@ -91,7 +90,7 @@ const RobboUnits = ({
                     />
                 </Col>
             </Row>
-        </PageLayout>
+        </React.Fragment>
     )
 }
 

@@ -4,14 +4,12 @@ import { FormattedMessage } from "react-intl"
 
 import { Code } from './components'
 
-import PageLayout from '@/components/PageLayout'
 import Flex from "@/components/Flex"
 
 const { Title } = Typography
 
 export default () => {
     return (
-        <PageLayout>
             <Flex
                 justify='center'
                 align='center'
@@ -23,6 +21,5 @@ export default () => {
                     <FormattedMessage id='error_fallback.title' />
                 </Title>
             </Flex>
-        </PageLayout >
     )
 }

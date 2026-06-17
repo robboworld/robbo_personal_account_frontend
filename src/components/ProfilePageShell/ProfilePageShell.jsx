@@ -4,7 +4,6 @@ import { Alert, Skeleton } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import { motion } from 'framer-motion'
 
-import PageLayout from '@/components/PageLayout'
 import {
   AvatarMark,
   MetaChip,
@@ -109,11 +108,7 @@ animate='show'>
     return body
   }
 
-  return (
-    <PageLayout>
-      <ProfileShell>{body}</ProfileShell>
-    </PageLayout>
-  )
+  return <ProfileShell>{body}</ProfileShell>
 }
 
 ProfilePageShell.propTypes = {

@@ -3,7 +3,6 @@ import { Button, List, Row, Col, Typography } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
-import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
 
 const { Title } = Typography
@@ -23,7 +22,7 @@ const MyProjects = ({
     }
 
     return (
-        <PageLayout>
+        <React.Fragment>
             <Row style={{ margin: '0.5rem' }}>
                 <Col span={24}>
                     <Title>
@@ -69,7 +68,7 @@ const MyProjects = ({
                     />
                 </Col>
             </Row>
-        </PageLayout >
+        </React.Fragment>
     )
 }
 

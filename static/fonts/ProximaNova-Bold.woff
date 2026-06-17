@@ -1,0 +1,409 @@
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!--[if lte IE 9]><html class="ie ie9 lte9" lang="ru"><![endif]-->
+<!--[if !IE]><!--><html lang="ru"><!--<![endif]-->
+<head dir="ltr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+  
+      <title>
+       Страница не найдена | РОББО
+      </title>
+  
+
+      <script type="text/javascript">
+        /* immediately break out of an iframe if coming from the marketing website */
+        (function(window) {
+          if (window.location !== window.top.location) {
+            window.top.location = window.location;
+          }
+        })(this);
+      </script>
+
+  
+
+  <script type="text/javascript" src="/static/js/i18n/ru/djangojs.dab49ae03e58.js"></script>
+  <script type="text/javascript" src="/static/js/ie11_find_array.67b5a9edd5d5.js"></script>
+  
+  <link rel="icon" type="image/x-icon" href="/static/robbo-theme/images/favicon.a30c5b7f3b1c.ico"/>
+
+  
+
+  
+  
+
+    <link href="/static/robbo-theme/css/lms-style-vendor.68e48093f5dd.css" rel="stylesheet" type="text/css" />
+
+
+
+    
+  
+
+    <link href="/static/robbo-theme/css/lms-main-v1.03fc4d2c8bd2.css" rel="stylesheet" type="text/css" />
+
+
+
+
+    
+    
+<script type="text/javascript" src="/static/js/lms-main_vendor.4126ac02965c.js" charset="utf-8"></script>
+
+
+    
+    
+<script type="text/javascript" src="/static/js/lms-application.8e5b746b9825.js" charset="utf-8"></script>
+
+
+
+  
+    
+    
+    <script type="text/javascript" src="/static/bundles/commons.20bdac4aef0c44b02b02.0aec685f1bf4.js" ></script>
+
+
+
+  <script>
+    window.baseUrl = "/static/";
+    (function (require) {
+      require.config({
+          baseUrl: window.baseUrl
+      });
+    }).call(this, require || RequireJS.require);
+  </script>
+  <script type="text/javascript" src="/static/lms/js/require-config.30c1582aaf08.js"></script>
+  
+    <script type="text/javascript">
+        (function (require) {
+          require.config({
+              paths: {
+                'course_bookmarks/js/views/bookmark_button': 'course_bookmarks/js/views/bookmark_button.99159f5f5649',
+'js/views/message_banner': 'js/views/message_banner.141974fd4f5d',
+'moment': 'common/js/vendor/moment-with-locales.8afc1b9c35cd',
+'moment-timezone': 'common/js/vendor/moment-timezone-with-data.daaf3159f5d2',
+'js/courseware/course_info_events': 'js/courseware/course_info_events.2fc35b57627f',
+'js/courseware/accordion_events': 'js/courseware/accordion_events.6064c7809de5',
+'js/dateutil_factory': 'js/dateutil_factory.05a361148818',
+'js/courseware/link_clicked_events': 'js/courseware/link_clicked_events',
+'js/courseware/toggle_element_visibility': 'js/courseware/toggle_element_visibility.474ff5ba9de3',
+'js/student_account/logistration_factory': 'js/student_account/logistration_factory.df4e41783d02',
+'js/courseware/courseware_factory': 'js/courseware/courseware_factory.1504fc10caef',
+'js/groups/views/cohorts_dashboard_factory': 'js/groups/views/cohorts_dashboard_factory.f9c69d089f31',
+'js/groups/discussions_management/discussions_dashboard_factory': 'js/discussions_management/views/discussions_dashboard_factory.2e10d9097343',
+'draggabilly': 'js/vendor/draggabilly.26caba6f7187',
+'hls': 'common/js/vendor/hls.3026d7d10201'
+            }
+          });
+        }).call(this, require || RequireJS.require);
+    </script>
+  
+
+  
+  
+
+  
+
+
+  
+
+
+<script type="application/json" id="user-metadata">
+    null
+</script>
+
+  
+
+<script type="text/javascript">
+window.__ROBBO_YANDEX_METRIKA__ = {"enabled": false, "counterId": null};
+</script>
+
+
+  
+
+
+  
+
+
+<!-- dummy Segment -->
+<script type="text/javascript">
+  var analytics = {
+    track: function() { return; },
+    trackLink: function() { return; },
+    pageview: function() { return; },
+    page: function() { return; }
+  };
+</script>
+<!-- end dummy Segment -->
+
+
+  <meta name="path_prefix" content="">
+  
+
+  <meta name="openedx-release-line" content="teak" />
+
+
+
+
+
+
+
+</head>
+
+<body class="ltr  lang_ru">
+
+
+
+
+<div id="page-prompt"></div>
+  <div class="window-wrap" dir="ltr">
+    
+    <a class="nav-skip sr-only sr-only-focusable" href="#main">Перейти к основному содержимому</a>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/static/robbo-theme/js/responsive-nav.47c12a483298.js"></script>
+
+
+<header class="global-header ">
+    <div class="header-container">
+    <div class="main-header robbo-main-header nav-links">
+      <div class="robbo-main-header__leading">
+        
+
+
+
+
+
+
+
+<div class="header-logo">
+    <a class="header-logo-link" href="/courses" title="РОББО Главная страница">
+      
+        <span class="header-logo-wordmark" aria-hidden="true">РОББО<sup class="header-logo-reg">®</sup></span>
+        <span class="sr-only">РОББО Главная страница</span>
+      
+    </a>
+</div>
+
+        <button class="hamburger-menu" role="button" aria-label=Options Menu aria-expanded="false" aria-controls="mobile-menu" tabindex="0">
+          <span class="line"></span>
+          <span class="line"></span>
+          <span class="line"></span>
+          <span class="line"></span>
+        </button>
+      </div>
+            
+
+
+
+
+
+
+
+
+<!-- NEW IN INDIGO update nav: primary + trailing are grid children of .robbo-main-header -->
+  <nav class="main robbo-header-primary-nav robbo-main-header__primary" aria-label=Site navigation>
+    <ul class="robbo-header-primary-nav__list">
+    </ul>
+  </nav>
+  <div class="secondary d-flex align-items-center robbo-main-header__trailing">
+    <div class="theme-toggle-button mr-4">
+    <div class="light-theme-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" role="img" focusable="false" aria-hidden="true"><path d="m6.76 4.84-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7 1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91 1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z" fill="currentColor"></path></svg>
+    </div>
+    <div id="toggle-switch">
+      <label class="switch">
+        <input id="toggle-switch-input" type="checkbox">
+        <span class="slider round"></span>
+        <span id="theme-label" class="sr-only">Switch to Dark Mode</span>
+      </label>
+    </div>
+    <div class="dark-theme-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" role="img" focusable="false" aria-hidden="true"><path d="M14 2c1.82 0 3.53.5 5 1.35-2.99 1.73-5 4.95-5 8.65s2.01 6.92 5 8.65A9.973 9.973 0 0 1 14 22C8.48 22 4 17.52 4 12S8.48 2 14 2z" fill="currentColor"></path></svg>
+    </div> 
+</div>
+    <div class="btn-holder">
+            <div class="mobile-nav-item hidden-mobile nav-item">
+                <a class="register-btn btn" href="/register?next=%2Fstatic%2Frobbo-theme%2Ffonts%2FProximaNova-Bold.woff">Зарегистрироваться бесплатно</a>
+            </div>
+        <div class="mobile-nav-item hidden-mobile nav-item">
+            <a class="sign-in-btn btn" href="/login?next=%2Fstatic%2Frobbo-theme%2Ffonts%2FProximaNova-Bold.woff">Войти</a>
+        </div>
+    </div>
+  </div>
+
+    </div>
+    <div class="mobile-menu hidden" aria-label=More Options role="menu" id="mobile-menu"></div>
+    </div>
+</header>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    <div class="marketing-hero"></div>
+
+    <div class="content-wrapper main-container" id="content" dir="ltr">
+      
+
+
+
+
+
+
+<main id="main" aria-label="Content" tabindex="-1">
+    <section class="outside-app">
+        <h1>
+            Страница не найдена
+        </h1>
+        <p>
+            
+                    Страница, которую вы искали, не найдена. Вернитесь на <a href="/">главную страницу</a>.
+            
+        </p>
+    </section>
+</main>
+
+      
+    </div>
+
+        
+
+<div class="wrapper wrapper-footer">
+  <footer id="footer" class="robbo-site-footer"
+  >
+    <div class="robbo-site-footer__inner">
+      
+
+
+<div class="robbo-footer__main">
+  <div class="robbo-footer__brand-col">
+    <div class="robbo-footer__brand">
+      <span class="robbo-footer__logo" aria-label="РОББО">РОББО<sup class="robbo-footer__reg" aria-hidden="true">®</sup></span>
+    </div>
+    <p class="robbo-footer__tagline">Образовательная платформа РОББО</p>
+    <p class="robbo-footer__copyright">© ООО «РОББО ТЕХНОЛОГИИ», 2026</p>
+  </div>
+  <div class="robbo-footer__partner-col">
+    <div class="robbo-footer__partner">
+      <a class="robbo-footer__partner-link" href="https://fasie.ru" target="_blank" rel="noopener noreferrer">
+        <img class="robbo-footer__partner-logo" src="/static/robbo-theme/images/partners/fasie.f05e18a09656.png" alt="Фонд содействия инновациям" />
+      </a>
+    </div>
+  </div>
+  <nav class="robbo-footer__col" aria-label="Документы">
+    <h2 class="robbo-footer__heading">Документы</h2>
+    <ul class="robbo-footer__links">
+      <li>
+        <a href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+      </li>
+      <li>
+        <a href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">Согласие на обработку персональных данных</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="robbo-footer__col robbo-footer__contacts-col">
+    <h2 class="robbo-footer__heading">Контакты</h2>
+    <ul class="robbo-footer__contacts-list">
+      <li class="robbo-footer__contacts-item">
+        <span class="robbo-footer__contacts-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
+            <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"></rect>
+            <path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </span>
+        <a class="robbo-footer__contacts-link" href="mailto:info@robbo.ru" aria-label="Почта: info@robbo.ru">info@robbo.ru</a>
+      </li>
+      <li class="robbo-footer__contacts-item">
+        <span class="robbo-footer__contacts-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
+            <path d="M3 12h18M12 3c2.5 2.8 2.5 14.2 0 18M12 3c-2.5 2.8-2.5 14.2 0 18" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </span>
+        <a class="robbo-footer__contacts-link" href="https://robbo.ru" target="_blank" rel="noopener noreferrer" aria-label="Наш сайт: robbo.ru">robbo.ru</a>
+      </li>
+      <li class="robbo-footer__contacts-item">
+        <span class="robbo-footer__contacts-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
+            <path d="M4 11v3a2 2 0 002 2h1v-7H6a2 2 0 00-2 2zM18 9h1a2 2 0 012 2v3a2 2 0 01-2 2h-1V9z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"></path>
+            <path d="M8 18v1a4 4 0 004 4 4 4 0 004-4v-1" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+            <path d="M12 14v-1a3 3 0 013-3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </span>
+        <a class="robbo-footer__contacts-link" href="https://support.robbo.world/" target="_blank" rel="noopener noreferrer" aria-label="Поддержка: support.robbo.world">support.robbo.world</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+    </div>
+  </footer>
+</div>
+
+
+  </div>
+
+  
+  
+
+  
+
+
+
+  <script type="text/javascript" src="/static/js/vendor/noreferrer.aa62a3e70ffa.js" charset="utf-8"></script>
+  <script type="text/javascript" src="/static/js/utils/navigation.5a78fd05918f.js" charset="utf-8"></script>
+  <script type="text/javascript" src="/static/js/header/header.ec5be6bf6c3d.js"></script>
+  <script type="text/javascript" src="/static/js/header-custom-branding.6934ec5ee3e9.js"></script>
+  
+  <script type="text/javascript" src="/static/js/src/jquery_extend_patch.54dddef28d15.js"></script>
+  <div id="lean_overlay"></div>
+
+</body>
+</html>
+
+
