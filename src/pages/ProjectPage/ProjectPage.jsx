@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Input, Button, Form, Switch, Spin, Col, Row, Space, message, Typography } from 'antd'
-import { ArrowLeftOutlined, CloudDownloadOutlined } from '@ant-design/icons'
+import { Input, Button, Form, Switch, Spin, Col, Row, Space, message, Typography, Modal } from 'antd'
+import { ArrowLeftOutlined, CloudDownloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { downloadProjectSb3 } from '@/api/projectPage'
 import config from '@/config'
 import { MY_PROJECTS_ROUTE } from '@/constants'
+import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
 import { useActions } from '@/helpers/useActions'
 import { getProjectPageState } from '@/reducers/projectPage'
 import {
@@ -18,10 +19,12 @@ import {
 
 const { TextArea } = Input
 const { Text } = Typography
+const { confirm } = Modal
 
 export default () => {
     const intl = useIntl()
     const [downloadBusy, setDownloadBusy] = useState(false)
+    const [deleteBusy, setDeleteBusy] = useState(false)
     const navigate = useNavigate()
     const actions = useActions({
         getProjectPageById,
@@ -85,6 +88,28 @@ export default () => {
         } finally {
             setDownloadBusy(false)
         }
+    }
+
+    const handleDeleteProject = () => {
+        confirm({
+            title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
+            icon: <ExclamationCircleOutlined />,
+            okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
+            okType: 'danger',
+            cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
+            async onOk() {
+                setDeleteBusy(true)
+                try {
+                    await projectPageMutationGraphQL.deleteProjectPage(projectPageId)
+                    message.success(intl.formatMessage({ id: 'notification.project_page_deleted_success' }))
+                    navigate(MY_PROJECTS_ROUTE)
+                } catch (e) {
+                    message.error(e?.message || intl.formatMessage({ id: 'notification.error_message' }))
+                } finally {
+                    setDeleteBusy(false)
+                }
+            },
+        })
     }
 
     return (
@@ -199,6 +224,15 @@ export default () => {
                                             onClick={handleDownloadSb3}
                                         >
                                             <FormattedMessage id='project_page.download_sb3' />
+                                        </Button>
+                                        <Button
+                                            type='default'
+                                            danger
+                                            htmlType='button'
+                                            loading={deleteBusy}
+                                            onClick={handleDeleteProject}
+                                        >
+                                            <FormattedMessage id='project_page.delete' />
                                         </Button>
                                     </Space>
                                     <div style={{ marginTop: 8 }}>
