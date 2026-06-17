@@ -19,13 +19,22 @@ export const getSidebarIconAccent = item => {
   return 'rose'
 }
 
-export const withSidebarIcon = item => {
+export const withSidebarIcon = (item, collapsed = false) => {
   if (!item?.icon) {
     return item
   }
 
   const accent = getSidebarIconAccent(item)
   const isLogout = item.pathname === LOGIN_PAGE_ROUTE
+
+  if (collapsed) {
+    return {
+      ...item,
+      'data-menu-logout': isLogout ? 'true' : undefined,
+      'data-icon-accent': accent,
+      icon: item.icon,
+    }
+  }
 
   return {
     ...item,
@@ -38,4 +47,6 @@ export const withSidebarIcon = item => {
   }
 }
 
-export const mapSidebarMenuItems = items => (items || []).map(withSidebarIcon)
+export const mapSidebarMenuItems = (items, collapsed = false) => (
+  (items || []).map(item => withSidebarIcon(item, collapsed))
+)

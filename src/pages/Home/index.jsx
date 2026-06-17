@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 import {
   ArrowRightOutlined,
+  ProjectOutlined,
   BookOutlined,
   TeamOutlined,
   UserOutlined,
@@ -43,6 +44,7 @@ import {
 import { parseJwt, openLms, getSelectedNavBarKeyFromPath } from '@/helpers'
 import {
   PROFILE_PAGE_ROUTE,
+  MY_PROJECTS_ROUTE,
   TEACHERS_PAGE_ROUTE,
   ROBBO_UNITS_ROUTE,
   ROBBO_GROUPS_ROUTE,
@@ -51,11 +53,13 @@ import {
   USER_ROLE_MESSAGE_IDS,
   UNIT_ADMIN,
   SUPER_ADMIN,
+  STUDENT,
 } from '@/constants'
 
 const ACTION_ICONS = {
   profile: UserOutlined,
   lms: BookOutlined,
+  projects: ProjectOutlined,
   teachers: TeamOutlined,
   units: BankOutlined,
   groups: GroupOutlined,
@@ -72,6 +76,17 @@ const QUICK_ACTION_DEFS = [
     iconKey: 'profile',
     featured: true,
     accent: 'rose',
+    gridSpan: 4,
+  },
+  {
+    key: 'projects',
+    titleId: 'home.action.projects.title',
+    descriptionId: 'home.action.projects.description',
+    path: MY_PROJECTS_ROUTE,
+    roles: [STUDENT],
+    iconKey: 'projects',
+    accent: 'green',
+    gridSpan: 4,
   },
   {
     key: 'lms',
@@ -81,6 +96,7 @@ const QUICK_ACTION_DEFS = [
     iconKey: 'lms',
     wide: true,
     accent: 'green',
+    gridSpan: 4,
   },
   {
     key: 'teachers',
@@ -213,6 +229,7 @@ animate='show'>
                         key={action.key}
                         $featured={action.featured}
                         $wide={action.wide}
+                        $gridSpan={action.gridSpan}
                         onClick={() => handleAction(action)}
                         whileTap={{ scale: 0.99 }}
                       >

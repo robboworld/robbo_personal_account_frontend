@@ -3,18 +3,18 @@ import { Button, ConfigProvider, theme as antdThemeApi } from 'antd'
 import styled, { createGlobalStyle } from 'styled-components'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaMoon, FaSun } from 'react-icons/fa'
 import {
   TbBolt,
   TbCode,
   TbLayoutDashboard,
   TbRobot,
   TbRoute,
+  TbSchool,
   TbStars,
-  TbTrophy,
 } from 'react-icons/tb'
 
 import appTheme from '@/theme'
+import { useLandingTheme } from '@/helpers/landingTheme'
 
 /** Логотип в шапке — локальный файл из `static/logo.png`. */
 const HEADER_LOGO_URL = '/static/logo.png'
@@ -22,33 +22,31 @@ const HEADER_LOGO_URL = '/static/logo.png'
 const ACCENT = appTheme.colors.accentGreen
 const ACCENT_HOVER = appTheme.colors.accentGreenHover
 
-const LANDING_THEME_KEY = 'scratch-landing-theme'
-
 const HERO_PILLS = [
-  { Icon: TbCode, label: 'Визуальная среда' },
+  { Icon: TbLayoutDashboard, label: 'РОББО' },
   { Icon: TbRobot, label: 'Робототехника' },
-  { Icon: TbTrophy, label: 'Олимпиады' },
-  { Icon: TbLayoutDashboard, label: 'Платформа' },
+  { Icon: TbSchool, label: 'LMS' },
+  { Icon: TbCode, label: 'Scratch.ru' },
 ]
 
 const SIGNAL_ROWS = [
   {
-    Icon: TbBolt,
-    label: 'Инженерный фокус',
+    Icon: TbStars,
+    label: 'РОББО Класс',
     text:
-      'От блок-схем к реальным исполнителям: цифровая среда и железо РОББО в одной цепочке.',
+      'Инженерный инновационный класс и методика преподавания — от цифровой среды до реального оборудования. Подробнее на innoclass.ru.',
   },
   {
-    Icon: TbStars,
-    label: 'Развитие продукта',
+    Icon: TbBolt,
+    label: 'Инженерная траектория',
     text:
-      'Методики и среда обновляются под школы, олимпиады и STEM.',
+      'От первого проекта в Scratch до программирования роботов РОББО и участия в международных олимпиадах.',
   },
   {
     Icon: TbRoute,
-    label: 'Траектория',
+    label: 'Единый аккаунт',
     text:
-      'От первого проекта в Scratch до международных номинаций и экспертного жюри.',
+      'Личный кабинет объединяет профиль, обучение в LMS и Scratch-проекты: один вход — без повторной авторизации.',
   },
 ]
 
@@ -248,18 +246,12 @@ const NavCluster = styled.div`
   flex-wrap: wrap;
 `
 
-const ThemeToggle = styled.button`
-  display: inline-flex;
+const HeaderActions = styled.div`
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--landing-border);
-  background: var(--landing-surface-2);
-  color: var(--landing-text);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-left: auto;
 `
 
 const StyledRouterLink = styled(Link)`
@@ -268,29 +260,10 @@ const StyledRouterLink = styled(Link)`
   text-decoration: none;
 `
 
-const StyledExternalAnchor = styled.a`
-  color: var(--landing-accent);
-  font-weight: 600;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease, color 0.2s ease;
-
-  &:hover {
-    border-bottom-color: var(--landing-accent);
-    color: var(--landing-accent-hover);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--landing-accent);
-    outline-offset: 2px;
-    border-radius: 2px;
-  }
-`
-
 const Container = styled.div`
   width: 100%;
   min-height: 100vh;
-  padding: 96px 20px 80px;
+  padding: 96px 20px 100px;
   position: relative;
   z-index: 1;
 `
@@ -332,7 +305,7 @@ const HeroTitle = styled.h1`
   font-weight: 700;
   position: relative;
   z-index: 1;
-  max-width: 17ch;
+  max-width: 24ch;
   color: var(--landing-text);
   text-wrap: balance;
 
@@ -709,7 +682,6 @@ const MotionSignalColumn = motion(SignalColumn)
 const MotionSignalRow = motion(SignalRow)
 const MotionSection = motion(Section)
 const MotionGalleryCard = motion(GalleryCard)
-const MotionThemeToggle = motion(ThemeToggle)
 const MotionVideoCard = motion(VideoCard)
 const MotionFrameVideoCard = motion(FrameVideoCard)
 const MotionTechPill = motion(TechPill)
@@ -731,28 +703,11 @@ const VideoLoop = ({ src, muted = true, className }) => (
 )
 
 const Landing = () => {
-  const [dark, setDark] = useState(() => {
-    if (typeof window === 'undefined') return false
-    try {
-      const v = localStorage.getItem(LANDING_THEME_KEY)
-      if (v === 'dark' || v === 'light') return v === 'dark'
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
-    } catch {
-      return false
-    }
-  })
+  const { dark } = useLandingTheme()
 
   useEffect(() => {
-    document.title = 'Scratch.ru – визуальное программирование на русском языке!'
+    document.title = 'РОББО — личный кабинет и образовательная экосистема'
   }, [])
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(LANDING_THEME_KEY, dark ? 'dark' : 'light')
-    } catch {
-      /* ignore */
-    }
-  }, [dark])
 
   useLayoutEffect(() => {
     document.documentElement.classList.add('landing-page-active')
@@ -825,6 +780,8 @@ const Landing = () => {
                 decoding='async'
               />
             </BrandMark>
+          </NavCluster>
+          <HeaderActions>
             <StyledRouterLink to='/login'>
               <Button>Войти</Button>
             </StyledRouterLink>
@@ -839,18 +796,7 @@ const Landing = () => {
             >
               Создавать
             </Button>
-          </NavCluster>
-          <MotionThemeToggle
-            type='button'
-            onClick={() => setDark(d => !d)}
-            aria-label={dark ? 'Светлая тема' : 'Тёмная тема'}
-            whileHover={{ scale: 1.02, boxShadow: `0 0 0 3px var(--landing-glow)` }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 420, damping: 28 }}
-          >
-            {dark ? <FaSun size={16} /> : <FaMoon size={16} />}
-            {dark ? 'Светлая тема' : 'Тёмная тема'}
-          </MotionThemeToggle>
+          </HeaderActions>
         </MotionHeaderBar>
 
         <Container>
@@ -882,14 +828,14 @@ const Landing = () => {
                   </motion.div>
                   <motion.div variants={staggerItem}>
                     <HeroTitle>
-                      Scratch.ru — визуальное программирование на русском языке
+                      Личный кабинет РОББО — единая точка входа в экосистему
                     </HeroTitle>
                   </motion.div>
                   <motion.div variants={staggerItem}>
                     <HeroTagline>
-                      Российская онлайн-платформа для творческих проектов: игры,
-                      викторины, анимация и управление роботами РОББО в одной
-                      образовательной экосистеме.
+                      Профиль, обучение в LMS, Scratch-проекты на scratch.ru и
+                      единый вход без повторной авторизации — всё в одном
+                      портале для учеников, педагогов и родителей.
                     </HeroTagline>
                   </motion.div>
                 </motion.div>
@@ -989,13 +935,76 @@ const Landing = () => {
           </MotionSection>
 
           <MotionSection {...sectionReveal}>
-            <SectionTitle>2. Scratch-олимпиада</SectionTitle>
+            <SectionTitle>2. LMS — обучение на платформе РОББО</SectionTitle>
             <Lead>
-              Ежегодная международная олимпиада, 2 номинации, даты и примеры
-              работ в виде гифок победителей
+              Система дистанционного обучения на базе Open edX: курсы, прогресс,
+              зачисления и сертификаты. Каталог курсов живёт в LMS — личный
+              кабинет открывает его по единому входу (SSO), без дублирования
+              списка курсов.
             </Lead>
 
-            <Subtitle>2.1. Краткая Лента времени с ключевыми датами</Subtitle>
+            <Subtitle>2.1. Как это работает</Subtitle>
+            <StepStack>
+              <StepRow>
+                <StepIndex>1</StepIndex>
+                Войдите в личный кабинет РОББО — профиль и роль подтягиваются из
+                единой учётной записи.
+              </StepRow>
+              <StepRow>
+                <StepIndex>2</StepIndex>
+                Нажмите «LMS» в меню — откроется платформа lms2.robbo.world с
+                бесшовной авторизацией.
+              </StepRow>
+              <StepRow>
+                <StepIndex>3</StepIndex>
+                Проходите курсы, отслеживайте прогресс и возвращайтесь в ЛК за
+                проектами и уведомлениями.
+              </StepRow>
+            </StepStack>
+
+            <Subtitle style={{ marginTop: 26 }}>2.2. Примеры курсов</Subtitle>
+            <Lead>
+              «Секреты Scratch» — для детей от 7 лет: анимационная история и путь
+              к Scratch-олимпиаде. Отдельные программы — для педагогов и членов
+              жюри номинаций Scratch и RobboScratch.
+            </Lead>
+
+            <ActionRow>
+              <StyledRouterLink to='/login'>
+                <Button type='primary' size='large'>
+                  Войти в личный кабинет
+                </Button>
+              </StyledRouterLink>
+              <Button
+                size='large'
+                href='https://lms2.robbo.world'
+                target='_blank'
+                rel='noreferrer'
+              >
+                Открыть LMS
+              </Button>
+              <Button
+                type='link'
+                href='https://support.robbo.world/'
+                target='_blank'
+                rel='noreferrer'
+              >
+                Центр поддержки РОББО
+              </Button>
+            </ActionRow>
+          </MotionSection>
+
+          <MotionSection {...sectionReveal}>
+            <SectionTitle>3. Scratch-олимпиада и сообщество</SectionTitle>
+
+            <Subtitle>3.1. Scratch-олимпиада</Subtitle>
+            <Lead>
+              Ежегодная международная олимпиада по креативному программированию:
+              две номинации — Scratch и RobboScratch. Участники создают игры,
+              викторины, анимацию и проекты с роботами РОББО.
+            </Lead>
+
+            <Subtitle>Лента ключевых дат</Subtitle>
             <StepStack>
               <StepRow>
                 <StepIndex>1</StepIndex>
@@ -1046,7 +1055,7 @@ const Landing = () => {
               </Button>
             </ActionRow>
 
-            <Subtitle style={{ marginTop: 26 }}>2.2. Трейлер Олимпиады</Subtitle>
+            <Subtitle style={{ marginTop: 26 }}>3.2. Трейлер олимпиады</Subtitle>
             <MotionVideoCard style={{ margin: '14px 0 18px', maxWidth: 520 }} {...videoReveal}>
               <VideoLoop src={v7} />
             </MotionVideoCard>
@@ -1075,7 +1084,7 @@ const Landing = () => {
 
             <Subtitle style={{ marginTop: 26 }}>Примеры проектов</Subtitle>
             <Lead>
-              Галерея с привлекательными картинками-скриншотами (гифками ). При
+              Галерея с привлекательными картинками-скриншотами (гифками). При
               клике на картинку открывается проект.
             </Lead>
             <GalleryGrid>
@@ -1095,22 +1104,17 @@ const Landing = () => {
                 </MotionGalleryCard>
               ))}
             </GalleryGrid>
-          </MotionSection>
 
-          <MotionSection {...sectionReveal}>
-            <SectionTitle>3. Педагогам</SectionTitle>
-
-            <Subtitle>3.1 Изучаем Скретч</Subtitle>
+            <Subtitle style={{ marginTop: 32 }}>3.3. Педагогам и родителям</Subtitle>
             <Lead>
-              Курс Секреты Scratch предназначен для детей от 7 лет и старше.
-              Участники разработают свою анимационную историю и смогут отправить
-              ее на Scratch Олимпиаду. В основном дети могут пройти курс
-              самостоятельно.
+              Курс «Секреты Scratch» предназначен для детей от 7 лет и старше.
+              Участники разработают анимационную историю и смогут отправить её
+              на Scratch-олимпиаду. В основном дети проходят курс самостоятельно.
             </Lead>
             <Lead>
-              Роль родителей и педагогов заключается в помощи детям в соблюдении
-              безопасности при работе за компьютером. Поддержка взрослых может
-              понадобиться при установке ROBBO Scratch на устройство ребенка.
+              Роль родителей и педагогов — помощь в соблюдении безопасности при
+              работе за компьютером и при установке ROBBO Scratch на устройство
+              ребёнка.
             </Lead>
             <motion.div
               whileHover={{ scale: 1.01 }}
@@ -1128,13 +1132,13 @@ const Landing = () => {
               </Button>
             </motion.div>
 
-            <Subtitle>3.2 Изучаем критерии оценки олимпиадных работ в дисциплине Scratch</Subtitle>
+            <Subtitle>3.4. Критерии оценки работ в дисциплине Scratch</Subtitle>
             <Lead>
-              Курс предназначен для членов жюри дисциплины Scratch в рамках
-              Российского национального отборочного этапа Международной
-              Scratch-Олимпиады по креативному программированию.
+              Курс для членов жюри дисциплины Scratch в рамках Российского
+              национального отборочного этапа Международной Scratch-Олимпиады по
+              креативному программированию. В жюри — педагоги с опытом
+              преподавания Scratch.
             </Lead>
-            <Lead>В состав жюри могут войти только педагоги с опытом преподавания Scratch.</Lead>
             <ActionRow>
               <Button
                 type='primary'
@@ -1145,13 +1149,12 @@ const Landing = () => {
               </Button>
             </ActionRow>
 
-            <Subtitle>3.3 Изучаем критерии оценки олимпиадных работ в дисциплине RobboScratch</Subtitle>
+            <Subtitle>3.5. Критерии оценки работ в дисциплине RobboScratch</Subtitle>
             <Lead>
-              Курс предназначен для членов жюри дисциплины RobboScratch —
-              креативное программирование на RobboScratch с использованием
-              мобильных роботов и цифровых лабораторий РОББО.
+              Курс для членов жюри дисциплины RobboScratch — креативное
+              программирование с мобильными роботами и цифровыми лабораториями
+              РОББО. В жюри — педагоги с опытом работы на оборудовании РОББО.
             </Lead>
-            <Lead>В состав жюри могут войти только педагоги с опытом работы на оборудовании РОББО.</Lead>
             <ActionRow>
               <Button
                 type='primary'
@@ -1161,58 +1164,6 @@ const Landing = () => {
                 СТАТЬ ЭКСПЕРТОМ ПРОВЕРКИ РАБОТ В дисциплине RobboScratch
               </Button>
             </ActionRow>
-          </MotionSection>
-
-          <MotionSection {...sectionReveal}>
-            <SectionTitle>4. О РОББО</SectionTitle>
-
-            <Subtitle>О компании</Subtitle>
-            <Lead>
-              Модернизация урока &quot;Технология&quot;. Инженерный инновационный
-              РОББО Класс{' '}
-              <StyledExternalAnchor
-                href='https://innoclass.ru/'
-                target='_blank'
-                rel='noreferrer'
-              >
-                innoclass.ru
-              </StyledExternalAnchor>
-            </Lead>
-
-            <Subtitle>4.2. Методика преподавания</Subtitle>
-            <Lead>
-              Тут еще раз говорим про то что скретч.ру поддерживает традиц
-              ценности, потом напоминаем инструкцию по использованию, потом текст
-              про уникальные возможности при обучении программированию и далее
-              про ЭУМК РОББО.
-            </Lead>
-            <Lead>Квик-гайд</Lead>
-
-            <Subtitle style={{ marginTop: 18 }}>Это первоначальный список:</Subtitle>
-            <CopyCard>
-              <div style={{ marginBottom: 10 }}>
-                Инструкция для педагогов - как открыть, как сохранить
-              </div>
-              <div style={{ marginBottom: 10 }}>
-                <StyledExternalAnchor
-                  href='https://scratch.ru'
-                  target='_blank'
-                  rel='noreferrer'
-                >
-                  Начать работу
-                </StyledExternalAnchor>{' '}
-                — переход на нынешний scratch.ru
-              </div>
-              <div style={{ marginBottom: 10 }}>
-                Кнопки как в футере - на Секреты Скретч, Заявки на покупку
-                оборудования Иннокласс, заявка на участие в Scratch-Олимпиаде,
-                заявка на обучение педагогов
-              </div>
-              <div style={{ marginBottom: 10 }}>Ссылки на Протокол с работами - #</div>
-              <div style={{ marginBottom: 10 }}>
-                Видео лучших работ в номинации RobboScratch - #
-              </div>
-            </CopyCard>
           </MotionSection>
         </Container>
       </PageRoot>

@@ -49,8 +49,11 @@ const PageLayout = ({ children }) => {
             <Sider
                 trigger={null} collapsible
                 collapsed={collapsed} theme='light'
+                width={232}
+                collapsedWidth={80}
+                styles={{ body: { overflow: 'hidden', padding: 0 } }}
             >
-                <SideBar selectedNavBarKey={selectedNavBarKey} />
+                <SideBar selectedNavBarKey={selectedNavBarKey} collapsed={collapsed} />
             </Sider>
             <Layout>
                 <Header

@@ -1,5 +1,6 @@
 import {
   CLIENTS_ROUTE,
+  MY_PROJECTS_ROUTE,
   PROFILE_PAGE_ROUTE,
   ROBBO_GROUPS_ROUTE,
   ROBBO_UNITS_ROUTE,
@@ -17,6 +18,7 @@ import {
 const exactByRole = {
   [STUDENT]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [MY_PROJECTS_ROUTE]: '2',
   },
   [PARENT]: {
     [PROFILE_PAGE_ROUTE]: '1',
@@ -72,6 +74,12 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
       return '6'
     }
     if (pathname.startsWith(ROBBO_UNITS_ROUTE)) {
+      return '2'
+    }
+  }
+
+  if (role === STUDENT) {
+    if (pathname.startsWith('/projects/')) {
       return '2'
     }
   }
