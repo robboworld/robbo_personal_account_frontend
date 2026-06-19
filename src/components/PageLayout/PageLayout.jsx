@@ -11,6 +11,7 @@ import SideBar from '@/components/SideBar'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
 import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
+import HeaderExploreNav from '@/components/PageLayout/HeaderExploreNav'
 import { parseJwt, getSelectedNavBarKeyFromPath } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
 import theme from '@/theme'
@@ -96,6 +97,7 @@ const PageLayout = ({ children }) => {
                             })
                         }
                     </div>
+                    <HeaderExploreNav />
                     <div
                         style={{
                             marginLeft: 'auto',

@@ -51,11 +51,10 @@ export const getProjectPageById = createAction(GET_PROJECT_PAGE_BY_ID, (token, i
     }
 })
 
-export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, response => {
-    return {
-        response,
-    }
-})
+export const getProjectPageByIdSuccess = createAction(GET_PROJECT_PAGE_BY_ID_SUCCESS, ({ projectPage, playToken }) => ({
+    projectPage,
+    playToken,
+}))
 
 export const getProjectPageByIdFailed = createAction(GET_PROJECT_PAGE_BY_ID_FAILED, err => {
     return {

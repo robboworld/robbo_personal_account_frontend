@@ -2,6 +2,7 @@ import {
   CLIENTS_ROUTE,
   MY_PROJECTS_ROUTE,
   PROFILE_PAGE_ROUTE,
+  PUBLIC_PROJECTS_ROUTE,
   ROBBO_GROUPS_ROUTE,
   ROBBO_UNITS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
@@ -79,6 +80,9 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
   }
 
   if (role === STUDENT) {
+    if (pathname === PUBLIC_PROJECTS_ROUTE) {
+      return undefined
+    }
     if (pathname.startsWith('/projects/')) {
       return '2'
     }

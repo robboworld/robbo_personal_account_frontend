@@ -6,6 +6,7 @@ import {
   LOGIN_PAGE_ROUTE,
   REGISTER_PAGE_ROUTE,
   PROJECT_PAGE_ROUTE,
+  PUBLIC_PROJECTS_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
   OIDC_CALLBACK_ROUTE,
@@ -37,6 +38,7 @@ const LoginPage = lazy(() => import('@/pages/Login'))
 const Landing = lazy(() => import('@/pages/Landing'))
 const RegisterPage = lazy(() => import('@/pages/Register'))
 const MyProjects = lazy(() => import('@/pages/MyProjects'))
+const PublicProjects = lazy(() => import('@/pages/PublicProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const LmsRedirect = lazy(() => import('@/pages/LmsRedirect'))
 const OidcCallback = lazy(() => import('@/pages/OidcCallback'))
@@ -67,7 +69,8 @@ const AppRoutes = () => (
         element={wrapProtected(STANDARD_ROLES, <HomePage />)}
       />
       <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT], <MyProjects />)} />
-      <Route path={PROJECT_PAGE_ROUTE} element={wrapProtected([STUDENT], <ProjectPage />)} />
+      <Route path={PUBLIC_PROJECTS_ROUTE} element={wrapProtected(STANDARD_ROLES, <PublicProjects />)} />
+      <Route path={PROJECT_PAGE_ROUTE} element={wrapProtected(STANDARD_ROLES, <ProjectPage />)} />
       <Route
         path={MY_COURSES_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <LmsRedirect />)}
