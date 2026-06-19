@@ -10,7 +10,6 @@ import './ScratchPlayerEmbed.css'
 const READY_TIMEOUT_MS = 20000
 const MIN_PLAYER_HEIGHT = 200
 const DEFAULT_PLAYER_HEIGHT = 400
-const RESIZE_HANDLE_HEIGHT = 14
 
 function clampHeight(value) {
     const maxHeight = typeof window !== 'undefined'
@@ -153,25 +152,6 @@ export default function ScratchPlayerEmbed({ projectPageId, locale, playToken: p
         }, 800)
     }
 
-    const handleResizePointerDown = useCallback(event => {
-        event.preventDefault()
-        const startY = event.clientY
-        const startHeight = playerHeight
-
-        const onPointerMove = moveEvent => {
-            const next = clampHeight(startHeight + moveEvent.clientY - startY)
-            setPlayerHeight(next)
-        }
-        const onPointerUp = () => {
-            document.removeEventListener('pointermove', onPointerMove)
-            document.removeEventListener('pointerup', onPointerUp)
-            notifyIframeResize()
-        }
-
-        document.addEventListener('pointermove', onPointerMove)
-        document.addEventListener('pointerup', onPointerUp)
-    }, [playerHeight, notifyIframeResize])
-
     if (loading) {
         return <Spin style={{ width: '100%', padding: '2rem 0' }} />
     }
@@ -207,14 +187,6 @@ message={intl.formatMessage({ id: 'project_page.player_empty' })} />
                     style={{ opacity: ready ? 1 : 0.3 }}
                 />
             </div>
-            <div
-                className='scratch-player-embed__resize'
-                role='separator'
-                aria-orientation='horizontal'
-                aria-label={intl.formatMessage({ id: 'project_page.player_resize' })}
-                onPointerDown={handleResizePointerDown}
-                style={{ height: RESIZE_HANDLE_HEIGHT }}
-            />
         </div>
     )
 }

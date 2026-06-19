@@ -14,6 +14,7 @@ import {
   SafetyCertificateOutlined,
   GlobalOutlined,
   CustomerServiceOutlined,
+  EditOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -41,6 +42,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
+import config from '@/config'
 import { parseJwt, openLms, getSelectedNavBarKeyFromPath } from '@/helpers'
 import {
   PROFILE_PAGE_ROUTE,
@@ -67,6 +69,7 @@ const ACTION_ICONS = {
   groups: GroupOutlined,
   unitAdmins: SafetyCertificateOutlined,
   clients: CustomerServiceOutlined,
+  create: EditOutlined,
 }
 
 const QUICK_ACTION_DEFS = [
@@ -96,6 +99,15 @@ const QUICK_ACTION_DEFS = [
     descriptionId: 'home.action.public_projects.description',
     path: PUBLIC_PROJECTS_ROUTE,
     iconKey: 'publicProjects',
+    accent: 'green',
+    gridSpan: 4,
+  },
+  {
+    key: 'create',
+    titleId: 'home.action.create.title',
+    descriptionId: 'home.action.create.description',
+    external: 'scratch',
+    iconKey: 'create',
     accent: 'green',
     gridSpan: 4,
   },
@@ -151,7 +163,12 @@ const QUICK_ACTION_DEFS = [
   },
 ]
 
-const NEXT_STEP_IDS = ['home.next_step_1', 'home.next_step_2', 'home.next_step_3']
+const NEXT_STEP_IDS = [
+  'home.next_step_1',
+  'home.next_step_2',
+  'home.next_step_3',
+  'home.next_step_4',
+]
 
 const Home = () => {
   const navigate = useNavigate()
@@ -183,6 +200,11 @@ const Home = () => {
   const handleAction = action => {
     if (action.external === 'lms') {
       openLms()
+      return
+    }
+
+    if (action.external === 'scratch') {
+      window.open(config.scratchURL || 'https://scratch.ru', '_blank', 'noopener,noreferrer')
       return
     }
 
