@@ -23,12 +23,23 @@ function resolveFrontendOrigin() {
   return 'http://localhost:3030'
 }
 
+function resolveScratchOrigin(path, envKey) {
+  if (typeof process !== 'undefined' && process.env && process.env[envKey]) {
+    return process.env[envKey]
+  }
+  if (typeof window !== 'undefined' && window.location && window.location.hostname) {
+    const port = (process.env && process.env.SCRATCH_PLAYER_PORT) || '5001'
+    return `http://${window.location.hostname}:${port}${path}`
+  }
+  return `http://127.0.0.1:5001${path}`
+}
+
 const backendOrigin = resolveBackendOrigin()
 const frontendOrigin = resolveFrontendOrigin()
 
 export default {
-  scratchURL: process.env.SCRATCH_EDITOR_URL || 'http://127.0.0.1:5001/',
-  scratchPlayerURL: process.env.SCRATCH_PLAYER_URL || 'http://127.0.0.1:5001/player.html',
+  scratchURL: resolveScratchOrigin('/', 'SCRATCH_EDITOR_URL'),
+  scratchPlayerURL: resolveScratchOrigin('/player.html', 'SCRATCH_PLAYER_URL'),
   backendURL: [`${backendOrigin}/`],
   frontendURL: [`${frontendOrigin}/`],
   graphQLURL: [`${backendOrigin}/query`],
