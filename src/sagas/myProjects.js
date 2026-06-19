@@ -11,7 +11,28 @@ import {
     getProjectPageByAccessTokenFailed,
 } from '@/actions'
 import { projectPageQueryGraphQL } from '@/graphQL'
+import { parseJwt } from '@/helpers/jwtParser'
 
+function normalizeProjectPage(raw, token) {
+    if (!raw) return {}
+    let viewerId = ''
+    if (token) {
+        try {
+            viewerId = String(parseJwt(token).Id || parseJwt(token).id || '')
+        } catch (_) { /* ignore */ }
+    }
+    const authorUserId = raw.authorUserId || raw.authorUserID || ''
+    const isOwner = raw.isOwner === true ||
+        (viewerId !== '' && String(authorUserId) === viewerId)
+    return {
+        ...raw,
+        projectPageId: raw.projectPageId || raw.projectPageID,
+        projectId: raw.projectId || raw.projectID,
+        authorUserId,
+        authorName: raw.authorName || raw.authorUserID || '',
+        isOwner,
+    }
+}
 
 function* getAllProjectPagesSaga(action) {
     try {
@@ -27,12 +48,13 @@ function* getAllProjectPagesSaga(action) {
 
 function* getProjectPageByIdSaga(action) {
     try {
-
         const { token, id } = action.payload
-        const response = yield call(projectPageQueryGraphQL.getProjectPageById, { projectPageID: id })
-        console.log(response)
-
-        yield put(getProjectPageByIdSuccess(response.data.GetProjectPageById))
+        const response = yield call(projectPageAPI.getProjectPageById, token, id)
+        const page = normalizeProjectPage(response.data?.projectPage, token)
+        yield put(getProjectPageByIdSuccess({
+            projectPage: page,
+            playToken: response.data?.playToken || null,
+        }))
     } catch (e) {
         yield put(getProjectPageByIdFailed(e.message))
     }

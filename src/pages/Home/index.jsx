@@ -12,6 +12,7 @@ import {
   BankOutlined,
   GroupOutlined,
   SafetyCertificateOutlined,
+  GlobalOutlined,
   CustomerServiceOutlined,
 } from '@ant-design/icons'
 
@@ -44,6 +45,7 @@ import { parseJwt, openLms, getSelectedNavBarKeyFromPath } from '@/helpers'
 import {
   PROFILE_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
+  PUBLIC_PROJECTS_ROUTE,
   TEACHERS_PAGE_ROUTE,
   ROBBO_UNITS_ROUTE,
   ROBBO_GROUPS_ROUTE,
@@ -59,6 +61,7 @@ const ACTION_ICONS = {
   profile: UserOutlined,
   lms: BookOutlined,
   projects: ProjectOutlined,
+  publicProjects: GlobalOutlined,
   teachers: TeamOutlined,
   units: BankOutlined,
   groups: GroupOutlined,
@@ -84,6 +87,15 @@ const QUICK_ACTION_DEFS = [
     path: MY_PROJECTS_ROUTE,
     roles: [STUDENT],
     iconKey: 'projects',
+    accent: 'green',
+    gridSpan: 4,
+  },
+  {
+    key: 'publicProjects',
+    titleId: 'home.action.public_projects.title',
+    descriptionId: 'home.action.public_projects.description',
+    path: PUBLIC_PROJECTS_ROUTE,
+    iconKey: 'publicProjects',
     accent: 'green',
     gridSpan: 4,
   },

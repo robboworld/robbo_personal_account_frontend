@@ -1,4 +1,5 @@
 export * from './formatUserDisplayName'
+export * from './formatDateTime'
 export * from './useUserIdentity'
 export * from './useActions'
 export * from './courseDescriptionParser'

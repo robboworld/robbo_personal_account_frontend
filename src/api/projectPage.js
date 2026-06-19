@@ -118,4 +118,49 @@ export const projectPageAPI = {
             },
         )
     },
+
+    getPublicProjectPages(token, page = '1', pageSize = '20') {
+        return instance.get(`projectPage/public?page=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(pageSize)}`,
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
+
+    getProjectPlayToken(token, projectPageId) {
+        return instance.get(`projectPage/${encodeURIComponent(projectPageId)}/play-token`,
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+    },
+}
+
+/** POST /projectPage/:id/upload — .sb3 file upload (multipart). */
+export async function uploadProjectSb3(token, projectPageId, file) {
+    const base = config.backendURL[0].replace(/\/?$/, '/')
+    const url = `${base}projectPage/${encodeURIComponent(projectPageId)}/upload`
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: formData,
+    })
+    if (!res.ok) {
+        let msg = res.statusText
+        try {
+            const t = await res.text()
+            if (t) msg = t
+        } catch (_) { /* ignore */ }
+        throw new Error(msg)
+    }
+    return res.json()
 }

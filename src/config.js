@@ -27,7 +27,8 @@ const backendOrigin = resolveBackendOrigin()
 const frontendOrigin = resolveFrontendOrigin()
 
 export default {
-  scratchURL: 'http://scratch.ru/',
+  scratchURL: process.env.SCRATCH_EDITOR_URL || 'http://127.0.0.1:5001/',
+  scratchPlayerURL: process.env.SCRATCH_PLAYER_URL || 'http://127.0.0.1:5001/player.html',
   backendURL: [`${backendOrigin}/`],
   frontendURL: [`${frontendOrigin}/`],
   graphQLURL: [`${backendOrigin}/query`],

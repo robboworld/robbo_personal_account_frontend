@@ -9,6 +9,7 @@ import {
 
 const INITIAL_STATE = {
     projectPage: {},
+    playToken: null,
     loading: true,
 }
 
@@ -17,7 +18,12 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getProjectPageByIdSuccess](state, action) {
-        return { ...state, loading: false, projectPage: action.payload.response }
+        return {
+            ...state,
+            loading: false,
+            projectPage: action.payload.projectPage,
+            playToken: action.payload.playToken || null,
+        }
     },
     [getProjectPageByIdFailed](state, action) {
         return { ...state, loading: false }
@@ -40,4 +46,5 @@ export default handleActions({
 }, INITIAL_STATE)
 
 export const getProjectPageState = state => state
-export const getProjectPageLoading = state => state.loading 
+export const getProjectPageLoading = state => state.loading
+export const getProjectPlayToken = state => state.playToken

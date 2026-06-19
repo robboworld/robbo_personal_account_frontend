@@ -1,14 +1,40 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Input, Button, Form, Switch, Spin, Col, Row, Space, message, Typography, Modal } from 'antd'
-import { ArrowLeftOutlined, CloudDownloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { Input, Form, Switch, Spin, message, Modal } from 'antd'
+import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { downloadProjectSb3 } from '@/api/projectPage'
+import {
+    ActionButton,
+    ActionsGroup,
+    ActionsSection,
+    AuthorText,
+    BackButton,
+    BackRow,
+    LoadingWrap,
+    MainGrid,
+    MetaCard,
+    MetaLabel,
+    MetaRow,
+    MetaValue,
+    PageShell,
+    PlayerCard,
+    PrimaryAction,
+    ProjectForm,
+    ProjectTitle,
+    ScratchAction,
+    SectionTitle,
+    UploadHint,
+    ViewOnlyNote,
+} from './styles'
+
+import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
+import { downloadProjectSb3, uploadProjectSb3 } from '@/api/projectPage'
 import config from '@/config'
-import { MY_PROJECTS_ROUTE } from '@/constants'
+import { MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE } from '@/constants'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
+import { formatDateTime } from '@/helpers/formatDateTime'
 import { useActions } from '@/helpers/useActions'
 import { getProjectPageState } from '@/reducers/projectPage'
 import {
@@ -17,14 +43,17 @@ import {
     updateProjectPage,
 } from '@/actions'
 
+
 const { TextArea } = Input
-const { Text } = Typography
 const { confirm } = Modal
 
 export default () => {
     const intl = useIntl()
     const [downloadBusy, setDownloadBusy] = useState(false)
+    const [uploadBusy, setUploadBusy] = useState(false)
     const [deleteBusy, setDeleteBusy] = useState(false)
+    const [playerReloadKey, setPlayerReloadKey] = useState(0)
+    const uploadInputRef = useRef(null)
     const navigate = useNavigate()
     const actions = useActions({
         getProjectPageById,
@@ -32,17 +61,10 @@ export default () => {
         updateProjectPage,
     }, [])
 
-    const layout = {
-        labelCol: {
-            span: 8,
-        },
-        wrapperCol: {
-            span: 16,
-        },
-    }
     const [form] = Form.useForm()
     const { projectPageId } = useParams()
     const token = localStorage.getItem('token')
+    const titleValue = Form.useWatch('title', form)
 
     useEffect(() => {
         actions.getProjectPageById(token, projectPageId)
@@ -51,7 +73,8 @@ export default () => {
         }
     }, [projectPageId, token])
 
-    const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
+    const { projectPage, playToken, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
+    const isOwner = Boolean(projectPage?.isOwner)
 
     useEffect(() => {
         if (loading || !projectPage?.projectPageId) return
@@ -73,12 +96,11 @@ export default () => {
     ])
 
     const seeInsideHandler = () => {
-        window.open(config.scratchURL + `?#${projectPageId}`)
+        window.open(`${config.scratchURL}?#${projectPage.projectId}`)
     }
 
     const handleDownloadSb3 = async () => {
-        if (!token || !projectPageId)
-            return
+        if (!token || !projectPageId) return
         setDownloadBusy(true)
         try {
             await downloadProjectSb3(token, projectPageId, projectPage?.title)
@@ -87,6 +109,27 @@ export default () => {
             message.error(e?.message || intl.formatMessage({ id: 'project_page.download_sb3_error' }))
         } finally {
             setDownloadBusy(false)
+        }
+    }
+
+    const handleUploadSb3 = async event => {
+        const file = event.target.files?.[0]
+        event.target.value = ''
+        if (!file || !token || !projectPageId) return
+        if (!file.name.toLowerCase().endsWith('.sb3')) {
+            message.error(intl.formatMessage({ id: 'project_page.upload_sb3_invalid' }))
+            return
+        }
+        setUploadBusy(true)
+        try {
+            await uploadProjectSb3(token, projectPageId, file)
+            message.success(intl.formatMessage({ id: 'project_page.upload_sb3_success' }))
+            actions.getProjectPageById(token, projectPageId)
+            setPlayerReloadKey(k => k + 1)
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'project_page.upload_sb3_error' }))
+        } finally {
+            setUploadBusy(false)
         }
     }
 
@@ -112,35 +155,55 @@ export default () => {
         })
     }
 
+    const backTarget = isOwner ? MY_PROJECTS_ROUTE : PUBLIC_PROJECTS_ROUTE
+    const displayTitle = titleValue || projectPage?.title || intl.formatMessage({ id: 'project_page.player_title' })
+
     return (
-        <React.Fragment>
-            <Row style={{ margin: '0.5rem 0 1rem' }}>
-                <Col span={24}>
-                    <Button
-                        type='default'
-                        icon={<ArrowLeftOutlined />}
-                        onClick={() => navigate(MY_PROJECTS_ROUTE)}
-                    >
-                        <FormattedMessage id='project_page.back_to_projects' />
-                    </Button>
-                </Col>
-            </Row>
-            {loading ? <Spin />
-                : (
-                    <Row align='start' gutter={[16, 8]}>
-                        <Col xs={24} lg={18}>
+        <PageShell>
+            <BackRow>
+                <BackButton
+                    type='default'
+                    icon={<ArrowLeftOutlined />}
+                    onClick={() => navigate(backTarget)}
+                >
+                    <FormattedMessage id={isOwner ? 'project_page.back_to_projects' : 'project_page.back_to_public'} />
+                </BackButton>
+                {projectPage?.authorName && (
+                    <AuthorText>
+                        <FormattedMessage
+                            id='project_page.author_label'
+                            values={{ name: projectPage.authorName }}
+                        />
+                    </AuthorText>
+                )}
+            </BackRow>
+            {loading ? (
+                <LoadingWrap><Spin /></LoadingWrap>
+            ) : (
+                <MainGrid>
+                    <PlayerCard>
+                        <ProjectTitle>{displayTitle}</ProjectTitle>
+                        <ScratchPlayerEmbed
+                            projectPageId={projectPageId}
+                            playToken={playToken}
+                            reloadKey={playerReloadKey}
+                        />
+                        {!isOwner && (
+                            <ViewOnlyNote>
+                                <FormattedMessage id='project_page.view_only' />
+                            </ViewOnlyNote>
+                        )}
+                    </PlayerCard>
+                    <MetaCard>
+                        <SectionTitle>
+                            <FormattedMessage id='project_page.meta_section' />
+                        </SectionTitle>
+                        <ProjectForm>
                             <Form
                                 name='normal_project-page'
                                 className='project-page-form'
-                                labelWrap
-                                {...layout}
+                                layout='vertical'
                                 form={form}
-                                initialValues={{
-                                    title: projectPage.title,
-                                    instruction: projectPage.instruction,
-                                    notes: projectPage.notes,
-                                    isShared: projectPage.isShared,
-                                }}
                                 onFinish={({ title, instruction, notes, isShared }) => {
                                     actions.updateProjectPage(token, {
                                         projectPageId,
@@ -154,69 +217,76 @@ export default () => {
                             >
                                 <Form.Item
                                     name='title'
-                                    placeholder={projectPage.title}
                                     label={<FormattedMessage id='project_page.title' />}
                                 >
-                                    <Input size='large' />
+                                    <Input size='large' readOnly={!isOwner} />
                                 </Form.Item>
                                 <Form.Item
-                                    name='instruction' placeholder={projectPage.title}
+                                    name='instruction'
                                     label={<FormattedMessage id='project_page.instruction' />}
                                 >
-                                    <TextArea size='large' rows={4} />
+                                    <TextArea size='large' rows={4}
+readOnly={!isOwner} />
                                 </Form.Item>
                                 <Form.Item
-                                    name='notes' placeholder={projectPage.title}
+                                    name='notes'
                                     label={<FormattedMessage id='project_page.description' />}
                                 >
-                                    <TextArea size='large' rows={4} />
+                                    <TextArea size='large' rows={4}
+readOnly={!isOwner} />
                                 </Form.Item>
-                                <Form.Item
-                                    label={<FormattedMessage id='project_page.last_change' />}
-                                >
-                                    {projectPage.lastModified}
-                                </Form.Item>
-                                {
-                                    projectPage.isShared
-                                        ? (
-                                            <Form.Item
-                                                name='isShared'
-                                                label={<FormattedMessage id='project_page.close_access' />}
-                                                valuePropName='checked'
-                                            >
-                                                <Switch />
-                                            </Form.Item>
-                                        )
-                                        : (
-                                            <Form.Item
-                                                name='isShared'
-                                                label={<FormattedMessage id='project_page.open_access' />}
-                                                valuePropName='checked'
-                                            >
-                                                <Switch />
-                                            </Form.Item>
-                                        )
-                                }
-                                <Form.Item label={<FormattedMessage id='project_page.actions_group' />}>
-                                    <Space
-                                        wrap
-                                        size='middle'
-                                        align='start'
+                                <MetaRow>
+                                    <MetaLabel>
+                                        <FormattedMessage id='project_page.last_change' />
+                                    </MetaLabel>
+                                    <MetaValue>
+                                        {formatDateTime(projectPage.lastModified, intl.locale)}
+                                    </MetaValue>
+                                </MetaRow>
+                                {isOwner && (
+                                    <Form.Item
+                                        name='isShared'
+                                        label={<FormattedMessage id='project_page.shared_access' />}
+                                        valuePropName='checked'
                                     >
-                                        <Button
-                                            type='primary'
-                                            htmlType='submit'
-                                            className='login-form-button'
-                                        >
-                                            <FormattedMessage id='project_page.save' />
-                                        </Button>
-                                        <Button
-                                            type='primary'
-                                            onClick={seeInsideHandler}
-                                        >
-                                            <FormattedMessage id='project_page.open_in_scratch' />
-                                        </Button>
-                                        <Button
+                                        <Switch />
+                                    </Form.Item>
+                                )}
+                                <ActionsSection>
+                                    <MetaLabel style={{ marginBottom: '0.65rem' }}>
+                                        <FormattedMessage id='project_page.actions_group' />
+                                    </MetaLabel>
+                                    <ActionsGroup>
+                                        {isOwner && (
+                                            <PrimaryAction type='primary' htmlType='submit'>
+                                                <FormattedMessage id='project_page.save' />
+                                            </PrimaryAction>
+                                        )}
+                                        {isOwner && (
+                                            <React.Fragment>
+                                                <input
+                                                    ref={uploadInputRef}
+                                                    type='file'
+                                                    accept='.sb3,application/x.scratch.sb3'
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleUploadSb3}
+                                                />
+                                                <ActionButton
+                                                    type='default'
+                                                    icon={<CloudUploadOutlined />}
+                                                    loading={uploadBusy}
+                                                    onClick={() => uploadInputRef.current?.click()}
+                                                >
+                                                    <FormattedMessage id='project_page.upload_sb3' />
+                                                </ActionButton>
+                                            </React.Fragment>
+                                        )}
+                                        {isOwner && (
+                                            <ScratchAction type='primary' onClick={seeInsideHandler}>
+                                                <FormattedMessage id='project_page.open_in_scratch' />
+                                            </ScratchAction>
+                                        )}
+                                        <ActionButton
                                             type='default'
                                             htmlType='button'
                                             icon={<CloudDownloadOutlined />}
@@ -224,28 +294,30 @@ export default () => {
                                             onClick={handleDownloadSb3}
                                         >
                                             <FormattedMessage id='project_page.download_sb3' />
-                                        </Button>
-                                        <Button
-                                            type='default'
-                                            danger
-                                            htmlType='button'
-                                            loading={deleteBusy}
-                                            onClick={handleDeleteProject}
-                                        >
-                                            <FormattedMessage id='project_page.delete' />
-                                        </Button>
-                                    </Space>
-                                    <div style={{ marginTop: 8 }}>
-                                        <Text type='secondary'>
-                                            <FormattedMessage id='project_page.download_sb3_hint' />
-                                        </Text>
-                                    </div>
-                                </Form.Item>
+                                        </ActionButton>
+                                        {isOwner && (
+                                            <ActionButton
+                                                type='default'
+                                                danger
+                                                htmlType='button'
+                                                loading={deleteBusy}
+                                                onClick={handleDeleteProject}
+                                            >
+                                                <FormattedMessage id='project_page.delete' />
+                                            </ActionButton>
+                                        )}
+                                    </ActionsGroup>
+                                    {isOwner && (
+                                        <UploadHint>
+                                            <FormattedMessage id='project_page.upload_sb3_hint' />
+                                        </UploadHint>
+                                    )}
+                                </ActionsSection>
                             </Form>
-                        </Col>
-                    </Row>
-                )
-            }
-        </React.Fragment>
+                        </ProjectForm>
+                    </MetaCard>
+                </MainGrid>
+            )}
+        </PageShell>
     )
 }

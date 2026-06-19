@@ -239,28 +239,6 @@ export const VideoCard = styled.div`
   }
 `
 
-export const FrameVideoCard = styled(VideoCard)`
-  position: relative;
-
-  .mainVideo {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .frameVideo {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 44%;
-    height: 44%;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    object-fit: cover;
-  }
-`
-
 export const CtaBtn = styled.a`
   display: inline-flex;
   align-items: center;
@@ -353,6 +331,144 @@ export const StepIndex = styled.span`
   background: ${t.green};
 `
 
+export const CourseGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin: 1rem 0 0.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+export const CourseCard = styled.a`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: ${t.cardRadius};
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  background: ${t.white};
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 8px 22px rgba(15, 23, 42, 0.06);
+  text-decoration: none !important;
+  color: inherit;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+
+  &:hover {
+    box-shadow:
+      0 4px 12px rgba(15, 23, 42, 0.07),
+      0 14px 36px rgba(0, 175, 65, 0.1);
+    transform: translateY(-3px);
+    text-decoration: none !important;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${t.green};
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+`
+
+export const CourseCardMedia = styled.div`
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #eef2f7;
+`
+
+export const CourseCardImage = styled.img`
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.45s ease;
+
+  ${CourseCard}:hover & {
+    transform: scale(1.03);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    ${CourseCard}:hover & {
+      transform: none;
+    }
+  }
+`
+
+export const CourseCardMediaShade = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0) 55%,
+    rgba(15, 23, 42, 0.1) 100%
+  );
+`
+
+export const CourseCardBody = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: clamp(0.9rem, 2.2vw, 1.25rem);
+`
+
+export const CourseCardTitle = styled.h4`
+  margin: 0;
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: ${t.coal};
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+`
+
+export const CourseCardMeta = styled.p`
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: ${t.grey};
+`
+
+export const CourseCardDesc = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: ${t.bodyMuted};
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+`
+
+export const CourseCardCta = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${t.green};
+`
+
 export const GalleryGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -390,6 +506,60 @@ export const GalleryCard = styled.button`
 export const CopyCard = styled.div`
   font-size: 0.875rem;
   line-height: 1.55;
+  color: ${t.bodyMuted};
+`
+
+export const Timeline = styled.div`
+  margin: 1rem 0 0;
+  border: 1px solid rgba(0, 175, 65, 0.12);
+  border-radius: ${t.cardRadius};
+  overflow: hidden;
+  background: ${t.pageBg};
+`
+
+export const TimelineRow = styled.div`
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 9.75rem) 1fr;
+  gap: 1rem 1.25rem;
+  padding: 1rem 1.125rem;
+  align-items: start;
+  background: ${({ $highlight }) =>
+    $highlight ? 'rgba(0, 175, 65, 0.06)' : 'transparent'};
+
+  &:not(:first-child) {
+    border-top: 1px solid rgba(0, 175, 65, 0.1);
+  }
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+`
+
+export const TimelineDate = styled.span`
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: ${t.green};
+  letter-spacing: 0.01em;
+`
+
+export const TimelineBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`
+
+export const TimelineTitle = styled.span`
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: ${t.coal};
+`
+
+export const TimelineDetail = styled.span`
+  font-size: 0.8125rem;
+  line-height: 1.5;
   color: ${t.bodyMuted};
 `
 

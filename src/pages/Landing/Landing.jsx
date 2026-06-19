@@ -11,12 +11,20 @@ import {
   AboutTagline,
   Accent,
   ContentWrap,
-  CopyCard,
+  CourseCard,
+  CourseCardBody,
+  CourseCardCta,
+  CourseCardDesc,
+  CourseCardImage,
+  CourseCardMedia,
+  CourseCardMediaShade,
+  CourseCardMeta,
+  CourseCardTitle,
+  CourseGrid,
   CtaBtn,
   CtaGhost,
   CtaRow,
   Eyebrow,
-  FrameVideoCard,
   GalleryCard,
   GalleryGrid,
   HeroInner,
@@ -34,6 +42,12 @@ import {
   StepRow,
   StepStack,
   Subtitle,
+  Timeline,
+  TimelineBody,
+  TimelineDate,
+  TimelineDetail,
+  TimelineRow,
+  TimelineTitle,
   VideoCard,
   sectionReveal,
 } from './landingStyles'
@@ -70,6 +84,67 @@ const OFFICIAL_IMGS = [
   'official_img2.jpg',
   'official_img3.jpg',
   'official_img4.jpg',
+]
+
+const LMS_COURSE_EXAMPLES = [
+  {
+    id: 'course-v1:ROBBO+C4+November',
+    title: 'Дистанционные образовательные технологии в преподавании робототехники',
+    startLabel: 'Старт: 28.02.2022',
+    description:
+      'Курс для педагогов: дистанционные занятия по программированию роботов и 3D-моделированию, доступ к базе учебных проектов РОББО.',
+    imageUrl:
+      'https://online.robbo.ru/asset-v1:ROBBO+C4+November+type@asset+block@WLmgY3KijMg1.jpg',
+    aboutUrl: 'https://online.robbo.ru/courses/course-v1:ROBBO+C4+November/about',
+  },
+  {
+    id: 'course-v1:Robbo+AC002+June',
+    title: 'Секреты Scratch',
+    startLabel: 'Старт: 05.07.2023',
+    description:
+      'Курс для новичков в программировании. Вы разработаете свою анимационную историю и сможете отправить её на Scratch-олимпиаду.',
+    imageUrl:
+      'https://online.robbo.ru/asset-v1:Robbo+AC002+June+type@asset+block@%D0%97%D0%90%D0%A1%D0%A2%D0%90%D0%92%D0%9A%D0%90.jpg',
+    aboutUrl: 'https://online.robbo.ru/courses/course-v1:Robbo+AC002+June/about',
+  },
+]
+
+const OLYMPIAD_TIMELINE = [
+  {
+    period: 'дек 2025 — фев 2026',
+    title: 'Региональные туры',
+    detail:
+      'В отдельных инициативных регионах. Победители получают дополнительные баллы на межрегиональном этапе.',
+  },
+  {
+    period: 'март — май 2026',
+    title: 'Приём заявок на межрегиональные туры',
+    detail:
+      'Подача заявок открывается на страницах туров по федеральным округам — конкретные даты определяет оргкомитет каждого межрегиона.',
+  },
+  {
+    period: 'фев — июнь 2026',
+    title: 'Межрегиональные туры',
+    detail:
+      'Заочный конкурс в каждом федеральном округе России по дисциплинам Scratch и RobboScratch.',
+  },
+  {
+    period: '19 июня 2026',
+    title: 'Предварительные результаты межрегиональных туров',
+    detail: 'Публикация на страницах соответствующих межрегиональных туров.',
+    highlight: true,
+  },
+  {
+    period: 'июнь — июль 2026',
+    title: 'Общероссийский отбор',
+    detail:
+      'Проекты-победители межрегиональных туров выходят в национальный отбор; лучшие формируют российскую команду.',
+  },
+  {
+    period: 'сентябрь 2026',
+    title: 'Финал Scratch-Олимпиады',
+    detail: 'Международный этап и награждение победителей.',
+  },
 ]
 
 function pickOfficial(n) {
@@ -197,10 +272,9 @@ rel='noreferrer'>
             <Lead>Scratch.ru среда для программирования роботов РОББО</Lead>
             <MediaRow>
               {v4to6.map((file, idx) => (
-                <FrameVideoCard key={`${file}-${idx}`}>
-                  <MediaImage src={`${staticBase}/${file}`} className='mainVideo' />
-                  <MediaImage src={`${staticBase}/${file}`} className='frameVideo' />
-                </FrameVideoCard>
+                <VideoCard key={`${file}-${idx}`}>
+                  <MediaImage src={`${staticBase}/${file}`} />
+                </VideoCard>
               ))}
             </MediaRow>
             <CtaBtn href='https://scratch.ru/' target='_blank'
@@ -239,6 +313,35 @@ rel='noreferrer'>
               «Секреты Scratch» — для детей от 7 лет. Отдельные программы — для
               педагогов и членов жюри номинаций Scratch и RobboScratch.
             </Lead>
+            <CourseGrid>
+              {LMS_COURSE_EXAMPLES.map(
+                ({ id, title, startLabel, description, imageUrl, aboutUrl }, index) => (
+                  <CourseCard
+                    key={id}
+                    href={aboutUrl}
+                    target='_blank'
+                    rel='noreferrer'
+                    aria-label={`${title} — открыть курс в LMS`}
+                  >
+                    <CourseCardMedia>
+                      <CourseCardImage
+                        src={imageUrl}
+                        alt=''
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        fetchPriority={index === 0 ? 'high' : 'auto'}
+                      />
+                      <CourseCardMediaShade aria-hidden='true' />
+                    </CourseCardMedia>
+                    <CourseCardBody>
+                      <CourseCardTitle>{title}</CourseCardTitle>
+                      <CourseCardMeta>{startLabel}</CourseCardMeta>
+                      <CourseCardDesc>{description}</CourseCardDesc>
+                      <CourseCardCta>Подробнее о курсе →</CourseCardCta>
+                    </CourseCardBody>
+                  </CourseCard>
+                ),
+              )}
+            </CourseGrid>
             <CtaRow>
               <CtaBtn as={Link} to='/login'>
                 Войти в личный кабинет
@@ -258,29 +361,24 @@ rel='noreferrer'>
             <SectionTitle>3. Scratch-олимпиада и сообщество</SectionTitle>
             <Subtitle>3.1. Scratch-олимпиада</Subtitle>
             <Lead>
-              Ежегодная международная олимпиада по креативному программированию:
-              две номинации — Scratch и RobboScratch.
+              Всероссийская Scratch-Олимпиада по креативному программированию —
+              ежегодный заочный конкурс в дисциплинах Scratch и RobboScratch.
+              Участники создают оригинальные проекты без единственно верного
+              решения; жюри оценивает идею, качество воплощения и проектное
+              мышление. Сезон 2026 стартовал.
             </Lead>
             <Subtitle>Лента ключевых дат</Subtitle>
-            <StepStack>
-              {['дата 1', 'дата 2', 'дата 3', 'дата 4', 'дата 5'].map((label, i) => (
-                <StepRow key={label}>
-                  <StepIndex>{i + 1}</StepIndex>
-                  {label}
-                </StepRow>
+            <Timeline>
+              {OLYMPIAD_TIMELINE.map(({ period, title, detail, highlight }) => (
+                <TimelineRow key={period + title} $highlight={highlight}>
+                  <TimelineDate>{period}</TimelineDate>
+                  <TimelineBody>
+                    <TimelineTitle>{title}</TimelineTitle>
+                    <TimelineDetail>{detail}</TimelineDetail>
+                  </TimelineBody>
+                </TimelineRow>
               ))}
-            </StepStack>
-            <CopyCard style={{ marginTop: '1rem' }}>
-              прием заявок на российский межрегиональный отборочный тур
-              <br />
-              прием заявок на российский отборочный тур
-              <br />
-              прием заявок на международный этап
-              <br />
-              международный этап
-              <br />
-              награждение победителей международный этап
-            </CopyCard>
+            </Timeline>
             <Subtitle>3.2. Трейлер олимпиады</Subtitle>
             {trailerImg && (
               <VideoCard style={{ maxWidth: 520, margin: '0.75rem 0' }}>
@@ -299,8 +397,9 @@ rel='noreferrer'>
             </CtaRow>
             <Subtitle>Примеры проектов</Subtitle>
             <Lead>
-              Галерея с привлекательными картинками-скриншотами. При клике
-              открывается проект.
+              Работы победителей прошлых лет — анимированные истории, игры и
+              робототехнические проекты. Нажмите на карточку, чтобы открыть
+              проект.
             </Lead>
             <GalleryGrid>
               {galleryItems.map(({ file, url }, idx) => (
@@ -330,7 +429,8 @@ rel='noreferrer'>
               Курс для членов жюри дисциплины Scratch в рамках Российского
               национального отборочного этапа.
             </Lead>
-            <CtaBtn href='#' aria-disabled='true'>
+            <CtaBtn href='https://robbo.ru/olymp/expert/' target='_blank'
+rel='noreferrer'>
               СТАТЬ ЭКСПЕРТОМ ПРОВЕРКИ РАБОТ В дисциплине Scratch
             </CtaBtn>
             <Subtitle>3.5. Критерии оценки работ в дисциплине RobboScratch</Subtitle>
@@ -338,7 +438,8 @@ rel='noreferrer'>
               Курс для членов жюри дисциплины RobboScratch — креативное
               программирование с роботами РОББО.
             </Lead>
-            <CtaBtn href='#' aria-disabled='true'>
+            <CtaBtn href='https://robbo.ru/olymp/expert/' target='_blank'
+rel='noreferrer'>
               СТАТЬ ЭКСПЕРТОМ ПРОВЕРКИ РАБОТ В дисциплине RobboScratch
             </CtaBtn>
           </SectionCard>
