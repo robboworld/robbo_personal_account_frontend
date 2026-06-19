@@ -27,7 +27,6 @@ import {
   FREE_LISTENER,
 } from '@/constants'
 import Loader from '@/components/Loader'
-import HelpButton from '@/components/HelpButton/HelpButton'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
 import { ProtectedRoute } from '@/helpers'
 
@@ -115,7 +114,6 @@ const Application = () => (
   <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: '100dvh', width: '100%' }}>
     <Suspense fallback={<Loader />}>
       <AppRoutes />
-      <HelpButton />
     </Suspense>
   </div>
 )

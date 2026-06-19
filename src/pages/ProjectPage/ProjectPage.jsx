@@ -25,7 +25,6 @@ import {
     ProjectTitle,
     ScratchAction,
     SectionTitle,
-    UploadHint,
     ViewOnlyNote,
 } from './styles'
 
@@ -307,11 +306,6 @@ readOnly={!isOwner} />
                                             </ActionButton>
                                         )}
                                     </ActionsGroup>
-                                    {isOwner && (
-                                        <UploadHint>
-                                            <FormattedMessage id='project_page.upload_sb3_hint' />
-                                        </UploadHint>
-                                    )}
                                 </ActionsSection>
                             </Form>
                         </ProjectForm>
