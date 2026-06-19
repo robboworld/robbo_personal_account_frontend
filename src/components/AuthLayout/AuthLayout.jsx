@@ -15,6 +15,7 @@ import {
   ContentColumn,
   ContentPanel,
   AuthFormWrap,
+  AuthFormInner,
   AuthTabs,
   AuthTabLink,
   MainContent,
@@ -28,9 +29,14 @@ import {
   REGISTER_PAGE_ROUTE,
 } from '@/constants'
 
-const AuthLayout = ({ activeTab, children }) => {
+const AuthLayout = ({ selectedPage, onTabSelect, children }) => {
   const navigate = useNavigate()
   const intl = useIntl()
+
+  const handleTabClick = (event, tabKey) => {
+    event.preventDefault()
+    onTabSelect(tabKey)
+  }
 
   return (
     <AuthShell className='robbo-auth-standalone-shell'>
@@ -59,32 +65,26 @@ const AuthLayout = ({ activeTab, children }) => {
           <ContentColumn className='content'>
             <ContentPanel>
               <AuthFormWrap className='authn-logistration'>
-                <div className='authn-logistration__inner'>
+                <AuthFormInner className='authn-logistration__inner'>
                   <AuthTabs
                     role='tablist'
                     aria-label={intl.formatMessage({ id: 'auth_layout.tabs_aria' })}
                   >
                     <AuthTabLink
                       role='tab'
-                      $active={activeTab === 'register'}
-                      aria-selected={activeTab === 'register'}
+                      $active={selectedPage === REGISTER_PAGE_ROUTE}
+                      aria-selected={selectedPage === REGISTER_PAGE_ROUTE}
                       href={REGISTER_PAGE_ROUTE}
-                      onClick={event => {
-                        event.preventDefault()
-                        navigate(REGISTER_PAGE_ROUTE)
-                      }}
+                      onClick={event => handleTabClick(event, REGISTER_PAGE_ROUTE)}
                     >
                       <FormattedMessage id='auth_layout.tab_register' />
                     </AuthTabLink>
                     <AuthTabLink
                       role='tab'
-                      $active={activeTab === 'login'}
-                      aria-selected={activeTab === 'login'}
+                      $active={selectedPage === LOGIN_PAGE_ROUTE}
+                      aria-selected={selectedPage === LOGIN_PAGE_ROUTE}
                       href={LOGIN_PAGE_ROUTE}
-                      onClick={event => {
-                        event.preventDefault()
-                        navigate(LOGIN_PAGE_ROUTE)
-                      }}
+                      onClick={event => handleTabClick(event, LOGIN_PAGE_ROUTE)}
                     >
                       <FormattedMessage id='auth_layout.tab_login' />
                     </AuthTabLink>
@@ -99,7 +99,7 @@ const AuthLayout = ({ activeTab, children }) => {
                       <FormattedMessage id='auth_layout.back_to_landing' />
                     </AuthTextLink>
                   </AuthFooterLinks>
-                </div>
+                </AuthFormInner>
               </AuthFormWrap>
             </ContentPanel>
           </ContentColumn>
@@ -110,7 +110,8 @@ const AuthLayout = ({ activeTab, children }) => {
 }
 
 AuthLayout.propTypes = {
-  activeTab: PropTypes.oneOf(['login', 'register']).isRequired,
+  selectedPage: PropTypes.oneOf([LOGIN_PAGE_ROUTE, REGISTER_PAGE_ROUTE]).isRequired,
+  onTabSelect: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
 }
 

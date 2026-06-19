@@ -234,6 +234,54 @@ export const ActionTile = styled(motion.button).attrs({ type: 'button' })`
   `}
 `
 
+export const ActionTileLink = styled(motion.a).attrs({
+  target: '_blank',
+  rel: 'noopener noreferrer',
+})`
+  ${actionTileMotion}
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 148px;
+  padding: 1.125rem 1.125rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 1rem;
+  border: 1px solid ${surface.line};
+  background: ${surface.card};
+  box-shadow: 0 12px 32px -24px rgba(108, 91, 123, 0.4);
+  text-decoration: none;
+  color: inherit;
+
+  ${({ $gridSpan }) => $gridSpan && css`
+    ${theme.above.large`
+      grid-column: span ${$gridSpan};
+    `}
+  `}
+
+  ${({ $gridSpan, $featured }) => !$gridSpan && $featured && css`
+    ${theme.above.large`
+      grid-column: span 6;
+      min-height: 168px;
+      background: linear-gradient(145deg, rgba(0, 175, 65, 0.06), rgba(255, 255, 255, 0.98));
+    `}
+  `}
+
+  ${({ $gridSpan, $featured, $wide }) => !$gridSpan && !$featured && $wide && css`
+    ${theme.above.large`
+      grid-column: span 6;
+    `}
+  `}
+
+  ${({ $gridSpan, $featured, $wide }) => !$gridSpan && !$featured && !$wide && css`
+    ${theme.above.large`
+      grid-column: span 4;
+    `}
+  `}
+`
+
 const navIconAccent = accent => {
   if (accent === 'green') {
     return {

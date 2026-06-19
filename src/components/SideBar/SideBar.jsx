@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { Button, Space } from 'antd'
 import { useMutation } from '@apollo/client'
 import { FormattedMessage } from 'react-intl'
+import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import {
@@ -14,6 +15,7 @@ import {
 } from './SideBarData.jsx'
 import { mapSidebarMenuItems } from './sidebarMenu'
 
+import { signOutSuccess } from '@/actions/auth'
 import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
 import { parseJwt, openLms, clearLmsIdentityLink, buildPostLogoutUrl } from '@/helpers'
 import {
@@ -26,10 +28,11 @@ import {
 import { SidebarAdminActions, SidebarMenu, SidebarShell } from '@/components/AccountShell'
 
 export default ({ selectedNavBarKey = '1', collapsed = false }) => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
   const token = localStorage.getItem('token')
-  const { Role } = parseJwt(token)
+  const { Role } = token ? parseJwt(token) : { Role: null }
   const showAdminHomeShortcuts =
     location.pathname === HOME_PAGE_ROUTE && (Role === UNIT_ADMIN || Role === SUPER_ADMIN)
   let SideBarData = []
@@ -67,6 +70,7 @@ export default ({ selectedNavBarKey = '1', collapsed = false }) => {
 
   const [loginOut] = useMutation(authMutationsGQL.SING_OUT, {
     onCompleted: () => {
+      dispatch(signOutSuccess())
       graphQLClient.resetStore()
       localStorage.removeItem('token')
       clearLmsIdentityLink()

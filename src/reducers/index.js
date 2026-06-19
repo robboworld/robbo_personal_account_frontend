@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 
 import login from './login'
+import authForms from './authForms'
 import myProjects from './myProjects'
 import projectPage from './projectPage'
 import myCourses from './myCourses'
@@ -17,6 +18,7 @@ import app from './app'
 
 export const rootReducer = combineReducers({
   login,
+  authForms,
   myProjects,
   projectPage,
   myCourses,

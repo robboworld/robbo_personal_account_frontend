@@ -23,6 +23,7 @@ import {
   ActionGrid,
   ActionIcon,
   ActionTile,
+  ActionTileLink,
   ActionTitle,
   Eyebrow,
   HeroInner,
@@ -42,7 +43,6 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import config from '@/config'
 import { parseJwt, openLms, getSelectedNavBarKeyFromPath } from '@/helpers'
 import {
   PROFILE_PAGE_ROUTE,
@@ -58,6 +58,8 @@ import {
   SUPER_ADMIN,
   STUDENT,
 } from '@/constants'
+
+const SCRATCH_RU_URL = 'https://scratch.ru/'
 
 const ACTION_ICONS = {
   profile: UserOutlined,
@@ -106,7 +108,7 @@ const QUICK_ACTION_DEFS = [
     key: 'create',
     titleId: 'home.action.create.title',
     descriptionId: 'home.action.create.description',
-    external: 'scratch',
+    href: SCRATCH_RU_URL,
     iconKey: 'create',
     accent: 'green',
     gridSpan: 4,
@@ -203,11 +205,6 @@ const Home = () => {
       return
     }
 
-    if (action.external === 'scratch') {
-      window.open(config.scratchURL || 'https://scratch.ru', '_blank', 'noopener,noreferrer')
-      return
-    }
-
     navigate(action.path, {
       state: {
         selectedNavBarKey: getSelectedNavBarKeyFromPath(role, action.path) ?? '1',
@@ -256,14 +253,19 @@ animate='show'>
                 <ActionGrid>
                   {quickActions.map(action => {
                     const Icon = ACTION_ICONS[action.iconKey] || ArrowRightOutlined
+                    const Tile = action.href ? ActionTileLink : ActionTile
+                    const tileProps = action.href
+                      ? { href: action.href }
+                      : { onClick: () => handleAction(action) }
+
                     return (
-                      <ActionTile
+                      <Tile
                         key={action.key}
                         $featured={action.featured}
                         $wide={action.wide}
                         $gridSpan={action.gridSpan}
-                        onClick={() => handleAction(action)}
                         whileTap={{ scale: 0.99 }}
+                        {...tileProps}
                       >
                         <ActionIcon $accent={action.accent}>
                           <Icon />
@@ -278,7 +280,7 @@ animate='show'>
                           <FormattedMessage id='home.go_to' />
                           <ArrowRightOutlined style={{ fontSize: 12 }} />
                         </ActionCta>
-                      </ActionTile>
+                      </Tile>
                     )
                   })}
                 </ActionGrid>

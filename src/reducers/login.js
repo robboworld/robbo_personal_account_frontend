@@ -12,7 +12,8 @@ import {
 const INITIAL_STATE = {
     userRole: null,
     isAuth: false,
-    loginLoading: true,
+    loginLoading: false,
+    signUpLoading: false,
 }
 
 export default handleActions({
@@ -26,13 +27,13 @@ export default handleActions({
         return { ...state, isAuth: false, loginLoading: false }
     },
     [signUpRequest](state, action) {
-        return { ...state, loginLoading: true }
+        return { ...state, signUpLoading: true }
     },
     [signUpSuccess](state) {
-        return { ...state, isAuth: true, loginLoading: false }
+        return { ...state, isAuth: true, signUpLoading: false }
     },
     [signUpFailed](state, action) {
-        return { ...state, loginLoading: false }
+        return { ...state, signUpLoading: false }
     },
     [signOutRequest](state) {
         return { ...state, loginLoading: true }

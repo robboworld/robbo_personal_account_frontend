@@ -28,14 +28,13 @@ import {
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
-import { ProtectedRoute } from '@/helpers'
+import { ProtectedRoute, PublicAuthGate } from '@/helpers'
 
 import HomePage from '@/pages/Home'
 import ProfilePage from '@/pages/Profile'
+import Logistration from '@/pages/Logistration'
 
-const LoginPage = lazy(() => import('@/pages/Login'))
 const Landing = lazy(() => import('@/pages/Landing'))
-const RegisterPage = lazy(() => import('@/pages/Register'))
 const MyProjects = lazy(() => import('@/pages/MyProjects'))
 const PublicProjects = lazy(() => import('@/pages/PublicProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
@@ -58,9 +57,11 @@ const wrapProtected = (allowedRoles, element) => (
 const AppRoutes = () => (
   <Routes>
     <Route path='/' element={<Landing />} />
-    <Route path={LOGIN_PAGE_ROUTE} element={<LoginPage />} />
     <Route path={OIDC_CALLBACK_ROUTE} element={<OidcCallback />} />
-    <Route path={REGISTER_PAGE_ROUTE} element={<RegisterPage />} />
+    <Route element={<PublicAuthGate />}>
+      <Route path={LOGIN_PAGE_ROUTE} element={<Logistration />} />
+      <Route path={REGISTER_PAGE_ROUTE} element={<Logistration />} />
+    </Route>
 
     <Route element={<AuthenticatedShell />}>
       <Route
