@@ -1,4 +1,5 @@
 export * from './auth'
+export * from './authForms'
 export * from './projectPage'
 export * from './coursePage'
 export * from './profile'

@@ -2,18 +2,32 @@ import instance from './instance'
 
 export const authAPI = {
     signUp(user) {
-        const { email, password, nickname, fullName, company, lastname, firstname, middlename, role } = user
+        const {
+            email,
+            password,
+            nickname,
+            fullName,
+            phoneNumber = user.phone_number,
+            honorCode = user.honor_code,
+            marketingEmailsOptIn = user.marketing_emails_opt_in,
+            lastname,
+            firstname,
+            middlename,
+            role,
+        } = user
         return instance.post('auth/sign-up',
             {
-                email: email,
-                password: password,
-                role: role,
-                nickname: nickname,
-                fullName: fullName,
-                company: company,
-                lastname: lastname,
-                firstname: firstname,
-                middlename: middlename,
+                email,
+                password,
+                role,
+                nickname,
+                fullName,
+                phone_number: phoneNumber,
+                honor_code: honorCode,
+                marketing_emails_opt_in: marketingEmailsOptIn,
+                lastname,
+                firstname,
+                middlename,
             },
             {
                 withCredentials: true,

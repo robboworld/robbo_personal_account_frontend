@@ -217,8 +217,17 @@ export const ContentPanel = styled.div`
     min-height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-top: 1.75rem;
   }
+`
+
+export const AuthFormInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  justify-content: flex-start;
 `
 
 export const AuthFormWrap = styled.div`
@@ -351,10 +360,31 @@ export const AuthFormStyles = styled.div`
     width: 100%;
   }
 
+  .authn-sign-in-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .authn-forgot-password-link {
+    color: ${text};
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-decoration: none;
+
+    &:hover {
+      color: ${accent};
+      text-decoration: underline;
+    }
+  }
+
   .register-button {
     min-width: 14.4rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0;
   }
 `
 
@@ -395,8 +425,8 @@ export const AuthFooterLinks = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
+  margin-top: 0.375rem;
+  padding-top: 0.375rem;
   border-top: 1px solid #eef2f0;
 `
 
