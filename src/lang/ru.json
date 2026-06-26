@@ -89,6 +89,8 @@
     "project_page.player_title": "Плеер",
     "project_page.player_resize": "Изменить высоту плеера",
     "project_page.view_only": "Только просмотр",
+    "project_page.green_flag": "Запуск",
+    "project_page.stop_all": "Стоп",
     "project_page.player_error": "Не удалось загрузить плеер проекта.",
     "project_page.player_empty": "Проект пока пуст — добавьте блоки в Scratch или загрузите .sb3.",
     "project_page.player_not_ready": "Плеер недоступен: обновите backend ЛК или загрузите файл .sb3.",

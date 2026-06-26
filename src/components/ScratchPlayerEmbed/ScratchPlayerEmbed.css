@@ -24,6 +24,10 @@
     background: #000;
 }
 
+.scratch-player-embed__iframe:focus {
+    outline: none;
+}
+
 .scratch-player-embed__loading {
     position: absolute;
     inset: 0;

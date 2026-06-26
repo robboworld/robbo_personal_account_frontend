@@ -89,6 +89,8 @@
     "project_page.player_title": "Player",
     "project_page.player_resize": "Resize player height",
     "project_page.view_only": "View only",
+    "project_page.green_flag": "Run",
+    "project_page.stop_all": "Stop",
     "project_page.player_error": "Could not load the project player.",
     "project_page.player_empty": "This project is empty — add blocks in Scratch or upload a .sb3 file.",
     "project_page.player_not_ready": "Player unavailable: update the LK backend or upload a .sb3 file.",

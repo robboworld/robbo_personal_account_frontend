@@ -89,6 +89,8 @@
     "project_page.player_title": "播放器",
     "project_page.player_resize": "调整播放器高度",
     "project_page.view_only": "仅查看",
+    "project_page.green_flag": "运行",
+    "project_page.stop_all": "停止",
     "project_page.player_error": "无法加载项目播放器。",
     "project_page.player_empty": "项目为空 — 请在 Scratch 中添加积木或上传 .sb3 文件。",
     "project_page.player_not_ready": "播放器不可用：请更新 LK 后端或上传 .sb3 文件。",
