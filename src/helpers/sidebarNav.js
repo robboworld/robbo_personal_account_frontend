@@ -56,6 +56,10 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
     return undefined
   }
 
+  if (pathname === PUBLIC_PROJECTS_ROUTE) {
+    return 'public_projects'
+  }
+
   const exact = exactByRole[role]?.[pathname]
   if (exact != null) {
     return exact
@@ -80,9 +84,6 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
   }
 
   if (role === STUDENT) {
-    if (pathname === PUBLIC_PROJECTS_ROUTE) {
-      return undefined
-    }
     if (pathname.startsWith('/projects/')) {
       return '2'
     }

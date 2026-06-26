@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { Spin, Alert } from 'antd'
 import { useIntl } from 'react-intl'
 
@@ -28,7 +28,13 @@ function buildPlayerSrc(playToken, locale) {
     return `${base}?${params.toString()}`
 }
 
-export default function ScratchPlayerEmbed({ projectPageId, locale, playToken: playTokenProp, reloadKey = 0 }) {
+const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
+    projectPageId,
+    locale,
+    playToken: playTokenProp,
+    reloadKey = 0,
+    onRunningChange,
+}, ref) {
     const intl = useIntl()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -38,6 +44,22 @@ export default function ScratchPlayerEmbed({ projectPageId, locale, playToken: p
     const readyTimerRef = useRef(null)
     const rootRef = useRef(null)
     const iframeRef = useRef(null)
+
+    const focusPlayer = useCallback(() => {
+        if (iframeRef.current) iframeRef.current.focus()
+    }, [])
+
+    useImperativeHandle(ref, () => ({
+        sendCommand(type) {
+            const iframe = iframeRef.current
+            if (!iframe?.contentWindow) return
+            iframe.contentWindow.postMessage({ type }, '*')
+            if (type === 'scratch:greenFlag') {
+                window.setTimeout(() => iframe.focus(), 0)
+            }
+        },
+        focusPlayer,
+    }), [focusPlayer])
 
     const clearReadyTimer = () => {
         if (readyTimerRef.current) {
@@ -105,10 +127,16 @@ export default function ScratchPlayerEmbed({ projectPageId, locale, playToken: p
                 clearReadyTimer()
                 setError(event.data.message || intl.formatMessage({ id: 'project_page.player_error' }))
             }
+            if (event.data.type === 'scratch:runStart') {
+                if (onRunningChange) onRunningChange(true)
+            }
+            if (event.data.type === 'scratch:runStop') {
+                if (onRunningChange) onRunningChange(false)
+            }
         }
         window.addEventListener('message', onMessage)
         return () => window.removeEventListener('message', onMessage)
-    }, [intl])
+    }, [intl, onRunningChange])
 
     const iframeSrc = useMemo(() => {
         if (!playToken?.jsonUrl && !playToken?.playUrl) return null
@@ -117,13 +145,14 @@ export default function ScratchPlayerEmbed({ projectPageId, locale, playToken: p
 
     useEffect(() => {
         setReady(false)
+        if (onRunningChange) onRunningChange(false)
         clearReadyTimer()
         if (!iframeSrc) return undefined
         readyTimerRef.current = setTimeout(() => {
             setError(intl.formatMessage({ id: 'project_page.player_load_timeout' }))
         }, READY_TIMEOUT_MS)
         return clearReadyTimer
-    }, [iframeSrc, reloadKey, intl])
+    }, [iframeSrc, reloadKey, intl, onRunningChange])
 
     useEffect(() => {
         const root = rootRef.current
@@ -169,6 +198,7 @@ message={intl.formatMessage({ id: 'project_page.player_empty' })} />
             ref={rootRef}
             className='scratch-player-embed'
             style={{ height: playerHeight }}
+            onMouseDown={focusPlayer}
         >
             <div className='scratch-player-embed__frame'>
                 {!ready && (
@@ -180,6 +210,7 @@ message={intl.formatMessage({ id: 'project_page.player_empty' })} />
                     ref={iframeRef}
                     title='Scratch player'
                     src={iframeSrc}
+                    tabIndex={0}
                     allow='autoplay'
                     sandbox='allow-scripts allow-same-origin'
                     onLoad={handleIframeLoad}
@@ -189,4 +220,6 @@ message={intl.formatMessage({ id: 'project_page.player_empty' })} />
             </div>
         </div>
     )
-}
+})
+
+export default ScratchPlayerEmbed

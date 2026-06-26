@@ -28,6 +28,8 @@ import {
     ViewOnlyNote,
 } from './styles'
 
+import PlayerScratchControls from './PlayerScratchControls'
+
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
 import { downloadProjectSb3, uploadProjectSb3 } from '@/api/projectPage'
 import config from '@/config'
@@ -52,7 +54,9 @@ export default () => {
     const [uploadBusy, setUploadBusy] = useState(false)
     const [deleteBusy, setDeleteBusy] = useState(false)
     const [playerReloadKey, setPlayerReloadKey] = useState(0)
+    const [isPlayerRunning, setIsPlayerRunning] = useState(false)
     const uploadInputRef = useRef(null)
+    const playerRef = useRef(null)
     const navigate = useNavigate()
     const actions = useActions({
         getProjectPageById,
@@ -183,9 +187,16 @@ export default () => {
                     <PlayerCard>
                         <ProjectTitle>{displayTitle}</ProjectTitle>
                         <ScratchPlayerEmbed
+                            ref={playerRef}
                             projectPageId={projectPageId}
                             playToken={playToken}
                             reloadKey={playerReloadKey}
+                            onRunningChange={setIsPlayerRunning}
+                        />
+                        <PlayerScratchControls
+                            running={isPlayerRunning}
+                            onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
+                            onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
                         />
                         {!isOwner && (
                             <ViewOnlyNote>

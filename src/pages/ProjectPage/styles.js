@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Button } from 'antd'
 
 import theme from '@/theme'
@@ -165,4 +165,52 @@ export const LoadingWrap = styled.div`
   display: flex;
   justify-content: center;
   padding: 3rem 0;
+`
+
+export const PlayerControls = styled.div`
+  display: flex;
+  margin-top: 0.75rem;
+`
+
+const scratchControlBase = css`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.375rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  box-sizing: content-box;
+  user-select: none;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+  }
+`
+
+export const GreenFlagControl = styled.button`
+  ${scratchControlBase}
+
+  &:hover {
+    background-color: rgba(0, 175, 65, 0.15);
+  }
+
+  ${props => props.$active && `
+    background-color: rgba(0, 175, 65, 0.35);
+  `}
+`
+
+export const StopAllControl = styled.button`
+  ${scratchControlBase}
+  opacity: ${props => (props.$active ? 1 : 0.5)};
+
+  &:hover {
+    background-color: rgba(0, 175, 65, 0.15);
+  }
 `
