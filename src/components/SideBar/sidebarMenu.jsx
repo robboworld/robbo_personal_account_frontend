@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { SidebarIcon } from '@/components/AccountShell'
-import { LOGIN_PAGE_ROUTE } from '@/constants'
 
 export const getSidebarIconAccent = item => {
   if (item.iconAccent) {
@@ -10,9 +9,6 @@ export const getSidebarIconAccent = item => {
   if (item.external === 'lms') {
     return 'green'
   }
-  if (item.pathname === LOGIN_PAGE_ROUTE) {
-    return 'muted'
-  }
   if (item.key === 'send_notification') {
     return 'green'
   }
@@ -20,17 +16,15 @@ export const getSidebarIconAccent = item => {
 }
 
 export const withSidebarIcon = (item, collapsed = false) => {
-  if (!item?.icon) {
+  if (!item?.icon || item.type === 'divider') {
     return item
   }
 
   const accent = getSidebarIconAccent(item)
-  const isLogout = item.pathname === LOGIN_PAGE_ROUTE
 
   if (collapsed) {
     return {
       ...item,
-      'data-menu-logout': isLogout ? 'true' : undefined,
       'data-icon-accent': accent,
       icon: item.icon,
     }
@@ -38,7 +32,6 @@ export const withSidebarIcon = (item, collapsed = false) => {
 
   return {
     ...item,
-    'data-menu-logout': isLogout ? 'true' : undefined,
     icon: (
       <SidebarIcon $accent={accent}>
         {item.icon}

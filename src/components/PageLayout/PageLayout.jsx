@@ -2,26 +2,18 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Layout } from 'antd'
 import { useLocation } from 'react-router-dom'
 
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-} from '@ant-design/icons'
-
 import SideBar from '@/components/SideBar'
-import SelectLanguage from '@/components/SelectLanguage'
-import NotificationBell from '@/components/NotificationBell/NotificationBell'
 import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
-import HeaderExploreNav from '@/components/PageLayout/HeaderExploreNav'
 import { parseJwt, getSelectedNavBarKeyFromPath } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
-import theme from '@/theme'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 
-const { Header, Sider, Content } = Layout
+const { Sider, Content } = Layout
 const SIDEBAR_COLLAPSED_STORAGE_KEY = 'lk_sidebar_collapsed'
 
 const shellStyle = {
     flex: 1,
+    minHeight: 0,
 }
 
 const innerLayoutStyle = {
@@ -74,44 +66,32 @@ const PageLayout = ({ children }) => {
                     theme='light'
                     width={232}
                     collapsedWidth={80}
-                    styles={{ body: { overflow: 'hidden', padding: 0 } }}
+                    style={{
+                        height: '100dvh',
+                        maxHeight: '100dvh',
+                        position: 'sticky',
+                        top: 0,
+                        flex: '0 0 auto',
+                        zIndex: 20,
+                    }}
+                    styles={{
+                        body: {
+                            overflow: 'hidden',
+                            padding: 0,
+                            height: '100%',
+                            maxHeight: '100dvh',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        },
+                    }}
                 >
-                    <SideBar selectedNavBarKey={selectedNavBarKey} collapsed={collapsed} />
+                    <SideBar
+                        selectedNavBarKey={selectedNavBarKey}
+                        collapsed={collapsed}
+                        onToggleCollapsed={() => setCollapsed(prev => !prev)}
+                    />
                 </Sider>
                 <Layout style={innerLayoutStyle}>
-                    <Header
-                        style={{
-                            backgroundColor: theme.colors.accentGreen,
-                            display: 'flex',
-                            alignItems: 'center',
-                            paddingLeft: 16,
-                            paddingRight: 16,
-                            lineHeight: 1,
-                            flexShrink: 0,
-                        }}
-                    >
-                        <div style={{ flexShrink: 0 }}>
-                            {
-                                React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                                    className: 'trigger',
-                                    onClick: () => setCollapsed(!collapsed),
-                                })
-                            }
-                        </div>
-                        <HeaderExploreNav />
-                        <div
-                            style={{
-                                marginLeft: 'auto',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 12,
-                                flexShrink: 0,
-                            }}
-                        >
-                            <SelectLanguage />
-                            <NotificationBell />
-                        </div>
-                    </Header>
                     <Content style={contentStyle}>
                         {children}
                     </Content>

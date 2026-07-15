@@ -25,6 +25,7 @@ import {
   TEACHER,
   PARENT,
   FREE_LISTENER,
+  SCRATCH_HUB_ROUTE,
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
@@ -47,6 +48,7 @@ const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
+const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
 
@@ -70,6 +72,7 @@ const AppRoutes = () => (
       />
       <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT], <MyProjects />)} />
       <Route path={PUBLIC_PROJECTS_ROUTE} element={wrapProtected(STANDARD_ROLES, <PublicProjects />)} />
+      <Route path={SCRATCH_HUB_ROUTE} element={wrapProtected(STANDARD_ROLES, <ScratchHubPage />)} />
       <Route path={PROJECT_PAGE_ROUTE} element={wrapProtected(STANDARD_ROLES, <ProjectPage />)} />
       <Route
         path={MY_COURSES_ROUTE}

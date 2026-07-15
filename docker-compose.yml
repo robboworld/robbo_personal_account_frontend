@@ -1,4 +1,6 @@
 # ЛК frontend + локальный Scratch player (robboscratch3_gui с embed-плеером).
+# Без network_mode: host — на Docker Desktop (macOS/Windows) host-network не
+# публикует порты на localhost хоста; bridge + ports работает и на Linux.
 name: robbo_personal_account_frontend
 
 services:
@@ -12,7 +14,6 @@ services:
     environment:
       - PORT=3030
       - HOST=0.0.0.0
-    network_mode: "host"
     depends_on:
       - scratch-gui
 

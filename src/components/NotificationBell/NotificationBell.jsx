@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Badge, Button, List, Popover, Space, Typography, message } from 'antd'
+import { Badge, Button, List, Modal, Space, Typography, message } from 'antd'
 import { BellOutlined } from '@ant-design/icons'
 import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 
 import {
     fetchNotificationFeed,
@@ -10,11 +11,63 @@ import {
     markAnnouncementRead,
     markAllNotificationsRead,
 } from '@/api/notifications'
+import theme from '@/theme'
 
 const { Text } = Typography
 
-const NotificationBell = () => {
+const IconTrigger = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0.65rem;
+  background: rgba(0, 175, 65, 0.1);
+  color: ${theme.colors.secondary};
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    color 0.22s ease,
+    transform 0.18s ease;
+
+  &:hover {
+    background: rgba(0, 175, 65, 0.18);
+    color: ${theme.colors.accentGreen};
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  .anticon {
+    font-size: 1.05rem;
+    color: inherit;
+  }
+
+  .ant-badge {
+    color: inherit;
+    line-height: 1;
+  }
+
+  .ant-badge .anticon {
+    color: inherit;
+  }
+`
+
+const FeedPanel = styled.div`
+  max-height: min(60vh, 420px);
+  overflow: auto;
+  margin: -0.25rem -0.5rem 0;
+  padding: 0 0.5rem;
+`
+
+const NotificationBell = ({ variant = 'default' }) => {
     const intl = useIntl()
+    const isSidebar = variant === 'sidebar'
     const [open, setOpen] = useState(false)
     const [count, setCount] = useState(0)
     const [items, setItems] = useState([])
@@ -59,10 +112,6 @@ const NotificationBell = () => {
         }
     }, [open, loadFeed, refreshCount])
 
-    const onOpenChange = next => {
-        setOpen(next)
-    }
-
     const handleMarkRead = async row => {
         try {
             if (row.feedKind === 'personal') {
@@ -88,8 +137,8 @@ const NotificationBell = () => {
         }
     }
 
-    const overlay = (
-        <div style={{ width: 360, maxHeight: 420, overflow: 'auto', background: '#fff', padding: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+    const feed = (
+        <FeedPanel>
             <Space style={{ marginBottom: 8, width: '100%', justifyContent: 'space-between' }}>
                 <Text strong>{intl.formatMessage({ id: 'notifications.title' })}</Text>
                 <Button size='small' type='link'
@@ -131,44 +180,70 @@ key='read' onClick={() => handleMarkRead(row)}>
                     )
                 }}
             />
-        </div>
+        </FeedPanel>
     )
 
-    return (
-        <Popover
-            content={overlay}
-            trigger='click'
-            open={open}
-            onOpenChange={onOpenChange}
-            placement='bottomRight'
+    const trigger = (
+        <IconTrigger
+            type='button'
+            aria-label={intl.formatMessage({ id: 'notifications.title' })}
+            onClick={() => setOpen(true)}
+            style={isSidebar ? undefined : {
+                background: 'rgba(255,255,255,0.22)',
+                color: '#fff',
+            }}
         >
-            <span
-                role='button'
-                tabIndex={0}
-                aria-label={intl.formatMessage({ id: 'notifications.title' })}
-                style={{
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '6px 8px',
-                    borderRadius: 8,
-                    background: 'rgba(255,255,255,0.22)',
-                    lineHeight: 1,
-                }}
-                onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setOpen(o => !o)
-                    }
-                }}
-            >
-                <Badge count={count > 0 ? count : undefined} size='small'
+            <Badge count={count > 0 ? count : undefined} size='small'
 overflowCount={99}>
-                    <BellOutlined style={{ fontSize: 22, color: '#fff' }} />
-                </Badge>
-            </span>
-        </Popover>
+                <BellOutlined
+                  style={{
+                    fontSize: 17,
+                    color: isSidebar ? theme.colors.secondary : '#fff',
+                  }}
+                />
+            </Badge>
+        </IconTrigger>
+    )
+
+    if (isSidebar) {
+        return (
+            <React.Fragment>
+                {trigger}
+                <Modal
+                    title={intl.formatMessage({ id: 'notifications.title' })}
+                    open={open}
+                    onCancel={() => setOpen(false)}
+                    footer={null}
+                    centered
+                    destroyOnClose
+                    width={440}
+                    maskClosable
+                    styles={{
+                        mask: { background: 'rgba(24, 28, 32, 0.55)' },
+                    }}
+                >
+                    {feed}
+                </Modal>
+            </React.Fragment>
+        )
+    }
+
+    return (
+        <React.Fragment>
+            {trigger}
+            <Modal
+                title={intl.formatMessage({ id: 'notifications.title' })}
+                open={open}
+                onCancel={() => setOpen(false)}
+                footer={null}
+                centered
+                destroyOnClose
+                width={440}
+                maskClosable
+            >
+                {feed}
+            </Modal>
+        </React.Fragment>
     )
 }
 

@@ -4,6 +4,11 @@ import { useMutation } from '@apollo/client'
 import { FormattedMessage } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons'
 
 import {
   SidebarDataSuperAdmin,
@@ -12,6 +17,7 @@ import {
   SidebarDataTeacher,
   SidebarDataUnitAdmin,
   SidebarDataFreeListener,
+  buildSidebarItems,
 } from './SideBarData.jsx'
 import { mapSidebarMenuItems } from './sidebarMenu'
 
@@ -20,14 +26,27 @@ import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
 import { parseJwt, openLms, clearLmsIdentityLink, buildPostLogoutUrl } from '@/helpers'
 import {
   HOME_PAGE_ROUTE,
-  LOGIN_PAGE_ROUTE,
   SEND_NOTIFICATION_ROUTE,
   SUPER_ADMIN,
   UNIT_ADMIN,
 } from '@/constants'
-import { SidebarAdminActions, SidebarMenu, SidebarShell } from '@/components/AccountShell'
+import SelectLanguage from '@/components/SelectLanguage'
+import NotificationBell from '@/components/NotificationBell/NotificationBell'
+import {
+  SidebarAdminActions,
+  SidebarMenu,
+  SidebarShell,
+  SidebarTopBar,
+  SidebarTopActions,
+  SidebarCollapseBtn,
+  SidebarFooter,
+  SidebarLogoutBtn,
+} from '@/components/AccountShell'
 
-export default ({ selectedNavBarKey = '1', collapsed = false }) => {
+/** Build nav: Home / Profile / Projects / Explore — divider — Scratch / LMS — rest. */
+const withSharedExploreItems = roleItems => buildSidebarItems(roleItems)
+
+export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
@@ -35,33 +54,30 @@ export default ({ selectedNavBarKey = '1', collapsed = false }) => {
   const { Role } = token ? parseJwt(token) : { Role: null }
   const showAdminHomeShortcuts =
     location.pathname === HOME_PAGE_ROUTE && (Role === UNIT_ADMIN || Role === SUPER_ADMIN)
-  let SideBarData = []
-  switch (Role) {
-    case 0: {
-      SideBarData = SidebarDataStudent
-      break
+
+  const roleSideBarData = useMemo(() => {
+    switch (Role) {
+      case 0:
+        return SidebarDataStudent
+      case 1:
+        return SidebarDataTeacher
+      case 2:
+        return SidebarDataParent
+      case 3:
+        return SidebarDataFreeListener
+      case 4:
+        return SidebarDataUnitAdmin
+      case 5:
+        return SidebarDataSuperAdmin
+      default:
+        return []
     }
-    case 1: {
-      SideBarData = SidebarDataTeacher
-      break
-    }
-    case 2: {
-      SideBarData = SidebarDataParent
-      break
-    }
-    case 3: {
-      SideBarData = SidebarDataFreeListener
-      break
-    }
-    case 4: {
-      SideBarData = SidebarDataUnitAdmin
-      break
-    }
-    case 5: {
-      SideBarData = SidebarDataSuperAdmin
-      break
-    }
-  }
+  }, [Role])
+
+  const SideBarData = useMemo(
+    () => withSharedExploreItems(roleSideBarData),
+    [roleSideBarData],
+  )
 
   const menuItems = useMemo(
     () => mapSidebarMenuItems(SideBarData, collapsed),
@@ -86,16 +102,15 @@ export default ({ selectedNavBarKey = '1', collapsed = false }) => {
   })
 
   const onMenuClick = async ({ key }) => {
+    if (key === 'tools-divider') {
+      return
+    }
     const entry = SideBarData.find(i => String(i.key) === String(key))
-    if (!entry) {
+    if (!entry || entry.type === 'divider') {
       return
     }
     if (entry.external === 'lms') {
       await openLms()
-      return
-    }
-    if (entry.pathname === LOGIN_PAGE_ROUTE) {
-      loginOut()
       return
     }
     navigate(entry.pathname, { state: { selectedNavBarKey: key } })
@@ -107,6 +122,20 @@ export default ({ selectedNavBarKey = '1', collapsed = false }) => {
 
   return (
     <SidebarShell $collapsed={collapsed}>
+      <SidebarTopBar $collapsed={collapsed}>
+        <SidebarCollapseBtn
+          type='button'
+          $collapsed={collapsed}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          onClick={onToggleCollapsed}
+        >
+          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        </SidebarCollapseBtn>
+        <SidebarTopActions $collapsed={collapsed}>
+          <SelectLanguage variant='sidebar' />
+          <NotificationBell variant='sidebar' />
+        </SidebarTopActions>
+      </SidebarTopBar>
       {showAdminHomeShortcuts ? (
         <SidebarAdminActions>
           <Space direction='vertical' style={{ width: '100%' }}
@@ -127,6 +156,18 @@ onClick={onSendNotificationClick}>
         onClick={onMenuClick}
         items={menuItems}
       />
+      <SidebarFooter $collapsed={collapsed}>
+        <SidebarLogoutBtn
+          type='button'
+          $collapsed={collapsed}
+          onClick={() => loginOut()}
+        >
+          <LogoutOutlined />
+          {!collapsed ? (
+            <span><FormattedMessage id='sidebar_data.logout' /></span>
+          ) : null}
+        </SidebarLogoutBtn>
+      </SidebarFooter>
     </SidebarShell>
   )
 }

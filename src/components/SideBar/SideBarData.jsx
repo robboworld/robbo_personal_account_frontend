@@ -7,18 +7,19 @@ import {
   ProjectOutlined,
   CreditCardOutlined,
   TeamOutlined,
-  LogoutOutlined,
   NotificationOutlined,
   SafetyCertificateOutlined,
   ReadOutlined,
   InfoCircleOutlined,
   BankOutlined,
   GroupOutlined,
+  CodeOutlined,
+  CompassOutlined,
+  BookOutlined,
 } from '@ant-design/icons'
 
 import {
   HOME_PAGE_ROUTE,
-  LOGIN_PAGE_ROUTE,
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
   UNIT_ADMINS_ROUTE,
@@ -27,7 +28,71 @@ import {
   MY_PROJECTS_ROUTE,
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
+  SCRATCH_HUB_ROUTE,
+  PUBLIC_PROJECTS_ROUTE,
 } from '@/constants'
+
+/** Explore — in the main nav block with home / profile / projects. */
+export const ExploreNavItem = {
+  key: 'public_projects',
+  label: <FormattedMessage id='header.explore' />,
+  pathname: PUBLIC_PROJECTS_ROUTE,
+  icon: <CompassOutlined />,
+}
+
+/** External tools below the divider: Scratch.ru + LMS. */
+export const ToolNavItems = [
+  {
+    key: 'scratch',
+    label: <FormattedMessage id='sidebar_data.scratch_ru' />,
+    pathname: SCRATCH_HUB_ROUTE,
+    icon: <CodeOutlined />,
+    iconAccent: 'green',
+  },
+  {
+    key: 'lms',
+    label: <FormattedMessage id='sidebar_data.lms' />,
+    pathname: '#lms',
+    external: 'lms',
+    icon: <BookOutlined />,
+    iconAccent: 'green',
+  },
+]
+
+export const ToolsDividerItem = {
+  type: 'divider',
+  key: 'tools-divider',
+  'data-menu-tools-divider': 'true',
+}
+
+/**
+ * Order: Home → Profile → Projects (if any) → Explore → divider → Scratch → LMS → rest.
+ */
+export const buildSidebarItems = roleItems => {
+  const head = []
+  const tail = []
+
+  ;(roleItems || []).forEach(item => {
+    const isPrimary =
+      item.key === 'home' ||
+      item.pathname === PROFILE_PAGE_ROUTE ||
+      item.pathname === MY_PROJECTS_ROUTE
+
+    if (isPrimary) {
+      head.push(item)
+    } else {
+      tail.push(item)
+    }
+  })
+
+  return [
+    ...head,
+    ExploreNavItem,
+    ToolsDividerItem,
+    ...ToolNavItems,
+    ...tail,
+  ]
+}
 
 export const SidebarDataStudent = [
   {
@@ -48,12 +113,6 @@ export const SidebarDataStudent = [
     pathname: MY_PROJECTS_ROUTE,
     icon: <ProjectOutlined />,
   },
-  {
-    key: '7',
-    label: <FormattedMessage id='sidebar_data.logout' />,
-    pathname: LOGIN_PAGE_ROUTE,
-    icon: <LogoutOutlined />,
-  },
 ]
 
 export const SidebarDataParent = [
@@ -68,12 +127,6 @@ export const SidebarDataParent = [
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
-  },
-  {
-    key: '4',
-    label: <FormattedMessage id='sidebar_data.logout' />,
-    pathname: LOGIN_PAGE_ROUTE,
-    icon: <LogoutOutlined />,
   },
 ]
 
@@ -125,54 +178,6 @@ export const SidebarDataSuperAdmin = [
     pathname: SEND_NOTIFICATION_ROUTE,
     icon: <NotificationOutlined />,
   },
-  // {
-  //   key: '11',
-  //   label: 'Свободные слушатели',
-  //   pathname: '/',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  // {
-  //   key: '12',
-  //   label: 'Финансы',
-  //   pathname: '/',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  // {
-  //   key: '13',
-  //   label: 'Лиды',
-  //   pathname: '/',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  // {
-  //   key: '14',
-  //   label: 'Звонки',
-  //   pathname: '/',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  // {
-  //   key: '15',
-  //   label: 'Доступ в CRM',
-  //   pathname: '/',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  // {
-  //   key: '16',
-  //   label: 'Абонементы',
-  //   pathname: '/',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  // {
-  //   key: '17',
-  //   label: 'Информер',
-  //   pathname: '/',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  {
-    key: '18',
-    label: <FormattedMessage id='sidebar_data.logout' />,
-    pathname: LOGIN_PAGE_ROUTE,
-    icon: <LogoutOutlined />,
-  },
 ]
 
 export const SidebarDataTeacher = [
@@ -187,12 +192,6 @@ export const SidebarDataTeacher = [
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
-  },
-  {
-    key: '6',
-    label: <FormattedMessage id='sidebar_data.logout' />,
-    pathname: LOGIN_PAGE_ROUTE,
-    icon: <LogoutOutlined />,
   },
 ]
 
@@ -227,12 +226,6 @@ export const SidebarDataFreeListener = [
     pathname: '/informer',
     icon: <InfoCircleOutlined />,
   },
-  {
-    key: '6',
-    label: <FormattedMessage id='sidebar_data.logout' />,
-    pathname: LOGIN_PAGE_ROUTE,
-    icon: <LogoutOutlined />,
-  },
 ]
 
 export const SidebarDataUnitAdmin = [
@@ -260,12 +253,6 @@ export const SidebarDataUnitAdmin = [
     pathname: TEACHERS_PAGE_ROUTE,
     icon: <TeamOutlined />,
   },
-  // {
-  //   key: '5',
-  //   label: <FormattedMessage id='sidebar_data.clients' />,
-  //   pathname: '/program',
-  //   icon: <FaIcons.FaTasks />,
-  // },
   {
     key: '6',
     label: <FormattedMessage id='sidebar_data.robbo_groups' />,
@@ -277,29 +264,5 @@ export const SidebarDataUnitAdmin = [
     label: <FormattedMessage id='sidebar_data.send_notification' />,
     pathname: SEND_NOTIFICATION_ROUTE,
     icon: <NotificationOutlined />,
-  },
-  // {
-  //   key: '7',
-  //   label: 'Ученики',
-  //   pathname: '/program',
-  //   icon: <FaIcons.FaTasks />,
-  // },
-  // {
-  //   key: '8',
-  //   label: 'Финансы',
-  //   pathname: '/payments',
-  //   icon: <CreditCardOutlined />,
-  // },
-  // {
-  //   key: '9',
-  //   label: 'Задачи',
-  //   pathname: '/informer',
-  //   icon: <FaIcons.FaInfo />,
-  // },
-  {
-    key: '10',
-    label: <FormattedMessage id='sidebar_data.logout' />,
-    pathname: LOGIN_PAGE_ROUTE,
-    icon: <LogoutOutlined />,
   },
 ]
