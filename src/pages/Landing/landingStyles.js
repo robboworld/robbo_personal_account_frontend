@@ -487,6 +487,8 @@ export const GalleryCard = styled.button`
   cursor: pointer;
   background: transparent;
   border-radius: ${t.cardRadius};
+  text-align: left;
+  width: 100%;
 
   img {
     width: 100%;
@@ -501,6 +503,125 @@ export const GalleryCard = styled.button`
     outline: 2px solid ${t.green};
     outline-offset: 3px;
   }
+`
+
+export const ProjectTile = styled.button`
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 148px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: ${t.cardRadius};
+  background: #fff;
+  box-shadow: ${t.cardShadow};
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${t.cardShadowHover};
+    border-color: rgba(0, 175, 65, 0.28);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${t.green};
+    outline-offset: 3px;
+  }
+`
+
+export const ProjectTileMedia = styled.div`
+  position: relative;
+  width: 100%;
+  height: 140px;
+  background:
+    linear-gradient(145deg, rgba(0, 175, 65, 0.18), rgba(0, 122, 46, 0.35)),
+    ${t.pageBg};
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+`
+
+export const ProjectTileTop = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.85rem 1.05rem 0;
+`
+
+export const ProjectTileGlyph = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex-shrink: 0;
+  border-radius: 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: linear-gradient(145deg, ${t.green}, ${t.greenDark});
+`
+
+export const ProjectTileBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+  flex: 1;
+`
+
+export const ProjectTileTitle = styled.span`
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: ${t.coal};
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+`
+
+export const ProjectTileMeta = styled.span`
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: ${t.green};
+`
+
+export const ProjectTileAuthor = styled.span`
+  margin-top: auto;
+  padding: 0.15rem 1.05rem 0.95rem;
+  font-size: 0.8125rem;
+  color: ${t.grey};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
+export const ProjectsEmpty = styled.p`
+  margin: 0.75rem 0 0;
+  padding: 1.25rem 1rem;
+  border-radius: ${t.cardRadius};
+  border: 1px dashed rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: ${t.bodyMuted};
+  text-align: center;
 `
 
 export const CopyCard = styled.div`
