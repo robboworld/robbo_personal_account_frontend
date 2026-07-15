@@ -8,6 +8,7 @@ import {
   SEND_NOTIFICATION_ROUTE,
   TEACHERS_PAGE_ROUTE,
   UNIT_ADMINS_ROUTE,
+  SCRATCH_HUB_ROUTE,
   STUDENT,
   UNIT_ADMIN,
   SUPER_ADMIN,
@@ -54,6 +55,10 @@ const exactByRole = {
 export function getSelectedNavBarKeyFromPath(role, pathname) {
   if (pathname == null || pathname === '') {
     return undefined
+  }
+
+  if (pathname === SCRATCH_HUB_ROUTE) {
+    return 'scratch'
   }
 
   if (pathname === PUBLIC_PROJECTS_ROUTE) {

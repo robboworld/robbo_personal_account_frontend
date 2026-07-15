@@ -618,14 +618,148 @@ export const SidebarShell = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0.5rem 0.35rem 1rem;
+  min-height: 0;
+  max-height: 100dvh;
+  padding: 0.5rem 0.35rem 0.75rem;
   background: linear-gradient(180deg, #fafcfa 0%, #f4f8f4 100%);
   border-inline-end: 1px solid rgba(108, 91, 123, 0.1);
   overflow: hidden;
+  box-sizing: border-box;
 
   ${({ $collapsed }) => $collapsed && css`
-    padding: 0.5rem 0.375rem 0.75rem;
+    padding: 0.5rem 0.375rem 0.65rem;
   `}
+`
+
+export const SidebarTopBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.35rem 0.4rem 0.55rem;
+  flex-shrink: 0;
+
+  ${({ $collapsed }) => $collapsed && css`
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding: 0.35rem 0.2rem 0.5rem;
+  `}
+`
+
+export const SidebarTopActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  order: 0;
+
+  ${({ $collapsed }) => $collapsed && css`
+    flex-direction: column;
+    order: 2;
+  `}
+`
+
+export const SidebarCollapseBtn = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  border-radius: 0.65rem;
+  background: rgba(0, 175, 65, 0.1);
+  color: ${colors.secondary};
+  cursor: pointer;
+  flex-shrink: 0;
+  order: 1;
+  transition:
+    background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    color 0.22s ease,
+    transform 0.18s ease;
+
+  ${({ $collapsed }) => $collapsed && css`
+    margin-left: 0;
+    order: 0;
+  `}
+
+  &:hover {
+    background: rgba(0, 175, 65, 0.18);
+    color: ${colors.accentGreen};
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  .anticon {
+    font-size: 1.05rem;
+  }
+`
+
+export const SidebarFooter = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding: 0.65rem 0.35rem 0.25rem;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(108, 91, 123, 0.1);
+  background: #f4f8f4;
+  position: relative;
+  z-index: 2;
+
+  ${({ $collapsed }) => $collapsed && css`
+    padding: 0.5rem 0.15rem 0.2rem;
+    align-items: stretch;
+  `}
+`
+
+export const SidebarUtils = styled.div`
+  display: none;
+`
+
+export const SidebarLogoutBtn = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: ${({ $collapsed }) => ($collapsed ? 'center' : 'flex-start')};
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: ${({ $collapsed }) => ($collapsed ? '0.55rem' : '0.55rem 0.75rem')};
+  border: 1px solid rgba(198, 40, 40, 0.22);
+  border-radius: 0.875rem;
+  background: rgba(198, 40, 40, 0.08);
+  color: #b71c1c;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    border-color 0.22s ease,
+    color 0.22s ease,
+    transform 0.18s ease;
+
+  .anticon {
+    font-size: 1.05rem;
+    color: #c62828;
+  }
+
+  &:hover {
+    background: rgba(198, 40, 40, 0.16);
+    border-color: rgba(198, 40, 40, 0.38);
+    color: #8b0000;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 `
 
 export const SidebarAdminActions = styled.div`
@@ -634,6 +768,9 @@ export const SidebarAdminActions = styled.div`
 
 export const SidebarMenu = styled(Menu)`
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: transparent !important;
   border-inline-end: none !important;
 
@@ -693,10 +830,11 @@ export const SidebarMenu = styled(Menu)`
       background: rgba(0, 175, 65, 0.16);
     }
 
-    .ant-menu-item-danger,
-    .ant-menu-item[data-menu-logout='true'] {
-      margin-top: 0.35rem !important;
+    .ant-menu-item-divider {
+      margin: 0.65rem 0.5rem !important;
+      border-block-start-color: rgba(108, 91, 123, 0.14) !important;
     }
+
   `}
 
   ${({ $collapsed }) => $collapsed && css`
