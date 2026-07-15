@@ -63,6 +63,9 @@ const AppRoutes = () => (
       <Route path={REGISTER_PAGE_ROUTE} element={<Logistration />} />
     </Route>
 
+    {/* Public + authenticated project page (guest uses landing header; owner uses LK shell). */}
+    <Route path={PROJECT_PAGE_ROUTE} element={<ProjectPage />} />
+
     <Route element={<AuthenticatedShell />}>
       <Route
         path={HOME_PAGE_ROUTE}
@@ -70,7 +73,6 @@ const AppRoutes = () => (
       />
       <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT], <MyProjects />)} />
       <Route path={PUBLIC_PROJECTS_ROUTE} element={wrapProtected(STANDARD_ROLES, <PublicProjects />)} />
-      <Route path={PROJECT_PAGE_ROUTE} element={wrapProtected(STANDARD_ROLES, <ProjectPage />)} />
       <Route
         path={MY_COURSES_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <LmsRedirect />)}

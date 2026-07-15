@@ -62,17 +62,29 @@ export default function PublicProjects() {
   const [projects, setProjects] = useState([])
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      setLoading(false)
-      return
-    }
+    let cancelled = false
+    setLoading(true)
 
-    projectPageAPI.getPublicProjectPages(token)
-      .then(res => {
-        setProjects(res.data?.projectPages || [])
+    projectPageAPI.fetchPublicProjectPages()
+      .then(data => {
+        if (!cancelled) {
+          setProjects(data?.projectPages || [])
+        }
       })
-      .finally(() => setLoading(false))
+      .catch(() => {
+        if (!cancelled) {
+          setProjects([])
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const openProject = useCallback(projectPageId => {

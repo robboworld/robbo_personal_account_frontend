@@ -1,6 +1,6 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { createGlobalStyle } from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import {
   AboutHighlight,
@@ -25,7 +25,6 @@ import {
   CtaGhost,
   CtaRow,
   Eyebrow,
-  GalleryCard,
   GalleryGrid,
   HeroInner,
   HeroLede,
@@ -34,6 +33,15 @@ import {
   Main,
   MediaRow,
   PageRoot,
+  ProjectTile,
+  ProjectTileAuthor,
+  ProjectTileBody,
+  ProjectTileGlyph,
+  ProjectTileMedia,
+  ProjectTileMeta,
+  ProjectTileTitle,
+  ProjectTileTop,
+  ProjectsEmpty,
   SectionCard,
   SectionTitle,
   StatLabel,
@@ -52,6 +60,8 @@ import {
   sectionReveal,
 } from './landingStyles'
 
+import { projectPageAPI } from '@/api/projectPage'
+import config from '@/config'
 import RobboGuestHeader from '@/components/RobboGuestHeader/RobboGuestHeader'
 import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
@@ -85,6 +95,30 @@ const OFFICIAL_IMGS = [
   'official_img3.jpg',
   'official_img4.jpg',
 ]
+
+const LANDING_PROJECTS_LIMIT = 3
+
+const getAuthorInitials = name => {
+  if (!name) {
+    return '?'
+  }
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+  }
+  return name.slice(0, 2).toUpperCase()
+}
+
+const resolvePreviewUrl = preview => {
+  if (!preview) {
+    return ''
+  }
+  if (/^https?:\/\//i.test(preview) || preview.startsWith('data:')) {
+    return preview
+  }
+  const base = (config.backendURL?.[0] || '').replace(/\/?$/, '/')
+  return `${base}${preview.replace(/^\//, '')}`
+}
 
 const LMS_COURSE_EXAMPLES = [
   {
@@ -159,7 +193,34 @@ const MediaImage = ({ src, className }) => (
 className={className} />
 )
 
+const LandingProjectCard = ({ project, onOpen }) => {
+  const title = project.title || 'Без названия'
+  const authorName = project.authorName || project.authorUserId || 'Автор'
+  const previewUrl = resolvePreviewUrl(project.preview)
+  return (
+    <ProjectTile
+      type='button'
+      onClick={() => onOpen(project.projectPageId)}
+      aria-label={`Открыть проект «${title}»`}
+    >
+      <ProjectTileMedia>
+        {previewUrl ? <img src={previewUrl} alt='' loading='lazy' /> : null}
+      </ProjectTileMedia>
+      <ProjectTileTop>
+        <ProjectTileGlyph aria-hidden>{getAuthorInitials(authorName)}</ProjectTileGlyph>
+        <ProjectTileBody>
+          <ProjectTileTitle>{title}</ProjectTileTitle>
+          <ProjectTileMeta>Открыть проект →</ProjectTileMeta>
+        </ProjectTileBody>
+      </ProjectTileTop>
+      <ProjectTileAuthor>{authorName}</ProjectTileAuthor>
+    </ProjectTile>
+  )
+}
+
 const Landing = () => {
+  const navigate = useNavigate()
+
   useEffect(() => {
     document.title = 'РОББО — личный кабинет и образовательная экосистема'
   }, [])
@@ -174,16 +235,8 @@ const Landing = () => {
   const staticBase = '/static'
   const [v1to3, setV1to3] = useState([])
   const [v4to6, setV4to6] = useState([])
-
-  const galleryItems = useMemo(
-    () =>
-      pickOfficial(3).map((file, idx) => ({
-        file,
-        url: `https://scratch.ru/example${idx + 1}`,
-      })),
-    [],
-  )
-
+  const [galleryProjects, setGalleryProjects] = useState([])
+  const [projectsLoading, setProjectsLoading] = useState(true)
   const [trailerImg, setTrailerImg] = useState('')
 
   useEffect(() => {
@@ -191,6 +244,38 @@ const Landing = () => {
     setV4to6(pickOfficial(3))
     setTrailerImg(pickOfficial(1)[0])
   }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    setProjectsLoading(true)
+    projectPageAPI
+      .fetchPublicProjectPages('1', String(LANDING_PROJECTS_LIMIT), { featured: 'landing' })
+      .then(data => {
+        if (!cancelled) {
+          setGalleryProjects(data?.projectPages || [])
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGalleryProjects([])
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setProjectsLoading(false)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const openProject = useCallback(projectPageId => {
+    if (!projectPageId) {
+      return
+    }
+    navigate(`/projects/${projectPageId}`)
+  }, [navigate])
 
   return (
     <PageRoot>
@@ -397,21 +482,37 @@ rel='noreferrer'>
             </CtaRow>
             <Subtitle>Примеры проектов</Subtitle>
             <Lead>
-              Работы победителей прошлых лет — анимированные истории, игры и
-              робототехнические проекты. Нажмите на карточку, чтобы открыть
-              проект.
+              Избранные публичные Scratch-проекты — анимированные истории, игры и
+              робототехнические работы. Нажмите на карточку, чтобы открыть проект
+              без входа в личный кабинет.
             </Lead>
-            <GalleryGrid>
-              {galleryItems.map(({ file, url }, idx) => (
-                <GalleryCard
-                  key={`${file}-${idx}`}
-                  type='button'
-                  onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
-                >
-                  <img src={`${staticBase}/${file}`} alt='Example project' />
-                </GalleryCard>
-              ))}
-            </GalleryGrid>
+            {projectsLoading ? (
+              <GalleryGrid aria-busy='true'>
+                {Array.from({ length: 3 }, (_, idx) => (
+                  <ProjectTile
+                    key={`gallery-skeleton-${idx}`}
+                    as='div'
+                    aria-hidden
+                    style={{ minHeight: 220, opacity: 0.55, pointerEvents: 'none' }}
+                  />
+                ))}
+              </GalleryGrid>
+            ) : galleryProjects.length === 0 ? (
+              <ProjectsEmpty>
+                Избранных проектов для лендинга пока нет. Администратор может отметить
+                публичный проект флагом landing_featured.
+              </ProjectsEmpty>
+            ) : (
+              <GalleryGrid>
+                {galleryProjects.map((project, idx) => (
+                  <LandingProjectCard
+                    key={`${project.projectPageId}-g-${idx}`}
+                    project={project}
+                    onOpen={openProject}
+                  />
+                ))}
+              </GalleryGrid>
+            )}
             <Subtitle>3.3. Педагогам и родителям</Subtitle>
             <Lead>
               Курс «Секреты Scratch» — для детей от 7 лет. Участники разработают
