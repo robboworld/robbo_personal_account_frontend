@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { Input, Form, Switch, Spin, message, Modal } from 'antd'
-import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, ExclamationCircleOutlined, PictureOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { createGlobalStyle } from 'styled-components'
 
 import {
     ActionButton,
@@ -12,6 +13,10 @@ import {
     AuthorText,
     BackButton,
     BackRow,
+    GuestMainGrid,
+    GuestMetaBlock,
+    GuestMetaSection,
+    GuestMetaText,
     LoadingWrap,
     MainGrid,
     MetaCard,
@@ -31,11 +36,21 @@ import {
 import PlayerScratchControls from './PlayerScratchControls'
 
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
-import { downloadProjectSb3, uploadProjectSb3 } from '@/api/projectPage'
+import PageLayout from '@/components/PageLayout'
+import RobboGuestHeader from '@/components/RobboGuestHeader/RobboGuestHeader'
+import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
+import {
+    downloadProjectSb3,
+    downloadProjectSb3ByPlayToken,
+    projectPageAPI,
+    uploadProjectPreview,
+    uploadProjectSb3,
+} from '@/api/projectPage'
 import config from '@/config'
-import { MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE } from '@/constants'
+import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE } from '@/constants'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
 import { formatDateTime } from '@/helpers/formatDateTime'
+import { RequireAuth } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
 import { getProjectPageState } from '@/reducers/projectPage'
 import {
@@ -43,19 +58,203 @@ import {
     clearProjectPageState,
     updateProjectPage,
 } from '@/actions'
+import RobboGuestFonts from '@/theme/robboGuestFonts'
+import robboGuestTokens from '@/theme/robboGuestTokens'
 
 
 const { TextArea } = Input
 const { confirm } = Modal
 
-export default () => {
+const GuestGlobal = createGlobalStyle`
+  html.guest-project-page-active,
+  html.guest-project-page-active body,
+  html.guest-project-page-active #root {
+    min-height: 100dvh;
+    background: ${robboGuestTokens.pageBg} !important;
+    background-image: none !important;
+  }
+`
+
+function normalizeGuestProjectPage(raw) {
+    if (!raw) return {}
+    return {
+        ...raw,
+        projectPageId: raw.projectPageId || raw.projectPageID,
+        projectId: raw.projectId || raw.projectID,
+        authorUserId: raw.authorUserId || raw.authorUserID || '',
+        authorName: raw.authorName || raw.authorUserID || '',
+        isOwner: false,
+    }
+}
+
+function GuestProjectView({ projectPageId }) {
+    const intl = useIntl()
+    const navigate = useNavigate()
+    const playerRef = useRef(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+    const [projectPage, setProjectPage] = useState(null)
+    const [playToken, setPlayToken] = useState(null)
+    const [isPlayerRunning, setIsPlayerRunning] = useState(false)
+    const [downloadBusy, setDownloadBusy] = useState(false)
+
+    useEffect(() => {
+        document.documentElement.classList.add('guest-project-page-active')
+        return () => {
+            document.documentElement.classList.remove('guest-project-page-active')
+        }
+    }, [])
+
+    useEffect(() => {
+        let cancelled = false
+        setLoading(true)
+        setError('')
+        projectPageAPI.fetchProjectPageById(projectPageId)
+            .then(data => {
+                if (cancelled) return
+                setProjectPage(normalizeGuestProjectPage(data?.projectPage))
+                setPlayToken(data?.playToken || null)
+            })
+            .catch(e => {
+                if (cancelled) return
+                setError(e?.message || intl.formatMessage({ id: 'project_page.player_error' }))
+                setProjectPage(null)
+                setPlayToken(null)
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false)
+            })
+        return () => {
+            cancelled = true
+        }
+    }, [projectPageId, intl])
+
+    const displayTitle = projectPage?.title || intl.formatMessage({ id: 'project_page.player_title' })
+    const instruction = (projectPage?.instruction || '').trim()
+    const notes = (projectPage?.notes || '').trim()
+
+    const handleDownloadSb3 = async () => {
+        if (!playToken) {
+            message.error(intl.formatMessage({ id: 'project_page.download_sb3_error' }))
+            return
+        }
+        setDownloadBusy(true)
+        try {
+            await downloadProjectSb3ByPlayToken(playToken, projectPageId, projectPage?.title)
+            message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'project_page.download_sb3_error' }))
+        } finally {
+            setDownloadBusy(false)
+        }
+    }
+
+    return (
+        <>
+            <RobboGuestFonts />
+            <GuestGlobal />
+            <RobboGuestHeader />
+            <main id='content' style={{ flex: 1, width: '100%' }}>
+                <PageShell>
+                    <BackRow>
+                        <BackButton
+                            type='default'
+                            icon={<ArrowLeftOutlined />}
+                            onClick={() => navigate(LANDING_PAGE_ROUTE)}
+                        >
+                            На главную
+                        </BackButton>
+                        {projectPage?.authorName && (
+                            <AuthorText>
+                                <FormattedMessage
+                                    id='project_page.author_label'
+                                    values={{ name: projectPage.authorName }}
+                                />
+                            </AuthorText>
+                        )}
+                    </BackRow>
+                    {loading ? (
+                        <LoadingWrap><Spin /></LoadingWrap>
+                    ) : error ? (
+                        <PlayerCard>
+                            <ProjectTitle>{intl.formatMessage({ id: 'project_page.player_error' })}</ProjectTitle>
+                            <ViewOnlyNote>{error}</ViewOnlyNote>
+                            <div style={{ marginTop: '1rem' }}>
+                                <Link to={LANDING_PAGE_ROUTE}>Вернуться на лендинг</Link>
+                            </div>
+                        </PlayerCard>
+                    ) : (
+                        <GuestMainGrid>
+                            <PlayerCard>
+                                <ScratchPlayerEmbed
+                                    ref={playerRef}
+                                    projectPageId={projectPageId}
+                                    playToken={playToken}
+                                    onRunningChange={setIsPlayerRunning}
+                                />
+                                <PlayerScratchControls
+                                    running={isPlayerRunning}
+                                    onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
+                                    onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
+                                />
+                            </PlayerCard>
+                            <MetaCard>
+                                <ProjectTitle>{displayTitle}</ProjectTitle>
+                                {(instruction || notes) ? (
+                                    <GuestMetaBlock style={{ marginTop: 0 }}>
+                                        {instruction ? (
+                                            <GuestMetaSection>
+                                                <MetaLabel>
+                                                    <FormattedMessage id='project_page.instruction' />
+                                                </MetaLabel>
+                                                <GuestMetaText>{instruction}</GuestMetaText>
+                                            </GuestMetaSection>
+                                        ) : null}
+                                        {notes ? (
+                                            <GuestMetaSection>
+                                                <MetaLabel>
+                                                    <FormattedMessage id='project_page.description' />
+                                                </MetaLabel>
+                                                <GuestMetaText>{notes}</GuestMetaText>
+                                            </GuestMetaSection>
+                                        ) : null}
+                                    </GuestMetaBlock>
+                                ) : null}
+                                <ActionsGroup style={{ marginTop: '1rem' }}>
+                                    <ActionButton
+                                        type='default'
+                                        htmlType='button'
+                                        icon={<CloudDownloadOutlined />}
+                                        loading={downloadBusy}
+                                        disabled={!playToken}
+                                        onClick={handleDownloadSb3}
+                                    >
+                                        <FormattedMessage id='project_page.download_sb3' />
+                                    </ActionButton>
+                                </ActionsGroup>
+                                <ViewOnlyNote>
+                                    <FormattedMessage id='project_page.view_only' />
+                                </ViewOnlyNote>
+                            </MetaCard>
+                        </GuestMainGrid>
+                    )}
+                </PageShell>
+            </main>
+            <RobboSiteFooter />
+        </>
+    )
+}
+
+function AuthenticatedProjectView({ projectPageId, token }) {
     const intl = useIntl()
     const [downloadBusy, setDownloadBusy] = useState(false)
     const [uploadBusy, setUploadBusy] = useState(false)
+    const [previewBusy, setPreviewBusy] = useState(false)
     const [deleteBusy, setDeleteBusy] = useState(false)
     const [playerReloadKey, setPlayerReloadKey] = useState(0)
     const [isPlayerRunning, setIsPlayerRunning] = useState(false)
     const uploadInputRef = useRef(null)
+    const previewInputRef = useRef(null)
     const playerRef = useRef(null)
     const navigate = useNavigate()
     const actions = useActions({
@@ -65,8 +264,6 @@ export default () => {
     }, [])
 
     const [form] = Form.useForm()
-    const { projectPageId } = useParams()
-    const token = localStorage.getItem('token')
     const titleValue = Form.useWatch('title', form)
 
     useEffect(() => {
@@ -133,6 +330,22 @@ export default () => {
             message.error(e?.message || intl.formatMessage({ id: 'project_page.upload_sb3_error' }))
         } finally {
             setUploadBusy(false)
+        }
+    }
+
+    const handleUploadPreview = async event => {
+        const file = event.target.files?.[0]
+        event.target.value = ''
+        if (!file || !token || !projectPageId) return
+        setPreviewBusy(true)
+        try {
+            await uploadProjectPreview(token, projectPageId, file)
+            message.success('Превью проекта обновлено')
+            actions.getProjectPageById(token, projectPageId)
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'notification.error_message' }))
+        } finally {
+            setPreviewBusy(false)
         }
     }
 
@@ -292,6 +505,25 @@ readOnly={!isOwner} />
                                             </React.Fragment>
                                         )}
                                         {isOwner && (
+                                            <React.Fragment>
+                                                <input
+                                                    ref={previewInputRef}
+                                                    type='file'
+                                                    accept='image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp'
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleUploadPreview}
+                                                />
+                                                <ActionButton
+                                                    type='default'
+                                                    icon={<PictureOutlined />}
+                                                    loading={previewBusy}
+                                                    onClick={() => previewInputRef.current?.click()}
+                                                >
+                                                    Загрузить превью
+                                                </ActionButton>
+                                            </React.Fragment>
+                                        )}
+                                        {isOwner && (
                                             <ScratchAction type='primary' onClick={seeInsideHandler}>
                                                 <FormattedMessage id='project_page.open_in_scratch' />
                                             </ScratchAction>
@@ -324,5 +556,23 @@ readOnly={!isOwner} />
                 </MainGrid>
             )}
         </PageShell>
+    )
+}
+
+export default () => {
+    const { projectPageId } = useParams()
+    const token = localStorage.getItem('token')
+    const isGuest = !token || token === 'null'
+
+    if (isGuest) {
+        return <GuestProjectView projectPageId={projectPageId} />
+    }
+
+    return (
+        <RequireAuth>
+            <PageLayout>
+                <AuthenticatedProjectView projectPageId={projectPageId} token={token} />
+            </PageLayout>
+        </RequireAuth>
     )
 }

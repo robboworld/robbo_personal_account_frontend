@@ -20,35 +20,92 @@ function parseContentDispositionFilename(cd) {
     return null
 }
 
-/** GET /projectPage/:id/download — binary .sb3 (uses fetch to avoid JSON default + body size limits on axios). */
-export async function downloadProjectSb3(token, projectPageId, fallbackTitle) {
-    const base = config.backendURL[0].replace(/\/?$/, '/')
-    const url = `${base}projectPage/${encodeURIComponent(projectPageId)}/download`
-    const res = await fetch(url, {
+function backendBase() {
+    return config.backendURL[0].replace(/\/?$/, '/')
+}
+
+function currentAccessToken(fallback) {
+    const token = localStorage.getItem('token')
+    if (token && token !== 'null') {
+        return token
+    }
+    return fallback || ''
+}
+
+async function refreshAccessToken() {
+    const res = await fetch(`${backendBase()}auth/refresh`, {
         method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
         credentials: 'include',
     })
     if (!res.ok) {
-        let msg = res.statusText
-        try {
-            const t = await res.text()
-            if (t) {
-                try {
-                    const j = JSON.parse(t)
-                    if (typeof j === 'string')
-                        msg = j
-                    else
-                        msg = j.message || j.error || String(j)
-                } catch (_) {
-                    msg = t
-                }
-            }
-        } catch (_) { /* ignore */ }
-        throw new Error(msg)
+        throw new Error('Session expired')
     }
+    const data = await res.json()
+    const accessToken = data?.accessToken
+    if (!accessToken) {
+        throw new Error('Session expired')
+    }
+    localStorage.setItem('token', accessToken)
+    return accessToken
+}
+
+async function readFetchErrorMessage(res) {
+    let msg = res.statusText || 'Request failed'
+    try {
+        const t = await res.text()
+        if (!t) {
+            return msg
+        }
+        try {
+            const j = JSON.parse(t)
+            if (typeof j === 'string') {
+                return j
+            }
+            return j.message || j.error || String(j)
+        } catch (_) {
+            return t
+        }
+    } catch (_) {
+        return msg
+    }
+}
+
+/**
+ * Authenticated fetch that reads token from localStorage and retries once after auth/refresh on 401.
+ * @param {string} url
+ * @param {RequestInit} [init]
+ * @param {{ fallbackToken?: string }} [options]
+ */
+export async function fetchWithAuthRetry(url, init = {}, options = {}) {
+    const buildInit = token => {
+        const headers = new Headers(init.headers || {})
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`)
+        } else {
+            headers.delete('Authorization')
+        }
+        return {
+            ...init,
+            headers,
+            credentials: init.credentials ?? 'include',
+        }
+    }
+
+    let token = currentAccessToken(options.fallbackToken)
+    let res = await fetch(url, buildInit(token))
+    if (res.status !== 401) {
+        return res
+    }
+
+    try {
+        token = await refreshAccessToken()
+    } catch (_) {
+        return res
+    }
+    return fetch(url, buildInit(token))
+}
+
+async function saveSb3Blob(res, fallbackTitle) {
     const blob = await res.blob()
     let filename = parseContentDispositionFilename(res.headers.get('Content-Disposition'))
     if (!filename) {
@@ -60,6 +117,47 @@ export async function downloadProjectSb3(token, projectPageId, fallbackTitle) {
     a.download = filename
     a.click()
     URL.revokeObjectURL(a.href)
+}
+
+/** GET /projectPage/:id/download — binary .sb3 (uses fetch to avoid JSON default + body size limits on axios). */
+export async function downloadProjectSb3(token, projectPageId, fallbackTitle) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/download`
+    const res = await fetchWithAuthRetry(url, { method: 'GET' }, { fallbackToken: token })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    await saveSb3Blob(res, fallbackTitle)
+}
+
+/** Guest download via play token: GET /projectPage/:id/download?token=... */
+export async function downloadProjectSb3ByPlayToken(playToken, projectPageId, fallbackTitle) {
+    const token = extractTokenFromPlayPayload(playToken)
+    if (!token) {
+        throw new Error('Play token is missing')
+    }
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/download?token=${encodeURIComponent(token)}`
+    const res = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    await saveSb3Blob(res, fallbackTitle)
+}
+
+function extractTokenFromPlayPayload(playToken) {
+    if (!playToken) return ''
+    if (typeof playToken === 'string') return playToken.trim()
+    const src = playToken.playUrl || playToken.jsonUrl || ''
+    if (!src) return ''
+    try {
+        const u = new URL(src, typeof window !== 'undefined' ? window.location.origin : 'http://localhost')
+        return u.searchParams.get('token') || ''
+    } catch (_) {
+        const match = String(src).match(/[?&]token=([^&]+)/)
+        return match ? decodeURIComponent(match[1]) : ''
+    }
 }
 
 export const projectPageAPI = {
@@ -129,6 +227,43 @@ export const projectPageAPI = {
             })
     },
 
+    /** Guest-safe public catalog (never sends Authorization). */
+    async fetchPublicProjectPages(page = '1', pageSize = '20', options = {}) {
+        const params = new URLSearchParams({
+            page: String(page),
+            pageSize: String(pageSize),
+        })
+        if (options.featured) {
+            params.set('featured', String(options.featured))
+        }
+        const url = `${backendBase()}projectPage/public?${params.toString()}`
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            credentials: 'include',
+        })
+        if (!res.ok) {
+            throw new Error(res.statusText || 'Failed to load public projects')
+        }
+        return res.json()
+    },
+
+    /** Guest-safe project page + playToken (never sends Authorization). */
+    async fetchProjectPageById(id) {
+        const url = `${backendBase()}projectPage/${encodeURIComponent(id)}`
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            credentials: 'include',
+        })
+        if (!res.ok) {
+            const err = new Error(await readFetchErrorMessage(res))
+            err.status = res.status
+            throw err
+        }
+        return res.json()
+    },
+
     getProjectPlayToken(token, projectPageId) {
         return instance.get(`projectPage/${encodeURIComponent(projectPageId)}/play-token`,
             {
@@ -140,27 +275,32 @@ export const projectPageAPI = {
     },
 }
 
-/** POST /projectPage/:id/upload — .sb3 file upload (multipart). */
-export async function uploadProjectSb3(token, projectPageId, file) {
-    const base = config.backendURL[0].replace(/\/?$/, '/')
-    const url = `${base}projectPage/${encodeURIComponent(projectPageId)}/upload`
+/** POST /projectPage/:id/preview — owner preview image upload. */
+export async function uploadProjectPreview(token, projectPageId, file) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/preview`
     const formData = new FormData()
     formData.append('file', file)
-    const res = await fetch(url, {
+    const res = await fetchWithAuthRetry(url, {
         method: 'POST',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        credentials: 'include',
         body: formData,
-    })
+    }, { fallbackToken: token })
     if (!res.ok) {
-        let msg = res.statusText
-        try {
-            const t = await res.text()
-            if (t) msg = t
-        } catch (_) { /* ignore */ }
-        throw new Error(msg)
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
+/** POST /projectPage/:id/upload — .sb3 file upload (multipart). */
+export async function uploadProjectSb3(token, projectPageId, file) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/upload`
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetchWithAuthRetry(url, {
+        method: 'POST',
+        body: formData,
+    }, { fallbackToken: token })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
     }
     return res.json()
 }

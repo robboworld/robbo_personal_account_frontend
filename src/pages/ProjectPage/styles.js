@@ -9,7 +9,8 @@ export const PageShell = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.5rem 0 2rem;
+  padding: 0.5rem clamp(1rem, 3vw, 1.5rem) 2rem;
+  box-sizing: border-box;
 `
 
 export const BackRow = styled.div`
@@ -38,6 +39,28 @@ export const MainGrid = styled.div`
   @media (min-width: 992px) {
     grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
     gap: 1.75rem;
+  }
+`
+
+/** Guest layout: player right on large screens; player first on mobile. */
+export const GuestMainGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 992px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+    gap: 1.75rem;
+    align-items: start;
+
+    & > *:first-child {
+      grid-column: 2;
+    }
+
+    & > *:last-child {
+      grid-column: 1;
+      grid-row: 1;
+    }
   }
 `
 
@@ -170,6 +193,29 @@ export const LoadingWrap = styled.div`
 export const PlayerControls = styled.div`
   display: flex;
   margin-top: 0.75rem;
+`
+
+export const GuestMetaBlock = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+`
+
+export const GuestMetaSection = styled.div`
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: rgba(244, 248, 244, 0.9);
+  border: 1px solid rgba(87, 94, 117, 0.1);
+`
+
+export const GuestMetaText = styled.p`
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: #383838;
+  white-space: pre-wrap;
+  word-break: break-word;
 `
 
 const scratchControlBase = css`
