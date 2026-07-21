@@ -249,6 +249,7 @@
     "notifications.load_error": "Failed to load notifications",
     "notifications.kind_lms": "LMS",
     "notifications.kind_admin": "Admin",
+    "notifications.kind_system": "System",
     "notifications.kind_announcement": "Announcement",
     "send_notification.personal_title": "Personal notification",
     "send_notification.announcement_title": "Broadcast announcement",
@@ -495,5 +496,11 @@
     "notification.student_create_success": "Student created successfully!",
     "notification.student_delete_success": "Student removed successfully!",
     "notification.student_added_success": "Student added successfully!",
+    "reactions.title": "Reactions",
+    "reactions.loading": "Loading reactions…",
+    "reactions.load_error": "Could not load reactions",
+    "reactions.update_error": "Could not update the reaction",
+    "reactions.action_label": "Reaction {emoji}, {count} total. Press to add or remove",
+    "reactions.count_label": "Reaction {emoji}, {count} total",
     "foo": "bar"
 }
