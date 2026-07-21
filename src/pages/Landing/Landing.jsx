@@ -204,7 +204,8 @@ const LandingProjectCard = ({ project, onOpen }) => {
       aria-label={`Открыть проект «${title}»`}
     >
       <ProjectTileMedia>
-        {previewUrl ? <img src={previewUrl} alt='' loading='lazy' /> : null}
+        {previewUrl ? <img src={previewUrl} alt=''
+loading='lazy' /> : null}
       </ProjectTileMedia>
       <ProjectTileTop>
         <ProjectTileGlyph aria-hidden>{getAuthorInitials(authorName)}</ProjectTileGlyph>

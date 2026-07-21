@@ -12,13 +12,16 @@ instance.defaults.headers = {
   'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Origin': backendURL,
   'Content-Type': 'application/json',
-  'Authorization': `Bearer ${localStorage.getItem('token')}`,
 }
+instance.defaults.withCredentials = true
 
 instance.interceptors.request.use(config => {
-  config.headers.Authorization = `Bearer ${localStorage.getItem(
-    'token',
-  )}`
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  } else if (config.headers) {
+    delete config.headers.Authorization
+  }
   return config
 })
 

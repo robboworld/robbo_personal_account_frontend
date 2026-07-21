@@ -150,7 +150,7 @@ function GuestProjectView({ projectPageId }) {
     }
 
     return (
-        <>
+        <React.Fragment>
             <RobboGuestFonts />
             <GuestGlobal />
             <RobboGuestHeader />
@@ -241,7 +241,7 @@ function GuestProjectView({ projectPageId }) {
                 </PageShell>
             </main>
             <RobboSiteFooter />
-        </>
+        </React.Fragment>
     )
 }
 

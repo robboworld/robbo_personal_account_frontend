@@ -26,6 +26,9 @@ import {
   PARENT,
   FREE_LISTENER,
   SCRATCH_HUB_ROUTE,
+  MY_LICENSES_ROUTE,
+  ISSUE_LICENSE_ROUTE,
+  DEVICE_LINK_ROUTE,
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
@@ -49,6 +52,9 @@ const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
 const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
+const MyLicensesPage = lazy(() => import('@/pages/Licensing/MyLicenses'))
+const IssueLicensePage = lazy(() => import('@/pages/Licensing/IssueLicense'))
+const DeviceLinkPage = lazy(() => import('@/pages/Licensing/DeviceLink'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
 
@@ -109,6 +115,18 @@ const AppRoutes = () => (
       <Route
         path={SEND_NOTIFICATION_ROUTE}
         element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <SendNotificationPage />)}
+      />
+      <Route
+        path={MY_LICENSES_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)}
+      />
+      <Route
+        path={ISSUE_LICENSE_ROUTE}
+        element={wrapProtected([SUPER_ADMIN], <IssueLicensePage />)}
+      />
+      <Route
+        path={DEVICE_LINK_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <DeviceLinkPage />)}
       />
     </Route>
 
