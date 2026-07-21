@@ -4,8 +4,8 @@ import { FormattedMessage, useIntl } from 'react-intl'
 
 import PageLayoutLogin from '@/components/PageLayoutLogin'
 import { HOME_PAGE_ROUTE, LMS_URL } from '@/constants'
-import config from '@/config'
 import {
+  buildOidcStartUrl,
   clearPkceFromSession,
   exchangeCodeForTokens,
   fetchUserInfo,
@@ -30,17 +30,8 @@ const OIDC_REASON_IDS = {
   missing_sub: 'oidc_callback.reason.missing_sub',
 }
 
-const backendBase = () => {
-  const url = config.backendURL && config.backendURL[0]
-  return url ? url.replace(/\/$/, '') : 'http://localhost:8080'
-}
-
-const buildLoginAgainUrl = () => {
-  const startUrl = new URL(`${backendBase()}/auth/oidc/start`)
-  startUrl.searchParams.set('prompt', 'login')
-  startUrl.searchParams.set('return_to', HOME_PAGE_ROUTE)
-  return startUrl.toString()
-}
+const buildLoginAgainUrl = () =>
+  buildOidcStartUrl(HOME_PAGE_ROUTE, 'login')
 
 const OidcCallback = () => {
   const intl = useIntl()
