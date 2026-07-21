@@ -43,7 +43,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { parseJwt, openLms, getSelectedNavBarKeyFromPath } from '@/helpers'
+import { parseJwt, openLms, getSelectedNavBarKeyFromPath, useAuthRole } from '@/helpers'
 import {
   PROFILE_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
@@ -175,6 +175,7 @@ const NEXT_STEP_IDS = [
 const Home = () => {
   const navigate = useNavigate()
   const intl = useIntl()
+  const role = useAuthRole()
   const token = localStorage.getItem('token')
 
   const parsedToken = useMemo(() => {
@@ -189,7 +190,6 @@ const Home = () => {
     }
   }, [token])
 
-  const role = parsedToken?.Role
   const roleTitle = intl.formatMessage({
     id: USER_ROLE_MESSAGE_IDS[role] || 'user_role.fallback',
   })

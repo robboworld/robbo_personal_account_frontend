@@ -23,9 +23,17 @@ import { mapSidebarMenuItems } from './sidebarMenu'
 
 import { signOutSuccess } from '@/actions/auth'
 import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
-import { parseJwt, openLms, clearLmsIdentityLink, buildPostLogoutUrl } from '@/helpers'
+import {
+  openLms,
+  clearLmsIdentityLink,
+  buildPostLogoutUrl,
+  isOidcSsoEnabled,
+  redirectToOidcLogout,
+  useAuthRole,
+} from '@/helpers'
 import {
   HOME_PAGE_ROUTE,
+  LOGIN_PAGE_ROUTE,
   SEND_NOTIFICATION_ROUTE,
   SUPER_ADMIN,
   UNIT_ADMIN,
@@ -50,8 +58,8 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
-  const token = localStorage.getItem('token')
-  const { Role } = token ? parseJwt(token) : { Role: null }
+  const Role = useAuthRole()
+
   const showAdminHomeShortcuts =
     location.pathname === HOME_PAGE_ROUTE && (Role === UNIT_ADMIN || Role === SUPER_ADMIN)
 
@@ -84,22 +92,37 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
     [SideBarData, collapsed],
   )
 
-  const [loginOut] = useMutation(authMutationsGQL.SING_OUT, {
-    onCompleted: () => {
-      dispatch(signOutSuccess())
-      graphQLClient.resetStore()
-      localStorage.removeItem('token')
-      clearLmsIdentityLink()
+  const [singOutMutation] = useMutation(authMutationsGQL.SING_OUT)
 
-      const postLogoutUrl = buildPostLogoutUrl()
-      if (postLogoutUrl) {
-        window.location.assign(postLogoutUrl)
-        return
-      }
+  const clearLocalSession = () => {
+    dispatch(signOutSuccess())
+    graphQLClient.resetStore()
+    localStorage.removeItem('token')
+    clearLmsIdentityLink()
+  }
 
-      navigate('/login')
-    },
-  })
+  const handleLogout = async () => {
+    // OIDC BFF: session lives in cookie — GraphQL SingOut alone cannot clear it.
+    if (isOidcSsoEnabled()) {
+      clearLocalSession()
+      redirectToOidcLogout(LOGIN_PAGE_ROUTE)
+      return
+    }
+
+    try {
+      await singOutMutation()
+    } catch {
+      // Token may already be gone; still clear local state and leave.
+    }
+    clearLocalSession()
+
+    const postLogoutUrl = buildPostLogoutUrl()
+    if (postLogoutUrl) {
+      window.location.assign(postLogoutUrl)
+      return
+    }
+    navigate(LOGIN_PAGE_ROUTE)
+  }
 
   const onMenuClick = async ({ key }) => {
     if (key === 'tools-divider') {
@@ -160,7 +183,7 @@ onClick={onSendNotificationClick}>
         <SidebarLogoutBtn
           type='button'
           $collapsed={collapsed}
-          onClick={() => loginOut()}
+          onClick={() => handleLogout()}
         >
           <LogoutOutlined />
           {!collapsed ? (
