@@ -12,6 +12,7 @@ import {
   OIDC_LOGOUT_ENDPOINT,
   OIDC_POST_LOGOUT_REDIRECT_URI,
 } from '@/constants'
+import { buildOidcStartUrl } from '@/helpers/oidcSession'
 
 const SSO_STATE_STORAGE_KEY = 'lk_lms_oauth_state'
 const SSO_NONCE_STORAGE_KEY = 'lk_lms_oauth_nonce'
@@ -77,7 +78,8 @@ export const getOidcConfigStatus = () => {
   }
 }
 
-const buildAuthorizeUrl = async () => {
+/** Legacy frontend PKCE authorize URL — kept for OidcCallback compatibility. */
+const buildFrontendAuthorizeUrl = async () => {
   const state = randomString(16)
   const nonce = randomString(16)
   const codeVerifier = randomString(64)
@@ -106,7 +108,7 @@ const openLmsDirect = () => {
 }
 
 export const openLms = async () => {
-  if (!LK_SSO_WITH_LMS_ENABLED || !isOAuthConfigured()) {
+  if (!LK_SSO_WITH_LMS_ENABLED) {
     const status = getOidcConfigStatus()
     logAuthEvent('fallback_lms_direct_open_new_tab', status)
     openLmsDirect()
@@ -114,8 +116,8 @@ export const openLms = async () => {
   }
 
   try {
-    logAuthEvent('authorize_redirect_started', { mode: 'new_tab' })
-    const url = await buildAuthorizeUrl()
+    logAuthEvent('authorize_redirect_started', { mode: 'new_tab', flow: 'bff' })
+    const url = buildOidcStartUrl(LMS_URL, 'none')
     const popup = window.open(url, '_blank', 'noopener,noreferrer')
     if (!popup) {
       logAuthEvent('fallback_lms_popup_blocked')
@@ -129,7 +131,7 @@ export const openLms = async () => {
 
 /** Редирект в LMS в текущей вкладке (маршрут /mycourses и прямые ссылки). */
 export const navigateToLmsSameTab = async () => {
-  if (!LK_SSO_WITH_LMS_ENABLED || !isOAuthConfigured()) {
+  if (!LK_SSO_WITH_LMS_ENABLED) {
     const status = getOidcConfigStatus()
     logAuthEvent('fallback_lms_direct_open_same_tab', status)
     window.location.replace(LMS_URL)
@@ -137,9 +139,8 @@ export const navigateToLmsSameTab = async () => {
   }
 
   try {
-    logAuthEvent('authorize_redirect_started', { mode: 'same_tab' })
-    const url = await buildAuthorizeUrl()
-    window.location.assign(url)
+    logAuthEvent('authorize_redirect_started', { mode: 'same_tab', flow: 'bff' })
+    window.location.assign(buildOidcStartUrl(LMS_URL, 'none'))
   } catch (error) {
     logAuthEvent('fallback_lms_oidc_error_same_tab', { error: String(error?.message || error) })
     window.location.replace(LMS_URL)
@@ -275,3 +276,6 @@ export const fetchUserInfo = async accessToken => {
 
   return response.json()
 }
+
+/** @deprecated Prefer BFF flow via buildOidcStartUrl; kept for legacy FE callback tests. */
+export const buildAuthorizeUrl = buildFrontendAuthorizeUrl

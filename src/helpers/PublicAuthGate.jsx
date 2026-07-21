@@ -14,8 +14,8 @@ import {
 import { parseJwt } from '@/helpers/jwtParser'
 import {
   fetchOidcStatus,
-  isHybridAuthEnabled,
   isOidcSsoEnabled,
+  shouldShowLocalAuthForms,
 } from '@/helpers/oidcSession'
 
 const HOME_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
@@ -34,14 +34,14 @@ async function resolveAuthGate() {
 
   try {
     const oidcStatus = await fetchOidcStatus()
-    const hybridAuth = isHybridAuthEnabled(oidcStatus)
-    const showOidcLogin = isOidcSsoEnabled()
+    const showLocalAuthForms = shouldShowLocalAuthForms(oidcStatus)
+    const ssoEnabled = isOidcSsoEnabled()
 
     if (oidcStatus.authenticated) {
       return { status: 'redirect' }
     }
 
-    if (legacyToken && (oidcStatus.lms_password_fallback || !showOidcLogin)) {
+    if (legacyToken && (oidcStatus.lms_password_fallback || !ssoEnabled)) {
       if (isUsableLegacyToken(legacyToken)) {
         return { status: 'redirect' }
       }
@@ -52,7 +52,7 @@ async function resolveAuthGate() {
 
     return {
       status: 'ok',
-      context: { oidcStatus, hybridAuth, showOidcLogin },
+      context: { oidcStatus, showLocalAuthForms },
     }
   } catch {
     if (legacyToken && isUsableLegacyToken(legacyToken)) {
@@ -66,33 +66,20 @@ async function resolveAuthGate() {
       status: 'ok',
       context: {
         oidcStatus: { authenticated: false },
-        hybridAuth: false,
-        showOidcLogin: isOidcSsoEnabled(),
+        showLocalAuthForms: !isOidcSsoEnabled(),
       },
     }
   }
 }
 
-let cachedGateResult = null
-
 const PublicAuthGate = () => {
-  const [gateState, setGateState] = useState(() => {
-    if (cachedGateResult) {
-      return cachedGateResult
-    }
-    return { status: 'loading' }
-  })
+  const [gateState, setGateState] = useState({ status: 'loading' })
 
   useEffect(() => {
-    if (cachedGateResult) {
-      return undefined
-    }
-
     let cancelled = false
 
     resolveAuthGate().then(result => {
       if (!cancelled) {
-        cachedGateResult = result
         setGateState(result)
       }
     })
