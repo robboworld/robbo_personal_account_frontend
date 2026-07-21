@@ -50,7 +50,7 @@ async function refreshAccessToken() {
 }
 
 async function readFetchErrorMessage(res) {
-    let msg = res.statusText || 'Request failed'
+    const msg = res.statusText || 'Request failed'
     try {
         const t = await res.text()
         if (!t) {
@@ -92,7 +92,7 @@ export async function fetchWithAuthRetry(url, init = {}, options = {}) {
     }
 
     let token = currentAccessToken(options.fallbackToken)
-    let res = await fetch(url, buildInit(token))
+    const res = await fetch(url, buildInit(token))
     if (res.status !== 401) {
         return res
     }

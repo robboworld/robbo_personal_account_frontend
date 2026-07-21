@@ -16,6 +16,8 @@ import {
   CodeOutlined,
   CompassOutlined,
   BookOutlined,
+  KeyOutlined,
+  PlusCircleOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -30,6 +32,8 @@ import {
   SEND_NOTIFICATION_ROUTE,
   SCRATCH_HUB_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
+  MY_LICENSES_ROUTE,
+  ISSUE_LICENSE_ROUTE,
 } from '@/constants'
 
 /** Explore — in the main nav block with home / profile / projects. */
@@ -113,6 +117,12 @@ export const SidebarDataStudent = [
     pathname: MY_PROJECTS_ROUTE,
     icon: <ProjectOutlined />,
   },
+  {
+    key: 'my_licenses',
+    label: <FormattedMessage id='sidebar_data.my_licenses' />,
+    pathname: MY_LICENSES_ROUTE,
+    icon: <KeyOutlined />,
+  },
 ]
 
 export const SidebarDataParent = [
@@ -128,6 +138,12 @@ export const SidebarDataParent = [
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
+  {
+    key: 'my_licenses',
+    label: <FormattedMessage id='sidebar_data.my_licenses' />,
+    pathname: MY_LICENSES_ROUTE,
+    icon: <KeyOutlined />,
+  },
 ]
 
 export const SidebarDataSuperAdmin = [
@@ -142,6 +158,18 @@ export const SidebarDataSuperAdmin = [
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
+  },
+  {
+    key: 'my_licenses',
+    label: <FormattedMessage id='sidebar_data.my_licenses' />,
+    pathname: MY_LICENSES_ROUTE,
+    icon: <KeyOutlined />,
+  },
+  {
+    key: 'issue_license',
+    label: <FormattedMessage id='sidebar_data.issue_license' />,
+    pathname: ISSUE_LICENSE_ROUTE,
+    icon: <PlusCircleOutlined />,
   },
   {
     key: '5',
@@ -193,6 +221,12 @@ export const SidebarDataTeacher = [
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
+  {
+    key: 'my_licenses',
+    label: <FormattedMessage id='sidebar_data.my_licenses' />,
+    pathname: MY_LICENSES_ROUTE,
+    icon: <KeyOutlined />,
+  },
 ]
 
 export const SidebarDataFreeListener = [
@@ -207,6 +241,12 @@ export const SidebarDataFreeListener = [
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
+  },
+  {
+    key: 'my_licenses',
+    label: <FormattedMessage id='sidebar_data.my_licenses' />,
+    pathname: MY_LICENSES_ROUTE,
+    icon: <KeyOutlined />,
   },
   {
     key: '2',
@@ -240,6 +280,12 @@ export const SidebarDataUnitAdmin = [
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
+  },
+  {
+    key: 'my_licenses',
+    label: <FormattedMessage id='sidebar_data.my_licenses' />,
+    pathname: MY_LICENSES_ROUTE,
+    icon: <KeyOutlined />,
   },
   {
     key: '2',

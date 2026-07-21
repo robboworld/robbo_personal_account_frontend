@@ -9,6 +9,8 @@ import {
   TEACHERS_PAGE_ROUTE,
   UNIT_ADMINS_ROUTE,
   SCRATCH_HUB_ROUTE,
+  MY_LICENSES_ROUTE,
+  ISSUE_LICENSE_ROUTE,
   STUDENT,
   UNIT_ADMIN,
   SUPER_ADMIN,
@@ -21,15 +23,19 @@ const exactByRole = {
   [STUDENT]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [MY_PROJECTS_ROUTE]: '2',
+    [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [PARENT]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [TEACHER]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [UNIT_ADMIN]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [MY_LICENSES_ROUTE]: 'my_licenses',
     [ROBBO_UNITS_ROUTE]: '2',
     [TEACHERS_PAGE_ROUTE]: '4',
     [ROBBO_GROUPS_ROUTE]: '6',
@@ -37,6 +43,8 @@ const exactByRole = {
   },
   [SUPER_ADMIN]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [MY_LICENSES_ROUTE]: 'my_licenses',
+    [ISSUE_LICENSE_ROUTE]: 'issue_license',
     [CLIENTS_ROUTE]: '5',
     [ROBBO_UNITS_ROUTE]: '6',
     [ROBBO_GROUPS_ROUTE]: '7',
@@ -46,6 +54,7 @@ const exactByRole = {
   },
   [FREE_LISTENER]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [MY_LICENSES_ROUTE]: 'my_licenses',
   },
 }
 
