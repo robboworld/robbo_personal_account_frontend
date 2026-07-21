@@ -163,9 +163,7 @@ onClick={onSendNotificationClick}>
           onClick={() => loginOut()}
         >
           <LogoutOutlined />
-          {!collapsed ? (
-            <span><FormattedMessage id='sidebar_data.logout' /></span>
-          ) : null}
+          <span><FormattedMessage id='sidebar_data.logout' /></span>
         </SidebarLogoutBtn>
       </SidebarFooter>
     </SidebarShell>

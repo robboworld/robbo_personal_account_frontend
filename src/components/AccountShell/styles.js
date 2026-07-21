@@ -615,6 +615,8 @@ export const ChildrenListHeader = styled.h2`
 `
 
 export const SidebarShell = styled.div`
+  --sidebar-collapse-duration: 300ms;
+  --sidebar-collapse-ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -625,10 +627,15 @@ export const SidebarShell = styled.div`
   border-inline-end: 1px solid rgba(108, 91, 123, 0.1);
   overflow: hidden;
   box-sizing: border-box;
+  transition: padding var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
 
   ${({ $collapsed }) => $collapsed && css`
     padding: 0.5rem 0.375rem 0.65rem;
   `}
+
+  @media (prefers-reduced-motion: reduce) {
+    --sidebar-collapse-duration: 1ms;
+  }
 `
 
 export const SidebarTopBar = styled.div`
@@ -638,6 +645,9 @@ export const SidebarTopBar = styled.div`
   gap: 0.4rem;
   padding: 0.35rem 0.4rem 0.55rem;
   flex-shrink: 0;
+  transition:
+    gap var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+    padding var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
 
   ${({ $collapsed }) => $collapsed && css`
     flex-direction: column;
@@ -654,10 +664,14 @@ export const SidebarTopActions = styled.div`
   gap: 0.4rem;
   min-width: 0;
   order: 0;
+  transition:
+    gap var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+    transform var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
 
   ${({ $collapsed }) => $collapsed && css`
     flex-direction: column;
     order: 2;
+    transform: translateY(0.125rem);
   `}
 `
 
@@ -680,7 +694,8 @@ export const SidebarCollapseBtn = styled.button`
   transition:
     background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
     color 0.22s ease,
-    transform 0.18s ease;
+    transform 0.18s ease,
+    margin var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
 
   ${({ $collapsed }) => $collapsed && css`
     margin-left: 0;
@@ -712,6 +727,9 @@ export const SidebarFooter = styled.div`
   background: #f4f8f4;
   position: relative;
   z-index: 2;
+  transition:
+    padding var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+    gap var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
 
   ${({ $collapsed }) => $collapsed && css`
     padding: 0.5rem 0.15rem 0.2rem;
@@ -744,7 +762,23 @@ export const SidebarLogoutBtn = styled.button`
     background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
     border-color 0.22s ease,
     color 0.22s ease,
-    transform 0.18s ease;
+    transform 0.18s ease,
+    gap var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+    padding var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
+
+  > span:not(.anticon) {
+    display: inline-block;
+    min-width: 0;
+    max-width: ${({ $collapsed }) => ($collapsed ? '0' : '9rem')};
+    overflow: hidden;
+    opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
+    white-space: nowrap;
+    transform: translateX(${({ $collapsed }) => ($collapsed ? '-0.35rem' : '0')});
+    transition:
+      max-width var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      opacity 180ms ease,
+      transform var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
+  }
 
   .anticon {
     font-size: 1.05rem;
@@ -773,6 +807,24 @@ export const SidebarMenu = styled(Menu)`
   overflow-x: hidden;
   background: transparent !important;
   border-inline-end: none !important;
+
+  .ant-menu-item,
+  .ant-menu-item .ant-menu-item-icon,
+  .ant-menu-title-content,
+  ${SidebarIcon} {
+    transition:
+      width var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      min-width var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      max-width var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      margin var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      padding var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      gap var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      border-radius var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+      background 220ms var(--sidebar-collapse-ease),
+      color 220ms ease,
+      opacity 180ms ease,
+      transform var(--sidebar-collapse-duration) var(--sidebar-collapse-ease) !important;
+  }
 
   ${({ $collapsed }) => !$collapsed && css`
     padding: 0.25rem 0.35rem;
@@ -803,9 +855,12 @@ export const SidebarMenu = styled(Menu)`
     }
 
     .ant-menu-title-content {
+      display: inline-block !important;
+      max-width: 10rem;
+      opacity: 1;
       font-size: 0.9375rem;
       font-weight: 500;
-      overflow: visible;
+      overflow: hidden;
       text-overflow: clip;
       white-space: nowrap;
     }
@@ -854,7 +909,7 @@ export const SidebarMenu = styled(Menu)`
       padding-inline: 0 !important;
       display: flex !important;
       align-items: center !important;
-      justify-content: center !important;
+      justify-content: flex-start !important;
       gap: 0 !important;
       border-radius: 0.625rem;
       line-height: 1 !important;
@@ -866,6 +921,7 @@ export const SidebarMenu = styled(Menu)`
       height: auto !important;
       min-width: 0 !important;
       margin: 0 !important;
+      margin-inline-start: calc(50% - 0.5625rem) !important;
       padding: 0 !important;
       background: none !important;
       border-radius: 0 !important;
@@ -876,7 +932,16 @@ export const SidebarMenu = styled(Menu)`
       line-height: 1 !important;
       color: ${colors.secondary} !important;
       opacity: 1 !important;
-      transition: color 0.22s ease;
+    }
+
+    &&.ant-menu-inline-collapsed > .ant-menu-item ${SidebarIcon} {
+      width: 1.125rem;
+      height: 1.125rem;
+      min-width: 1.125rem;
+      padding: 0;
+      border-radius: 0.35rem;
+      background: transparent;
+      transform: scale(1);
     }
 
     &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon .anticon {
@@ -890,9 +955,15 @@ export const SidebarMenu = styled(Menu)`
     }
 
     &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-title-content {
-      display: none !important;
-      width: 0 !important;
+      display: inline-block !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      margin-inline-start: 0 !important;
+      overflow: hidden !important;
       opacity: 0 !important;
+      transform: translateX(-0.5rem);
+      pointer-events: none;
     }
 
     &&.ant-menu-inline-collapsed > .ant-menu-item:not(.ant-menu-item-selected):hover {

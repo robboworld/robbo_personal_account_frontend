@@ -88,7 +88,9 @@ const MyProjects = ({
   const creating = CreateProjectPage?.loading
 
   const openProject = useCallback(projectPageId => {
-    navigate(`/projects/${projectPageId}`)
+    navigate(`/projects/${projectPageId}`, {
+      state: { selectedNavBarKey: '2' },
+    })
   }, [navigate])
 
   const confirmDelete = useCallback(projectPageId => {

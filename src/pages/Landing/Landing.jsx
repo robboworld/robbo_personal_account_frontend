@@ -204,7 +204,13 @@ const LandingProjectCard = ({ project, onOpen }) => {
       aria-label={`Открыть проект «${title}»`}
     >
       <ProjectTileMedia>
-        {previewUrl ? <img src={previewUrl} alt='' loading='lazy' /> : null}
+        {previewUrl ? (
+          <img
+            src={previewUrl}
+            alt=''
+            loading='lazy'
+          />
+        ) : null}
       </ProjectTileMedia>
       <ProjectTileTop>
         <ProjectTileGlyph aria-hidden>{getAuthorInitials(authorName)}</ProjectTileGlyph>
@@ -274,7 +280,9 @@ const Landing = () => {
     if (!projectPageId) {
       return
     }
-    navigate(`/projects/${projectPageId}`)
+    navigate(`/projects/${projectPageId}`, {
+      state: { selectedNavBarKey: 'public_projects' },
+    })
   }, [navigate])
 
   return (

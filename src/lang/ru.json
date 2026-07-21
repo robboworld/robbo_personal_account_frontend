@@ -249,6 +249,7 @@
     "notifications.load_error": "Не удалось загрузить уведомления",
     "notifications.kind_lms": "LMS",
     "notifications.kind_admin": "Админ",
+    "notifications.kind_system": "Система",
     "notifications.kind_announcement": "Объявление",
     "send_notification.personal_title": "Персональное уведомление",
     "send_notification.announcement_title": "Объявление для аудитории",
@@ -496,5 +497,11 @@
     "notification.student_create_success": "Ученик успешно создан!",
     "notification.student_delete_success": "Ученик успешно удален!",
     "notification.student_added_success": "Ученик успешно добавлен!",
+    "reactions.title": "Реакции",
+    "reactions.loading": "Загружаем реакции…",
+    "reactions.load_error": "Не удалось загрузить реакции",
+    "reactions.update_error": "Не удалось изменить реакцию",
+    "reactions.action_label": "Реакция {emoji}, всего {count}. Нажмите, чтобы поставить или снять",
+    "reactions.count_label": "Реакция {emoji}, всего {count}",
     "foo": "bar"
 }
