@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@cospired/i18n-iso-languages": "4.2.0",
     "@emotion/styled": "^11.10.4",
     "antd": "5.x",
     "apollo-link-error": "^1.1.13",
@@ -31,6 +32,7 @@
     "formik": "^2.0.3",
     "framer-motion": "6.5.1",
     "graphql": "^16.6.0",
+    "i18n-iso-countries": "4.3.1",
     "libphonenumber-js": "^1.11.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",

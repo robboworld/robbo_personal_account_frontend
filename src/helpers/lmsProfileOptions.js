@@ -1,14 +1,35 @@
+import countries from 'i18n-iso-countries'
+import languages from '@cospired/i18n-iso-languages'
+
+import countriesEn from 'i18n-iso-countries/langs/en.json'
+import countriesRu from 'i18n-iso-countries/langs/ru.json'
+import countriesZh from 'i18n-iso-countries/langs/zh.json'
+import languagesEn from '@cospired/i18n-iso-languages/langs/en.json'
+import languagesRu from '@cospired/i18n-iso-languages/langs/ru.json'
+import languagesZh from '@cospired/i18n-iso-languages/langs/zh.json'
+
+countries.registerLocale(countriesEn)
+countries.registerLocale(countriesRu)
+countries.registerLocale(countriesZh)
+languages.registerLocale(languagesEn)
+languages.registerLocale(languagesRu)
+languages.registerLocale(languagesZh)
+
 const currentYear = new Date().getFullYear()
 
 const EDUCATION_VALUES = ['p', 'm', 'b', 'a', 'hs', 'jhs', 'el', 'none', 'other']
-const GENDER_VALUES = ['m', 'f', 'o']
-const COUNTRY_VALUES = [
-  'RU', 'BY', 'KZ', 'UA', 'UZ', 'AM', 'AZ', 'GE', 'KG', 'MD', 'TJ', 'TM',
-  'IN', 'CN', 'US', 'DE', 'FR', 'GB', 'TR', 'IL', 'AE', 'OTHER',
-]
-const LANGUAGE_VALUES = [
-  'ru', 'en', 'or', 'hi', 'zh-cn', 'de', 'fr', 'es', 'ar', 'tr', 'kk', 'uk', 'uz', 'other',
-]
+const GENDER_VALUES = ['m', 'f']
+
+const PACKAGE_LOCALES = {
+  en: 'en',
+  ru: 'ru',
+  zh: 'zh',
+}
+
+function resolvePackageLocale(intlLocale) {
+  const [base] = String(intlLocale || 'en').toLowerCase().split('-')
+  return PACKAGE_LOCALES[base] || 'en'
+}
 
 function mapOptions(intl, values, labelPrefix, placeholderId) {
   const placeholder = intl.formatMessage({ id: placeholderId })
@@ -18,6 +39,15 @@ function mapOptions(intl, values, labelPrefix, placeholderId) {
       value,
       label: intl.formatMessage({ id: `${labelPrefix}.${value}` }),
     })),
+  ]
+}
+
+function mapIsoNamesToOptions(names, placeholder) {
+  return [
+    { value: '', label: placeholder },
+    ...Object.entries(names)
+      .map(([code, name]) => ({ value: code, label: name }))
+      .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' })),
   ]
 }
 
@@ -40,20 +70,20 @@ export function getGenderOptions(intl) {
 }
 
 export function getCountryOptions(intl) {
-  return mapOptions(
-    intl,
-    COUNTRY_VALUES,
-    'lms_options.country',
-    'profile_card.country_placeholder',
+  const locale = resolvePackageLocale(intl.locale)
+  const names = countries.getNames(locale) || countries.getNames('en') || {}
+  return mapIsoNamesToOptions(
+    names,
+    intl.formatMessage({ id: 'profile_card.country_placeholder' }),
   )
 }
 
 export function getSpokenLanguageOptions(intl) {
-  return mapOptions(
-    intl,
-    LANGUAGE_VALUES,
-    'lms_options.language',
-    'profile_card.language_placeholder',
+  const locale = resolvePackageLocale(intl.locale)
+  const names = languages.getNames(locale) || languages.getNames('en') || {}
+  return mapIsoNamesToOptions(
+    names,
+    intl.formatMessage({ id: 'profile_card.language_placeholder' }),
   )
 }
 
@@ -66,6 +96,18 @@ export function getYearOfBirthOptions(intl) {
       return { value: year, label: String(year) }
     }),
   ]
+}
+
+/** Keep a saved value visible in Select when it is no longer in the canonical list. */
+export function withOrphanOption(options, currentValue) {
+  if (currentValue === undefined || currentValue === null || currentValue === '') {
+    return options
+  }
+  const value = String(currentValue)
+  if (options.some(option => String(option.value) === value)) {
+    return options
+  }
+  return [...options, { value, label: value }]
 }
 
 export function getLmsProfileOptions(intl) {

@@ -49,15 +49,11 @@ const ProfilePageBody = ({
             <FormattedMessage id='profile.loading' />
           )}
         </ProfileSubtitle>
-        {profile && (
+        {profile && accessUpdate && (
           <ProfileMeta>
-            {profile.nickname && <MetaChip>@{profile.nickname}</MetaChip>}
-            {profile.email && <MetaChip>{profile.email}</MetaChip>}
-            {accessUpdate && (
-              <MetaChip>
-                <FormattedMessage id='profile.read_only' />
-              </MetaChip>
-            )}
+            <MetaChip>
+              <FormattedMessage id='profile.read_only' />
+            </MetaChip>
           </ProfileMeta>
         )}
       </ProfileHeroCopy>
