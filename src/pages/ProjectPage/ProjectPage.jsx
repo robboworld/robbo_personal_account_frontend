@@ -44,6 +44,7 @@ import {
     downloadProjectSb3,
     downloadProjectSb3ByPlayToken,
     projectPageAPI,
+    tryRefreshAccessToken,
     uploadProjectPreview,
     uploadProjectSb3,
 } from '@/api/projectPage'
@@ -51,8 +52,9 @@ import config from '@/config'
 import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE } from '@/constants'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
 import { formatDateTime } from '@/helpers/formatDateTime'
-import { RequireAuth } from '@/helpers'
+import { RequireAuth, fetchOidcStatus, isAccessTokenExpired, isOidcSsoEnabled } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
+import Loader from '@/components/Loader'
 import { getProjectPageState } from '@/reducers/projectPage'
 import {
     getProjectPageById,
@@ -585,19 +587,83 @@ readOnly={!isOwner} />
     )
 }
 
+function readStoredAccessToken() {
+    const token = localStorage.getItem('token')
+    if (!token || token === 'null') {
+        return null
+    }
+    if (isAccessTokenExpired(token)) {
+        return null
+    }
+    return token
+}
+
+/**
+ * Soft session probe: JWT and/or OIDC BFF cookie.
+ * Does not use OidcSessionProvider (that redirects unauthenticated users to login).
+ */
 export default () => {
     const { projectPageId } = useParams()
-    const token = localStorage.getItem('token')
-    const isGuest = !token || token === 'null'
+    const [probe, setProbe] = useState({ status: 'loading', token: null })
 
-    if (isGuest) {
+    useEffect(() => {
+        let cancelled = false
+
+        const run = async () => {
+            let token = readStoredAccessToken()
+            if (token) {
+                if (!cancelled) {
+                    setProbe({ status: 'auth', token })
+                }
+                return
+            }
+
+            token = await tryRefreshAccessToken()
+            if (token) {
+                if (!cancelled) {
+                    setProbe({ status: 'auth', token })
+                }
+                return
+            }
+
+            if (isOidcSsoEnabled()) {
+                try {
+                    const status = await fetchOidcStatus()
+                    if (status?.authenticated) {
+                        token = await tryRefreshAccessToken()
+                        if (!cancelled) {
+                            setProbe({ status: 'auth', token: token || '' })
+                        }
+                        return
+                    }
+                } catch (_) {
+                    // fall through to guest
+                }
+            }
+
+            if (!cancelled) {
+                setProbe({ status: 'guest', token: null })
+            }
+        }
+
+        run()
+        return () => {
+            cancelled = true
+        }
+    }, [projectPageId])
+
+    if (probe.status === 'loading') {
+        return <Loader />
+    }
+
+    if (probe.status === 'guest') {
         return <GuestProjectView projectPageId={projectPageId} />
     }
 
     return (
         <RequireAuth>
             <PageLayout>
-                <AuthenticatedProjectView projectPageId={projectPageId} token={token} />
+                <AuthenticatedProjectView projectPageId={projectPageId} token={probe.token} />
             </PageLayout>
         </RequireAuth>
     )

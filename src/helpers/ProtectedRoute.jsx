@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
-import { parseJwt } from './jwtParser'
+import { parseJwt, isAccessTokenExpired } from './jwtParser'
 import { useOidcSession } from './OidcSessionContext'
 import { isOidcSsoEnabled } from './oidcSession'
 
@@ -38,7 +38,10 @@ export const ProtectedRoute = ({
   }
 
   const token = localStorage.getItem('token')
-  if (!token) {
+  if (!token || isAccessTokenExpired(token)) {
+    if (token) {
+      localStorage.removeItem('token')
+    }
     return <Navigate to={LOGIN_PAGE_ROUTE} replace />
   }
 

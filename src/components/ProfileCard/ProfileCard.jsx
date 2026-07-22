@@ -9,7 +9,11 @@ import {
   FormSection,
   FormSectionLegend,
 } from '@/components/AccountShell'
-import { getLmsProfileOptions } from '@/helpers/lmsProfileOptions'
+import { getLmsProfileOptions, withOrphanOption } from '@/helpers/lmsProfileOptions'
+
+const { TextArea } = Input
+
+const BIO_MAX_LENGTH = 300
 
 const normalizeProfileField = value => (value ?? '').trim()
 
@@ -31,6 +35,7 @@ const normalizeYearValue = value => {
 const profileFieldsUnchanged = (profile, formValues) => (
   normalizeProfileField(formValues.email) === normalizeProfileField(profile.email) &&
   normalizeProfileField(formValues.fullName) === normalizeProfileField(profile.fullName) &&
+  normalizeProfileField(formValues.bio) === normalizeProfileField(profile.bio) &&
   normalizeSelectValue(formValues.levelOfEducation) === normalizeSelectValue(profile.levelOfEducation) &&
   normalizeSelectValue(formValues.country) === normalizeSelectValue(profile.country) &&
   normalizeYearValue(formValues.yearOfBirth) === normalizeYearValue(profile.yearOfBirth) &&
@@ -58,6 +63,7 @@ const formatProfileDateTime = (value, locale) => {
 const profileToFormValues = profile => ({
   email: profile.email,
   fullName: profile.fullName,
+  bio: profile.bio || '',
   levelOfEducation: profile.levelOfEducation || undefined,
   country: profile.country || undefined,
   yearOfBirth: profile.yearOfBirth ?? undefined,
@@ -86,6 +92,19 @@ const ProfileCard = ({
     spokenLanguageOptions,
     educationLevelOptions,
   } = useMemo(() => getLmsProfileOptions(intl), [intl])
+
+  const countrySelectOptions = useMemo(
+    () => withOrphanOption(countryOptions.filter(o => o.value !== ''), profile?.country),
+    [countryOptions, profile?.country],
+  )
+  const genderSelectOptions = useMemo(
+    () => withOrphanOption(genderOptions.filter(o => o.value !== ''), profile?.gender),
+    [genderOptions, profile?.gender],
+  )
+  const languageSelectOptions = useMemo(
+    () => withOrphanOption(spokenLanguageOptions.filter(o => o.value !== ''), profile?.language),
+    [spokenLanguageOptions, profile?.language],
+  )
 
   useEffect(() => {
     if (!profile) {
@@ -122,6 +141,7 @@ const ProfileCard = ({
                 firstname: '',
                 lastname: '',
                 middlename: '',
+                bio: formValues.bio || null,
                 levelOfEducation: formValues.levelOfEducation || null,
                 country: formValues.country || null,
                 yearOfBirth,
@@ -149,8 +169,7 @@ const ProfileCard = ({
             <Input placeholder={profile.email} size='large' />
           </Form.Item>
           <Form.Item label={<FormattedMessage id='profile_card.username' />}>
-            <Input value={profile.nickname || '—'} disabled
-size='large' />
+            <span className='profile-static-value'>{profile.nickname || '—'}</span>
           </Form.Item>
           <Form.Item
             className='profile-form-span-full'
@@ -158,6 +177,35 @@ size='large' />
             label={<FormattedMessage id='profile_card.full_name' />}
           >
             <Input placeholder={profile.fullName || '—'} size='large' />
+          </Form.Item>
+        </FormGrid>
+      </FormSection>
+
+      <FormSection>
+        <FormSectionLegend>
+          <FormattedMessage id='profile.section.about' />
+        </FormSectionLegend>
+        <FormGrid>
+          <Form.Item
+            className='profile-form-span-full'
+            name='bio'
+            label={<FormattedMessage id='profile_card.bio' />}
+            rules={[
+              {
+                max: BIO_MAX_LENGTH,
+                message: intl.formatMessage(
+                  { id: 'profile_card.bio_max_length' },
+                  { max: BIO_MAX_LENGTH },
+                ),
+              },
+            ]}
+          >
+            <TextArea
+              rows={4}
+              maxLength={BIO_MAX_LENGTH}
+              showCount
+              placeholder={intl.formatMessage({ id: 'profile_card.bio_placeholder' })}
+            />
           </Form.Item>
         </FormGrid>
       </FormSection>
@@ -176,7 +224,7 @@ size='large' />
               allowClear
               showSearch
               optionFilterProp='label'
-              options={countryOptions.filter(o => o.value !== '')}
+              options={countrySelectOptions}
               placeholder={intl.formatMessage({ id: 'profile_card.country_placeholder' })}
             />
           </Form.Item>
@@ -202,7 +250,7 @@ size='large' />
               allowClear
               showSearch
               optionFilterProp='label'
-              options={genderOptions.filter(o => o.value !== '')}
+              options={genderSelectOptions}
               placeholder={intl.formatMessage({ id: 'profile_card.gender_placeholder' })}
             />
           </Form.Item>
@@ -215,7 +263,7 @@ size='large' />
               allowClear
               showSearch
               optionFilterProp='label'
-              options={spokenLanguageOptions.filter(o => o.value !== '')}
+              options={languageSelectOptions}
               placeholder={intl.formatMessage({ id: 'profile_card.language_placeholder' })}
             />
           </Form.Item>
@@ -245,11 +293,9 @@ size='large' />
             className='profile-form-span-full'
             label={<FormattedMessage id='profile_card.created_at' />}
           >
-            <Input
-              value={formatProfileDateTime(profile.createdAt, intl.locale)}
-              disabled
-              size='large'
-            />
+            <span className='profile-static-value'>
+              {formatProfileDateTime(profile.createdAt, intl.locale)}
+            </span>
           </Form.Item>
         </FormGrid>
       </FormSection>
@@ -272,6 +318,7 @@ ProfileCard.propTypes = {
     email: PropTypes.string,
     nickname: PropTypes.string,
     fullName: PropTypes.string,
+    bio: PropTypes.string,
     levelOfEducation: PropTypes.string,
     country: PropTypes.string,
     yearOfBirth: PropTypes.number,

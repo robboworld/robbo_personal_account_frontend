@@ -24,7 +24,6 @@ import {
   SkeletonGrid,
 } from '@/components/ProjectCatalog/styles'
 import {
-  Eyebrow,
   HeroInner,
   HeroLead,
   HeroPanel,
@@ -104,9 +103,6 @@ export default function PublicProjects() {
 animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
-            <Eyebrow>
-              <FormattedMessage id='project_page.public_catalog_eyebrow' />
-            </Eyebrow>
             <HeroTitle>
               <FormattedMessage id='project_page.public_catalog_title' />
             </HeroTitle>
