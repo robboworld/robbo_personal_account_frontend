@@ -510,6 +510,15 @@ export const ProfileFormCard = styled(motion.div)`
     font-size: 0.9375rem;
     color: ${colors.secondary};
   }
+
+  .profile-static-value {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: ${colors.secondary};
+  }
 `
 
 export const FormSection = styled.fieldset`

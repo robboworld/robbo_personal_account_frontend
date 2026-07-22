@@ -5,4 +5,5 @@ export {
   getLmsProfileOptions,
   getSpokenLanguageOptions,
   getYearOfBirthOptions,
+  withOrphanOption,
 } from '@/helpers/lmsProfileOptions'
