@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Card, Empty, List, Typography, message, Popconfirm } from 'antd'
+import { Link } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 
 import { listMyLicenses, revokeSeat } from '@/api/licensing'
+import { LICENSES_CATALOG_ROUTE } from '@/constants'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -42,7 +44,11 @@ const MyLicensesPage = () => {
       <Title level={3}>{intl.formatMessage({ id: 'licensing.my_title' })}</Title>
       <Paragraph type='secondary'>{intl.formatMessage({ id: 'licensing.my_hint' })}</Paragraph>
       {!loading && licenses.length === 0 ? (
-        <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })} />
+        <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })}>
+          <Link to={LICENSES_CATALOG_ROUTE}>
+            <Button type='primary'>{intl.formatMessage({ id: 'payments.buy' })}</Button>
+          </Link>
+        </Empty>
       ) : (
         <List
           loading={loading}
