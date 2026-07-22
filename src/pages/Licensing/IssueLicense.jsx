@@ -17,6 +17,7 @@ import {
   staggerItem,
 } from '@/components/AccountShell'
 import { issueLicense } from '@/api/licensing'
+import LmsUsernameSelect from '@/components/LmsUsernameSelect'
 
 const { Text } = Typography
 
@@ -31,7 +32,7 @@ const IssueLicensePage = () => {
     setIssued(null)
     try {
       const payload = {
-        lmsUserId: String(values.lmsUserId).trim(),
+        lmsUsername: String(values.lmsUsername).trim(),
         seatLimit: Number(values.seatLimit) || 1,
         note: values.note?.trim() || '',
         capabilities: ['premium.auto_update'],
@@ -78,11 +79,11 @@ animate='show'>
               initialValues={{ seatLimit: 2 }}
             >
               <Form.Item
-                name='lmsUserId'
-                label={intl.formatMessage({ id: 'licensing.lms_user_id' })}
+                name='lmsUsername'
+                label={intl.formatMessage({ id: 'licensing.lms_username' })}
                 rules={[{ required: true }]}
               >
-                <Input placeholder='123' />
+                <LmsUsernameSelect />
               </Form.Item>
               <Form.Item
                 name='seatLimit'

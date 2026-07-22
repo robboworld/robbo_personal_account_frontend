@@ -1,6 +1,7 @@
 import instance from './instance'
 
 import config from '@/config'
+import { readStoredLanguage } from '@/helpers/intl'
 
 function parseContentDispositionFilename(cd) {
     if (!cd)
@@ -179,6 +180,7 @@ export const projectPageAPI = {
                 withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
+                    'Accept-Language': readStoredLanguage(),
                 },
             })
     },
