@@ -7,7 +7,8 @@ services:
   web:
     restart: unless-stopped
     build: .
-    command: yarn start
+    # ENTRYPOINT in Dockerfile is already `yarn start --port 3030`; do not set
+    # `command: yarn start` or the process becomes `yarn start --port 3030 yarn start` and exits 1.
     stdin_open: true
     ports:
       - "3030:3030"
