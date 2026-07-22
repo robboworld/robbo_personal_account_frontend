@@ -11,7 +11,7 @@ import {
   TEACHER,
   UNIT_ADMIN,
 } from '@/constants'
-import { parseJwt } from '@/helpers/jwtParser'
+import { parseJwt, isAccessTokenExpired } from '@/helpers/jwtParser'
 import {
   fetchOidcStatus,
   isOidcSsoEnabled,
@@ -22,6 +22,9 @@ const HOME_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_A
 
 function isUsableLegacyToken(token) {
   try {
+    if (isAccessTokenExpired(token)) {
+      return false
+    }
     const { Role } = parseJwt(token)
     return HOME_ROLES.includes(Role)
   } catch {
