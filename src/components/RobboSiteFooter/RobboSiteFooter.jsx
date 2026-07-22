@@ -1,7 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import theme from '@/theme'
+import RobboGuestFonts from '@/theme/robboGuestFonts'
+
 const FASIE_LOGO_URL = '/static/partners/fasie.png'
+const { colors } = theme
 
 const SiteFooter = styled.footer`
   position: relative;
@@ -9,11 +13,28 @@ const SiteFooter = styled.footer`
   box-sizing: border-box;
   width: 100%;
   background: #fff;
-  border-top: 3px solid #00af41;
+  border-top: none;
   padding: clamp(28px, 4vw, 36px) 0;
-  color: #383838;
+  color: ${colors.secondary};
   font-family: 'ProximaNova', 'Proxima Nova', system-ui, -apple-system, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 175, 65, 0.05) 0%,
+      #00af41 35%,
+      rgba(0, 175, 65, 0.55) 65%,
+      rgba(0, 175, 65, 0.05) 100%
+    );
+    pointer-events: none;
+  }
 
   @media screen and (max-width: 980px) {
     padding: 24px 0;
@@ -122,16 +143,18 @@ const FooterBrand = styled.div`
 
 const FooterLogo = styled.span`
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
-  padding: clamp(4px, 1.2vw, 6px) clamp(14px, 2.2vw, 21px) clamp(4px, 1.2vw, 6px)
-    clamp(12px, 1.8vw, 15px);
+  padding: clamp(6px, 1.2vw, 8px) clamp(18px, 2.4vw, 24px);
   box-sizing: border-box;
   background: #00af41;
   color: #fff;
+  font-family: 'ProximaNova', 'Proxima Nova', Helvetica, Arial, sans-serif;
   font-size: clamp(14px, 2vw, 24px);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   text-align: center;
@@ -140,11 +163,12 @@ const FooterLogo = styled.span`
 
 const FooterReg = styled.sup`
   position: absolute;
-  top: clamp(4px, 0.8vw, 8px);
-  right: clamp(5px, 1vw, 10px);
+  top: clamp(3px, 0.7vw, 6px);
+  right: clamp(4px, 0.9vw, 8px);
   font-size: clamp(7px, 0.85vw, 10px);
   font-weight: 700;
   line-height: 1;
+  pointer-events: none;
 `
 
 const FooterTagline = styled.p`
@@ -188,7 +212,7 @@ const PartnerLogo = styled.img`
 
 const FooterHeading = styled.h2`
   margin: 0 0 12px;
-  color: #383838;
+  color: ${colors.secondary};
   font-size: 13px;
   font-weight: 800;
   line-height: 1.2;
@@ -367,7 +391,9 @@ aria-hidden>
 )
 
 const RobboSiteFooter = () => (
-  <SiteFooter id='footer-guest' lang='ru'>
+  <React.Fragment>
+    <RobboGuestFonts />
+    <SiteFooter id='footer-guest' lang='ru'>
     <FooterInner>
       <FooterMain>
         <BrandCol>
@@ -459,7 +485,8 @@ const RobboSiteFooter = () => (
         </ContactsCol>
       </FooterMain>
     </FooterInner>
-  </SiteFooter>
+    </SiteFooter>
+  </React.Fragment>
 )
 
 export default RobboSiteFooter

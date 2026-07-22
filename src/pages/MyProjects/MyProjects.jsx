@@ -35,7 +35,6 @@ import {
   SkeletonGrid,
 } from '@/components/ProjectCatalog/styles'
 import {
-  Eyebrow,
   HeroInner,
   HeroLead,
   HeroPanel,
@@ -118,9 +117,6 @@ animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroRow>
             <HeroInner>
-              <Eyebrow>
-                <FormattedMessage id='my_projects.eyebrow' />
-              </Eyebrow>
               <HeroTitle>
                 <FormattedMessage id='my_projects.title' />
               </HeroTitle>
