@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 import { projectPageAPI } from '@/api/projectPage'
+import { displayProjectTitle } from '@/helpers/intl'
 import {
   AuthorAvatar,
   AuthorName,
@@ -162,7 +163,7 @@ animate='show'>
                             type='button'
                             onClick={() => openProject(item.projectPageId)}
                           >
-                            {item.title || intl.formatMessage({ id: 'project_page.untitled' })}
+                            {displayProjectTitle(item.title, intl)}
                           </ProjectTitleButton>
                           <OpenButton
                             type='button'

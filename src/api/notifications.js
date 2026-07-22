@@ -47,7 +47,7 @@ async function notifyFetch(path, init = {}) {
         headers: authHeaders(init.headers || {}),
     })
 
-    let res = await doFetch()
+    const res = await doFetch()
     if (res.status !== 401) {
         return res
     }

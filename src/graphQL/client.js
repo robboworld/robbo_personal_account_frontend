@@ -6,6 +6,7 @@ import { RetryLink } from "@apollo/client/link/retry"
 import { authMutationsGQL } from './mutation'
 
 import config from '@/config'
+import { readStoredLanguage } from '@/helpers/intl'
 
 
 const httpLink = createHttpLink({
@@ -19,6 +20,7 @@ const authLink = setContext((_, { headers }) => {
         headers: {
             ...headers,
             authorization: token ? `Bearer ${token}` : "",
+            'Accept-Language': readStoredLanguage(),
         },
     }
 })
