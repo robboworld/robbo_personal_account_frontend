@@ -249,6 +249,7 @@
     "notifications.load_error": "加载通知失败",
     "notifications.kind_lms": "LMS",
     "notifications.kind_admin": "管理员",
+    "notifications.kind_system": "系统",
     "notifications.kind_announcement": "公告",
     "send_notification.personal_title": "个人通知",
     "send_notification.announcement_title": "广播公告",
@@ -503,5 +504,11 @@
     "notification.student_create_success": "学生已创建！",
     "notification.student_delete_success": "学生已删除！",
     "notification.student_added_success": "学生已添加！",
+    "reactions.title": "反应",
+    "reactions.loading": "正在加载反应…",
+    "reactions.load_error": "无法加载反应",
+    "reactions.update_error": "无法更新反应",
+    "reactions.action_label": "反应 {emoji}，共 {count} 个。按下可添加或移除",
+    "reactions.count_label": "反应 {emoji}，共 {count} 个",
     "foo": "bar"
 }

@@ -73,6 +73,12 @@ const PageLayout = ({ children }) => {
                         top: 0,
                         flex: '0 0 auto',
                         zIndex: 20,
+                        transition: [
+                            'flex-basis 300ms cubic-bezier(0.22, 1, 0.36, 1)',
+                            'max-width 300ms cubic-bezier(0.22, 1, 0.36, 1)',
+                            'min-width 300ms cubic-bezier(0.22, 1, 0.36, 1)',
+                            'width 300ms cubic-bezier(0.22, 1, 0.36, 1)',
+                        ].join(', '),
                     }}
                     styles={{
                         body: {

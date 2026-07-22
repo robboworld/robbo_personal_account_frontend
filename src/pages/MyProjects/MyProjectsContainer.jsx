@@ -77,7 +77,9 @@ const MyProjectsContainer = () => {
                         onCompleted: data => {
                             const created = data?.CreateProjectPage
                             if (created?.projectPageId) {
-                                navigate(`/projects/${created.projectPageId}`)
+                                navigate(`/projects/${created.projectPageId}`, {
+                                    state: { selectedNavBarKey: '2' },
+                                })
                             }
                         },
                         onError: error => {

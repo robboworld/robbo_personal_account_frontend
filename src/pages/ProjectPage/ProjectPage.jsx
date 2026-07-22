@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { Input, Form, Switch, Spin, message, Modal } from 'antd'
 import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, ExclamationCircleOutlined, PictureOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -34,6 +34,7 @@ import {
 } from './styles'
 
 import PlayerScratchControls from './PlayerScratchControls'
+import ProjectReactions from './ProjectReactions'
 
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
 import PageLayout from '@/components/PageLayout'
@@ -197,6 +198,7 @@ function GuestProjectView({ projectPageId }) {
                                     onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
                                     onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
                                 />
+                                <ProjectReactions projectPageId={projectPageId} />
                             </PlayerCard>
                             <MetaCard>
                                 <ProjectTitle>{displayTitle}</ProjectTitle>
@@ -257,6 +259,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     const previewInputRef = useRef(null)
     const playerRef = useRef(null)
     const navigate = useNavigate()
+    const location = useLocation()
     const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
@@ -275,6 +278,28 @@ function AuthenticatedProjectView({ projectPageId, token }) {
 
     const { projectPage, playToken, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
     const isOwner = Boolean(projectPage?.isOwner)
+
+    useEffect(() => {
+        if (loading || !projectPage?.projectPageId) return
+
+        const selectedNavBarKey = isOwner ? '2' : 'public_projects'
+        if (location.state?.selectedNavBarKey === selectedNavBarKey) return
+
+        navigate(location.pathname, {
+            replace: true,
+            state: {
+                ...location.state,
+                selectedNavBarKey,
+            },
+        })
+    }, [
+        isOwner,
+        loading,
+        location.pathname,
+        location.state,
+        navigate,
+        projectPage?.projectPageId,
+    ])
 
     useEffect(() => {
         if (loading || !projectPage?.projectPageId) return
@@ -411,6 +436,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                             onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
                             onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
                         />
+                        <ProjectReactions projectPageId={projectPageId} interactive />
                         {!isOwner && (
                             <ViewOnlyNote>
                                 <FormattedMessage id='project_page.view_only' />

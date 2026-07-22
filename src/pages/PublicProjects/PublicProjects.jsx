@@ -88,7 +88,9 @@ export default function PublicProjects() {
   }, [])
 
   const openProject = useCallback(projectPageId => {
-    navigate(`/projects/${projectPageId}`)
+    navigate(`/projects/${projectPageId}`, {
+      state: { selectedNavBarKey: 'public_projects' },
+    })
   }, [navigate])
 
   const projectCountLabel = intl.formatMessage(
