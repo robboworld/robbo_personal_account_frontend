@@ -6,4 +6,20 @@ export function parseJwt(token) {
     }).join(''))
 
     return JSON.parse(jsonPayload)
-};
+}
+
+/** Returns true when JWT `exp` is missing or already in the past. */
+export function isAccessTokenExpired(token) {
+    if (!token || token === 'null') {
+        return true
+    }
+    try {
+        const { exp } = parseJwt(token)
+        if (typeof exp !== 'number') {
+            return true
+        }
+        return exp <= Math.floor(Date.now() / 1000)
+    } catch {
+        return true
+    }
+}
