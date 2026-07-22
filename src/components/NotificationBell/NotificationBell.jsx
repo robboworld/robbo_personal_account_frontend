@@ -97,8 +97,10 @@ const NotificationBell = ({ variant = 'default' }) => {
             const data = await fetchNotificationFeed(40)
             setItems(data.items || [])
         } catch (e) {
-            if (!silent) {
-                message.error(e.message || intl.formatMessage({ id: 'notifications.load_error' }))
+            const raw = e?.message || String(e)
+            const isAuthError = /token is expired|Session expired|unauthorized|401/i.test(raw)
+            if (!silent && !isAuthError) {
+                message.error(intl.formatMessage({ id: 'notifications.load_error' }))
             }
         } finally {
             feedRequestInFlightRef.current = false

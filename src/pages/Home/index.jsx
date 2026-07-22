@@ -25,7 +25,6 @@ import {
   ActionTile,
   ActionTileLink,
   ActionTitle,
-  Eyebrow,
   HeroInner,
   HeroLead,
   HeroPanel,
@@ -218,9 +217,6 @@ const Home = () => {
 animate='show'>
           <HeroPanel variants={staggerItem}>
             <HeroInner>
-              <Eyebrow>
-                <FormattedMessage id='home.eyebrow' />
-              </Eyebrow>
               <HeroTitle>
                 {firstName
                   ? intl.formatMessage(

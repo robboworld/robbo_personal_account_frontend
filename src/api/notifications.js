@@ -2,97 +2,112 @@ import config from '@/config'
 
 const apiBase = () => (config.backendURL && config.backendURL[0]) ? config.backendURL[0].replace(/\/$/, '') : 'http://localhost:8080'
 
-const headers = () => {
-    const h = { 'Content-Type': 'application/json' }
+function authHeaders(extra = {}) {
+    const h = { 'Content-Type': 'application/json', ...extra }
     const t = localStorage.getItem('token')
-    if (t) {
+    if (t && t !== 'null') {
         h.Authorization = `Bearer ${t}`
     }
     return h
 }
 
-export async function fetchNotificationFeed(limit = 30) {
-    const res = await fetch(`${apiBase()}/api/notifications/feed?limit=${limit}`, {
-        headers: headers(),
+async function refreshAccessToken() {
+    const res = await fetch(`${apiBase()}/auth/refresh`, {
+        method: 'GET',
+        credentials: 'include',
     })
     if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || res.statusText)
+        throw new Error('Session expired')
+    }
+    const data = await res.json()
+    const accessToken = data?.accessToken
+    if (!accessToken) {
+        throw new Error('Session expired')
+    }
+    localStorage.setItem('token', accessToken)
+    return accessToken
+}
+
+async function readErrorMessage(res) {
+    try {
+        const err = await res.json()
+        return err.error || err.message || res.statusText
+    } catch {
+        return res.statusText || 'Request failed'
+    }
+}
+
+/**
+ * Authenticated notification fetch: retries once after /auth/refresh on 401.
+ */
+async function notifyFetch(path, init = {}) {
+    const doFetch = () => fetch(`${apiBase()}${path}`, {
+        ...init,
+        credentials: 'include',
+        headers: authHeaders(init.headers || {}),
+    })
+
+    const res = await doFetch()
+    if (res.status !== 401) {
+        return res
+    }
+
+    try {
+        await refreshAccessToken()
+    } catch (e) {
+        localStorage.removeItem('token')
+        throw e
+    }
+
+    return doFetch()
+}
+
+async function notifyJson(path, init = {}) {
+    const res = await notifyFetch(path, init)
+    if (!res.ok) {
+        throw new Error(await readErrorMessage(res))
     }
     return res.json()
+}
+
+export async function fetchNotificationFeed(limit = 30) {
+    return notifyJson(`/api/notifications/feed?limit=${limit}`)
 }
 
 export async function fetchUnreadNotificationCount() {
-    const res = await fetch(`${apiBase()}/api/notifications/unread-count`, {
-        headers: headers(),
-    })
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || res.statusText)
-    }
-    return res.json()
+    return notifyJson('/api/notifications/unread-count')
 }
 
 export async function markPersonalNotificationRead(id) {
-    const res = await fetch(`${apiBase()}/api/notifications/mark-personal-read`, {
+    return notifyJson('/api/notifications/mark-personal-read', {
         method: 'POST',
-        headers: headers(),
         body: JSON.stringify({ id }),
     })
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || res.statusText)
-    }
-    return res.json()
 }
 
 export async function markAnnouncementRead(id) {
-    const res = await fetch(`${apiBase()}/api/notifications/mark-announcement-read`, {
+    return notifyJson('/api/notifications/mark-announcement-read', {
         method: 'POST',
-        headers: headers(),
         body: JSON.stringify({ id }),
     })
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || res.statusText)
-    }
-    return res.json()
 }
 
 export async function markAllNotificationsRead() {
-    const res = await fetch(`${apiBase()}/api/notifications/mark-all-read`, {
+    return notifyJson('/api/notifications/mark-all-read', {
         method: 'POST',
-        headers: headers(),
     })
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || res.statusText)
-    }
-    return res.json()
 }
 
 export async function adminSendPersonalNotification(payload) {
-    const res = await fetch(`${apiBase()}/api/notifications/admin/personal`, {
+    return notifyJson('/api/notifications/admin/personal', {
         method: 'POST',
-        headers: headers(),
         body: JSON.stringify(payload),
     })
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || res.statusText)
-    }
-    return res.json()
 }
 
 export async function adminCreateAnnouncement(payload) {
-    const res = await fetch(`${apiBase()}/api/notifications/admin/announcement`, {
+    return notifyJson('/api/notifications/admin/announcement', {
         method: 'POST',
-        headers: headers(),
         body: JSON.stringify(payload),
     })
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        throw new Error(err.error || res.statusText)
-    }
-    return res.json()
 }

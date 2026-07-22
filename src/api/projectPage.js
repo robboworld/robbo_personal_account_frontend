@@ -49,6 +49,15 @@ async function refreshAccessToken() {
     return accessToken
 }
 
+/** Soft refresh: returns new access token or null (no throw). */
+export async function tryRefreshAccessToken() {
+    try {
+        return await refreshAccessToken()
+    } catch (_) {
+        return null
+    }
+}
+
 async function readFetchErrorMessage(res) {
     const msg = res.statusText || 'Request failed'
     try {

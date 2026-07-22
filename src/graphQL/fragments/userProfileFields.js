@@ -6,6 +6,7 @@ export const USER_PROFILE_FIELDS = `
     middlename
     nickname
     email
+    bio
     levelOfEducation
     country
     yearOfBirth
