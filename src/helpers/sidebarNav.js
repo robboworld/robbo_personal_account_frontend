@@ -97,12 +97,6 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
     }
   }
 
-  if (role === STUDENT) {
-    if (pathname.startsWith('/projects/')) {
-      return '2'
-    }
-  }
-
   if (role === SUPER_ADMIN) {
     if (pathname.startsWith(SEND_NOTIFICATION_ROUTE)) {
       return 'send_notification'

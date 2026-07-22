@@ -22,18 +22,11 @@ export const withSidebarIcon = (item, collapsed = false) => {
 
   const accent = getSidebarIconAccent(item)
 
-  if (collapsed) {
-    return {
-      ...item,
-      'data-icon-accent': accent,
-      icon: item.icon,
-    }
-  }
-
   return {
     ...item,
+    'data-icon-accent': accent,
     icon: (
-      <SidebarIcon $accent={accent}>
+      <SidebarIcon $accent={accent} $collapsed={collapsed}>
         {item.icon}
       </SidebarIcon>
     ),

@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Badge, Button, List, Modal, Space, Typography, message } from 'antd'
 import { BellOutlined } from '@ant-design/icons'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import {
@@ -67,11 +68,13 @@ const FeedPanel = styled.div`
 
 const NotificationBell = ({ variant = 'default' }) => {
     const intl = useIntl()
+    const navigate = useNavigate()
     const isSidebar = variant === 'sidebar'
     const [open, setOpen] = useState(false)
     const [count, setCount] = useState(0)
     const [items, setItems] = useState([])
     const [loading, setLoading] = useState(false)
+    const feedRequestInFlightRef = useRef(false)
 
     const refreshCount = useCallback(async () => {
         try {
@@ -82,33 +85,80 @@ const NotificationBell = ({ variant = 'default' }) => {
         }
     }, [])
 
-    const loadFeed = useCallback(async () => {
-        setLoading(true)
+    const loadFeed = useCallback(async ({ silent = false } = {}) => {
+        if (feedRequestInFlightRef.current) {
+            return
+        }
+        feedRequestInFlightRef.current = true
+        if (!silent) {
+            setLoading(true)
+        }
         try {
             const data = await fetchNotificationFeed(40)
             setItems(data.items || [])
         } catch (e) {
-            message.error(e.message || intl.formatMessage({ id: 'notifications.load_error' }))
+            if (!silent) {
+                message.error(e.message || intl.formatMessage({ id: 'notifications.load_error' }))
+            }
         } finally {
-            setLoading(false)
+            feedRequestInFlightRef.current = false
+            if (!silent) {
+                setLoading(false)
+            }
         }
     }, [intl])
 
     useEffect(() => {
-        refreshCount()
-        const t = setInterval(refreshCount, 60000)
+        let timer
+
+        const startPolling = () => {
+            clearInterval(timer)
+            if (document.visibilityState === 'visible') {
+                refreshCount()
+                timer = setInterval(refreshCount, 3000)
+            }
+        }
+
+        const onVisibilityChange = () => startPolling()
         const onFocus = () => refreshCount()
+
+        startPolling()
+        document.addEventListener('visibilitychange', onVisibilityChange)
         window.addEventListener('focus', onFocus)
         return () => {
-            clearInterval(t)
+            clearInterval(timer)
+            document.removeEventListener('visibilitychange', onVisibilityChange)
             window.removeEventListener('focus', onFocus)
         }
     }, [refreshCount])
 
     useEffect(() => {
-        if (open) {
-            loadFeed()
-            refreshCount()
+        if (!open) {
+            return undefined
+        }
+
+        let timer
+        const startFeedPolling = () => {
+            clearInterval(timer)
+            if (document.visibilityState === 'visible') {
+                timer = setInterval(() => loadFeed({ silent: true }), 3000)
+            }
+        }
+        const onVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                loadFeed({ silent: true })
+            }
+            startFeedPolling()
+        }
+
+        loadFeed()
+        refreshCount()
+        startFeedPolling()
+        document.addEventListener('visibilitychange', onVisibilityChange)
+
+        return () => {
+            clearInterval(timer)
+            document.removeEventListener('visibilitychange', onVisibilityChange)
         }
     }, [open, loadFeed, refreshCount])
 
@@ -121,6 +171,23 @@ const NotificationBell = ({ variant = 'default' }) => {
             }
             await loadFeed()
             await refreshCount()
+        } catch (e) {
+            message.error(e.message)
+        }
+    }
+
+    const handleNotificationClick = async row => {
+        if (!row.actionUrl) return
+        try {
+            if (!row.readAt) {
+                if (row.feedKind === 'personal') {
+                    await markPersonalNotificationRead(row.id)
+                } else {
+                    await markAnnouncementRead(row.id)
+                }
+            }
+            setOpen(false)
+            navigate(row.actionUrl)
         } catch (e) {
             message.error(e.message)
         }
@@ -139,8 +206,7 @@ const NotificationBell = ({ variant = 'default' }) => {
 
     const feed = (
         <FeedPanel>
-            <Space style={{ marginBottom: 8, width: '100%', justifyContent: 'space-between' }}>
-                <Text strong>{intl.formatMessage({ id: 'notifications.title' })}</Text>
+            <Space style={{ marginBottom: 8, width: '100%', justifyContent: 'flex-end' }}>
                 <Button size='small' type='link'
 onClick={handleMarkAll}>
                     {intl.formatMessage({ id: 'notifications.mark_all' })}
@@ -152,11 +218,25 @@ onClick={handleMarkAll}>
                 dataSource={items}
                 renderItem={row => {
                     const canMark = row.feedKind === 'announcement' || !row.readAt
+                    const isClickable = Boolean(row.actionUrl)
                     return (
                     <List.Item
+                        role={isClickable ? 'link' : undefined}
+                        tabIndex={isClickable ? 0 : undefined}
+                        onClick={isClickable ? () => handleNotificationClick(row) : undefined}
+                        onKeyDown={isClickable ? event => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault()
+                                handleNotificationClick(row)
+                            }
+                        } : undefined}
+                        style={isClickable ? { cursor: 'pointer' } : undefined}
                         actions={canMark ? [
                             <Button type='link' size='small'
-key='read' onClick={() => handleMarkRead(row)}>
+key='read' onClick={event => {
+                                event.stopPropagation()
+                                handleMarkRead(row)
+                            }}>
                                 {intl.formatMessage({ id: 'notifications.mark_read' })}
                             </Button>,
                         ] : []}
@@ -168,9 +248,11 @@ key='read' onClick={() => handleMarkRead(row)}>
                                     <Text type='secondary' style={{ fontSize: 12 }}>
                                         {row.feedKind === 'announcement'
                                             ? intl.formatMessage({ id: 'notifications.kind_announcement' })
-                                            : row.source === 'lms'
-                                                ? intl.formatMessage({ id: 'notifications.kind_lms' })
-                                                : intl.formatMessage({ id: 'notifications.kind_admin' })}
+                                            : row.source === 'system'
+                                                ? intl.formatMessage({ id: 'notifications.kind_system' })
+                                                : row.source === 'lms'
+                                                    ? intl.formatMessage({ id: 'notifications.kind_lms' })
+                                                    : intl.formatMessage({ id: 'notifications.kind_admin' })}
                                     </Text>
                                 </Space>
                             }

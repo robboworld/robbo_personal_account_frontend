@@ -275,6 +275,62 @@ export const projectPageAPI = {
     },
 }
 
+export async function fetchReactionTypes() {
+    const res = await fetch(`${backendBase()}projectPage/reaction-types`, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        credentials: 'include',
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
+export async function fetchProjectReactions(projectPageId) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
+    const token = currentAccessToken()
+    const res = token
+        ? await fetchWithAuthRetry(url, { method: 'GET', headers: { Accept: 'application/json' } })
+        : await fetch(url, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            credentials: 'include',
+        })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
+export async function putProjectReaction(projectPageId, code) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
+export async function deleteProjectReaction(projectPageId) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'DELETE',
+        headers: { Accept: 'application/json' },
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
 /** POST /projectPage/:id/preview — owner preview image upload. */
 export async function uploadProjectPreview(token, projectPageId, file) {
     const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/preview`
