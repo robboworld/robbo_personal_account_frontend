@@ -28,6 +28,8 @@ import {
   SCRATCH_HUB_ROUTE,
   MY_LICENSES_ROUTE,
   ISSUE_LICENSE_ROUTE,
+  LICENSES_CATALOG_ROUTE,
+  PAYMENT_RECEIPT_ROUTE,
   DEVICE_LINK_ROUTE,
 } from '@/constants'
 import Loader from '@/components/Loader'
@@ -55,6 +57,8 @@ const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
 const MyLicensesPage = lazy(() => import('@/pages/Licensing/MyLicenses'))
 const IssueLicensePage = lazy(() => import('@/pages/Licensing/IssueLicense'))
 const DeviceLinkPage = lazy(() => import('@/pages/Licensing/DeviceLink'))
+const PaymentsCatalogPage = lazy(() => import('@/pages/Payments/Catalog'))
+const PaymentsReceiptPage = lazy(() => import('@/pages/Payments/Receipt'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
 
@@ -119,6 +123,14 @@ const AppRoutes = () => (
       <Route
         path={MY_LICENSES_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)}
+      />
+      <Route
+        path={LICENSES_CATALOG_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <PaymentsCatalogPage />)}
+      />
+      <Route
+        path={PAYMENT_RECEIPT_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <PaymentsReceiptPage />)}
       />
       <Route
         path={ISSUE_LICENSE_ROUTE}

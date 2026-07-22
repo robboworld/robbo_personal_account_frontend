@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Empty, Spin, Typography, message, Popconfirm } from 'antd'
+import { Link } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
@@ -26,6 +27,7 @@ import {
   staggerItem,
 } from '@/components/AccountShell'
 import { listMyLicenses, revokeSeat } from '@/api/licensing'
+import { LICENSES_CATALOG_ROUTE } from '@/constants'
 
 const { Text } = Typography
 
@@ -82,7 +84,11 @@ animate='show'>
                 <Spin />
               </div>
             ) : licenses.length === 0 ? (
-              <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })} />
+              <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })}>
+                <Link to={LICENSES_CATALOG_ROUTE}>
+                  <Button type='primary'>{intl.formatMessage({ id: 'payments.buy' })}</Button>
+                </Link>
+              </Empty>
             ) : (
               <LicenseStack>
                 {licenses.map(lic => (
