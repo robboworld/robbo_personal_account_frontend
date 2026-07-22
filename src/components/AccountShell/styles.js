@@ -15,7 +15,26 @@ export const surface = {
   line: 'rgba(108, 91, 123, 0.12)',
   shadow: '0 20px 48px -28px rgba(108, 91, 123, 0.35)',
   shadowHover: '0 28px 56px -24px rgba(0, 175, 65, 0.22)',
+  glassFill: 'rgba(255, 255, 255, 0.58)',
+  glassFillStrong: 'rgba(255, 255, 255, 0.78)',
+  glassBorder: 'rgba(255, 255, 255, 0.62)',
+  glassLine: 'rgba(108, 91, 123, 0.14)',
+  glassShadow: '0 20px 48px -28px rgba(108, 91, 123, 0.32), 0 1px 0 rgba(255, 255, 255, 0.55) inset',
+  glassInset: 'inset 0 1px 0 rgba(255, 255, 255, 0.72)',
+  glassBlur: 'blur(16px) saturate(1.15)',
 }
+
+export const glassSurface = css`
+  background: ${surface.glassFill};
+  border: 1px solid ${surface.glassLine};
+  box-shadow: ${surface.glassShadow}, ${surface.glassInset};
+  backdrop-filter: ${surface.glassBlur};
+  -webkit-backdrop-filter: ${surface.glassBlur};
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background: ${surface.glassFillStrong};
+  }
+`
 
 export const PageContent = styled.div`
   width: 100%;
@@ -40,9 +59,11 @@ export const HeroPanel = styled(motion.section)`
   overflow: hidden;
   border-radius: 1.5rem;
   padding: 1.75rem 1.5rem;
-  background: ${surface.hero};
-  border: 1px solid ${surface.heroBorder};
-  box-shadow: ${surface.shadow};
+  ${glassSurface}
+  background:
+    linear-gradient(135deg, rgba(0, 175, 65, 0.1) 0%, rgba(255, 255, 255, 0.45) 48%, rgba(108, 91, 123, 0.06) 100%),
+    ${surface.glassFill};
+  border-color: ${surface.heroBorder};
 
   &::before {
     content: '';
@@ -64,7 +85,7 @@ export const HeroPanel = styled(motion.section)`
     bottom: -60px;
     left: -20px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(192, 108, 132, 0.16) 0%, transparent 72%);
+    background: radial-gradient(circle, rgba(192, 108, 132, 0.14) 0%, transparent 72%);
     pointer-events: none;
   }
 
@@ -80,21 +101,6 @@ export const HeroInner = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   max-width: 52ch;
-`
-
-export const Eyebrow = styled.span`
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: ${colors.accentGreen};
-  background: rgba(0, 175, 65, 0.1);
-  border: 1px solid rgba(0, 175, 65, 0.22);
 `
 
 export const HeroTitle = styled.h1`
@@ -146,13 +152,75 @@ export const SectionHint = styled.p`
 export const Panel = styled.section`
   border-radius: 1.25rem;
   padding: 1.25rem 1.25rem 1.5rem;
-  background: ${surface.card};
-  border: 1px solid ${surface.line};
-  box-shadow: ${surface.shadow};
+  ${glassSurface}
 
   ${theme.above.med`
     padding: 1.5rem 1.5rem 1.75rem;
   `}
+`
+
+export const GlassPanel = styled(motion.section)`
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.25rem 1.5rem;
+  ${glassSurface}
+
+  ${theme.above.med`
+    padding: 1.5rem 1.5rem 1.75rem;
+  `}
+
+  .ant-form-item-label > label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: ${colors.secondary};
+  }
+
+  .ant-input,
+  .ant-input-number,
+  .ant-input-affix-wrapper,
+  .ant-select-selector,
+  .ant-input-number-input {
+    border-radius: 0.75rem !important;
+    border-color: ${surface.line} !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+  }
+
+  .ant-input:focus,
+  .ant-input-focused,
+  .ant-input-number-focused,
+  .ant-select-focused .ant-select-selector {
+    border-color: ${colors.accentGreen} !important;
+    box-shadow: 0 0 0 2px rgba(0, 175, 65, 0.14) !important;
+  }
+
+  .ant-btn-primary {
+    min-height: 2.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: 0 10px 24px -12px rgba(0, 175, 65, 0.55);
+  }
+
+  .ant-tabs-nav::before {
+    border-bottom-color: ${surface.line} !important;
+  }
+
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: ${colors.accentGreen};
+    font-weight: 600;
+  }
+
+  .ant-tabs-ink-bar {
+    background: ${colors.accentGreen};
+  }
+
+  .ant-list-bordered {
+    border: none;
+    background: transparent;
+  }
+
+  .ant-list-item {
+    border-color: ${surface.line} !important;
+    padding-inline: 0;
+  }
 `
 
 export const ActionGrid = styled.div`
