@@ -253,3 +253,27 @@ export const AuthorName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `
+
+export const ModerationRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid ${surface.line};
+`
+
+export const ModerationBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-right: auto;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: ${colors.secondary};
+  background: rgba(0, 175, 65, 0.1);
+  border: 1px solid rgba(0, 175, 65, 0.22);
+`
