@@ -57,7 +57,6 @@ const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
 const MyLicensesPage = lazy(() => import('@/pages/Licensing/MyLicenses'))
 const IssueLicensePage = lazy(() => import('@/pages/Licensing/IssueLicense'))
 const DeviceLinkPage = lazy(() => import('@/pages/Licensing/DeviceLink'))
-const PaymentsCatalogPage = lazy(() => import('@/pages/Payments/Catalog'))
 const PaymentsReceiptPage = lazy(() => import('@/pages/Payments/Receipt'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
@@ -126,7 +125,7 @@ const AppRoutes = () => (
       />
       <Route
         path={LICENSES_CATALOG_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <PaymentsCatalogPage />)}
+        element={wrapProtected(STANDARD_ROLES, <Navigate to={`${MY_LICENSES_ROUTE}#buy`} replace />)}
       />
       <Route
         path={PAYMENT_RECEIPT_ROUTE}

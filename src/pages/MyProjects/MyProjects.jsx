@@ -18,6 +18,7 @@ import {
   PaginationWrap,
 } from './styles'
 
+import { displayProjectTitle } from '@/helpers/intl'
 import {
   CardMeta,
   CatalogCount,
@@ -206,7 +207,7 @@ animate='show'>
                               type='button'
                               onClick={() => openProject(projectPage.projectPageId)}
                             >
-                              {projectPage.title || intl.formatMessage({ id: 'project_page.untitled' })}
+                              {displayProjectTitle(projectPage.title, intl)}
                             </ProjectTitleButton>
                             {lastModified && (
                               <CardMeta>

@@ -62,3 +62,18 @@ export function formatMessageForLanguage(language, descriptor, values) {
 export function formatMessageId(language, id, values) {
   return formatMessageForLanguage(language, { id }, values)
 }
+
+const DEFAULT_TITLE_SENTINELS = new Set(['untitled', 'безымянный', '未命名', 'без названия'])
+
+/**
+ * Localized project title for list/detail UI.
+ * Empty titles and known default-name sentinels map to project_page.untitled.
+ */
+export function displayProjectTitle(title, intl) {
+  const trimmed = typeof title === 'string' ? title.trim() : ''
+  if (!trimmed || DEFAULT_TITLE_SENTINELS.has(trimmed.toLowerCase())) {
+    return intl.formatMessage({ id: 'project_page.untitled' })
+  }
+  return trimmed
+}
+
