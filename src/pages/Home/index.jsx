@@ -57,8 +57,7 @@ import {
   SUPER_ADMIN,
   STUDENT,
 } from '@/constants'
-
-const SCRATCH_RU_URL = 'https://scratch.ru/'
+import { getScratchEditorUrl } from '@/utils/scratchEditor'
 
 const ACTION_ICONS = {
   profile: UserOutlined,
@@ -107,7 +106,7 @@ const QUICK_ACTION_DEFS = [
     key: 'create',
     titleId: 'home.action.create.title',
     descriptionId: 'home.action.create.description',
-    href: SCRATCH_RU_URL,
+    scratchEditor: true,
     iconKey: 'create',
     accent: 'green',
     gridSpan: 4,
@@ -249,9 +248,12 @@ animate='show'>
                 <ActionGrid>
                   {quickActions.map(action => {
                     const Icon = ACTION_ICONS[action.iconKey] || ArrowRightOutlined
-                    const Tile = action.href ? ActionTileLink : ActionTile
-                    const tileProps = action.href
-                      ? { href: action.href }
+                    const href = action.scratchEditor
+                      ? getScratchEditorUrl()
+                      : action.href
+                    const Tile = href ? ActionTileLink : ActionTile
+                    const tileProps = href
+                      ? { href }
                       : { onClick: () => handleAction(action) }
 
                     return (

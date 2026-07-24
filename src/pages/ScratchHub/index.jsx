@@ -12,8 +12,8 @@ import styled, { css, keyframes } from 'styled-components'
 import { PageContent } from '@/components/AccountShell'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import theme from '@/theme'
+import { getScratchEditorUrl } from '@/utils/scratchEditor'
 
-const SCRATCH_WEB_URL = 'https://scratch.ru/'
 const RELEASE_BASE = 'http://files.robbo.ru/Software/RobboScratch3.0/release'
 
 const DOWNLOADS = [
@@ -333,9 +333,7 @@ const ScratchHubPage = () => {
 
         <Split>
           <WebPanel
-            href={SCRATCH_WEB_URL}
-            target='_blank'
-            rel='noopener noreferrer'
+            href={getScratchEditorUrl()}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
           >

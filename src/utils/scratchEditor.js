@@ -28,6 +28,23 @@ function alignLoopbackUrlHost(url) {
 }
 
 /**
+ * Standalone RobboScratch web editor origin.
+ * Single switch: `SCRATCH_EDITOR_URL` → `config.scratchURL`
+ * (local: http://localhost:8601/, prod: https://scratch.ru/).
+ * @param {string} [projectPageId]
+ * @returns {string}
+ */
+export function getScratchEditorUrl(projectPageId) {
+  const base = alignLoopbackUrlHost((config.scratchURL || '').replace(/\/?$/, '/'))
+  if (!projectPageId) {
+    return base
+  }
+  const params = new URLSearchParams()
+  params.set('projectPageId', projectPageId)
+  return `${base}?${params.toString()}`
+}
+
+/**
  * Open the standalone RobboScratch web editor in the current tab for the given cloud project.
  * @param {string} projectPageId
  */
@@ -35,9 +52,5 @@ export function openScratchEditor(projectPageId) {
   if (!projectPageId) {
     return
   }
-  const base = alignLoopbackUrlHost((config.scratchURL || '').replace(/\/?$/, '/'))
-  const params = new URLSearchParams()
-  params.set('projectPageId', projectPageId)
-  const url = `${base}?${params.toString()}`
-  window.location.assign(url)
+  window.location.assign(getScratchEditorUrl(projectPageId))
 }
