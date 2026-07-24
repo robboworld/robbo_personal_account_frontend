@@ -508,7 +508,7 @@ rel='noreferrer'>
             ) : galleryProjects.length === 0 ? (
               <ProjectsEmpty>
                 Избранных проектов для лендинга пока нет. Администратор может отметить
-                публичный проект флагом landing_featured.
+                публичный проект флагом landing_featured (SuperAdmin: страница публичных проектов).
               </ProjectsEmpty>
             ) : (
               <GalleryGrid>

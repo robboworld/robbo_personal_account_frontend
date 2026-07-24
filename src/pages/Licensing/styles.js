@@ -39,6 +39,18 @@ export const LicenseMeta = styled.p`
   color: ${surface.muted};
 `
 
+export const ProductTitle = styled.h3`
+  margin: 0 0 0.45rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: ${colors.secondary};
+`
+
+export const ProductActions = styled.div`
+  margin-top: 0.25rem;
+`
+
 export const SeatList = styled.ul`
   margin: 0;
   padding: 0;

@@ -12,6 +12,9 @@ export const getSidebarIconAccent = item => {
   if (item.key === 'send_notification') {
     return 'green'
   }
+  if (item.key === 'my_licenses') {
+    return 'green'
+  }
   return 'rose'
 }
 
