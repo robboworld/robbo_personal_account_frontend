@@ -48,6 +48,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
+import { PROJECT_EDIT_ROUTE } from '@/constants'
 
 
 const { confirm } = Modal
@@ -88,6 +89,12 @@ const MyProjects = ({
 
   const openProject = useCallback(projectPageId => {
     navigate(`/projects/${projectPageId}`, {
+      state: { selectedNavBarKey: '2' },
+    })
+  }, [navigate])
+
+  const editProject = useCallback(projectPageId => {
+    navigate(PROJECT_EDIT_ROUTE.replace(':projectPageId', projectPageId), {
       state: { selectedNavBarKey: '2' },
     })
   }, [navigate])
@@ -215,6 +222,14 @@ animate='show'>
                               onClick={() => openProject(projectPage.projectPageId)}
                             >
                               <FormattedMessage id='project_page.open_project' />
+                              <ArrowRightOutlined style={{ fontSize: 12 }} />
+                            </OpenButton>
+                            <OpenButton
+                              type='button'
+                              onClick={() => editProject(projectPage.projectPageId)}
+                              style={{ marginTop: 8 }}
+                            >
+                              <FormattedMessage id='project_page.open_in_scratch' />
                               <ArrowRightOutlined style={{ fontSize: 12 }} />
                             </OpenButton>
                           </ProjectCardBody>

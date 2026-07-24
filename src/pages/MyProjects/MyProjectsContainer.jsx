@@ -8,6 +8,7 @@ import { compose } from 'redux'
 import MyProjects from './MyProjects'
 
 import { projectPageMutationGQL, projectPageQueryGQL } from '@/graphQL'
+import { PROJECT_EDIT_ROUTE } from '@/constants'
 
 const MyProjectsContainer = () => {
     const intl = useIntl()
@@ -77,9 +78,12 @@ const MyProjectsContainer = () => {
                         onCompleted: data => {
                             const created = data?.CreateProjectPage
                             if (created?.projectPageId) {
-                                navigate(`/projects/${created.projectPageId}`, {
-                                    state: { selectedNavBarKey: '2' },
-                                })
+                                navigate(
+                                    PROJECT_EDIT_ROUTE.replace(':projectPageId', created.projectPageId),
+                                    {
+                                        state: { selectedNavBarKey: '2' },
+                                    },
+                                )
                             }
                         },
                         onError: error => {

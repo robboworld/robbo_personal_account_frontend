@@ -48,8 +48,7 @@ import {
     uploadProjectPreview,
     uploadProjectSb3,
 } from '@/api/projectPage'
-import config from '@/config'
-import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE } from '@/constants'
+import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE, PROJECT_EDIT_ROUTE } from '@/constants'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
 import { formatDateTime } from '@/helpers/formatDateTime'
 import { RequireAuth, fetchOidcStatus, isAccessTokenExpired, isOidcSsoEnabled } from '@/helpers'
@@ -323,7 +322,10 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     ])
 
     const seeInsideHandler = () => {
-        window.open(`${config.scratchURL}?#${projectPage.projectId}`)
+        const editPath = PROJECT_EDIT_ROUTE.replace(':projectPageId', projectPageId)
+        navigate(editPath, {
+            state: { selectedNavBarKey: '2' },
+        })
     }
 
     const handleDownloadSb3 = async () => {
