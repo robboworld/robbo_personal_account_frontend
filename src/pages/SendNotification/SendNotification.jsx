@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { adminSendPersonalNotification, adminCreateAnnouncement } from '@/api/notifications'
 import { SUPER_ADMIN } from '@/constants'
 import { parseJwt } from '@/helpers'
+import LmsUsernameSelect from '@/components/LmsUsernameSelect'
 import {
   GlassPanel,
   HeroInner,
@@ -36,7 +37,7 @@ const SendNotification = () => {
     setLoadingP(true)
     try {
       await adminSendPersonalNotification({
-        recipientUserId: values.recipientUserId.trim(),
+        recipientUsername: values.recipientUsername.trim(),
         title: values.title.trim(),
         body: values.body.trim(),
         kind: values.kind?.trim() || 'admin_message',
@@ -80,11 +81,11 @@ const SendNotification = () => {
       <Form form={personalForm} layout='vertical'
 onFinish={onPersonal}>
         <Form.Item
-          name='recipientUserId'
-          label={intl.formatMessage({ id: 'send_notification.recipient_id' })}
+          name='recipientUsername'
+          label={intl.formatMessage({ id: 'send_notification.recipient_username' })}
           rules={[{ required: true }]}
         >
-          <Input placeholder='123' />
+          <LmsUsernameSelect />
         </Form.Item>
         <Form.Item
           name='title'

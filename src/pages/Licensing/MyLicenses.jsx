@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Empty, Spin, Typography, message, Popconfirm } from 'antd'
-import { Link } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
@@ -10,6 +9,8 @@ import {
   LicenseLabel,
   LicenseMeta,
   LicenseStack,
+  ProductTitle,
+  ProductActions,
   SeatInfo,
   SeatItem,
   SeatList,
@@ -22,43 +23,103 @@ import {
   HeroPanel,
   HeroTitle,
   PageContent,
+  SectionHeader,
+  SectionHint,
+  SectionTitle,
   Stagger,
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
 import { listMyLicenses, revokeSeat } from '@/api/licensing'
-import { LICENSES_CATALOG_ROUTE } from '@/constants'
+import { checkout, listProducts } from '@/api/payments'
 
 const { Text } = Typography
+
+const formatPrice = (amount, currency, locale) => {
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency || 'RUB',
+    }).format(amount)
+  } catch (e) {
+    return `${amount} ${currency || 'RUB'}`
+  }
+}
 
 const MyLicensesPage = () => {
   const intl = useIntl()
   const [licenses, setLicenses] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [products, setProducts] = useState([])
+  const [licensesLoading, setLicensesLoading] = useState(true)
+  const [productsLoading, setProductsLoading] = useState(true)
+  const [buyingId, setBuyingId] = useState(null)
 
-  const load = useCallback(async () => {
-    setLoading(true)
+  const loadLicenses = useCallback(async () => {
+    setLicensesLoading(true)
     try {
       const list = await listMyLicenses()
       setLicenses(list)
     } catch (e) {
       message.error(e?.response?.data?.error || e.message || 'Error')
     } finally {
-      setLoading(false)
+      setLicensesLoading(false)
+    }
+  }, [])
+
+  const loadProducts = useCallback(async () => {
+    setProductsLoading(true)
+    try {
+      const list = await listProducts()
+      setProducts(list)
+    } catch (e) {
+      message.error(e?.response?.data?.error || e.message || 'Error')
+    } finally {
+      setProductsLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    load()
-  }, [load])
+    loadLicenses()
+    loadProducts()
+  }, [loadLicenses, loadProducts])
+
+  useEffect(() => {
+    if (window.location.hash !== '#buy') {
+      return undefined
+    }
+    const el = document.getElementById('buy')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    return undefined
+  }, [productsLoading])
 
   const onRevoke = async (licenseId, seatId) => {
     try {
       await revokeSeat(licenseId, seatId)
       message.success(intl.formatMessage({ id: 'licensing.seat_revoked' }))
-      load()
+      loadLicenses()
     } catch (e) {
       message.error(e?.response?.data?.error || e.message || 'Error')
+    }
+  }
+
+  const onBuy = async productId => {
+    setBuyingId(productId)
+    try {
+      const data = await checkout(productId)
+      if (!data?.confirmationUrl) {
+        throw new Error(intl.formatMessage({ id: 'payments.checkout_no_url' }))
+      }
+      window.location.href = data.confirmationUrl
+    } catch (e) {
+      const code = e?.response?.data?.errorCode
+      if (code === 'PAYMENT_NOT_CONFIGURED') {
+        message.error(intl.formatMessage({ id: 'payments.not_configured' }))
+      } else {
+        message.error(e?.response?.data?.error || e.message || 'Error')
+      }
+      setBuyingId(null)
     }
   }
 
@@ -79,16 +140,12 @@ animate='show'>
 
         <motion.div variants={staggerItem}>
           <GlassPanel>
-            {loading ? (
+            {licensesLoading ? (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
                 <Spin />
               </div>
             ) : licenses.length === 0 ? (
-              <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })}>
-                <Link to={LICENSES_CATALOG_ROUTE}>
-                  <Button type='primary'>{intl.formatMessage({ id: 'payments.buy' })}</Button>
-                </Link>
-              </Empty>
+              <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })} />
             ) : (
               <LicenseStack>
                 {licenses.map(lic => (
@@ -137,6 +194,62 @@ animate='show'>
                         ))}
                       </SeatList>
                     )}
+                  </LicenseCard>
+                ))}
+              </LicenseStack>
+            )}
+          </GlassPanel>
+        </motion.div>
+
+        <motion.div variants={staggerItem}>
+          <GlassPanel id='buy'>
+            <SectionHeader>
+              <SectionTitle>
+                {intl.formatMessage({ id: 'payments.catalog_title' })}
+              </SectionTitle>
+              <SectionHint>
+                {intl.formatMessage({ id: 'payments.catalog_hint' })}
+              </SectionHint>
+            </SectionHeader>
+            {productsLoading ? (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
+                <Spin />
+              </div>
+            ) : products.length === 0 ? (
+              <Empty description={intl.formatMessage({ id: 'payments.catalog_empty' })} />
+            ) : (
+              <LicenseStack>
+                {products.map(product => (
+                  <LicenseCard key={product.id}>
+                    <ProductTitle>{product.title}</ProductTitle>
+                    {product.description ? (
+                      <LicenseMeta>{product.description}</LicenseMeta>
+                    ) : null}
+                    <LicenseMeta>
+                      <Text strong>
+                        {intl.formatMessage({ id: 'payments.price' })}
+                        {': '}
+                      </Text>
+                      {formatPrice(product.amount, product.currency, intl.locale)}
+                      {' · '}
+                      {intl.formatMessage(
+                        { id: 'payments.product_meta' },
+                        {
+                          seats: product.seatLimit,
+                          days: product.durationDays,
+                        },
+                      )}
+                    </LicenseMeta>
+                    <ProductActions>
+                      <Button
+                        type='primary'
+                        loading={buyingId === product.id}
+                        disabled={!!buyingId}
+                        onClick={() => onBuy(product.id)}
+                      >
+                        {intl.formatMessage({ id: 'payments.buy' })}
+                      </Button>
+                    </ProductActions>
                   </LicenseCard>
                 ))}
               </LicenseStack>

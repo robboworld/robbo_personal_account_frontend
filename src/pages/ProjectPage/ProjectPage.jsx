@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
-import { Input, Form, Switch, Spin, message, Modal } from 'antd'
-import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, ExclamationCircleOutlined, PictureOutlined } from '@ant-design/icons'
+import { Input, Form, Switch, Spin, message, Modal, InputNumber, Space, Button } from 'antd'
+import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, DeleteOutlined, ExclamationCircleOutlined, PictureOutlined, PushpinOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { createGlobalStyle } from 'styled-components'
 
@@ -43,17 +43,20 @@ import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import {
     downloadProjectSb3,
     downloadProjectSb3ByPlayToken,
+    moderateDeleteProjectPage,
     projectPageAPI,
+    setLandingFeatured,
     tryRefreshAccessToken,
     uploadProjectPreview,
     uploadProjectSb3,
 } from '@/api/projectPage'
-import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE } from '@/constants'
+import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE, SUPER_ADMIN } from '@/constants'
 import { openScratchEditor } from '@/utils/scratchEditor'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
 import { formatDateTime } from '@/helpers/formatDateTime'
-import { RequireAuth, fetchOidcStatus, isAccessTokenExpired, isOidcSsoEnabled } from '@/helpers'
+import { RequireAuth, fetchOidcStatus, isAccessTokenExpired, isOidcSsoEnabled, useAuthRole } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
+import { displayProjectTitle } from '@/helpers/intl'
 import Loader from '@/components/Loader'
 import { getProjectPageState } from '@/reducers/projectPage'
 import {
@@ -251,12 +254,22 @@ function GuestProjectView({ projectPageId }) {
 
 function AuthenticatedProjectView({ projectPageId, token }) {
     const intl = useIntl()
+    const authRole = useAuthRole()
+    const isSuperAdmin = Number(authRole) === SUPER_ADMIN
     const [downloadBusy, setDownloadBusy] = useState(false)
     const [uploadBusy, setUploadBusy] = useState(false)
     const [previewBusy, setPreviewBusy] = useState(false)
     const [deleteBusy, setDeleteBusy] = useState(false)
     const [playerReloadKey, setPlayerReloadKey] = useState(0)
     const [isPlayerRunning, setIsPlayerRunning] = useState(false)
+    const [moderateOpen, setModerateOpen] = useState(false)
+    const [moderateReason, setModerateReason] = useState('')
+    const [moderateBusy, setModerateBusy] = useState(false)
+    const [featureOpen, setFeatureOpen] = useState(false)
+    const [featureOrder, setFeatureOrder] = useState(1)
+    const [featureBusy, setFeatureBusy] = useState(false)
+    const [landingFeatured, setLandingFeaturedLocal] = useState(false)
+    const [landingSortOrder, setLandingSortOrderLocal] = useState(0)
     const uploadInputRef = useRef(null)
     const previewInputRef = useRef(null)
     const playerRef = useRef(null)
@@ -280,6 +293,14 @@ function AuthenticatedProjectView({ projectPageId, token }) {
 
     const { projectPage, playToken, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
     const isOwner = Boolean(projectPage?.isOwner)
+
+    useEffect(() => {
+        if (!projectPage) {
+            return
+        }
+        setLandingFeaturedLocal(Boolean(projectPage.landingFeatured))
+        setLandingSortOrderLocal(Number(projectPage.landingSortOrder) || 0)
+    }, [projectPage?.projectPageId, projectPage?.landingFeatured, projectPage?.landingSortOrder])
 
     useEffect(() => {
         if (loading || !projectPage?.projectPageId) return
@@ -396,6 +417,74 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                 }
             },
         })
+    }
+
+    const confirmModerateDelete = async () => {
+        const reason = moderateReason.trim()
+        if (reason.length < 3) {
+            message.warning(intl.formatMessage({ id: 'project_page.moderate_reason_required' }))
+            return
+        }
+        setModerateBusy(true)
+        try {
+            await moderateDeleteProjectPage(projectPageId, reason)
+            message.success(intl.formatMessage({ id: 'project_page.moderate_delete_ok' }))
+            setModerateOpen(false)
+            setModerateReason('')
+            navigate(PUBLIC_PROJECTS_ROUTE)
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'project_page.moderate_delete_error' }))
+        } finally {
+            setModerateBusy(false)
+        }
+    }
+
+    const confirmAddToLanding = async () => {
+        setFeatureBusy(true)
+        try {
+            const data = await setLandingFeatured(projectPageId, {
+                featured: true,
+                sortOrder: Number(featureOrder) || 1,
+            })
+            setLandingFeaturedLocal(data?.projectPage?.landingFeatured ?? true)
+            setLandingSortOrderLocal(data?.projectPage?.landingSortOrder ?? (Number(featureOrder) || 1))
+            message.success(intl.formatMessage({ id: 'project_page.landing_add_ok' }))
+            setFeatureOpen(false)
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+        } finally {
+            setFeatureBusy(false)
+        }
+    }
+
+    const removeFromLanding = async () => {
+        setFeatureBusy(true)
+        try {
+            await setLandingFeatured(projectPageId, { featured: false, sortOrder: 0 })
+            setLandingFeaturedLocal(false)
+            setLandingSortOrderLocal(0)
+            message.success(intl.formatMessage({ id: 'project_page.landing_remove_ok' }))
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+        } finally {
+            setFeatureBusy(false)
+        }
+    }
+
+    const saveLandingOrder = async () => {
+        setFeatureBusy(true)
+        try {
+            const data = await setLandingFeatured(projectPageId, {
+                featured: true,
+                sortOrder: Number(landingSortOrder) || 0,
+            })
+            setLandingSortOrderLocal(data?.projectPage?.landingSortOrder ?? (Number(landingSortOrder) || 0))
+            message.success(intl.formatMessage({ id: 'project_page.landing_order_ok' }))
+        } catch (e) {
+            message.error(e?.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+        } finally {
+            setFeatureBusy(false)
+        }
     }
 
     const backTarget = isOwner ? MY_PROJECTS_ROUTE : PUBLIC_PROJECTS_ROUTE
@@ -565,6 +654,55 @@ readOnly={!isOwner} />
                                         >
                                             <FormattedMessage id='project_page.download_sb3' />
                                         </ActionButton>
+                                        {isSuperAdmin && (
+                                            <React.Fragment>
+                                                {landingFeatured ? (
+                                                    <Space wrap size={8}
+style={{ width: '100%' }}>
+                                                        <InputNumber
+                                                            min={0}
+                                                            value={landingSortOrder}
+                                                            onChange={value => setLandingSortOrderLocal(value)}
+                                                            aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
+                                                        />
+                                                        <Button
+                                                            loading={featureBusy}
+                                                            onClick={saveLandingOrder}
+                                                        >
+                                                            <FormattedMessage id='project_page.landing_order_save' />
+                                                        </Button>
+                                                        <Button
+                                                            loading={featureBusy}
+                                                            onClick={removeFromLanding}
+                                                        >
+                                                            <FormattedMessage id='project_page.landing_remove' />
+                                                        </Button>
+                                                    </Space>
+                                                ) : (
+                                                    <ActionButton
+                                                        type='default'
+                                                        icon={<PushpinOutlined />}
+                                                        onClick={() => {
+                                                            setFeatureOrder((landingSortOrder || 0) + 1 || 1)
+                                                            setFeatureOpen(true)
+                                                        }}
+                                                    >
+                                                        <FormattedMessage id='project_page.landing_add' />
+                                                    </ActionButton>
+                                                )}
+                                                <ActionButton
+                                                    type='default'
+                                                    danger
+                                                    icon={<DeleteOutlined />}
+                                                    onClick={() => {
+                                                        setModerateReason('')
+                                                        setModerateOpen(true)
+                                                    }}
+                                                >
+                                                    <FormattedMessage id='project_page.moderate_delete' />
+                                                </ActionButton>
+                                            </React.Fragment>
+                                        )}
                                         {isOwner && (
                                             <ActionButton
                                                 type='default'
@@ -583,6 +721,56 @@ readOnly={!isOwner} />
                     </MetaCard>
                 </MainGrid>
             )}
+            <Modal
+                open={moderateOpen}
+                title={intl.formatMessage({ id: 'project_page.moderate_delete_title' })}
+                okText={intl.formatMessage({ id: 'project_page.moderate_delete_confirm' })}
+                cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
+                okButtonProps={{ danger: true, loading: moderateBusy, disabled: moderateReason.trim().length < 3 }}
+                onOk={confirmModerateDelete}
+                onCancel={() => !moderateBusy && setModerateOpen(false)}
+                destroyOnClose
+            >
+                <p>
+                    <FormattedMessage
+                        id='project_page.moderate_delete_body'
+                        values={{ title: displayProjectTitle(projectPage?.title, intl) }}
+                    />
+                </p>
+                <TextArea
+                    rows={4}
+                    value={moderateReason}
+                    onChange={e => setModerateReason(e.target.value)}
+                    placeholder={intl.formatMessage({ id: 'project_page.moderate_reason_placeholder' })}
+                />
+            </Modal>
+            <Modal
+                open={featureOpen}
+                title={intl.formatMessage({ id: 'project_page.landing_add_title' })}
+                okText={intl.formatMessage({ id: 'project_page.landing_add_confirm' })}
+                cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
+                okButtonProps={{ loading: featureBusy }}
+                onOk={confirmAddToLanding}
+                onCancel={() => !featureBusy && setFeatureOpen(false)}
+                destroyOnClose
+            >
+                <p>
+                    <FormattedMessage
+                        id='project_page.landing_add_body'
+                        values={{ title: displayProjectTitle(projectPage?.title, intl) }}
+                    />
+                </p>
+                <label htmlFor='project-landing-sort-order'>
+                    <FormattedMessage id='project_page.landing_order_label' />
+                </label>
+                <InputNumber
+                    id='project-landing-sort-order'
+                    style={{ width: '100%', marginTop: 8 }}
+                    min={0}
+                    value={featureOrder}
+                    onChange={value => setFeatureOrder(value)}
+                />
+            </Modal>
         </PageShell>
     )
 }

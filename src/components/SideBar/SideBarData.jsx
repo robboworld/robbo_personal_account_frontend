@@ -34,7 +34,6 @@ import {
   PUBLIC_PROJECTS_ROUTE,
   MY_LICENSES_ROUTE,
   ISSUE_LICENSE_ROUTE,
-  LICENSES_CATALOG_ROUTE,
 } from '@/constants'
 
 /** Explore — in the main nav block with home / profile / projects. */
@@ -123,12 +122,7 @@ export const SidebarDataStudent = [
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
-  },
-  {
-    key: 'buy_license',
-    label: <FormattedMessage id='sidebar_data.buy_license' />,
-    pathname: LICENSES_CATALOG_ROUTE,
-    icon: <CreditCardOutlined />,
+    iconAccent: 'green',
   },
 ]
 
@@ -150,12 +144,7 @@ export const SidebarDataParent = [
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
-  },
-  {
-    key: 'buy_license',
-    label: <FormattedMessage id='sidebar_data.buy_license' />,
-    pathname: LICENSES_CATALOG_ROUTE,
-    icon: <CreditCardOutlined />,
+    iconAccent: 'green',
   },
 ]
 
@@ -177,12 +166,7 @@ export const SidebarDataSuperAdmin = [
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
-  },
-  {
-    key: 'buy_license',
-    label: <FormattedMessage id='sidebar_data.buy_license' />,
-    pathname: LICENSES_CATALOG_ROUTE,
-    icon: <CreditCardOutlined />,
+    iconAccent: 'green',
   },
   {
     key: 'issue_license',
@@ -245,12 +229,7 @@ export const SidebarDataTeacher = [
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
-  },
-  {
-    key: 'buy_license',
-    label: <FormattedMessage id='sidebar_data.buy_license' />,
-    pathname: LICENSES_CATALOG_ROUTE,
-    icon: <CreditCardOutlined />,
+    iconAccent: 'green',
   },
 ]
 
@@ -272,12 +251,7 @@ export const SidebarDataFreeListener = [
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
-  },
-  {
-    key: 'buy_license',
-    label: <FormattedMessage id='sidebar_data.buy_license' />,
-    pathname: LICENSES_CATALOG_ROUTE,
-    icon: <CreditCardOutlined />,
+    iconAccent: 'green',
   },
   {
     key: '2',
@@ -317,12 +291,7 @@ export const SidebarDataUnitAdmin = [
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
-  },
-  {
-    key: 'buy_license',
-    label: <FormattedMessage id='sidebar_data.buy_license' />,
-    pathname: LICENSES_CATALOG_ROUTE,
-    icon: <CreditCardOutlined />,
+    iconAccent: 'green',
   },
   {
     key: '2',
