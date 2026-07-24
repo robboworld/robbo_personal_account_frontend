@@ -28,17 +28,16 @@ function alignLoopbackUrlHost(url) {
 }
 
 /**
- * Open the standalone RobboScratch web editor in a new tab for the given cloud project.
+ * Open the standalone RobboScratch web editor in the current tab for the given cloud project.
  * @param {string} projectPageId
- * @returns {Window|null}
  */
 export function openScratchEditor(projectPageId) {
   if (!projectPageId) {
-    return null
+    return
   }
   const base = alignLoopbackUrlHost((config.scratchURL || '').replace(/\/?$/, '/'))
   const params = new URLSearchParams()
   params.set('projectPageId', projectPageId)
   const url = `${base}?${params.toString()}`
-  return window.open(url, '_blank', 'noopener,noreferrer')
+  window.location.assign(url)
 }
