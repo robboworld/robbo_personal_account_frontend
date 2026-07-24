@@ -71,29 +71,26 @@ export const OidcSessionProvider = ({ children }) => {
           return
         }
 
-        let token = localStorage.getItem('token')
-        if (token && isAccessTokenExpired(token)) {
-          token = await tryRefreshLegacyAccessToken()
-          if (!token) {
-            localStorage.removeItem('token')
+        // Password login from Scratch (or LK forms) sets HttpOnly refresh_token on API host.
+        // Accept that session before falling back to OIDC/mock.
+        if (hasLmsPasswordFallback(status)) {
+          let token = localStorage.getItem('token')
+          if (!token || isAccessTokenExpired(token)) {
+            token = await tryRefreshLegacyAccessToken()
+            if (!token) {
+              localStorage.removeItem('token')
+            }
           }
-        }
 
-        if (hasLmsPasswordFallback(status) && token) {
           const legacy = sessionFromLegacyToken(token)
           if (legacy) {
             setSession(legacy)
             setLoading(false)
             return
           }
-          localStorage.removeItem('token')
-        } else if (token && isAccessTokenExpired(token)) {
-          localStorage.removeItem('token')
-        }
 
-        if (hasLmsPasswordFallback(status)) {
-          const returnTo = encodeURIComponent(`${location.pathname}${location.search}`)
-          navigate(`${LOGIN_PAGE_ROUTE}?return_to=${returnTo}`, { replace: true })
+          // No password session — fallback to mock/prod OIDC.
+          redirectToOidcStart(`${location.pathname}${location.search}`)
           return
         }
 
@@ -101,7 +98,7 @@ export const OidcSessionProvider = ({ children }) => {
       } catch {
         if (!cancelled) {
           let token = localStorage.getItem('token')
-          if (token && isAccessTokenExpired(token)) {
+          if (!token || isAccessTokenExpired(token)) {
             token = await tryRefreshLegacyAccessToken()
             if (!token) {
               localStorage.removeItem('token')

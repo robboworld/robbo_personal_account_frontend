@@ -48,7 +48,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { PROJECT_EDIT_ROUTE } from '@/constants'
+import { openScratchEditor } from '@/utils/scratchEditor'
 
 
 const { confirm } = Modal
@@ -94,10 +94,8 @@ const MyProjects = ({
   }, [navigate])
 
   const editProject = useCallback(projectPageId => {
-    navigate(PROJECT_EDIT_ROUTE.replace(':projectPageId', projectPageId), {
-      state: { selectedNavBarKey: '2' },
-    })
-  }, [navigate])
+    openScratchEditor(projectPageId)
+  }, [])
 
   const confirmDelete = useCallback(projectPageId => {
     confirm({

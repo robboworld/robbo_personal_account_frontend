@@ -1,6 +1,12 @@
-# ЛК frontend + локальный Scratch player (robboscratch3_gui с embed-плеером).
+# ЛК frontend + Scratch player (preview).
 # Без network_mode: host — на Docker Desktop (macOS/Windows) host-network не
 # публикует порты на localhost хоста; bridge + ports работает и на Linux.
+#
+# Редактор локально — webpack-dev-server RobboScratch (:8601), см. SCRATCH_EDITOR_URL в .env.
+# scratch-gui (:5001) — только player.html для preview на странице проекта.
+# Перед сборкой player-образа (если обновляете preview):
+#   cd /path/to/RobboScratch && ./scripts/build.sh --release web dca vm gui
+#   rsync -a --delete .../robboscratch3_gui/build/ .../robbo_personal_account/robboscratch3_gui/build/
 name: robbo_personal_account_frontend
 
 services:
@@ -21,7 +27,8 @@ services:
   scratch-gui:
     image: robboscratch-gui:local
     build:
-      context: ../robboscratch3_gui
+      context: ${SCRATCH_GUI_CONTEXT:-../robboscratch3_gui}
+      dockerfile: deploy/Dockerfile
     restart: unless-stopped
     ports:
       - "5001:80"

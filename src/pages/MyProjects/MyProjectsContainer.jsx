@@ -1,18 +1,17 @@
 import React from 'react'
 import { notification } from 'antd'
 import { graphql } from '@apollo/client/react/hoc'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 import { compose } from 'redux'
 
 import MyProjects from './MyProjects'
 
 import { projectPageMutationGQL, projectPageQueryGQL } from '@/graphQL'
-import { PROJECT_EDIT_ROUTE } from '@/constants'
+import { openScratchEditor } from '@/utils/scratchEditor'
 
 const MyProjectsContainer = () => {
     const intl = useIntl()
-    const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams()
     const currentPage = searchParams.get('page') || '1'
     const pageSize = '5'
@@ -78,12 +77,7 @@ const MyProjectsContainer = () => {
                         onCompleted: data => {
                             const created = data?.CreateProjectPage
                             if (created?.projectPageId) {
-                                navigate(
-                                    PROJECT_EDIT_ROUTE.replace(':projectPageId', created.projectPageId),
-                                    {
-                                        state: { selectedNavBarKey: '2' },
-                                    },
-                                )
+                                openScratchEditor(created.projectPageId)
                             }
                         },
                         onError: error => {

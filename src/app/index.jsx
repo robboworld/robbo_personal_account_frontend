@@ -6,7 +6,6 @@ import {
   LOGIN_PAGE_ROUTE,
   REGISTER_PAGE_ROUTE,
   PROJECT_PAGE_ROUTE,
-  PROJECT_EDIT_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
@@ -45,7 +44,6 @@ const Landing = lazy(() => import('@/pages/Landing'))
 const MyProjects = lazy(() => import('@/pages/MyProjects'))
 const PublicProjects = lazy(() => import('@/pages/PublicProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
-const ProjectEditor = lazy(() => import('@/pages/ProjectEditor'))
 const LmsRedirect = lazy(() => import('@/pages/LmsRedirect'))
 const OidcCallback = lazy(() => import('@/pages/OidcCallback'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
@@ -79,7 +77,6 @@ const AppRoutes = () => (
 
     {/* Public + authenticated project page (guest uses landing header; owner uses LK shell). */}
     <Route path={PROJECT_PAGE_ROUTE} element={<ProjectPage />} />
-    <Route path={PROJECT_EDIT_ROUTE} element={<ProjectEditor />} />
 
     <Route element={<AuthenticatedShell />}>
       <Route
