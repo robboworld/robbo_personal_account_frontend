@@ -31,8 +31,8 @@ export const buildOidcStartUrl = (returnTo = '', prompt = 'login') => {
   return startUrl.toString()
 }
 
-/** Clears BFF cookie on backend, then redirects to IdP logout or FE /login. */
-export const buildOidcLogoutUrl = (returnTo = '/login') => {
+/** Clears BFF cookie on backend, then redirects to IdP logout or FE landing. */
+export const buildOidcLogoutUrl = (returnTo = '/?logged_out=1') => {
   const logoutUrl = new URL(`${apiBase()}/auth/oidc/logout`)
   if (returnTo) {
     logoutUrl.searchParams.set('return_to', returnTo)
@@ -40,7 +40,7 @@ export const buildOidcLogoutUrl = (returnTo = '/login') => {
   return logoutUrl.toString()
 }
 
-export const redirectToOidcLogout = (returnTo = '/login') => {
+export const redirectToOidcLogout = (returnTo = '/?logged_out=1') => {
   window.location.assign(buildOidcLogoutUrl(returnTo))
 }
 
