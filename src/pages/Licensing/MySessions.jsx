@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Empty, Spin, Typography, message, Popconfirm } from 'antd'
+import { Button, Empty, Spin, Tag, Typography, message, Popconfirm } from 'antd'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
@@ -15,6 +15,8 @@ import {
   staggerItem,
 } from '@/components/AccountShell'
 import { authAPI } from '@/api/auth'
+import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
+import { LANDING_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 
 const { Text } = Typography
 
@@ -30,6 +32,15 @@ const formatWhen = (iso, locale) => {
   }
 }
 
+const forceSessionExpiredLogout = () => {
+  localStorage.removeItem('token')
+  if (isOidcSsoEnabled()) {
+    redirectToOidcLogout(`${LANDING_PAGE_ROUTE}?session_expired=1`)
+    return
+  }
+  window.location.assign(`${LOGIN_PAGE_ROUTE}?session_expired=1`)
+}
+
 const MySessionsPage = () => {
   const intl = useIntl()
   const [sessions, setSessions] = useState([])
@@ -42,6 +53,10 @@ const MySessionsPage = () => {
       const { data } = await authAPI.listSessions()
       setSessions(data?.sessions || [])
     } catch (e) {
+      if (e?.response?.data?.code === 'SESSION_NOT_FOUND' || e?.response?.status === 401) {
+        forceSessionExpiredLogout()
+        return
+      }
       message.error(e?.response?.data?.error || e.message || 'Error')
     } finally {
       setLoading(false)
@@ -53,9 +68,14 @@ const MySessionsPage = () => {
   }, [load])
 
   const onRevoke = async sessionId => {
+    const target = sessions.find(s => s.id === sessionId)
     setRevokingId(sessionId)
     try {
-      await authAPI.revokeSession(sessionId)
+      const { data } = await authAPI.revokeSession(sessionId)
+      if (data?.wasCurrent || target?.isCurrent) {
+        forceSessionExpiredLogout()
+        return
+      }
       message.success(intl.formatMessage({ id: 'sessions.revoked' }))
       await load()
     } catch (e) {
@@ -104,9 +124,14 @@ animate='show'>
                     }}
                   >
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <Text strong>
-                        {session.authMode || intl.formatMessage({ id: 'sessions.unknown_mode' })}
-                      </Text>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <Text strong>
+                          {session.authMode || intl.formatMessage({ id: 'sessions.unknown_mode' })}
+                        </Text>
+                        {session.isCurrent ? (
+                          <Tag color='green'>{intl.formatMessage({ id: 'sessions.current' })}</Tag>
+                        ) : null}
+                      </div>
                       <div>
                         <Text type='secondary'>
                           {session.userAgent || intl.formatMessage({ id: 'sessions.unknown_ua' })}
@@ -122,7 +147,11 @@ animate='show'>
                       </div>
                     </div>
                     <Popconfirm
-                      title={intl.formatMessage({ id: 'sessions.revoke_confirm' })}
+                      title={
+                        session.isCurrent
+                          ? intl.formatMessage({ id: 'sessions.revoke_current_confirm' })
+                          : intl.formatMessage({ id: 'sessions.revoke_confirm' })
+                      }
                       onConfirm={() => onRevoke(session.id)}
                     >
                       <Button

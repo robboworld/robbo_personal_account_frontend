@@ -552,6 +552,8 @@
     "sessions.unknown_mode": "Session",
     "sessions.unknown_ua": "Unknown browser",
     "sessions.limit_reached": "Concurrent session limit reached. End an active session to sign in.",
+    "sessions.current": "This device",
+    "sessions.revoke_current_confirm": "End the session on this device? You will be signed out.",
     "licensing.cloud_quota": "Cloud",
     "licensing.session_limit": "Sessions",
     "licensing.unlimited": "unlimited",
