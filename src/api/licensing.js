@@ -23,3 +23,8 @@ export async function confirmDeviceLink({ userCode, licenseId }) {
   )
   return data
 }
+
+export async function getEntitlements() {
+  const { data } = await instance.get('licensing/entitlements', { withCredentials: true })
+  return data
+}

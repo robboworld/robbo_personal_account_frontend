@@ -50,6 +50,21 @@ const SignInForm = memo(({ handleSubmit }) => {
       navigate(HOME_PAGE_ROUTE)
     },
     onError: error => {
+      const graphQLError = error?.graphQLErrors?.[0]
+      const code = graphQLError?.extensions?.code
+      if (code === 'SESSION_LIMIT_REACHED' || String(error?.message || '').includes('SESSION_LIMIT_REACHED')) {
+        notification.error({
+          message: intl.formatMessage({ id: 'notification.error_message' }),
+          description: (
+            <span>
+              {intl.formatMessage({ id: 'sessions.limit_reached' })}
+              {' '}
+              <a href='/sessions'>{intl.formatMessage({ id: 'sessions.title' })}</a>
+            </span>
+          ),
+        })
+        return
+      }
       notification.error({
         message: intl.formatMessage({ id: 'notification.error_message' }),
         description: error?.message,

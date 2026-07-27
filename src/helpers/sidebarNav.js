@@ -10,6 +10,7 @@ import {
   UNIT_ADMINS_ROUTE,
   SCRATCH_HUB_ROUTE,
   MY_LICENSES_ROUTE,
+  MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
   LICENSES_CATALOG_ROUTE,
   STUDENT,
@@ -78,6 +79,10 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
   // Legacy buy URL redirects to /licenses; keep sidebar highlight on my_licenses.
   if (pathname === LICENSES_CATALOG_ROUTE) {
     return 'my_licenses'
+  }
+
+  if (pathname === MY_SESSIONS_ROUTE) {
+    return 'my_sessions'
   }
 
   const exact = exactByRole[role]?.[pathname]

@@ -80,6 +80,68 @@ export const SeatInfo = styled.div`
   min-width: 0;
 `
 
+export const UsageHeader = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+`
+
+export const TariffBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: ${colors.secondary};
+  background: rgba(15, 118, 110, 0.1);
+  border: 1px solid rgba(15, 118, 110, 0.18);
+`
+
+export const UsageGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+export const UsageMeter = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 0.85rem 0.9rem 0.95rem;
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid ${surface.line};
+`
+
+export const UsageMeterTop = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+`
+
+export const UsageMeterLabel = styled.span`
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: ${colors.secondary};
+`
+
+export const UsageMeterValue = styled.span`
+  font-size: 0.8125rem;
+  color: ${surface.muted};
+  white-space: nowrap;
+`
+
 export const ResultBlock = styled.div`
   margin-top: 0.25rem;
   padding-top: 1rem;
