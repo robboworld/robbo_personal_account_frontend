@@ -4,23 +4,39 @@ import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
 import {
-  LicenseCard,
+  EmptyDevices,
+  EmptyDevicesActions,
+  EmptyDevicesText,
+  EmptyDevicesTitle,
+  KeyBlock,
+  KeyBlockLabel,
   LicenseKeyRow,
   LicenseLabel,
-  LicenseMeta,
   LicenseStack,
-  ProductTitle,
+  PanelSectionTitle,
   ProductActions,
+  ProductCard,
+  ProductCardHeader,
+  ProductFeature,
+  ProductFeatures,
+  ProductGrid,
+  ProductPrice,
+  ProductTitle,
   SeatInfo,
   SeatItem,
   SeatList,
-  UsageHeader,
+  SessionsLink,
+  SplitGrid,
+  StatusHint,
+  StatusPills,
+  StatusTitle,
   TariffBadge,
-  UsageGrid,
+  UsageHeader,
   UsageMeter,
-  UsageMeterTop,
   UsageMeterLabel,
+  UsageMeterTop,
   UsageMeterValue,
+  UsageStack,
 } from './styles'
 
 import {
@@ -40,6 +56,7 @@ import {
 import { listMyLicenses, revokeSeat, getEntitlements } from '@/api/licensing'
 import { checkout, listProducts } from '@/api/payments'
 import { authAPI } from '@/api/auth'
+import { MY_SESSIONS_ROUTE } from '@/constants/router'
 
 const { Text } = Typography
 
@@ -51,6 +68,21 @@ const formatPrice = (amount, currency, locale) => {
     }).format(amount)
   } catch (e) {
     return `${amount} ${currency || 'RUB'}`
+  }
+}
+
+const formatExpiresAt = (iso, locale) => {
+  if (!iso) return null
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return iso
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(date)
+  } catch (e) {
+    return iso
   }
 }
 
@@ -69,16 +101,21 @@ const meterStatus = percent => {
   return 'normal'
 }
 
-const UsageWidget = ({ entitlements, licenses, activeSessions, intl }) => {
+const isLicenseActive = lic => {
+  const status = String(lic?.status || '').toLowerCase()
+  if (status && status !== 'active') return false
+  if (!lic?.expiresAt) return status === 'active'
+  const expires = new Date(lic.expiresAt)
+  if (Number.isNaN(expires.getTime())) return status === 'active'
+  return expires.getTime() > Date.now()
+}
+
+const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
   const quotaMb = Number(entitlements.cloudQuotaMb) || 0
   const usedMb = bytesToMb(entitlements.usedBytes)
   const cloudPercent = meterPercent(usedMb, quotaMb)
 
   const seatLimit = Number(entitlements.seatLimit) || 0
-  const seatsUsed = useMemo(
-    () => (licenses || []).reduce((sum, lic) => sum + ((lic.seats && lic.seats.length) || 0), 0),
-    [licenses],
-  )
   const seatsPercent = meterPercent(seatsUsed, seatLimit)
 
   const sessionLimit = Number(entitlements.sessionLimit) || 0
@@ -88,9 +125,9 @@ const UsageWidget = ({ entitlements, licenses, activeSessions, intl }) => {
   return (
     <GlassPanel>
       <UsageHeader>
-        <SectionTitle style={{ margin: 0 }}>
+        <PanelSectionTitle style={{ margin: 0 }}>
           {intl.formatMessage({ id: 'licensing.usage_title' })}
-        </SectionTitle>
+        </PanelSectionTitle>
         <TariffBadge>
           {intl.formatMessage(
             { id: 'licensing.usage_tariff' },
@@ -98,8 +135,7 @@ const UsageWidget = ({ entitlements, licenses, activeSessions, intl }) => {
           )}
         </TariffBadge>
       </UsageHeader>
-
-      <UsageGrid>
+      <UsageStack>
         <UsageMeter>
           <UsageMeterTop>
             <UsageMeterLabel>
@@ -168,7 +204,7 @@ const UsageWidget = ({ entitlements, licenses, activeSessions, intl }) => {
             strokeColor={seatLimit > 0 && seatsPercent >= 95 ? undefined : '#0f766e'}
           />
         </UsageMeter>
-      </UsageGrid>
+      </UsageStack>
     </GlassPanel>
   )
 }
@@ -267,6 +303,38 @@ const MyLicensesPage = () => {
     }
   }
 
+  const activeLicenses = useMemo(
+    () => (licenses || []).filter(isLicenseActive),
+    [licenses],
+  )
+
+  const primaryLicense = activeLicenses[0] || licenses[0] || null
+
+  const seatsUsed = useMemo(
+    () => (licenses || []).reduce((sum, lic) => sum + ((lic.seats && lic.seats.length) || 0), 0),
+    [licenses],
+  )
+
+  const seatEntries = useMemo(() => {
+    const rows = []
+    ;(licenses || []).forEach(lic => {
+      ;(lic.seats || []).forEach(seat => {
+        rows.push({ licenseId: lic.id, licenseKey: lic.licenseKey, seat })
+      })
+    })
+    return rows
+  }, [licenses])
+
+  const tariffName = entitlements?.tariffName || 'Free'
+  const hasActive = activeLicenses.length > 0
+  const seatLimit = Number(entitlements?.seatLimit ?? primaryLicense?.seatLimit) || 0
+  const expiresLabel = formatExpiresAt(primaryLicense?.expiresAt, intl.locale)
+
+  const isCurrentProduct = product => {
+    if (!hasActive || !product?.title) return false
+    return String(product.title).trim().toLowerCase() === String(tariffName).trim().toLowerCase()
+  }
+
   return (
     <PageContent>
       <Stagger variants={staggerContainer} initial='hidden'
@@ -282,88 +350,130 @@ animate='show'>
           </HeroInner>
         </HeroPanel>
 
-        {entitlements ? (
-          <motion.div variants={staggerItem}>
-            <UsageWidget
-              entitlements={entitlements}
-              licenses={licenses}
-              activeSessions={activeSessions}
-              intl={intl}
-            />
-          </motion.div>
-        ) : null}
-
         <motion.div variants={staggerItem}>
           <GlassPanel>
             {licensesLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
                 <Spin />
               </div>
-            ) : licenses.length === 0 ? (
-              <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })} />
             ) : (
-              <LicenseStack>
-                {licenses.map(lic => (
-                  <LicenseCard key={lic.id}>
-                    <LicenseKeyRow>
-                      <LicenseLabel>
-                        {intl.formatMessage({ id: 'licensing.license_key' })}
-                      </LicenseLabel>
-                      <Text code copyable>{lic.licenseKey}</Text>
-                    </LicenseKeyRow>
-                    <LicenseMeta>
-                      {lic.status}
-                      {' · seats '}
-                      {lic.seats?.length || 0}
-                      /
-                      {lic.seatLimit}
-                      {' · '}
-                      {intl.formatMessage({ id: 'licensing.cloud_quota' })}
-                      {': '}
-                      {lic.cloudQuotaMb ?? '—'}
-                      {' MB · '}
-                      {intl.formatMessage({ id: 'licensing.session_limit' })}
-                      {': '}
-                      {lic.sessionLimit === 0
-                        ? intl.formatMessage({ id: 'licensing.unlimited' })
-                        : (lic.sessionLimit ?? '—')}
-                      {' · '}
-                      {intl.formatMessage({ id: 'licensing.expires_at' })}
-                      {': '}
-                      {lic.expiresAt}
-                    </LicenseMeta>
-                    {(lic.seats || []).length === 0 ? (
-                      <Text type='secondary'>
-                        {intl.formatMessage({ id: 'licensing.no_seats' })}
-                      </Text>
-                    ) : (
-                      <SeatList>
-                        {(lic.seats || []).map(seat => (
-                          <SeatItem key={seat.seatId}>
-                            <SeatInfo>
-                              <Text code>{seat.seatId}</Text>
-                              <Text type='secondary'>
-                                {seat.deviceFingerprint?.slice(0, 12)}
-                                …
-                              </Text>
-                            </SeatInfo>
-                            <Popconfirm
-                              title={intl.formatMessage({ id: 'licensing.revoke_confirm' })}
-                              onConfirm={() => onRevoke(lic.id, seat.seatId)}
-                            >
-                              <Button danger size='small'>
-                                {intl.formatMessage({ id: 'licensing.revoke_seat' })}
-                              </Button>
-                            </Popconfirm>
-                          </SeatItem>
-                        ))}
-                      </SeatList>
+              <React.Fragment>
+                <StatusTitle>
+                  {hasActive
+                    ? intl.formatMessage({ id: 'licensing.status_active' })
+                    : intl.formatMessage({ id: 'licensing.status_none' })}
+                </StatusTitle>
+                <StatusPills>
+                  <TariffBadge>
+                    {intl.formatMessage(
+                      { id: 'licensing.usage_tariff' },
+                      { tariff: tariffName },
                     )}
-                  </LicenseCard>
-                ))}
-              </LicenseStack>
+                  </TariffBadge>
+                  {hasActive && seatLimit > 0 ? (
+                    <TariffBadge>
+                      {intl.formatMessage(
+                        { id: 'licensing.seats_pill' },
+                        { used: seatsUsed, limit: seatLimit },
+                      )}
+                    </TariffBadge>
+                  ) : null}
+                  {hasActive && expiresLabel ? (
+                    <TariffBadge>
+                      {intl.formatMessage(
+                        { id: 'licensing.expires_pill' },
+                        { date: expiresLabel },
+                      )}
+                    </TariffBadge>
+                  ) : null}
+                </StatusPills>
+                <StatusHint>
+                  {intl.formatMessage({ id: 'licensing.status_robbo_id_hint' })}
+                </StatusHint>
+                {licenses.length === 0 ? (
+                  <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })} />
+                ) : (
+                  <KeyBlock>
+                    <KeyBlockLabel>
+                      {intl.formatMessage({ id: 'licensing.key_manual_label' })}
+                    </KeyBlockLabel>
+                    <LicenseStack>
+                      {licenses.map(lic => (
+                        <LicenseKeyRow key={lic.id} style={{ marginBottom: 0 }}>
+                          <LicenseLabel>
+                            {intl.formatMessage({ id: 'licensing.license_key' })}
+                          </LicenseLabel>
+                          <Text code copyable>{lic.licenseKey}</Text>
+                        </LicenseKeyRow>
+                      ))}
+                    </LicenseStack>
+                  </KeyBlock>
+                )}
+              </React.Fragment>
             )}
           </GlassPanel>
+        </motion.div>
+
+        <motion.div variants={staggerItem}>
+          <SplitGrid>
+            <GlassPanel>
+              <PanelSectionTitle>
+                {intl.formatMessage({ id: 'licensing.devices_title' })}
+              </PanelSectionTitle>
+              {licensesLoading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
+                  <Spin />
+                </div>
+              ) : seatEntries.length === 0 ? (
+                <EmptyDevices>
+                  <EmptyDevicesTitle>
+                    {intl.formatMessage({ id: 'licensing.no_seats' })}
+                  </EmptyDevicesTitle>
+                  <EmptyDevicesText>
+                    {intl.formatMessage({ id: 'licensing.devices_empty_hint' })}
+                  </EmptyDevicesText>
+                  <EmptyDevicesActions>
+                    <SessionsLink to={MY_SESSIONS_ROUTE}>
+                      {intl.formatMessage({ id: 'licensing.devices_sessions_link' })}
+                    </SessionsLink>
+                  </EmptyDevicesActions>
+                </EmptyDevices>
+              ) : (
+                <SeatList>
+                  {seatEntries.map(({ licenseId, seat }) => (
+                    <SeatItem key={`${licenseId}-${seat.seatId}`}>
+                      <SeatInfo>
+                        <Text code>{seat.label || seat.seatId}</Text>
+                        {seat.deviceFingerprint ? (
+                          <Text type='secondary'>
+                            {seat.deviceFingerprint.slice(0, 12)}
+                            …
+                          </Text>
+                        ) : null}
+                      </SeatInfo>
+                      <Popconfirm
+                        title={intl.formatMessage({ id: 'licensing.revoke_confirm' })}
+                        onConfirm={() => onRevoke(licenseId, seat.seatId)}
+                      >
+                        <Button danger size='small'>
+                          {intl.formatMessage({ id: 'licensing.revoke_seat' })}
+                        </Button>
+                      </Popconfirm>
+                    </SeatItem>
+                  ))}
+                </SeatList>
+              )}
+            </GlassPanel>
+
+            {entitlements ? (
+              <UsageColumn
+                entitlements={entitlements}
+                seatsUsed={seatsUsed}
+                activeSessions={activeSessions}
+                intl={intl}
+              />
+            ) : null}
+          </SplitGrid>
         </motion.div>
 
         <motion.div variants={staggerItem}>
@@ -383,43 +493,71 @@ animate='show'>
             ) : products.length === 0 ? (
               <Empty description={intl.formatMessage({ id: 'payments.catalog_empty' })} />
             ) : (
-              <LicenseStack>
-                {products.map(product => (
-                  <LicenseCard key={product.id}>
-                    <ProductTitle>{product.title}</ProductTitle>
-                    {product.description ? (
-                      <LicenseMeta>{product.description}</LicenseMeta>
-                    ) : null}
-                    <LicenseMeta>
-                      <Text strong>
-                        {intl.formatMessage({ id: 'payments.price' })}
-                        {': '}
-                      </Text>
-                      {formatPrice(product.amount, product.currency, intl.locale)}
-                      {' · '}
-                      {intl.formatMessage(
-                        { id: 'payments.product_meta' },
-                        {
-                          seats: product.seatLimit,
-                          days: product.durationDays,
-                          cloudMb: product.cloudQuotaMb ?? 10,
-                          sessions: product.sessionLimit ?? 0,
-                        },
-                      )}
-                    </LicenseMeta>
-                    <ProductActions>
-                      <Button
-                        type='primary'
-                        loading={buyingId === product.id}
-                        disabled={!!buyingId}
-                        onClick={() => onBuy(product.id)}
-                      >
-                        {intl.formatMessage({ id: 'payments.buy' })}
-                      </Button>
-                    </ProductActions>
-                  </LicenseCard>
-                ))}
-              </LicenseStack>
+              <ProductGrid>
+                {products.map(product => {
+                  const current = isCurrentProduct(product)
+                  return (
+                    <ProductCard key={product.id} $current={current}>
+                      <ProductCardHeader>
+                        <ProductTitle style={{ margin: 0 }}>{product.title}</ProductTitle>
+                        {current ? (
+                          <TariffBadge>
+                            {intl.formatMessage({ id: 'payments.current_plan' })}
+                          </TariffBadge>
+                        ) : null}
+                      </ProductCardHeader>
+                      {product.description ? (
+                        <Text type='secondary' style={{ display: 'block', marginBottom: '0.65rem' }}>
+                          {product.description}
+                        </Text>
+                      ) : null}
+                      <ProductPrice>
+                        {formatPrice(product.amount, product.currency, intl.locale)}
+                      </ProductPrice>
+                      <ProductFeatures>
+                        <ProductFeature>
+                          {intl.formatMessage(
+                            { id: 'payments.feature_cloud' },
+                            { cloudMb: product.cloudQuotaMb ?? 10 },
+                          )}
+                        </ProductFeature>
+                        <ProductFeature>
+                          {intl.formatMessage(
+                            { id: 'payments.feature_devices' },
+                            { seats: product.seatLimit },
+                          )}
+                        </ProductFeature>
+                        <ProductFeature>
+                          {(product.sessionLimit ?? 0) <= 0
+                            ? intl.formatMessage({ id: 'payments.feature_sessions_unlimited' })
+                            : intl.formatMessage(
+                              { id: 'payments.feature_sessions' },
+                              { sessions: product.sessionLimit },
+                            )}
+                        </ProductFeature>
+                        <ProductFeature>
+                          {intl.formatMessage(
+                            { id: 'payments.feature_days' },
+                            { days: product.durationDays },
+                          )}
+                        </ProductFeature>
+                      </ProductFeatures>
+                      <ProductActions>
+                        <Button
+                          type={current ? 'default' : 'primary'}
+                          loading={buyingId === product.id}
+                          disabled={!!buyingId || current}
+                          onClick={() => onBuy(product.id)}
+                        >
+                          {current
+                            ? intl.formatMessage({ id: 'payments.already_connected' })
+                            : intl.formatMessage({ id: 'payments.buy' })}
+                        </Button>
+                      </ProductActions>
+                    </ProductCard>
+                  )
+                })}
+              </ProductGrid>
             )}
           </GlassPanel>
         </motion.div>
