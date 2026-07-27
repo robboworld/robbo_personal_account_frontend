@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Empty, Spin, Typography, message, Popconfirm } from 'antd'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Button, Empty, Progress, Spin, Typography, message, Popconfirm } from 'antd'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
@@ -14,6 +14,13 @@ import {
   SeatInfo,
   SeatItem,
   SeatList,
+  UsageHeader,
+  TariffBadge,
+  UsageGrid,
+  UsageMeter,
+  UsageMeterTop,
+  UsageMeterLabel,
+  UsageMeterValue,
 } from './styles'
 
 import {
@@ -30,8 +37,9 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { listMyLicenses, revokeSeat } from '@/api/licensing'
+import { listMyLicenses, revokeSeat, getEntitlements } from '@/api/licensing'
 import { checkout, listProducts } from '@/api/payments'
+import { authAPI } from '@/api/auth'
 
 const { Text } = Typography
 
@@ -46,10 +54,131 @@ const formatPrice = (amount, currency, locale) => {
   }
 }
 
+const bytesToMb = bytes => (Number(bytes) || 0) / (1024 * 1024)
+
+const meterPercent = (used, limit) => {
+  if (!limit || limit <= 0) {
+    return 0
+  }
+  return Math.min(100, Math.round((used / limit) * 100))
+}
+
+const meterStatus = percent => {
+  if (percent >= 95) return 'exception'
+  if (percent >= 80) return 'active'
+  return 'normal'
+}
+
+const UsageWidget = ({ entitlements, licenses, activeSessions, intl }) => {
+  const quotaMb = Number(entitlements.cloudQuotaMb) || 0
+  const usedMb = bytesToMb(entitlements.usedBytes)
+  const cloudPercent = meterPercent(usedMb, quotaMb)
+
+  const seatLimit = Number(entitlements.seatLimit) || 0
+  const seatsUsed = useMemo(
+    () => (licenses || []).reduce((sum, lic) => sum + ((lic.seats && lic.seats.length) || 0), 0),
+    [licenses],
+  )
+  const seatsPercent = meterPercent(seatsUsed, seatLimit)
+
+  const sessionLimit = Number(entitlements.sessionLimit) || 0
+  const sessionsUnlimited = sessionLimit <= 0
+  const sessionsPercent = sessionsUnlimited ? 0 : meterPercent(activeSessions, sessionLimit)
+
+  return (
+    <GlassPanel>
+      <UsageHeader>
+        <SectionTitle style={{ margin: 0 }}>
+          {intl.formatMessage({ id: 'licensing.usage_title' })}
+        </SectionTitle>
+        <TariffBadge>
+          {intl.formatMessage(
+            { id: 'licensing.usage_tariff' },
+            { tariff: entitlements.tariffName || 'Free' },
+          )}
+        </TariffBadge>
+      </UsageHeader>
+
+      <UsageGrid>
+        <UsageMeter>
+          <UsageMeterTop>
+            <UsageMeterLabel>
+              {intl.formatMessage({ id: 'licensing.cloud_quota' })}
+            </UsageMeterLabel>
+            <UsageMeterValue>
+              {quotaMb <= 0
+                ? intl.formatMessage({ id: 'licensing.unlimited' })
+                : intl.formatMessage(
+                  { id: 'licensing.usage_cloud_value' },
+                  {
+                    used: usedMb < 10 ? usedMb.toFixed(1) : Math.round(usedMb),
+                    quota: quotaMb,
+                  },
+                )}
+            </UsageMeterValue>
+          </UsageMeterTop>
+          <Progress
+            percent={quotaMb <= 0 ? 0 : cloudPercent}
+            status={quotaMb <= 0 ? 'normal' : meterStatus(cloudPercent)}
+            showInfo={quotaMb > 0}
+            strokeColor={quotaMb > 0 && cloudPercent >= 95 ? undefined : '#0f766e'}
+          />
+        </UsageMeter>
+
+        <UsageMeter>
+          <UsageMeterTop>
+            <UsageMeterLabel>
+              {intl.formatMessage({ id: 'licensing.session_limit' })}
+            </UsageMeterLabel>
+            <UsageMeterValue>
+              {sessionsUnlimited
+                ? intl.formatMessage({ id: 'licensing.unlimited' })
+                : intl.formatMessage(
+                  { id: 'licensing.usage_count_value' },
+                  { used: activeSessions, limit: sessionLimit },
+                )}
+            </UsageMeterValue>
+          </UsageMeterTop>
+          <Progress
+            percent={sessionsUnlimited ? 0 : sessionsPercent}
+            status={sessionsUnlimited ? 'normal' : meterStatus(sessionsPercent)}
+            showInfo={!sessionsUnlimited}
+            strokeColor={!sessionsUnlimited && sessionsPercent >= 95 ? undefined : '#0f766e'}
+          />
+        </UsageMeter>
+
+        <UsageMeter>
+          <UsageMeterTop>
+            <UsageMeterLabel>
+              {intl.formatMessage({ id: 'licensing.devices' })}
+            </UsageMeterLabel>
+            <UsageMeterValue>
+              {seatLimit <= 0
+                ? intl.formatMessage({ id: 'licensing.unlimited' })
+                : intl.formatMessage(
+                  { id: 'licensing.usage_count_value' },
+                  { used: seatsUsed, limit: seatLimit },
+                )}
+            </UsageMeterValue>
+          </UsageMeterTop>
+          <Progress
+            percent={seatLimit <= 0 ? 0 : seatsPercent}
+            status={seatLimit <= 0 ? 'normal' : meterStatus(seatsPercent)}
+            showInfo={seatLimit > 0}
+            strokeColor={seatLimit > 0 && seatsPercent >= 95 ? undefined : '#0f766e'}
+          />
+        </UsageMeter>
+      </UsageGrid>
+    </GlassPanel>
+  )
+}
+
 const MyLicensesPage = () => {
   const intl = useIntl()
   const [licenses, setLicenses] = useState([])
   const [products, setProducts] = useState([])
+  const [entitlements, setEntitlements] = useState(null)
+  const [activeSessions, setActiveSessions] = useState(0)
   const [licensesLoading, setLicensesLoading] = useState(true)
   const [productsLoading, setProductsLoading] = useState(true)
   const [buyingId, setBuyingId] = useState(null)
@@ -78,10 +207,24 @@ const MyLicensesPage = () => {
     }
   }, [])
 
+  const loadUsage = useCallback(async () => {
+    try {
+      const [ent, sessionsRes] = await Promise.all([
+        getEntitlements(),
+        authAPI.listSessions().catch(() => ({ data: { sessions: [] } })),
+      ])
+      setEntitlements(ent)
+      setActiveSessions((sessionsRes?.data?.sessions || []).length)
+    } catch (e) {
+      // Non-fatal for the page; usage widget just stays empty.
+    }
+  }, [])
+
   useEffect(() => {
     loadLicenses()
     loadProducts()
-  }, [loadLicenses, loadProducts])
+    loadUsage()
+  }, [loadLicenses, loadProducts, loadUsage])
 
   useEffect(() => {
     if (window.location.hash !== '#buy') {
@@ -99,6 +242,7 @@ const MyLicensesPage = () => {
       await revokeSeat(licenseId, seatId)
       message.success(intl.formatMessage({ id: 'licensing.seat_revoked' }))
       loadLicenses()
+      loadUsage()
     } catch (e) {
       message.error(e?.response?.data?.error || e.message || 'Error')
     }
@@ -138,6 +282,17 @@ animate='show'>
           </HeroInner>
         </HeroPanel>
 
+        {entitlements ? (
+          <motion.div variants={staggerItem}>
+            <UsageWidget
+              entitlements={entitlements}
+              licenses={licenses}
+              activeSessions={activeSessions}
+              intl={intl}
+            />
+          </motion.div>
+        ) : null}
+
         <motion.div variants={staggerItem}>
           <GlassPanel>
             {licensesLoading ? (
@@ -162,6 +317,16 @@ animate='show'>
                       {lic.seats?.length || 0}
                       /
                       {lic.seatLimit}
+                      {' · '}
+                      {intl.formatMessage({ id: 'licensing.cloud_quota' })}
+                      {': '}
+                      {lic.cloudQuotaMb ?? '—'}
+                      {' MB · '}
+                      {intl.formatMessage({ id: 'licensing.session_limit' })}
+                      {': '}
+                      {lic.sessionLimit === 0
+                        ? intl.formatMessage({ id: 'licensing.unlimited' })
+                        : (lic.sessionLimit ?? '—')}
                       {' · '}
                       {intl.formatMessage({ id: 'licensing.expires_at' })}
                       {': '}
@@ -237,6 +402,8 @@ animate='show'>
                         {
                           seats: product.seatLimit,
                           days: product.durationDays,
+                          cloudMb: product.cloudQuotaMb ?? 10,
+                          sessions: product.sessionLimit ?? 0,
                         },
                       )}
                     </LicenseMeta>

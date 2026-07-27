@@ -21,6 +21,7 @@ export const ROBBO_GROUP_PAGE_ROUTE = '/robboUnits/:robboUnitId/groups/:robboGro
 export const OIDC_CALLBACK_ROUTE = '/auth/oidc/callback'
 export const SEND_NOTIFICATION_ROUTE = '/send-notification'
 export const MY_LICENSES_ROUTE = '/licenses'
+export const MY_SESSIONS_ROUTE = '/sessions'
 export const ISSUE_LICENSE_ROUTE = '/licenses/issue'
 export const LICENSES_CATALOG_ROUTE = '/licenses/buy'
 export const PAYMENT_RECEIPT_ROUTE = '/licenses/receipt'

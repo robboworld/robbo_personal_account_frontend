@@ -18,6 +18,7 @@ import {
   BookOutlined,
   KeyOutlined,
   PlusCircleOutlined,
+  DesktopOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -33,6 +34,7 @@ import {
   SCRATCH_HUB_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
   MY_LICENSES_ROUTE,
+  MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
 } from '@/constants'
 
@@ -124,6 +126,12 @@ export const SidebarDataStudent = [
     icon: <KeyOutlined />,
     iconAccent: 'green',
   },
+  {
+    key: 'my_sessions',
+    label: <FormattedMessage id='sidebar_data.my_sessions' />,
+    pathname: MY_SESSIONS_ROUTE,
+    icon: <DesktopOutlined />,
+  },
 ]
 
 export const SidebarDataParent = [
@@ -146,6 +154,12 @@ export const SidebarDataParent = [
     icon: <KeyOutlined />,
     iconAccent: 'green',
   },
+  {
+    key: 'my_sessions',
+    label: <FormattedMessage id='sidebar_data.my_sessions' />,
+    pathname: MY_SESSIONS_ROUTE,
+    icon: <DesktopOutlined />,
+  },
 ]
 
 export const SidebarDataSuperAdmin = [
@@ -167,6 +181,12 @@ export const SidebarDataSuperAdmin = [
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
     iconAccent: 'green',
+  },
+  {
+    key: 'my_sessions',
+    label: <FormattedMessage id='sidebar_data.my_sessions' />,
+    pathname: MY_SESSIONS_ROUTE,
+    icon: <DesktopOutlined />,
   },
   {
     key: 'issue_license',
@@ -231,6 +251,12 @@ export const SidebarDataTeacher = [
     icon: <KeyOutlined />,
     iconAccent: 'green',
   },
+  {
+    key: 'my_sessions',
+    label: <FormattedMessage id='sidebar_data.my_sessions' />,
+    pathname: MY_SESSIONS_ROUTE,
+    icon: <DesktopOutlined />,
+  },
 ]
 
 export const SidebarDataFreeListener = [
@@ -252,6 +278,12 @@ export const SidebarDataFreeListener = [
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
     iconAccent: 'green',
+  },
+  {
+    key: 'my_sessions',
+    label: <FormattedMessage id='sidebar_data.my_sessions' />,
+    pathname: MY_SESSIONS_ROUTE,
+    icon: <DesktopOutlined />,
   },
   {
     key: '2',
@@ -292,6 +324,12 @@ export const SidebarDataUnitAdmin = [
     pathname: MY_LICENSES_ROUTE,
     icon: <KeyOutlined />,
     iconAccent: 'green',
+  },
+  {
+    key: 'my_sessions',
+    label: <FormattedMessage id='sidebar_data.my_sessions' />,
+    pathname: MY_SESSIONS_ROUTE,
+    icon: <DesktopOutlined />,
   },
   {
     key: '2',

@@ -27,6 +27,7 @@ import {
   FREE_LISTENER,
   SCRATCH_HUB_ROUTE,
   MY_LICENSES_ROUTE,
+  MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
   LICENSES_CATALOG_ROUTE,
   PAYMENT_RECEIPT_ROUTE,
@@ -55,6 +56,7 @@ const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
 const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
 const MyLicensesPage = lazy(() => import('@/pages/Licensing/MyLicenses'))
+const MySessionsPage = lazy(() => import('@/pages/Licensing/MySessions'))
 const IssueLicensePage = lazy(() => import('@/pages/Licensing/IssueLicense'))
 const DeviceLinkPage = lazy(() => import('@/pages/Licensing/DeviceLink'))
 const PaymentsReceiptPage = lazy(() => import('@/pages/Payments/Receipt'))
@@ -122,6 +124,10 @@ const AppRoutes = () => (
       <Route
         path={MY_LICENSES_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)}
+      />
+      <Route
+        path={MY_SESSIONS_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <MySessionsPage />)}
       />
       <Route
         path={LICENSES_CATALOG_ROUTE}
