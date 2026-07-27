@@ -231,6 +231,19 @@ const Landing = () => {
     document.title = 'РОББО — личный кабинет и образовательная экосистема'
   }, [])
 
+  // After OIDC/password logout: clear FE token left on :3030 (Scratch clears only its origin).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search || '')
+    if (params.get('logged_out') !== '1') {
+      return undefined
+    }
+    localStorage.removeItem('token')
+    params.delete('logged_out')
+    const next = params.toString()
+    navigate({ pathname: '/', search: next ? `?${next}` : '' }, { replace: true })
+    return undefined
+  }, [navigate])
+
   useLayoutEffect(() => {
     document.documentElement.classList.add('landing-page-active')
     return () => {

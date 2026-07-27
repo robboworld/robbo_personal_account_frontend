@@ -33,6 +33,7 @@ import {
 } from '@/helpers'
 import {
   HOME_PAGE_ROUTE,
+  LANDING_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
   SEND_NOTIFICATION_ROUTE,
   SUPER_ADMIN,
@@ -105,7 +106,7 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
     // OIDC BFF: session lives in cookie — GraphQL SingOut alone cannot clear it.
     if (isOidcSsoEnabled()) {
       clearLocalSession()
-      redirectToOidcLogout(LOGIN_PAGE_ROUTE)
+      redirectToOidcLogout(`${LANDING_PAGE_ROUTE}?logged_out=1`)
       return
     }
 
