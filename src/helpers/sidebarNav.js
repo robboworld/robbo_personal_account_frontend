@@ -10,6 +10,7 @@ import {
   UNIT_ADMINS_ROUTE,
   SCRATCH_HUB_ROUTE,
   MY_LICENSES_ROUTE,
+  MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
   LICENSES_CATALOG_ROUTE,
   STUDENT,
@@ -25,22 +26,18 @@ const exactByRole = {
     [PROFILE_PAGE_ROUTE]: '1',
     [MY_PROJECTS_ROUTE]: '2',
     [MY_LICENSES_ROUTE]: 'my_licenses',
-    [LICENSES_CATALOG_ROUTE]: 'buy_license',
   },
   [PARENT]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [MY_LICENSES_ROUTE]: 'my_licenses',
-    [LICENSES_CATALOG_ROUTE]: 'buy_license',
   },
   [TEACHER]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [MY_LICENSES_ROUTE]: 'my_licenses',
-    [LICENSES_CATALOG_ROUTE]: 'buy_license',
   },
   [UNIT_ADMIN]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [MY_LICENSES_ROUTE]: 'my_licenses',
-    [LICENSES_CATALOG_ROUTE]: 'buy_license',
     [ROBBO_UNITS_ROUTE]: '2',
     [TEACHERS_PAGE_ROUTE]: '4',
     [ROBBO_GROUPS_ROUTE]: '6',
@@ -49,7 +46,6 @@ const exactByRole = {
   [SUPER_ADMIN]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [MY_LICENSES_ROUTE]: 'my_licenses',
-    [LICENSES_CATALOG_ROUTE]: 'buy_license',
     [ISSUE_LICENSE_ROUTE]: 'issue_license',
     [CLIENTS_ROUTE]: '5',
     [ROBBO_UNITS_ROUTE]: '6',
@@ -61,7 +57,6 @@ const exactByRole = {
   [FREE_LISTENER]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [MY_LICENSES_ROUTE]: 'my_licenses',
-    [LICENSES_CATALOG_ROUTE]: 'buy_license',
   },
 }
 
@@ -79,6 +74,15 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
 
   if (pathname === PUBLIC_PROJECTS_ROUTE) {
     return 'public_projects'
+  }
+
+  // Legacy buy URL redirects to /licenses; keep sidebar highlight on my_licenses.
+  if (pathname === LICENSES_CATALOG_ROUTE) {
+    return 'my_licenses'
+  }
+
+  if (pathname === MY_SESSIONS_ROUTE) {
+    return 'my_sessions'
   }
 
   const exact = exactByRole[role]?.[pathname]

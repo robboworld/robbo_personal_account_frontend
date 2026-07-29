@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { Alert } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
+import { useIntl } from 'react-intl'
 
 import AuthLayout from '@/components/AuthLayout'
 import Loader from '@/components/Loader'
@@ -16,6 +18,10 @@ import {
   shouldShowLocalAuthForms,
 } from '@/helpers/oidcSession'
 import {
+  formatInactiveBanDescription,
+  parseInactiveLoginSearch,
+} from '@/helpers/inactiveLogin'
+import {
   HOME_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
   REGISTER_PAGE_ROUTE,
@@ -29,9 +35,11 @@ const Logistration = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
+  const intl = useIntl()
   const { oidcStatus } = useOutletContext()
   const [activeTab, setActiveTab] = useState(() => resolvePageFromPath(location.pathname))
   const showLocalAuthForms = shouldShowLocalAuthForms(oidcStatus)
+  const inactiveBan = parseInactiveLoginSearch(location.search)
 
   const isAuth = useSelector(state => state.login.isAuth)
 
@@ -45,9 +53,14 @@ const Logistration = () => {
     }
 
     // Pure OIDC (no password fallback): both /login and /register go to mock/IdP.
+    // Stay on login to show ban reason instead of bouncing back to IdP.
+    if (inactiveBan) {
+      return undefined
+    }
+
     redirectToOidcStart(resolveLoginReturnTo(location.search), 'login')
     return undefined
-  }, [activeTab, location.search, showLocalAuthForms])
+  }, [activeTab, location.search, showLocalAuthForms, inactiveBan])
 
   const handleOnSelect = tabKey => {
     if (tabKey === activeTab) {
@@ -68,14 +81,27 @@ const Logistration = () => {
     return <Navigate to={HOME_PAGE_ROUTE} replace />
   }
 
-  if (!showLocalAuthForms) {
+  if (!showLocalAuthForms && !inactiveBan) {
     return <Loader />
   }
+
+  const inactiveAlert = inactiveBan ? (
+    <Alert
+      type='error'
+      showIcon
+      style={{ marginBottom: 16, whiteSpace: 'pre-line' }}
+      message={intl.formatMessage({ id: 'login.inactive.heading' })}
+      description={formatInactiveBanDescription(intl, inactiveBan)}
+    />
+  ) : null
 
   return (
     <AuthLayout selectedPage={activeTab} onTabSelect={handleOnSelect}>
       {activeTab === LOGIN_PAGE_ROUTE ? (
-        <LoginContent />
+        <React.Fragment>
+          {inactiveAlert}
+          {showLocalAuthForms ? <LoginContent /> : null}
+        </React.Fragment>
       ) : (
         <RegisterForm />
       )}

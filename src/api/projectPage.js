@@ -1,6 +1,7 @@
 import instance from './instance'
 
 import config from '@/config'
+import { readStoredLanguage } from '@/helpers/intl'
 
 function parseContentDispositionFilename(cd) {
     if (!cd)
@@ -179,6 +180,7 @@ export const projectPageAPI = {
                 withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${token}`,
+                    'Accept-Language': readStoredLanguage(),
                 },
             })
     },
@@ -338,6 +340,61 @@ export async function deleteProjectReaction(projectPageId) {
         throw new Error(await readFetchErrorMessage(res))
     }
     return res.json()
+}
+
+/** SuperAdmin: soft-delete any project with a moderation reason. */
+export async function moderateDeleteProjectPage(projectPageId, reason) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/moderate`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'DELETE',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ reason }),
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    if (res.status === 204 || res.headers.get('content-length') === '0') {
+        return null
+    }
+    const text = await res.text()
+    return text ? JSON.parse(text) : null
+}
+
+/** SuperAdmin: add/update/remove landing showcase flag + sort order. */
+export async function setLandingFeatured(projectPageId, { featured, sortOrder = 0 } = {}) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/landing-featured`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ featured: Boolean(featured), sortOrder: Number(sortOrder) || 0 }),
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
+/** SuperAdmin: batch reorder landing showcase. */
+export async function reorderLandingFeatured(items) {
+    const url = `${backendBase()}projectPage/landing-featured/reorder`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items }),
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return null
 }
 
 /** POST /projectPage/:id/preview — owner preview image upload. */

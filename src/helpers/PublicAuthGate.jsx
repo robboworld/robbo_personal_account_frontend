@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
 import Loader from '@/components/Loader'
+import config from '@/config'
 import {
   FREE_LISTENER,
   HOME_PAGE_ROUTE,
@@ -19,6 +20,27 @@ import {
 } from '@/helpers/oidcSession'
 
 const HOME_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
+
+function apiBase() {
+  const url = config.backendURL && config.backendURL[0]
+  return url ? url.replace(/\/$/, '') : 'http://localhost:8080'
+}
+
+async function tryRefreshAccessToken() {
+  const res = await fetch(`${apiBase()}/auth/refresh`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    return null
+  }
+  const data = await res.json()
+  if (!data?.accessToken) {
+    return null
+  }
+  localStorage.setItem('token', data.accessToken)
+  return data.accessToken
+}
 
 function isUsableLegacyToken(token) {
   try {
@@ -44,11 +66,22 @@ async function resolveAuthGate() {
       return { status: 'redirect' }
     }
 
-    if (legacyToken && (oidcStatus.lms_password_fallback || !ssoEnabled)) {
-      if (isUsableLegacyToken(legacyToken)) {
+    // Scratch password login leaves refresh_token cookie but no localStorage on :3030.
+    if (oidcStatus.lms_password_fallback || !ssoEnabled) {
+      let token = legacyToken && isUsableLegacyToken(legacyToken) ? legacyToken : null
+      if (!token) {
+        try {
+          token = await tryRefreshAccessToken()
+        } catch {
+          token = null
+        }
+      }
+      if (token && isUsableLegacyToken(token)) {
         return { status: 'redirect' }
       }
-      localStorage.removeItem('token')
+      if (legacyToken) {
+        localStorage.removeItem('token')
+      }
     } else if (legacyToken) {
       localStorage.removeItem('token')
     }

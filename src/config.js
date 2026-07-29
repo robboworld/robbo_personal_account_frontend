@@ -23,9 +23,10 @@ function resolveFrontendOrigin() {
   return 'http://localhost:3030'
 }
 
-function resolveScratchOrigin(path, envKey) {
-  if (typeof process !== 'undefined' && process.env && process.env[envKey]) {
-    return process.env[envKey]
+function resolveScratchOrigin(path, fromEnv) {
+  const envUrl = (fromEnv || '').trim()
+  if (envUrl) {
+    return envUrl
   }
   if (typeof window !== 'undefined' && window.location && window.location.hostname) {
     const port = (process.env && process.env.SCRATCH_PLAYER_PORT) || '5001'
@@ -38,8 +39,9 @@ const backendOrigin = resolveBackendOrigin()
 const frontendOrigin = resolveFrontendOrigin()
 
 export default {
-  scratchURL: resolveScratchOrigin('/', 'SCRATCH_EDITOR_URL'),
-  scratchPlayerURL: resolveScratchOrigin('/player.html', 'SCRATCH_PLAYER_URL'),
+  // Static process.env.* so dotenv-webpack / DefinePlugin can inline local .env values.
+  scratchURL: resolveScratchOrigin('/', process.env.SCRATCH_EDITOR_URL),
+  scratchPlayerURL: resolveScratchOrigin('/player.html', process.env.SCRATCH_PLAYER_URL),
   backendURL: [`${backendOrigin}/`],
   frontendURL: [`${frontendOrigin}/`],
   graphQLURL: [`${backendOrigin}/query`],

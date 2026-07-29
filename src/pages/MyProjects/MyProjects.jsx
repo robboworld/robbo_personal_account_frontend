@@ -18,6 +18,7 @@ import {
   PaginationWrap,
 } from './styles'
 
+import { displayProjectTitle } from '@/helpers/intl'
 import {
   CardMeta,
   CatalogCount,
@@ -48,6 +49,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
+import { openScratchEditor } from '@/utils/scratchEditor'
 
 
 const { confirm } = Modal
@@ -91,6 +93,10 @@ const MyProjects = ({
       state: { selectedNavBarKey: '2' },
     })
   }, [navigate])
+
+  const editProject = useCallback(projectPageId => {
+    openScratchEditor(projectPageId)
+  }, [])
 
   const confirmDelete = useCallback(projectPageId => {
     confirm({
@@ -201,7 +207,7 @@ animate='show'>
                               type='button'
                               onClick={() => openProject(projectPage.projectPageId)}
                             >
-                              {projectPage.title || intl.formatMessage({ id: 'project_page.untitled' })}
+                              {displayProjectTitle(projectPage.title, intl)}
                             </ProjectTitleButton>
                             {lastModified && (
                               <CardMeta>
@@ -215,6 +221,14 @@ animate='show'>
                               onClick={() => openProject(projectPage.projectPageId)}
                             >
                               <FormattedMessage id='project_page.open_project' />
+                              <ArrowRightOutlined style={{ fontSize: 12 }} />
+                            </OpenButton>
+                            <OpenButton
+                              type='button'
+                              onClick={() => editProject(projectPage.projectPageId)}
+                              style={{ marginTop: 8 }}
+                            >
+                              <FormattedMessage id='project_page.open_in_scratch' />
                               <ArrowRightOutlined style={{ fontSize: 12 }} />
                             </OpenButton>
                           </ProjectCardBody>
