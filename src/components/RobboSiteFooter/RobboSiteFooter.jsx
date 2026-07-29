@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 import theme from '@/theme'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
@@ -390,21 +391,30 @@ aria-hidden>
   </svg>
 )
 
-const RobboSiteFooter = () => (
+const RobboSiteFooter = () => {
+  const intl = useIntl()
+  const { locale: intlLocale = 'ru' } = intl
+  const [locale] = intlLocale.split('-')
+
+  return (
   <React.Fragment>
     <RobboGuestFonts />
-    <SiteFooter id='footer-guest' lang='ru'>
+    <SiteFooter id='footer-guest' lang={locale}>
     <FooterInner>
       <FooterMain>
         <BrandCol>
           <FooterBrand>
-            <FooterLogo aria-label='РОББО'>
-              РОББО
+            <FooterLogo aria-label={intl.formatMessage({ id: 'footer.brand_aria' })}>
+              <FormattedMessage id='footer.brand' />
               <FooterReg aria-hidden>®</FooterReg>
             </FooterLogo>
           </FooterBrand>
-          <FooterTagline>Образовательная платформа РОББО</FooterTagline>
-          <FooterCopyright>© ООО «РОББО ТЕХНОЛОГИИ», 2026</FooterCopyright>
+          <FooterTagline>
+            <FormattedMessage id='footer.tagline' />
+          </FooterTagline>
+          <FooterCopyright>
+            <FormattedMessage id='footer.copyright' />
+          </FooterCopyright>
         </BrandCol>
 
         <PartnerCol>
@@ -415,13 +425,15 @@ const RobboSiteFooter = () => (
           >
             <PartnerLogo
               src={FASIE_LOGO_URL}
-              alt='Фонд содействия инновациям'
+              alt={intl.formatMessage({ id: 'footer.partner_fasie_alt' })}
             />
           </PartnerLink>
         </PartnerCol>
 
-        <FooterCol as='nav' aria-label='Документы'>
-          <FooterHeading>Документы</FooterHeading>
+        <FooterCol as='nav' aria-label={intl.formatMessage({ id: 'footer.docs_aria' })}>
+          <FooterHeading>
+            <FormattedMessage id='footer.docs_heading' />
+          </FooterHeading>
           <FooterLinks>
             <li>
               <a
@@ -429,7 +441,7 @@ const RobboSiteFooter = () => (
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                Политика обработки персональных данных
+                <FormattedMessage id='footer.privacy_policy' />
               </a>
             </li>
             <li>
@@ -438,20 +450,25 @@ const RobboSiteFooter = () => (
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                Согласие на обработку персональных данных
+                <FormattedMessage id='footer.consent' />
               </a>
             </li>
           </FooterLinks>
         </FooterCol>
 
         <ContactsCol>
-          <FooterHeading>Контакты</FooterHeading>
+          <FooterHeading>
+            <FormattedMessage id='footer.contacts_heading' />
+          </FooterHeading>
           <ContactsList>
             <ContactsItem>
               <ContactsIcon>
                 <MailIcon />
               </ContactsIcon>
-              <ContactsLink href='mailto:info@robbo.ru' aria-label='Почта: info@robbo.ru'>
+              <ContactsLink
+                href='mailto:info@robbo.ru'
+                aria-label={intl.formatMessage({ id: 'footer.email_aria' }, { email: 'info@robbo.ru' })}
+              >
                 info@robbo.ru
               </ContactsLink>
             </ContactsItem>
@@ -463,7 +480,7 @@ const RobboSiteFooter = () => (
                 href='https://robbo.ru'
                 target='_blank'
                 rel='noopener noreferrer'
-                aria-label='Наш сайт: robbo.ru'
+                aria-label={intl.formatMessage({ id: 'footer.site_aria' }, { site: 'robbo.ru' })}
               >
                 robbo.ru
               </ContactsLink>
@@ -476,7 +493,7 @@ const RobboSiteFooter = () => (
                 href='https://support.robbo.world/'
                 target='_blank'
                 rel='noopener noreferrer'
-                aria-label='Поддержка: support.robbo.world'
+                aria-label={intl.formatMessage({ id: 'footer.support_aria' }, { site: 'support.robbo.world' })}
               >
                 support.robbo.world
               </ContactsLink>
@@ -487,6 +504,7 @@ const RobboSiteFooter = () => (
     </FooterInner>
     </SiteFooter>
   </React.Fragment>
-)
+  )
+}
 
 export default RobboSiteFooter

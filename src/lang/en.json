@@ -638,5 +638,18 @@
     "sidebar.expand": "Expand sidebar",
     "sidebar.collapse": "Collapse sidebar",
     "common.search": "Search",
-    "home.next_step_4": "Open LMS and continue your course where you left off."
+    "home.next_step_4": "Open LMS and continue your course where you left off.",
+    "footer.brand": "ROBBO",
+    "footer.brand_aria": "ROBBO",
+    "footer.tagline": "ROBBO education platform",
+    "footer.copyright": "© ROBBO TECHNOLOGIES LLC, 2026",
+    "footer.partner_fasie_alt": "Foundation for Assistance to Small Innovative Enterprises",
+    "footer.docs_aria": "Documents",
+    "footer.docs_heading": "Documents",
+    "footer.privacy_policy": "Personal data processing policy",
+    "footer.consent": "Consent to personal data processing",
+    "footer.contacts_heading": "Contacts",
+    "footer.email_aria": "Email: {email}",
+    "footer.site_aria": "Our website: {site}",
+    "footer.support_aria": "Support: {site}"
 }
