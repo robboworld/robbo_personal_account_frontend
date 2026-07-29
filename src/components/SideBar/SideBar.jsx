@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
-import { Button, Space } from 'antd'
 import { useMutation } from '@apollo/client'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -18,6 +17,7 @@ import {
   SidebarDataUnitAdmin,
   SidebarDataFreeListener,
   buildSidebarItems,
+  flattenSidebarItems,
 } from './SideBarData.jsx'
 import { mapSidebarMenuItems } from './sidebarMenu'
 
@@ -31,17 +31,10 @@ import {
   redirectToOidcLogout,
   useAuthRole,
 } from '@/helpers'
-import {
-  HOME_PAGE_ROUTE,
-  LOGIN_PAGE_ROUTE,
-  SEND_NOTIFICATION_ROUTE,
-  SUPER_ADMIN,
-  UNIT_ADMIN,
-} from '@/constants'
+import { LOGIN_PAGE_ROUTE } from '@/constants'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
 import {
-  SidebarAdminActions,
   SidebarMenu,
   SidebarShell,
   SidebarTopBar,
@@ -51,17 +44,14 @@ import {
   SidebarLogoutBtn,
 } from '@/components/AccountShell'
 
-/** Build nav: Home / Profile / Projects / Explore — divider — Scratch / LMS — rest. */
+/** Build nav: primary → tools / tariffs / rest, with dividers. */
 const withSharedExploreItems = roleItems => buildSidebarItems(roleItems)
 
 export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const location = useLocation()
+  const intl = useIntl()
   const Role = useAuthRole()
-
-  const showAdminHomeShortcuts =
-    location.pathname === HOME_PAGE_ROUTE && (Role === UNIT_ADMIN || Role === SUPER_ADMIN)
 
   const roleSideBarData = useMemo(() => {
     switch (Role) {
@@ -85,6 +75,11 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
   const SideBarData = useMemo(
     () => withSharedExploreItems(roleSideBarData),
     [roleSideBarData],
+  )
+
+  const flatSideBarData = useMemo(
+    () => flattenSidebarItems(SideBarData),
+    [SideBarData],
   )
 
   const menuItems = useMemo(
@@ -125,11 +120,8 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
   }
 
   const onMenuClick = async ({ key }) => {
-    if (key === 'tools-divider') {
-      return
-    }
-    const entry = SideBarData.find(i => String(i.key) === String(key))
-    if (!entry || entry.type === 'divider') {
+    const entry = flatSideBarData.find(i => String(i.key) === String(key))
+    if (!entry) {
       return
     }
     if (entry.external === 'lms') {
@@ -139,17 +131,15 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
     navigate(entry.pathname, { state: { selectedNavBarKey: key } })
   }
 
-  const onSendNotificationClick = () => {
-    navigate(SEND_NOTIFICATION_ROUTE, { state: { selectedNavBarKey: 'send_notification' } })
-  }
-
   return (
     <SidebarShell $collapsed={collapsed}>
       <SidebarTopBar $collapsed={collapsed}>
         <SidebarCollapseBtn
           type='button'
           $collapsed={collapsed}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={collapsed
+            ? intl.formatMessage({ id: 'sidebar.expand' })
+            : intl.formatMessage({ id: 'sidebar.collapse' })}
           onClick={onToggleCollapsed}
         >
           {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -159,17 +149,6 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
           <NotificationBell variant='sidebar' />
         </SidebarTopActions>
       </SidebarTopBar>
-      {showAdminHomeShortcuts ? (
-        <SidebarAdminActions>
-          <Space direction='vertical' style={{ width: '100%' }}
-size={8}>
-            <Button type='primary' block
-onClick={onSendNotificationClick}>
-              <FormattedMessage id='sidebar_data.send_notification' />
-            </Button>
-          </Space>
-        </SidebarAdminActions>
-      ) : null}
       <SidebarMenu
         theme='light'
         mode='inline'

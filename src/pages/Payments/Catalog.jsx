@@ -1,7 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Card, Empty, List, Typography, message } from 'antd'
+import { Button, Empty, List, Typography, message } from 'antd'
 import { useIntl } from 'react-intl'
+import { motion } from 'framer-motion'
 
+import {
+  GlassPanel,
+  HeroInner,
+  HeroLead,
+  HeroPanel,
+  HeroTitle,
+  PageContent,
+  Stagger,
+  staggerContainer,
+  staggerItem,
+} from '@/components/AccountShell'
 import { checkout, listProducts } from '@/api/payments'
 
 const { Title, Text, Paragraph } = Typography
@@ -29,11 +41,15 @@ const CatalogPage = () => {
       const list = await listProducts()
       setProducts(list)
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(
+        e?.response?.data?.error ||
+        e.message ||
+        intl.formatMessage({ id: 'notification.error_message' }),
+      )
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [intl])
 
   useEffect(() => {
     load()
@@ -52,61 +68,81 @@ const CatalogPage = () => {
       if (code === 'PAYMENT_NOT_CONFIGURED') {
         message.error(intl.formatMessage({ id: 'payments.not_configured' }))
       } else {
-        message.error(e?.response?.data?.error || e.message || 'Error')
+        message.error(
+          e?.response?.data?.error ||
+          e.message ||
+          intl.formatMessage({ id: 'notification.error_message' }),
+        )
       }
       setBuyingId(null)
     }
   }
 
   return (
-    <div style={{ maxWidth: 840, margin: '24px auto', padding: '0 16px' }}>
-      <Title level={3}>{intl.formatMessage({ id: 'payments.catalog_title' })}</Title>
-      <Paragraph type='secondary'>{intl.formatMessage({ id: 'payments.catalog_hint' })}</Paragraph>
-      {!loading && products.length === 0 ? (
-        <Empty description={intl.formatMessage({ id: 'payments.catalog_empty' })} />
-      ) : (
-        <List
-          loading={loading}
-          grid={{ gutter: 16, column: 1 }}
-          dataSource={products}
-          renderItem={product => (
-            <List.Item>
-              <Card>
-                <Title level={4} style={{ marginTop: 0 }}>
-                  {product.title}
-                </Title>
-                {product.description ? (
-                  <Paragraph type='secondary'>{product.description}</Paragraph>
-                ) : null}
-                <Paragraph>
-                  <Text strong>{intl.formatMessage({ id: 'payments.price' })}: </Text>
-                  <Text>
-                    {formatPrice(product.amount, product.currency, intl.locale)}
-                  </Text>
-                </Paragraph>
-                <Paragraph type='secondary'>
-                  {intl.formatMessage(
-                    { id: 'payments.product_meta' },
-                    {
-                      seats: product.seatLimit,
-                      days: product.durationDays,
-                    },
-                  )}
-                </Paragraph>
-                <Button
-                  type='primary'
-                  loading={buyingId === product.id}
-                  disabled={!!buyingId}
-                  onClick={() => onBuy(product.id)}
-                >
-                  {intl.formatMessage({ id: 'payments.buy' })}
-                </Button>
-              </Card>
-            </List.Item>
-          )}
-        />
-      )}
-    </div>
+    <PageContent>
+      <Stagger variants={staggerContainer} initial='hidden'
+animate='show'>
+        <HeroPanel variants={staggerItem}>
+          <HeroInner>
+            <HeroTitle>
+              {intl.formatMessage({ id: 'payments.catalog_title' })}
+            </HeroTitle>
+            <HeroLead>
+              {intl.formatMessage({ id: 'payments.catalog_hint' })}
+            </HeroLead>
+          </HeroInner>
+        </HeroPanel>
+
+        <motion.div variants={staggerItem}>
+          <GlassPanel>
+            {!loading && products.length === 0 ? (
+              <Empty description={intl.formatMessage({ id: 'payments.catalog_empty' })} />
+            ) : (
+              <List
+                loading={loading}
+                grid={{ gutter: 16, column: 1 }}
+                dataSource={products}
+                renderItem={product => (
+                  <List.Item>
+                    <div>
+                      <Title level={4} style={{ marginTop: 0 }}>
+                        {product.title}
+                      </Title>
+                      {product.description ? (
+                        <Paragraph type='secondary'>{product.description}</Paragraph>
+                      ) : null}
+                      <Paragraph>
+                        <Text strong>{intl.formatMessage({ id: 'payments.price' })}: </Text>
+                        <Text>
+                          {formatPrice(product.amount, product.currency, intl.locale)}
+                        </Text>
+                      </Paragraph>
+                      <Paragraph type='secondary'>
+                        {intl.formatMessage(
+                          { id: 'payments.product_meta' },
+                          {
+                            seats: product.seatLimit,
+                            days: product.durationDays,
+                          },
+                        )}
+                      </Paragraph>
+                      <Button
+                        type='primary'
+                        loading={buyingId === product.id}
+                        disabled={!!buyingId}
+                        onClick={() => onBuy(product.id)}
+                      >
+                        {intl.formatMessage({ id: 'payments.buy' })}
+                      </Button>
+                    </div>
+                  </List.Item>
+                )}
+              />
+            )}
+          </GlassPanel>
+        </motion.div>
+      </Stagger>
+    </PageContent>
   )
 }
 
