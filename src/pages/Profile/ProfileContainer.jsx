@@ -274,7 +274,6 @@ const ProfileContainer = ({
                             type='warning'
                             showIcon
                             message={intl.formatMessage({ id: 'profile.unavailable' })}
-                            description={`role=${String(userRole)}`}
                         />
                 )
         }

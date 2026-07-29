@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
-import { Input, Form, Switch, Spin, message, Modal, InputNumber, Space, Button } from 'antd'
+import { Input, Form, Spin, message, Modal, InputNumber, Space, Button } from 'antd'
 import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, DeleteOutlined, ExclamationCircleOutlined, PictureOutlined, PushpinOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { createGlobalStyle } from 'styled-components'
@@ -347,6 +347,25 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         openScratchEditor(projectPageId)
     }
 
+    const buildProjectPayload = (overrides = {}) => {
+        const values = form.getFieldsValue()
+        return {
+            projectPageId,
+            projectId: projectPage.projectId,
+            title: values.title ?? projectPage.title,
+            instruction: values.instruction ?? projectPage.instruction,
+            notes: values.notes ?? projectPage.notes,
+            isShared: projectPage.isShared,
+            ...overrides,
+        }
+    }
+
+    const handlePublishToggle = () => {
+        actions.updateProjectPage(token, buildProjectPayload({
+            isShared: !projectPage.isShared,
+        }))
+    }
+
     const handleDownloadSb3 = async () => {
         if (!token || !projectPageId) return
         setDownloadBusy(true)
@@ -544,15 +563,12 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                                 className='project-page-form'
                                 layout='vertical'
                                 form={form}
-                                onFinish={({ title, instruction, notes, isShared }) => {
-                                    actions.updateProjectPage(token, {
-                                        projectPageId,
-                                        projectId: projectPage.projectId,
+                                onFinish={({ title, instruction, notes }) => {
+                                    actions.updateProjectPage(token, buildProjectPayload({
                                         title,
                                         instruction,
                                         notes,
-                                        isShared,
-                                    })
+                                    }))
                                 }}
                             >
                                 <Form.Item
@@ -583,15 +599,6 @@ readOnly={!isOwner} />
                                         {formatDateTime(projectPage.lastModified, intl.locale)}
                                     </MetaValue>
                                 </MetaRow>
-                                {isOwner && (
-                                    <Form.Item
-                                        name='isShared'
-                                        label={<FormattedMessage id='project_page.shared_access' />}
-                                        valuePropName='checked'
-                                    >
-                                        <Switch />
-                                    </Form.Item>
-                                )}
                                 <ActionsSection>
                                     <MetaLabel style={{ marginBottom: '0.65rem' }}>
                                         <FormattedMessage id='project_page.actions_group' />
@@ -601,6 +608,19 @@ readOnly={!isOwner} />
                                             <PrimaryAction type='primary' htmlType='submit'>
                                                 <FormattedMessage id='project_page.save' />
                                             </PrimaryAction>
+                                        )}
+                                        {isOwner && (
+                                            <ActionButton
+                                                type={projectPage.isShared ? 'default' : 'primary'}
+                                                htmlType='button'
+                                                onClick={handlePublishToggle}
+                                            >
+                                                <FormattedMessage
+                                                    id={projectPage.isShared
+                                                        ? 'project_page.unpublish'
+                                                        : 'project_page.publish'}
+                                                />
+                                            </ActionButton>
                                         )}
                                         {isOwner && (
                                             <React.Fragment>

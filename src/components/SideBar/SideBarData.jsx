@@ -9,8 +9,6 @@ import {
   TeamOutlined,
   NotificationOutlined,
   SafetyCertificateOutlined,
-  ReadOutlined,
-  InfoCircleOutlined,
   BankOutlined,
   GroupOutlined,
   CodeOutlined,
@@ -48,7 +46,7 @@ export const ExploreNavItem = {
   icon: <CompassOutlined />,
 }
 
-/** External tools below the divider: Scratch.ru + LMS. */
+/** External tools: Scratch.ru + LMS. */
 export const ToolNavItems = [
   {
     key: 'scratch',
@@ -67,40 +65,64 @@ export const ToolNavItems = [
   },
 ]
 
-export const ToolsDividerItem = {
+const TARIFF_KEYS = new Set(['my_licenses', 'buy_license', 'issue_license'])
+
+const isPrimaryItem = item => (
+  item.key === 'home' ||
+  item.pathname === PROFILE_PAGE_ROUTE ||
+  item.pathname === MY_PROJECTS_ROUTE
+)
+
+const makeDivider = key => ({
   type: 'divider',
-  key: 'tools-divider',
-  'data-menu-tools-divider': 'true',
+  key,
+})
+
+/**
+ * Append a section only if it has items, preceded by a divider when the
+ * list already has content.
+ */
+const appendSection = (items, section, dividerKey) => {
+  if (!section.length) {
+    return items
+  }
+  if (items.length) {
+    items.push(makeDivider(dividerKey))
+  }
+  items.push(...section)
+  return items
 }
 
 /**
- * Order: Home → Profile → Projects (if any) → Explore → divider → Scratch → LMS → rest.
+ * Order: primary (Home / Profile / Projects / Explore) →
+ * tools → tariffs → rest, separated by dividers.
  */
 export const buildSidebarItems = roleItems => {
   const head = []
-  const tail = []
+  const tariffs = []
+  const rest = []
 
   ;(roleItems || []).forEach(item => {
-    const isPrimary =
-      item.key === 'home' ||
-      item.pathname === PROFILE_PAGE_ROUTE ||
-      item.pathname === MY_PROJECTS_ROUTE
-
-    if (isPrimary) {
+    if (isPrimaryItem(item)) {
       head.push(item)
+    } else if (TARIFF_KEYS.has(item.key)) {
+      tariffs.push(item)
     } else {
-      tail.push(item)
+      rest.push(item)
     }
   })
 
-  return [
-    ...head,
-    ExploreNavItem,
-    ToolsDividerItem,
-    ...ToolNavItems,
-    ...tail,
-  ]
+  let items = [...head, ExploreNavItem]
+  items = appendSection(items, ToolNavItems, 'divider-tools')
+  items = appendSection(items, tariffs, 'divider-tariffs')
+  items = appendSection(items, rest, 'divider-rest')
+  return items
 }
+
+/** Flat list of clickable nav entries (skips dividers). */
+export const flattenSidebarItems = items => (
+  (items || []).filter(item => item && item.type !== 'divider')
+)
 
 export const SidebarDataStudent = [
   {
@@ -292,24 +314,6 @@ export const SidebarDataFreeListener = [
     label: <FormattedMessage id='sidebar_data.my_sessions' />,
     pathname: MY_SESSIONS_ROUTE,
     icon: <DesktopOutlined />,
-  },
-  {
-    key: '2',
-    label: <FormattedMessage id='sidebar_data.payments' />,
-    pathname: '/program',
-    icon: <CreditCardOutlined />,
-  },
-  {
-    key: '3',
-    label: <FormattedMessage id='sidebar_data.programm' />,
-    pathname: '/program',
-    icon: <ReadOutlined />,
-  },
-  {
-    key: '4',
-    label: <FormattedMessage id='sidebar_data.informer' />,
-    pathname: '/informer',
-    icon: <InfoCircleOutlined />,
   },
 ]
 
