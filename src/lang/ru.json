@@ -638,5 +638,18 @@
     "licensing.id_label": "ID",
     "sidebar.expand": "Развернуть меню",
     "sidebar.collapse": "Свернуть меню",
-    "common.search": "Найти"
+    "common.search": "Найти",
+    "footer.brand": "РОББО",
+    "footer.brand_aria": "РОББО",
+    "footer.tagline": "Образовательная платформа РОББО",
+    "footer.copyright": "© ООО «РОББО ТЕХНОЛОГИИ», 2026",
+    "footer.partner_fasie_alt": "Фонд содействия инновациям",
+    "footer.docs_aria": "Документы",
+    "footer.docs_heading": "Документы",
+    "footer.privacy_policy": "Политика обработки персональных данных",
+    "footer.consent": "Согласие на обработку персональных данных",
+    "footer.contacts_heading": "Контакты",
+    "footer.email_aria": "Почта: {email}",
+    "footer.site_aria": "Наш сайт: {site}",
+    "footer.support_aria": "Поддержка: {site}"
 }

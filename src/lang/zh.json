@@ -644,5 +644,18 @@
     "licensing.id_label": "ID",
     "sidebar.expand": "展开侧边栏",
     "sidebar.collapse": "收起侧边栏",
-    "common.search": "查找"
+    "common.search": "查找",
+    "footer.brand": "ROBBO",
+    "footer.brand_aria": "ROBBO",
+    "footer.tagline": "ROBBO 教育平台",
+    "footer.copyright": "© ROBBO TECHNOLOGIES LLC, 2026",
+    "footer.partner_fasie_alt": "俄罗斯中小企业创新基金会",
+    "footer.docs_aria": "文件",
+    "footer.docs_heading": "文件",
+    "footer.privacy_policy": "个人数据处理政策",
+    "footer.consent": "个人数据处理同意书",
+    "footer.contacts_heading": "联系方式",
+    "footer.email_aria": "邮箱：{email}",
+    "footer.site_aria": "官网：{site}",
+    "footer.support_aria": "支持：{site}"
 }
