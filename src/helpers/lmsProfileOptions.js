@@ -17,7 +17,7 @@ languages.registerLocale(languagesZh)
 
 const currentYear = new Date().getFullYear()
 
-const EDUCATION_VALUES = ['p', 'm', 'b', 'a', 'hs', 'jhs', 'el', 'none', 'other']
+const EDUCATION_VALUES = ['p', 'm', 'b', 'a', 'hs', 'jhs', 'el', 'other']
 const GENDER_VALUES = ['m', 'f']
 
 const PACKAGE_LOCALES = {
@@ -42,13 +42,41 @@ function mapOptions(intl, values, labelPrefix, placeholderId) {
   ]
 }
 
-function mapIsoNamesToOptions(names, placeholder) {
-  return [
-    { value: '', label: placeholder },
-    ...Object.entries(names)
-      .map(([code, name]) => ({ value: code, label: name }))
-      .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' })),
-  ]
+/** Russia → CIS → China → rest (A–Z by label). */
+const PRIORITY_COUNTRY_CODES = [
+  'RU',
+  // CIS (excluding RU)
+  'BY', 'KZ', 'AM', 'AZ', 'KG', 'MD', 'TJ', 'UZ', 'TM',
+  'CN',
+]
+
+/** Russian → CIS languages → Chinese → rest (A–Z by label). */
+const PRIORITY_LANGUAGE_CODES = [
+  'ru',
+  // CIS (excluding Russian): BY, KZ, AM, AZ, KG, MD, TJ, UZ, TM
+  'be', 'kk', 'hy', 'az', 'ky', 'ro', 'tg', 'uz', 'tk',
+  'zh',
+]
+
+function mapNamesToOptionsWithPriority(names, placeholder, priorityCodes) {
+  const priorityRank = new Map(
+    priorityCodes.map((code, index) => [code, index]),
+  )
+  const options = Object.entries(names).map(([code, name]) => ({
+    value: code,
+    label: name,
+  }))
+
+  options.sort((a, b) => {
+    const aRank = priorityRank.has(a.value) ? priorityRank.get(a.value) : Infinity
+    const bRank = priorityRank.has(b.value) ? priorityRank.get(b.value) : Infinity
+    if (aRank !== bRank) {
+      return aRank - bRank
+    }
+    return a.label.localeCompare(b.label, undefined, { sensitivity: 'base' })
+  })
+
+  return [{ value: '', label: placeholder }, ...options]
 }
 
 export function getEducationLevelOptions(intl) {
@@ -72,18 +100,20 @@ export function getGenderOptions(intl) {
 export function getCountryOptions(intl) {
   const locale = resolvePackageLocale(intl.locale)
   const names = countries.getNames(locale) || countries.getNames('en') || {}
-  return mapIsoNamesToOptions(
+  return mapNamesToOptionsWithPriority(
     names,
     intl.formatMessage({ id: 'profile_card.country_placeholder' }),
+    PRIORITY_COUNTRY_CODES,
   )
 }
 
 export function getSpokenLanguageOptions(intl) {
   const locale = resolvePackageLocale(intl.locale)
   const names = languages.getNames(locale) || languages.getNames('en') || {}
-  return mapIsoNamesToOptions(
+  return mapNamesToOptionsWithPriority(
     names,
     intl.formatMessage({ id: 'profile_card.language_placeholder' }),
+    PRIORITY_LANGUAGE_CODES,
   )
 }
 
