@@ -521,5 +521,17 @@
     "reactions.load_error": "Could not load reactions",
     "reactions.update_error": "Could not update the reaction",
     "reactions.action_label": "Reaction {emoji}, {count} total. Press to add or remove",
-    "reactions.count_label": "Reaction {emoji}, {count} total"
+    "reactions.count_label": "Reaction {emoji}, {count} total",
+    "footer.brand_aria": "ROBBO",
+    "footer.tagline": "ROBBO education platform",
+    "footer.copyright": "© ROBBO TECHNOLOGIES LLC, 2026",
+    "footer.partner_alt": "Foundation for Assistance to Small Innovative Enterprises",
+    "footer.documents": "Documents",
+    "footer.documents_nav": "Documents",
+    "footer.privacy_policy": "Personal data processing policy",
+    "footer.privacy_consent": "Consent to personal data processing",
+    "footer.contacts": "Contacts",
+    "footer.email_aria": "Email: {email}",
+    "footer.website_aria": "Our website: {host}",
+    "footer.support_aria": "Support: {host}"
 }
