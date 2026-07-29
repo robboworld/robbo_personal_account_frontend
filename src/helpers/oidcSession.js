@@ -31,8 +31,8 @@ export const buildOidcStartUrl = (returnTo = '', prompt = 'login') => {
   return startUrl.toString()
 }
 
-/** Clears BFF cookie on backend, then redirects to IdP logout or FE /login. */
-export const buildOidcLogoutUrl = (returnTo = '/login') => {
+/** Clears BFF cookie on backend, then redirects to IdP logout or FE landing. */
+export const buildOidcLogoutUrl = (returnTo = '/?logged_out=1') => {
   const logoutUrl = new URL(`${apiBase()}/auth/oidc/logout`)
   if (returnTo) {
     logoutUrl.searchParams.set('return_to', returnTo)
@@ -40,7 +40,7 @@ export const buildOidcLogoutUrl = (returnTo = '/login') => {
   return logoutUrl.toString()
 }
 
-export const redirectToOidcLogout = (returnTo = '/login') => {
+export const redirectToOidcLogout = (returnTo = '/?logged_out=1') => {
   window.location.assign(buildOidcLogoutUrl(returnTo))
 }
 
@@ -48,11 +48,15 @@ export const isOidcSsoEnabled = () => LK_SSO_WITH_LMS_ENABLED
 
 export const hasLmsPasswordFallback = status => Boolean(status?.lms_password_fallback)
 
-/** Local Ant Design login/register when SSO is off or password fallback is enabled. */
-export const shouldShowLocalAuthForms = status =>
-  !isOidcSsoEnabled() || hasLmsPasswordFallback(status)
+/**
+ * Local Ant Design login/register only when SSO is off.
+ * When LK_SSO_WITH_LMS_ENABLED: /login always goes to OIDC (mock/prod IdP).
+ * AUTH_LMS_PASSWORD_FALLBACK enables POST /auth/sign-in for Scratch dropdown —
+ * it must NOT switch the LK login page to password forms.
+ */
+export const shouldShowLocalAuthForms = () => !isOidcSsoEnabled()
 
-/** @deprecated Use shouldShowLocalAuthForms — kept for tests/imports. */
+/** Scratch (and other API clients) may use password while LK UI uses OIDC. */
 export const isHybridAuthEnabled = status =>
   isOidcSsoEnabled() && hasLmsPasswordFallback(status)
 

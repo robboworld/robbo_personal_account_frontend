@@ -231,6 +231,22 @@ const Landing = () => {
     document.title = 'РОББО — личный кабинет и образовательная экосистема'
   }, [])
 
+  // After OIDC/password logout: clear FE token left on :3030 (Scratch clears only its origin).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search || '')
+    const loggedOut = params.get('logged_out') === '1'
+    const sessionExpired = params.get('session_expired') === '1'
+    if (!loggedOut && !sessionExpired) {
+      return undefined
+    }
+    localStorage.removeItem('token')
+    params.delete('logged_out')
+    params.delete('session_expired')
+    const next = params.toString()
+    navigate({ pathname: '/', search: next ? `?${next}` : '' }, { replace: true })
+    return undefined
+  }, [navigate])
+
   useLayoutEffect(() => {
     document.documentElement.classList.add('landing-page-active')
     return () => {
@@ -508,7 +524,7 @@ rel='noreferrer'>
             ) : galleryProjects.length === 0 ? (
               <ProjectsEmpty>
                 Избранных проектов для лендинга пока нет. Администратор может отметить
-                публичный проект флагом landing_featured.
+                публичный проект флагом landing_featured (SuperAdmin: страница публичных проектов).
               </ProjectsEmpty>
             ) : (
               <GalleryGrid>

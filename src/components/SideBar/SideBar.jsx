@@ -31,7 +31,10 @@ import {
   redirectToOidcLogout,
   useAuthRole,
 } from '@/helpers'
-import { LOGIN_PAGE_ROUTE } from '@/constants'
+import {
+  LANDING_PAGE_ROUTE,
+  LOGIN_PAGE_ROUTE,
+} from '@/constants'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
 import {
@@ -100,7 +103,7 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
     // OIDC BFF: session lives in cookie — GraphQL SingOut alone cannot clear it.
     if (isOidcSsoEnabled()) {
       clearLocalSession()
-      redirectToOidcLogout(LOGIN_PAGE_ROUTE)
+      redirectToOidcLogout(`${LANDING_PAGE_ROUTE}?logged_out=1`)
       return
     }
 

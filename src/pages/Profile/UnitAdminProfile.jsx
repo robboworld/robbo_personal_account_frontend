@@ -9,6 +9,8 @@ const UnitAdminProfile = ({
   data,
   UpdateUnitAdmin,
   accessUpdate,
+  peekUserId,
+  peekUserRole,
 }) => {
   const { profile, loading, error } = getProfileFromQuery(data)
 
@@ -18,6 +20,8 @@ const UnitAdminProfile = ({
       loading={loading}
       error={error}
       accessUpdate={accessUpdate}
+      peekUserId={peekUserId}
+      peekUserRole={peekUserRole}
     >
       <ProfileCard
         profile={profile}

@@ -19,6 +19,7 @@ import {
   ROBBO_UNIT_STUDENT_GROUPS_PAGE,
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
+  USERS_ROUTE,
   SUPER_ADMIN,
   STUDENT,
   UNIT_ADMIN,
@@ -27,6 +28,7 @@ import {
   FREE_LISTENER,
   SCRATCH_HUB_ROUTE,
   MY_LICENSES_ROUTE,
+  MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
   LICENSES_CATALOG_ROUTE,
   PAYMENT_RECEIPT_ROUTE,
@@ -53,11 +55,12 @@ const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
+const UserModerationPage = lazy(() => import('@/pages/UserModeration'))
 const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
 const MyLicensesPage = lazy(() => import('@/pages/Licensing/MyLicenses'))
+const MySessionsPage = lazy(() => import('@/pages/Licensing/MySessions'))
 const IssueLicensePage = lazy(() => import('@/pages/Licensing/IssueLicense'))
 const DeviceLinkPage = lazy(() => import('@/pages/Licensing/DeviceLink'))
-const PaymentsCatalogPage = lazy(() => import('@/pages/Payments/Catalog'))
 const PaymentsReceiptPage = lazy(() => import('@/pages/Payments/Receipt'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
@@ -121,12 +124,20 @@ const AppRoutes = () => (
         element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <SendNotificationPage />)}
       />
       <Route
+        path={USERS_ROUTE}
+        element={wrapProtected([SUPER_ADMIN], <UserModerationPage />)}
+      />
+      <Route
         path={MY_LICENSES_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)}
       />
       <Route
+        path={MY_SESSIONS_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <MySessionsPage />)}
+      />
+      <Route
         path={LICENSES_CATALOG_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <PaymentsCatalogPage />)}
+        element={wrapProtected(STANDARD_ROLES, <Navigate to={`${MY_LICENSES_ROUTE}#buy`} replace />)}
       />
       <Route
         path={PAYMENT_RECEIPT_ROUTE}

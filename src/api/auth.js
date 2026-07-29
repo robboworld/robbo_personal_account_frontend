@@ -66,4 +66,23 @@ export const authAPI = {
             },
         })
     },
+
+    listSessions() {
+        return instance.get('auth/sessions', {
+            withCredentials: true,
+            headers: authHeaders(),
+        })
+    },
+
+    revokeSession(sessionId) {
+        return instance.delete(`auth/sessions/${sessionId}`, {
+            withCredentials: true,
+            headers: authHeaders(),
+        })
+    },
+}
+
+function authHeaders() {
+    const token = localStorage.getItem('token')
+    return token ? { Authorization: `Bearer ${token}` } : {}
 }
