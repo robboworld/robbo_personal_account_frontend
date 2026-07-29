@@ -19,6 +19,7 @@ import {
   KeyOutlined,
   PlusCircleOutlined,
   DesktopOutlined,
+  StopOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -31,6 +32,7 @@ import {
   MY_PROJECTS_ROUTE,
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
+  USERS_ROUTE,
   SCRATCH_HUB_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
   MY_LICENSES_ROUTE,
@@ -193,6 +195,12 @@ export const SidebarDataSuperAdmin = [
     label: <FormattedMessage id='sidebar_data.issue_license' />,
     pathname: ISSUE_LICENSE_ROUTE,
     icon: <PlusCircleOutlined />,
+  },
+  {
+    key: 'users_moderation',
+    label: <FormattedMessage id='sidebar_data.users' />,
+    pathname: USERS_ROUTE,
+    icon: <StopOutlined />,
   },
   {
     key: '5',

@@ -1,6 +1,8 @@
 import * as axios from 'axios'
 
 import config from '@/config'
+import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
+import { buildInactiveLoginURL } from '@/helpers/inactiveLogin'
 
 const instance = axios.create()
 const [backendURL] = config.backendURL
@@ -32,8 +34,17 @@ instance.interceptors.response.use(
   async error => {
     const originalRequest = error.config
     const code = error?.response?.data?.code
-    if (code === 'SESSION_NOT_FOUND') {
+    if (code === 'SESSION_NOT_FOUND' || code === 'USER_INACTIVE') {
       localStorage.removeItem('token')
+      if (code === 'USER_INACTIVE') {
+        const ban = error?.response?.data?.ban || null
+        const loginURL = buildInactiveLoginURL(ban)
+        if (isOidcSsoEnabled()) {
+          redirectToOidcLogout(loginURL)
+        } else {
+          window.location.assign(loginURL)
+        }
+      }
       throw error
     }
 
