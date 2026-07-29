@@ -11,7 +11,6 @@ import {
   backupRegistrationForm,
 } from '@/actions/authForms'
 import {
-  redirectToLmsRegister,
   redirectToOidcStart,
   resolveLoginReturnTo,
   shouldShowLocalAuthForms,
@@ -45,15 +44,8 @@ const Logistration = () => {
       return undefined
     }
 
-    if (activeTab === LOGIN_PAGE_ROUTE) {
-      redirectToOidcStart(resolveLoginReturnTo(location.search), 'login')
-      return undefined
-    }
-
-    if (activeTab === REGISTER_PAGE_ROUTE) {
-      redirectToLmsRegister()
-    }
-
+    // Pure OIDC (no password fallback): both /login and /register go to mock/IdP.
+    redirectToOidcStart(resolveLoginReturnTo(location.search), 'login')
     return undefined
   }, [activeTab, location.search, showLocalAuthForms])
 
