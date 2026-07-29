@@ -7,6 +7,7 @@ import { authMutationsGQL } from './mutation'
 
 import config from '@/config'
 import { readStoredLanguage } from '@/helpers/intl'
+import { buildInactiveLoginURL } from '@/helpers/inactiveLogin'
 
 
 const httpLink = createHttpLink({
@@ -42,26 +43,17 @@ const retryLink = new RetryLink({
     },
 })
 
-// const errorLink = onError(
-//     async ({ graphQLErrors, networkError, operation, forward }) => {
-//         if (networkError.statusCode === 401 && networkError.result.ExpiredBy) {
-//             localStorage.removeItem('token')
-//             const accessToken = await refreshToken()
-//             const oldHeaders = operation.getContext().headers
-//             operation.setContext({
-//                 headers: {
-//                     ...oldHeaders,
-//                     authorization: accessToken ? `Bearer ${accessToken}` : "",
-//                 },
-//             })
-//             console.log(operation)
-//             return forward(operation)
-//         }
-//     },
-// )
+const errorLink = onError(({ networkError }) => {
+    const result = typeof networkError?.result === 'object' ? networkError.result : null
+    const code = result?.code || networkError?.result?.code || networkError?.bodyText
+    if (networkError?.statusCode === 403 && code === 'USER_INACTIVE') {
+        localStorage.removeItem('token')
+        window.location.assign(buildInactiveLoginURL(result?.ban || null))
+    }
+})
 
 export const graphQLClient = new ApolloClient({
-    link: from([retryLink, authLink, httpLink]),
+    link: from([errorLink, retryLink, authLink, httpLink]),
     cache: new InMemoryCache(),
 })
 

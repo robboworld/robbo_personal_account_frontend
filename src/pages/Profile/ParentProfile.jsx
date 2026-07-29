@@ -26,6 +26,8 @@ const ParentProfile = ({
   GetStudents,
   UpdateParent,
   accessUpdate,
+  peekUserId,
+  peekUserRole,
 }) => {
   const navigate = useNavigate()
   const intl = useIntl()
@@ -53,6 +55,8 @@ const ParentProfile = ({
               profile={profile}
               loading={profileLoading}
               accessUpdate={accessUpdate}
+              peekUserId={peekUserId}
+              peekUserRole={peekUserRole}
               embedded
             >
               <ProfileCard

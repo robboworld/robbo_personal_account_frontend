@@ -9,6 +9,7 @@ import { useIntl, FormattedMessage } from 'react-intl'
 import { backupLoginFormBegin } from '@/actions/authForms'
 import { HOME_PAGE_ROUTE, LMS_URL } from '@/constants'
 import { authMutationsGQL } from '@/graphQL'
+import { formatInactiveBanDescription } from '@/helpers/inactiveLogin'
 
 const LMS_RESET_PASSWORD_URL = `${LMS_URL}/authn/reset`
 
@@ -62,6 +63,19 @@ const SignInForm = memo(({ handleSubmit }) => {
               <a href='/sessions'>{intl.formatMessage({ id: 'sessions.title' })}</a>
             </span>
           ),
+        })
+        return
+      }
+      if (code === 'USER_INACTIVE') {
+        const ban = graphQLError?.extensions?.ban || null
+        notification.error({
+          message: intl.formatMessage({ id: 'login.inactive.heading' }),
+          description: (
+            <span style={{ whiteSpace: 'pre-line' }}>
+              {formatInactiveBanDescription(intl, ban)}
+            </span>
+          ),
+          duration: 12,
         })
         return
       }

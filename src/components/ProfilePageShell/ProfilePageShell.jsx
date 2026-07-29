@@ -17,6 +17,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
+import UserBanPanel from '@/components/UserBanPanel'
 
 const getInitials = (profile, fallback = '?') => {
   const source = (profile?.fullName || profile?.nickname || profile?.email || '').trim()
@@ -35,6 +36,8 @@ const ProfilePageBody = ({
   loading,
   error,
   accessUpdate,
+  peekUserId,
+  peekUserRole,
   children,
 }) => (
   <React.Fragment>
@@ -73,6 +76,9 @@ const ProfilePageBody = ({
       <Skeleton active loading={loading}
 paragraph={{ rows: 8 }}>
         {children}
+        {peekUserId ? (
+          <UserBanPanel lmsUserId={peekUserId} peekUserRole={peekUserRole} />
+        ) : null}
       </Skeleton>
     </ProfileFormCard>
   </React.Fragment>
@@ -83,6 +89,8 @@ const ProfilePageShell = ({
   loading,
   error,
   accessUpdate,
+  peekUserId,
+  peekUserRole,
   embedded = false,
   children,
 }) => {
@@ -94,6 +102,8 @@ animate='show'>
         loading={loading}
         error={error}
         accessUpdate={accessUpdate}
+        peekUserId={peekUserId}
+        peekUserRole={peekUserRole}
       >
         {children}
       </ProfilePageBody>
@@ -116,6 +126,8 @@ ProfilePageShell.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.object,
   accessUpdate: PropTypes.bool,
+  peekUserId: PropTypes.string,
+  peekUserRole: PropTypes.number,
   embedded: PropTypes.bool,
   children: PropTypes.node,
 }

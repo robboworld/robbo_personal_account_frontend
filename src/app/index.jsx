@@ -19,6 +19,7 @@ import {
   ROBBO_UNIT_STUDENT_GROUPS_PAGE,
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
+  USERS_ROUTE,
   SUPER_ADMIN,
   STUDENT,
   UNIT_ADMIN,
@@ -54,6 +55,7 @@ const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
 const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
+const UserModerationPage = lazy(() => import('@/pages/UserModeration'))
 const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
 const MyLicensesPage = lazy(() => import('@/pages/Licensing/MyLicenses'))
 const MySessionsPage = lazy(() => import('@/pages/Licensing/MySessions'))
@@ -120,6 +122,10 @@ const AppRoutes = () => (
       <Route
         path={SEND_NOTIFICATION_ROUTE}
         element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <SendNotificationPage />)}
+      />
+      <Route
+        path={USERS_ROUTE}
+        element={wrapProtected([SUPER_ADMIN], <UserModerationPage />)}
       />
       <Route
         path={MY_LICENSES_ROUTE}
