@@ -1,12 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, Button, Card, Spin, Typography } from 'antd'
+import { Alert, Button, Spin, Typography } from 'antd'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useIntl } from 'react-intl'
+import { motion } from 'framer-motion'
 
+import {
+  GlassPanel,
+  HeroInner,
+  HeroPanel,
+  HeroTitle,
+  PageContent,
+  Stagger,
+  staggerContainer,
+  staggerItem,
+} from '@/components/AccountShell'
 import { getOrder } from '@/api/payments'
 import { MY_LICENSES_ROUTE } from '@/constants'
 
-const { Title, Paragraph, Text } = Typography
+const { Paragraph, Text } = Typography
 
 const POLL_MS = 3000
 const MAX_POLLS = 20
@@ -37,7 +48,11 @@ const ReceiptPage = () => {
         timerRef.current = setTimeout(load, POLL_MS)
       }
     } catch (e) {
-      setError(e?.response?.data?.error || e.message || 'Error')
+      setError(
+        e?.response?.data?.error ||
+        e.message ||
+        intl.formatMessage({ id: 'notification.error_message' }),
+      )
       setLoading(false)
     }
   }, [orderNumber, intl])
@@ -70,42 +85,56 @@ const ReceiptPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: '24px auto', padding: '0 16px' }}>
-      <Title level={3}>{intl.formatMessage({ id: 'payments.receipt_title' })}</Title>
-      {loading && !order ? (
-        <div style={{ textAlign: 'center', padding: 48 }}>
-          <Spin />
-        </div>
-      ) : null}
-      {error ? <Alert type='error' showIcon
+    <PageContent>
+      <Stagger variants={staggerContainer} initial='hidden'
+animate='show'>
+        <HeroPanel variants={staggerItem}>
+          <HeroInner>
+            <HeroTitle>
+              {intl.formatMessage({ id: 'payments.receipt_title' })}
+            </HeroTitle>
+          </HeroInner>
+        </HeroPanel>
+
+        <motion.div variants={staggerItem}>
+          <GlassPanel>
+            {loading && !order ? (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
+                <Spin />
+              </div>
+            ) : null}
+            {error ? <Alert type='error' showIcon
 message={error} /> : null}
-      {order ? (
-        <Card style={{ marginTop: 16 }}>
-          <Alert type={alertType} showIcon
+            {order ? (
+              <React.Fragment>
+                <Alert type={alertType} showIcon
 message={statusMessage} style={{ marginBottom: 16 }} />
-          <Paragraph>
-            <Text strong>{intl.formatMessage({ id: 'payments.order_number' })}: </Text>
-            <Text code copyable>{order.orderNumber}</Text>
-          </Paragraph>
-          <Paragraph>
-            <Text strong>{intl.formatMessage({ id: 'payments.price' })}: </Text>
-            {order.amount} {order.currency}
-          </Paragraph>
-          {status === 'paid' ? (
-            <Link to={MY_LICENSES_ROUTE}>
-              <Button type='primary'>
-                {intl.formatMessage({ id: 'payments.go_to_licenses' })}
-              </Button>
-            </Link>
-          ) : null}
-          {status === 'pending' ? (
-            <Paragraph type='secondary' style={{ marginTop: 12 }}>
-              {intl.formatMessage({ id: 'payments.receipt_polling' })}
-            </Paragraph>
-          ) : null}
-        </Card>
-      ) : null}
-    </div>
+                <Paragraph>
+                  <Text strong>{intl.formatMessage({ id: 'payments.order_number' })}: </Text>
+                  <Text code copyable>{order.orderNumber}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>{intl.formatMessage({ id: 'payments.price' })}: </Text>
+                  {order.amount} {order.currency}
+                </Paragraph>
+                {status === 'paid' ? (
+                  <Link to={MY_LICENSES_ROUTE}>
+                    <Button type='primary'>
+                      {intl.formatMessage({ id: 'payments.go_to_licenses' })}
+                    </Button>
+                  </Link>
+                ) : null}
+                {status === 'pending' ? (
+                  <Paragraph type='secondary' style={{ marginTop: 12 }}>
+                    {intl.formatMessage({ id: 'payments.receipt_polling' })}
+                  </Paragraph>
+                ) : null}
+              </React.Fragment>
+            ) : null}
+          </GlassPanel>
+        </motion.div>
+      </Stagger>
+    </PageContent>
   )
 }
 

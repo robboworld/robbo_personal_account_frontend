@@ -38,7 +38,7 @@ const TeacherContent = ({
                 {
                     label: <FormattedMessage id='teacher_content.courses_item' />,
                     key: '3',
-                    children: 'Курсы',
+                    children: <FormattedMessage id='teacher_content.courses_item' />,
                 },
             ]}
         />

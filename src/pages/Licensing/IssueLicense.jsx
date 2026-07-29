@@ -48,7 +48,7 @@ const IssueLicensePage = () => {
       message.success(intl.formatMessage({ id: 'licensing.issue_ok' }))
       form.resetFields(['note'])
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(e?.response?.data?.error || e.message || intl.formatMessage({ id: 'notification.error_message' }))
     } finally {
       setLoading(false)
     }
@@ -112,7 +112,7 @@ loading={loading}>
                   <Text code copyable>{issued.licenseKey}</Text>
                 </p>
                 <p>
-                  <Text strong>ID: </Text>
+                  <Text strong>{intl.formatMessage({ id: 'licensing.id_label' })}: </Text>
                   <Text code>{issued.id}</Text>
                 </p>
                 <p>

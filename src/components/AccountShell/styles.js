@@ -976,7 +976,7 @@ export const SidebarMenu = styled(Menu)`
       border-inline-end: none !important;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item {
+    &&.ant-menu-inline-collapsed .ant-menu-item {
       width: 100% !important;
       max-width: 100% !important;
       height: 2.5rem !important;
@@ -993,7 +993,7 @@ export const SidebarMenu = styled(Menu)`
       overflow: visible !important;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon {
+    &&.ant-menu-inline-collapsed .ant-menu-item .ant-menu-item-icon {
       width: auto !important;
       height: auto !important;
       min-width: 0 !important;
@@ -1011,7 +1011,7 @@ export const SidebarMenu = styled(Menu)`
       opacity: 1 !important;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item ${SidebarIcon} {
+    &&.ant-menu-inline-collapsed .ant-menu-item ${SidebarIcon} {
       width: 1.125rem;
       height: 1.125rem;
       min-width: 1.125rem;
@@ -1021,7 +1021,7 @@ export const SidebarMenu = styled(Menu)`
       transform: scale(1);
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon .anticon {
+    &&.ant-menu-inline-collapsed .ant-menu-item .ant-menu-item-icon .anticon {
       display: inline-flex !important;
       align-items: center;
       justify-content: center;
@@ -1031,7 +1031,7 @@ export const SidebarMenu = styled(Menu)`
       opacity: 1 !important;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-title-content {
+    &&.ant-menu-inline-collapsed .ant-menu-item .ant-menu-title-content {
       display: inline-block !important;
       width: auto !important;
       min-width: 0 !important;
@@ -1043,21 +1043,21 @@ export const SidebarMenu = styled(Menu)`
       pointer-events: none;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item:not(.ant-menu-item-selected):hover {
+    &&.ant-menu-inline-collapsed .ant-menu-item:not(.ant-menu-item-selected):hover {
       background: rgba(192, 108, 132, 0.1) !important;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item-selected {
+    &&.ant-menu-inline-collapsed .ant-menu-item-selected {
       background: rgba(0, 175, 65, 0.14) !important;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item-selected .ant-menu-item-icon,
-    &&.ant-menu-inline-collapsed > .ant-menu-item[data-icon-accent='green'] .ant-menu-item-icon {
+    &&.ant-menu-inline-collapsed .ant-menu-item-selected .ant-menu-item-icon,
+    &&.ant-menu-inline-collapsed .ant-menu-item[data-icon-accent='green'] .ant-menu-item-icon {
       color: ${colors.accentGreen} !important;
     }
 
-    &&.ant-menu-inline-collapsed > .ant-menu-item[data-icon-accent='muted'] .ant-menu-item-icon,
-    &&.ant-menu-inline-collapsed > .ant-menu-item[data-menu-logout='true'] .ant-menu-item-icon {
+    &&.ant-menu-inline-collapsed .ant-menu-item[data-icon-accent='muted'] .ant-menu-item-icon,
+    &&.ant-menu-inline-collapsed .ant-menu-item[data-menu-logout='true'] .ant-menu-item-icon {
       color: ${colors.secondaryLight} !important;
     }
   `}

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
-import { Input, Form, Switch, Spin, message, Modal } from 'antd'
+import { Input, Form, Spin, message, Modal } from 'antd'
 import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, ExclamationCircleOutlined, PictureOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { createGlobalStyle } from 'styled-components'
@@ -165,7 +165,7 @@ function GuestProjectView({ projectPageId }) {
                             icon={<ArrowLeftOutlined />}
                             onClick={() => navigate(LANDING_PAGE_ROUTE)}
                         >
-                            На главную
+                            <FormattedMessage id='project_page.back_to_home' />
                         </BackButton>
                         {projectPage?.authorName && (
                             <AuthorText>
@@ -183,7 +183,9 @@ function GuestProjectView({ projectPageId }) {
                             <ProjectTitle>{intl.formatMessage({ id: 'project_page.player_error' })}</ProjectTitle>
                             <ViewOnlyNote>{error}</ViewOnlyNote>
                             <div style={{ marginTop: '1rem' }}>
-                                <Link to={LANDING_PAGE_ROUTE}>Вернуться на лендинг</Link>
+                                <Link to={LANDING_PAGE_ROUTE}>
+                                    <FormattedMessage id='project_page.back_to_landing' />
+                                </Link>
                             </div>
                         </PlayerCard>
                     ) : (
@@ -309,7 +311,6 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             title: projectPage.title,
             instruction: projectPage.instruction,
             notes: projectPage.notes,
-            isShared: projectPage.isShared,
         })
     }, [
         loading,
@@ -319,11 +320,29 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         projectPage?.title,
         projectPage?.instruction,
         projectPage?.notes,
-        projectPage?.isShared,
     ])
 
     const seeInsideHandler = () => {
         window.open(`${config.scratchURL}?#${projectPage.projectId}`)
+    }
+
+    const buildProjectPayload = (overrides = {}) => {
+        const values = form.getFieldsValue()
+        return {
+            projectPageId,
+            projectId: projectPage.projectId,
+            title: values.title ?? projectPage.title,
+            instruction: values.instruction ?? projectPage.instruction,
+            notes: values.notes ?? projectPage.notes,
+            isShared: projectPage.isShared,
+            ...overrides,
+        }
+    }
+
+    const handlePublishToggle = () => {
+        actions.updateProjectPage(token, buildProjectPayload({
+            isShared: !projectPage.isShared,
+        }))
     }
 
     const handleDownloadSb3 = async () => {
@@ -367,7 +386,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         setPreviewBusy(true)
         try {
             await uploadProjectPreview(token, projectPageId, file)
-            message.success('Превью проекта обновлено')
+            message.success(intl.formatMessage({ id: 'project_page.upload_preview_success' }))
             actions.getProjectPageById(token, projectPageId)
         } catch (e) {
             message.error(e?.message || intl.formatMessage({ id: 'notification.error_message' }))
@@ -455,15 +474,12 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                                 className='project-page-form'
                                 layout='vertical'
                                 form={form}
-                                onFinish={({ title, instruction, notes, isShared }) => {
-                                    actions.updateProjectPage(token, {
-                                        projectPageId,
-                                        projectId: projectPage.projectId,
+                                onFinish={({ title, instruction, notes }) => {
+                                    actions.updateProjectPage(token, buildProjectPayload({
                                         title,
                                         instruction,
                                         notes,
-                                        isShared,
-                                    })
+                                    }))
                                 }}
                             >
                                 <Form.Item
@@ -494,15 +510,6 @@ readOnly={!isOwner} />
                                         {formatDateTime(projectPage.lastModified, intl.locale)}
                                     </MetaValue>
                                 </MetaRow>
-                                {isOwner && (
-                                    <Form.Item
-                                        name='isShared'
-                                        label={<FormattedMessage id='project_page.shared_access' />}
-                                        valuePropName='checked'
-                                    >
-                                        <Switch />
-                                    </Form.Item>
-                                )}
                                 <ActionsSection>
                                     <MetaLabel style={{ marginBottom: '0.65rem' }}>
                                         <FormattedMessage id='project_page.actions_group' />
@@ -512,6 +519,19 @@ readOnly={!isOwner} />
                                             <PrimaryAction type='primary' htmlType='submit'>
                                                 <FormattedMessage id='project_page.save' />
                                             </PrimaryAction>
+                                        )}
+                                        {isOwner && (
+                                            <ActionButton
+                                                type={projectPage.isShared ? 'default' : 'primary'}
+                                                htmlType='button'
+                                                onClick={handlePublishToggle}
+                                            >
+                                                <FormattedMessage
+                                                    id={projectPage.isShared
+                                                        ? 'project_page.unpublish'
+                                                        : 'project_page.publish'}
+                                                />
+                                            </ActionButton>
                                         )}
                                         {isOwner && (
                                             <React.Fragment>
@@ -547,7 +567,7 @@ readOnly={!isOwner} />
                                                     loading={previewBusy}
                                                     onClick={() => previewInputRef.current?.click()}
                                                 >
-                                                    Загрузить превью
+                                                    <FormattedMessage id='project_page.upload_preview' />
                                                 </ActionButton>
                                             </React.Fragment>
                                         )}

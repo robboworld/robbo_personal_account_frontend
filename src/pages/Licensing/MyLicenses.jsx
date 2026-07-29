@@ -31,6 +31,16 @@ import { LICENSES_CATALOG_ROUTE } from '@/constants'
 
 const { Text } = Typography
 
+const formatLicenseStatus = (intl, status) => {
+  const statusIds = {
+    active: 'licensing.status_active',
+    expired: 'licensing.status_expired',
+    revoked: 'licensing.status_revoked',
+  }
+  const id = statusIds[String(status || '').toLowerCase()]
+  return id ? intl.formatMessage({ id }) : (status || '')
+}
+
 const MyLicensesPage = () => {
   const intl = useIntl()
   const [licenses, setLicenses] = useState([])
@@ -42,11 +52,11 @@ const MyLicensesPage = () => {
       const list = await listMyLicenses()
       setLicenses(list)
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(e?.response?.data?.error || e.message || intl.formatMessage({ id: 'notification.error_message' }))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [intl])
 
   useEffect(() => {
     load()
@@ -58,7 +68,7 @@ const MyLicensesPage = () => {
       message.success(intl.formatMessage({ id: 'licensing.seat_revoked' }))
       load()
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(e?.response?.data?.error || e.message || intl.formatMessage({ id: 'notification.error_message' }))
     }
   }
 
@@ -100,11 +110,15 @@ animate='show'>
                       <Text code copyable>{lic.licenseKey}</Text>
                     </LicenseKeyRow>
                     <LicenseMeta>
-                      {lic.status}
-                      {' · seats '}
-                      {lic.seats?.length || 0}
-                      /
-                      {lic.seatLimit}
+                      {formatLicenseStatus(intl, lic.status)}
+                      {' · '}
+                      {intl.formatMessage(
+                        { id: 'licensing.seats_meta' },
+                        {
+                          used: lic.seats?.length || 0,
+                          limit: lic.seatLimit,
+                        },
+                      )}
                       {' · '}
                       {intl.formatMessage({ id: 'licensing.expires_at' })}
                       {': '}
