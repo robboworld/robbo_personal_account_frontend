@@ -277,3 +277,37 @@ export const ModerationBadge = styled.span`
   background: rgba(0, 175, 65, 0.1);
   border: 1px solid rgba(0, 175, 65, 0.22);
 `
+
+export const PaginationWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding-top: 0.25rem;
+
+  .ant-pagination-item-active {
+    border-color: ${colors.accentGreen};
+  }
+
+  .ant-pagination-item-active a {
+    color: ${colors.accentGreen};
+  }
+`
+
+export const CatalogToolbar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  margin-left: auto;
+  align-self: center;
+`
+
+export const PageSizeControl = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: ${surface.muted};
+  white-space: nowrap;
+`
