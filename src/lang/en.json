@@ -109,6 +109,7 @@
     "project_page.public_catalog_empty": "No shared projects yet.",
     "project_page.public_catalog_empty_hint": "Be the first — share your project publicly",
     "project_page.public_catalog_count": "{count, plural, one {# project} other {# projects}}",
+    "project_page.public_catalog_page_size": "Per page",
     "project_page.public_catalog_loading": "Loading projects",
     "project_page.untitled": "Untitled",
     "project_page.open_project": "Open",

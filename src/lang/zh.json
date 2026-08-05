@@ -109,6 +109,7 @@
     "project_page.public_catalog_empty": "暂无已分享的项目。",
     "project_page.public_catalog_empty_hint": "成为第一个公开分享项目的人",
     "project_page.public_catalog_count": "{count} 个项目",
+    "project_page.public_catalog_page_size": "每页",
     "project_page.public_catalog_loading": "正在加载项目",
     "project_page.untitled": "未命名",
     "project_page.open_project": "打开",

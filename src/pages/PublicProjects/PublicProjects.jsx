@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ArrowRightOutlined,
   DeleteOutlined,
   GlobalOutlined,
   PushpinOutlined,
 } from '@ant-design/icons'
-import { Button, Input, InputNumber, Modal, Space, message } from 'antd'
+import { Button, Input, InputNumber, Modal, Pagination, Select, Space, message } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 import {
@@ -23,12 +23,15 @@ import {
   AuthorName,
   AuthorRow,
   CatalogCount,
+  CatalogToolbar,
   EmptyIcon,
   EmptyState,
   EmptyText,
   ModerationBadge,
   ModerationRow,
   OpenButton,
+  PageSizeControl,
+  PaginationWrap,
   ProjectCard,
   ProjectCardBody,
   ProjectCardTop,
@@ -54,7 +57,19 @@ import {
 } from '@/components/AccountShell'
 
 const SKELETON_COUNT = 6
+const PAGE_SIZE_OPTIONS = [5, 10, 20]
+const DEFAULT_PAGE_SIZE = 10
 const { TextArea } = Input
+
+const parsePage = value => {
+  const n = Number.parseInt(String(value || ''), 10)
+  return Number.isFinite(n) && n >= 1 ? n : 1
+}
+
+const parsePageSize = value => {
+  const n = Number.parseInt(String(value || ''), 10)
+  return PAGE_SIZE_OPTIONS.includes(n) ? n : DEFAULT_PAGE_SIZE
+}
 
 const getAuthorInitials = name => {
   if (!name) {
@@ -73,10 +88,12 @@ const getAuthorInitials = name => {
 export default function PublicProjects() {
   const navigate = useNavigate()
   const intl = useIntl()
+  const [searchParams, setSearchParams] = useSearchParams()
   const authRole = useAuthRole()
   const isSuperAdmin = Number(authRole) === SUPER_ADMIN
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState([])
+  const [totalRows, setTotalRows] = useState(0)
 
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleteReason, setDeleteReason] = useState('')
@@ -86,6 +103,22 @@ export default function PublicProjects() {
   const [featureBusy, setFeatureBusy] = useState(false)
   const [orderDrafts, setOrderDrafts] = useState({})
   const [orderBusyId, setOrderBusyId] = useState(null)
+
+  const currentPage = useMemo(
+    () => parsePage(searchParams.get('page')),
+    [searchParams],
+  )
+  const pageSize = useMemo(
+    () => parsePageSize(searchParams.get('pageSize')),
+    [searchParams],
+  )
+
+  const updatePaging = useCallback((page, size) => {
+    const next = new URLSearchParams(searchParams)
+    next.set('page', String(page))
+    next.set('pageSize', String(size))
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams])
 
   const nextFeatureSortOrder = useCallback(list => {
     const featured = (list || []).filter(item => item.landingFeatured)
@@ -99,15 +132,28 @@ export default function PublicProjects() {
     let cancelled = false
     setLoading(true)
 
-    projectPageAPI.fetchPublicProjectPages()
+    projectPageAPI.fetchPublicProjectPages(String(currentPage), String(pageSize))
       .then(data => {
-        if (!cancelled) {
-          setProjects(data?.projectPages || [])
+        if (cancelled) {
+          return
+        }
+        const pages = data?.projectPages || []
+        const total = Number(data?.countRows) || 0
+        setProjects(pages)
+        setTotalRows(total)
+
+        const maxPage = Math.max(1, Math.ceil(total / pageSize) || 1)
+        if (currentPage > maxPage) {
+          const next = new URLSearchParams(window.location.search)
+          next.set('page', String(maxPage))
+          next.set('pageSize', String(pageSize))
+          setSearchParams(next, { replace: true })
         }
       })
       .catch(() => {
         if (!cancelled) {
           setProjects([])
+          setTotalRows(0)
         }
       })
       .finally(() => {
@@ -119,7 +165,7 @@ export default function PublicProjects() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [currentPage, pageSize, setSearchParams])
 
   const openProject = useCallback(projectPageId => {
     navigate(`/projects/${projectPageId}`, {
@@ -152,7 +198,13 @@ export default function PublicProjects() {
     setDeleteBusy(true)
     try {
       await moderateDeleteProjectPage(deleteTarget.projectPageId, reason)
-      setProjects(prev => prev.filter(item => item.projectPageId !== deleteTarget.projectPageId))
+      const nextTotal = Math.max(0, totalRows - 1)
+      const nextProjects = projects.filter(item => item.projectPageId !== deleteTarget.projectPageId)
+      setProjects(nextProjects)
+      setTotalRows(nextTotal)
+      if (nextProjects.length === 0 && currentPage > 1) {
+        updatePaging(currentPage - 1, pageSize)
+      }
       message.success(intl.formatMessage({ id: 'project_page.moderate_delete_ok' }))
       setDeleteTarget(null)
       setDeleteReason('')
@@ -261,8 +313,16 @@ export default function PublicProjects() {
 
   const projectCountLabel = intl.formatMessage(
     { id: 'project_page.public_catalog_count' },
-    { count: projects.length },
+    { count: totalRows },
   )
+
+  const onPaginationChange = page => {
+    updatePaging(parsePage(page), pageSize)
+  }
+
+  const onPageSizeChange = value => {
+    updatePaging(1, parsePageSize(value))
+  }
 
   return (
     <PageContent>
@@ -285,10 +345,27 @@ animate='show'>
               <SectionTitle>
                 <FormattedMessage id='project_page.public_catalog_list_title' />
               </SectionTitle>
-              {!loading && projects.length > 0 && (
-                <CatalogCount>{projectCountLabel}</CatalogCount>
-              )}
-              {!loading && projects.length === 0 && (
+              <CatalogToolbar>
+                {!loading && totalRows > 0 && (
+                  <CatalogCount>{projectCountLabel}</CatalogCount>
+                )}
+                <PageSizeControl htmlFor='public-projects-page-size'>
+                  <FormattedMessage id='project_page.public_catalog_page_size' />
+                  <Select
+                    id='public-projects-page-size'
+                    size='small'
+                    value={pageSize}
+                    onChange={onPageSizeChange}
+                    options={PAGE_SIZE_OPTIONS.map(size => ({
+                      value: size,
+                      label: String(size),
+                    }))}
+                    style={{ width: 72 }}
+                    aria-label={intl.formatMessage({ id: 'project_page.public_catalog_page_size' })}
+                  />
+                </PageSizeControl>
+              </CatalogToolbar>
+              {!loading && totalRows === 0 && (
                 <SectionHint>
                   <FormattedMessage id='project_page.public_catalog_empty_hint' />
                 </SectionHint>
@@ -311,110 +388,125 @@ animate='show'>
                 </EmptyText>
               </EmptyState>
             ) : (
-              <ProjectGrid>
-                {projects.map(item => {
-                  const authorName = item.authorName || item.authorUserId || '?'
-                  const orderValue = orderDrafts[item.projectPageId] !== undefined
-                    ? orderDrafts[item.projectPageId]
-                    : (item.landingSortOrder ?? 0)
+              <React.Fragment>
+                <ProjectGrid>
+                  {projects.map(item => {
+                    const authorName = item.authorName || item.authorUserId || '?'
+                    const orderValue = orderDrafts[item.projectPageId] !== undefined
+                      ? orderDrafts[item.projectPageId]
+                      : (item.landingSortOrder ?? 0)
 
-                  return (
-                    <ProjectCard
-                      key={item.projectPageId}
-                      whileTap={{ scale: 0.995 }}
-                    >
-                      <ProjectCardTop>
-                        <ProjectGlyph>
-                          <GlobalOutlined />
-                        </ProjectGlyph>
-                        <ProjectCardBody>
-                          <ProjectTitleButton
-                            type='button'
-                            onClick={() => openProject(item.projectPageId)}
-                          >
-                            {displayProjectTitle(item.title, intl)}
-                          </ProjectTitleButton>
-                          <OpenButton
-                            type='button'
-                            onClick={() => openProject(item.projectPageId)}
-                          >
-                            <FormattedMessage id='project_page.open_project' />
-                            <ArrowRightOutlined style={{ fontSize: 12 }} />
-                          </OpenButton>
-                        </ProjectCardBody>
-                      </ProjectCardTop>
-                      <AuthorRow>
-                        <AuthorAvatar>{getAuthorInitials(authorName)}</AuthorAvatar>
-                        <AuthorName>
-                          <FormattedMessage
-                            id='project_page.author_label'
-                            values={{ name: authorName }}
-                          />
-                        </AuthorName>
-                      </AuthorRow>
-                      {isSuperAdmin && (
-                        <ModerationRow>
-                          {item.landingFeatured ? (
-                            <ModerationBadge>
-                              <PushpinOutlined />
-                              <FormattedMessage
-                                id='project_page.landing_on_badge'
-                                values={{ order: item.landingSortOrder ?? 0 }}
-                              />
-                            </ModerationBadge>
-                          ) : (
-                            <span style={{ marginRight: 'auto' }} />
-                          )}
-                          {item.landingFeatured ? (
-                            <Space size={4} wrap>
-                              <InputNumber
-                                size='small'
-                                min={0}
-                                value={orderValue}
-                                onChange={value => setOrderDrafts(prev => ({
-                                  ...prev,
-                                  [item.projectPageId]: value,
-                                }))}
-                                aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
-                              />
+                    return (
+                      <ProjectCard
+                        key={item.projectPageId}
+                        whileTap={{ scale: 0.995 }}
+                      >
+                        <ProjectCardTop>
+                          <ProjectGlyph>
+                            <GlobalOutlined />
+                          </ProjectGlyph>
+                          <ProjectCardBody>
+                            <ProjectTitleButton
+                              type='button'
+                              onClick={() => openProject(item.projectPageId)}
+                            >
+                              {displayProjectTitle(item.title, intl)}
+                            </ProjectTitleButton>
+                            <OpenButton
+                              type='button'
+                              onClick={() => openProject(item.projectPageId)}
+                            >
+                              <FormattedMessage id='project_page.open_project' />
+                              <ArrowRightOutlined style={{ fontSize: 12 }} />
+                            </OpenButton>
+                          </ProjectCardBody>
+                        </ProjectCardTop>
+                        <AuthorRow>
+                          <AuthorAvatar>{getAuthorInitials(authorName)}</AuthorAvatar>
+                          <AuthorName>
+                            <FormattedMessage
+                              id='project_page.author_label'
+                              values={{ name: authorName }}
+                            />
+                          </AuthorName>
+                        </AuthorRow>
+                        {isSuperAdmin && (
+                          <ModerationRow>
+                            {item.landingFeatured ? (
+                              <ModerationBadge>
+                                <PushpinOutlined />
+                                <FormattedMessage
+                                  id='project_page.landing_on_badge'
+                                  values={{ order: item.landingSortOrder ?? 0 }}
+                                />
+                              </ModerationBadge>
+                            ) : (
+                              <span style={{ marginRight: 'auto' }} />
+                            )}
+                            {item.landingFeatured ? (
+                              <Space size={4} wrap>
+                                <InputNumber
+                                  size='small'
+                                  min={0}
+                                  value={orderValue}
+                                  onChange={value => setOrderDrafts(prev => ({
+                                    ...prev,
+                                    [item.projectPageId]: value,
+                                  }))}
+                                  aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
+                                />
+                                <Button
+                                  size='small'
+                                  loading={orderBusyId === item.projectPageId}
+                                  onClick={() => saveSortOrder(item)}
+                                >
+                                  <FormattedMessage id='project_page.landing_order_save' />
+                                </Button>
+                                <Button
+                                  size='small'
+                                  disabled={featureBusy}
+                                  onClick={() => removeFromLanding(item)}
+                                >
+                                  <FormattedMessage id='project_page.landing_remove' />
+                                </Button>
+                              </Space>
+                            ) : (
                               <Button
                                 size='small'
-                                loading={orderBusyId === item.projectPageId}
-                                onClick={() => saveSortOrder(item)}
+                                icon={<PushpinOutlined />}
+                                onClick={() => openFeatureModal(item)}
                               >
-                                <FormattedMessage id='project_page.landing_order_save' />
+                                <FormattedMessage id='project_page.landing_add' />
                               </Button>
-                              <Button
-                                size='small'
-                                disabled={featureBusy}
-                                onClick={() => removeFromLanding(item)}
-                              >
-                                <FormattedMessage id='project_page.landing_remove' />
-                              </Button>
-                            </Space>
-                          ) : (
+                            )}
                             <Button
                               size='small'
-                              icon={<PushpinOutlined />}
-                              onClick={() => openFeatureModal(item)}
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => openDeleteModal(item)}
                             >
-                              <FormattedMessage id='project_page.landing_add' />
+                              <FormattedMessage id='project_page.moderate_delete' />
                             </Button>
-                          )}
-                          <Button
-                            size='small'
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => openDeleteModal(item)}
-                          >
-                            <FormattedMessage id='project_page.moderate_delete' />
-                          </Button>
-                        </ModerationRow>
-                      )}
-                    </ProjectCard>
-                  )
-                })}
-              </ProjectGrid>
+                          </ModerationRow>
+                        )}
+                      </ProjectCard>
+                    )
+                  })}
+                </ProjectGrid>
+
+                {totalRows > pageSize && (
+                  <PaginationWrap>
+                    <Pagination
+                      current={currentPage}
+                      pageSize={pageSize}
+                      total={totalRows}
+                      onChange={onPaginationChange}
+                      showSizeChanger={false}
+                      responsive
+                    />
+                  </PaginationWrap>
+                )}
+              </React.Fragment>
             )}
           </Panel>
         </motion.div>
