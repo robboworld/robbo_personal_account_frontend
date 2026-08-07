@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
-import { Input, Form, Spin, message, Modal, InputNumber, Space, Button } from 'antd'
+import { Input, Form, Spin, message, Modal, InputNumber, Space, Button, Select } from 'antd'
 import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, DeleteOutlined, ExclamationCircleOutlined, PictureOutlined, PushpinOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { createGlobalStyle } from 'styled-components'
@@ -66,6 +66,7 @@ import {
 } from '@/actions'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
+import { ProjectTag, ProjectTagList } from '@/components/ProjectCatalog/styles'
 
 
 const { TextArea } = Input
@@ -227,6 +228,24 @@ function GuestProjectView({ projectPageId }) {
                                                 <GuestMetaText>{notes}</GuestMetaText>
                                             </GuestMetaSection>
                                         ) : null}
+                                        {Array.isArray(projectPage?.tags) && projectPage.tags.length > 0 ? (
+                                            <GuestMetaSection>
+                                                <MetaLabel>
+                                                    <FormattedMessage id='project_page.tags_label' />
+                                                </MetaLabel>
+                                                <ProjectTagList>
+                                                    {projectPage.tags.map(tag => (
+                                                        <ProjectTag
+                                                            key={tag}
+                                                            type='button'
+                                                            onClick={() => navigate(`${PUBLIC_PROJECTS_ROUTE}?tag=${encodeURIComponent(tag)}`)}
+                                                        >
+                                                            {tag}
+                                                        </ProjectTag>
+                                                    ))}
+                                                </ProjectTagList>
+                                            </GuestMetaSection>
+                                        ) : null}
                                     </GuestMetaBlock>
                                 ) : null}
                                 <ActionsGroup style={{ marginTop: '1rem' }}>
@@ -295,6 +314,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
 
     const { projectPage, playToken, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
     const isOwner = Boolean(projectPage?.isOwner)
+    const canEditTags = isOwner || isSuperAdmin
 
     useEffect(() => {
         if (!projectPage) {
@@ -332,6 +352,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             title: projectPage.title,
             instruction: projectPage.instruction,
             notes: projectPage.notes,
+            tags: Array.isArray(projectPage.tags) ? projectPage.tags : [],
         })
     }, [
         loading,
@@ -341,6 +362,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         projectPage?.title,
         projectPage?.instruction,
         projectPage?.notes,
+        projectPage?.tags,
     ])
 
     const seeInsideHandler = () => {
@@ -356,6 +378,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             instruction: values.instruction ?? projectPage.instruction,
             notes: values.notes ?? projectPage.notes,
             isShared: projectPage.isShared,
+            tags: Array.isArray(values.tags) ? values.tags : (projectPage.tags || []),
             ...overrides,
         }
     }
@@ -563,11 +586,12 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                                 className='project-page-form'
                                 layout='vertical'
                                 form={form}
-                                onFinish={({ title, instruction, notes }) => {
+                                onFinish={({ title, instruction, notes, tags }) => {
                                     actions.updateProjectPage(token, buildProjectPayload({
                                         title,
                                         instruction,
                                         notes,
+                                        tags: Array.isArray(tags) ? tags : [],
                                     }))
                                 }}
                             >
@@ -591,6 +615,90 @@ readOnly={!isOwner} />
                                     <TextArea size='large' rows={4}
 readOnly={!isOwner} />
                                 </Form.Item>
+                                {canEditTags ? (
+                                    <Form.Item
+                                        name='tags'
+                                        label={<FormattedMessage id='project_page.tags_label' />}
+                                        extra={<FormattedMessage id='project_page.tags_hint' values={{ maxCount: 5 }} />}
+                                    >
+                                        <Select
+                                            mode='tags'
+                                            tokenSeparators={[',']}
+                                            placeholder={intl.formatMessage({ id: 'project_page.tags_placeholder' })}
+                                            maxTagCount={5}
+                                            open={false}
+                                            onChange={values => {
+                                                const MAX_COUNT = 5
+                                                const MAX_LEN = 25
+                                                const seen = new Set()
+                                                const next = []
+                                                let tooLong = false
+                                                let capped = false
+                                                ;(Array.isArray(values) ? values : []).forEach(raw => {
+                                                    const original = String(raw || '').trim()
+                                                    if (!original) {
+                                                        return
+                                                    }
+                                                    if (original.length > MAX_LEN) {
+                                                        tooLong = true
+                                                        return
+                                                    }
+                                                    const value = original.toLowerCase()
+                                                        .replace(/_/g, '-')
+                                                        .replace(/\s+/g, '-')
+                                                        .replace(/[^a-z0-9-]/g, '')
+                                                        .replace(/-+/g, '-')
+                                                        .replace(/^-|-$/g, '')
+                                                    if (!value || seen.has(value)) {
+                                                        return
+                                                    }
+                                                    if (value.length > MAX_LEN) {
+                                                        tooLong = true
+                                                        return
+                                                    }
+                                                    if (next.length >= MAX_COUNT) {
+                                                        capped = true
+                                                        return
+                                                    }
+                                                    seen.add(value)
+                                                    next.push(value)
+                                                })
+                                                if (tooLong) {
+                                                    message.error(intl.formatMessage(
+                                                        { id: 'project_page.tags_max_length' },
+                                                        { max: MAX_LEN },
+                                                    ))
+                                                }
+                                                if (capped) {
+                                                    message.warning(intl.formatMessage(
+                                                        { id: 'project_page.tags_max_count' },
+                                                        { max: MAX_COUNT },
+                                                    ))
+                                                }
+                                                form.setFieldsValue({ tags: next })
+                                            }}
+                                        />
+                                    </Form.Item>
+                                ) : (
+                                    Array.isArray(projectPage?.tags) && projectPage.tags.length > 0 && (
+                                        <MetaRow>
+                                            <MetaLabel>
+                                                <FormattedMessage id='project_page.tags_label' />
+                                            </MetaLabel>
+                                            <ProjectTagList>
+                                                {projectPage.tags.map(tag => (
+                                                    <ProjectTag
+                                                        key={tag}
+                                                        type='button'
+                                                        onClick={() => navigate(`${PUBLIC_PROJECTS_ROUTE}?tag=${encodeURIComponent(tag)}`)}
+                                                    >
+                                                        {tag}
+                                                    </ProjectTag>
+                                                ))}
+                                            </ProjectTagList>
+                                        </MetaRow>
+                                    )
+                                )}
                                 <MetaRow>
                                     <MetaLabel>
                                         <FormattedMessage id='project_page.last_change' />
@@ -604,7 +712,7 @@ readOnly={!isOwner} />
                                         <FormattedMessage id='project_page.actions_group' />
                                     </MetaLabel>
                                     <ActionsGroup>
-                                        {isOwner && (
+                                        {canEditTags && (
                                             <PrimaryAction type='primary' htmlType='submit'>
                                                 <FormattedMessage id='project_page.save' />
                                             </PrimaryAction>

@@ -5,7 +5,7 @@ import {
   GlobalOutlined,
   PushpinOutlined,
 } from '@ant-design/icons'
-import { Button, Input, InputNumber, Modal, Pagination, Select, Space, message } from 'antd'
+import { Button, Input, InputNumber, Modal, Pagination, Select, Space, Tag, message } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -19,6 +19,7 @@ import { SUPER_ADMIN } from '@/constants'
 import { useAuthRole } from '@/helpers'
 import { displayProjectTitle } from '@/helpers/intl'
 import {
+  ActiveFilterChip,
   AuthorAvatar,
   AuthorName,
   AuthorRow,
@@ -38,7 +39,10 @@ import {
   ProjectCardTop,
   ProjectGlyph,
   ProjectGrid,
+  ProjectTag,
+  ProjectTagList,
   ProjectTitleButton,
+  SearchBar,
   SkeletonCard,
   SkeletonGrid,
 } from '@/components/ProjectCatalog/styles'
@@ -60,7 +64,9 @@ import {
 const SKELETON_COUNT = 6
 const PAGE_SIZE_OPTIONS = [6, 12, 24]
 const DEFAULT_PAGE_SIZE = 12
-const { TextArea } = Input
+const MAX_FILTER_TAGS = 5
+const MAX_TAG_LEN = 25
+const { TextArea, Search } = Input
 
 const parsePage = value => {
   const n = Number.parseInt(String(value || ''), 10)
@@ -70,6 +76,42 @@ const parsePage = value => {
 const parsePageSize = value => {
   const n = Number.parseInt(String(value || ''), 10)
   return PAGE_SIZE_OPTIONS.includes(n) ? n : DEFAULT_PAGE_SIZE
+}
+
+const parseQuery = value => String(value || '').trim()
+
+const parseTag = value => {
+  const raw = String(value || '').trim().toLowerCase()
+    .replace(/_/g, '-')
+    .replace(/\s+/g, '-')
+  if (!raw) {
+    return ''
+  }
+  const cleaned = raw.replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '')
+  if (!cleaned || cleaned.length > MAX_TAG_LEN) {
+    return ''
+  }
+  return cleaned
+}
+
+const parseTagsFromSearchParams = params => {
+  const rawParts = [
+    ...params.getAll('tag'),
+    ...(params.get('tags') ? [params.get('tags')] : []),
+  ]
+  const seen = new Set()
+  const out = []
+  rawParts.forEach(raw => {
+    String(raw || '').split(',').forEach(part => {
+      const tag = parseTag(part)
+      if (!tag || seen.has(tag) || out.length >= MAX_FILTER_TAGS) {
+        return
+      }
+      seen.add(tag)
+      out.push(tag)
+    })
+  })
+  return out
 }
 
 const getAuthorInitials = name => {
@@ -113,13 +155,89 @@ export default function PublicProjects() {
     () => parsePageSize(searchParams.get('pageSize')),
     [searchParams],
   )
+  const searchQuery = useMemo(
+    () => parseQuery(searchParams.get('q')),
+    [searchParams],
+  )
+  const activeTags = useMemo(
+    () => parseTagsFromSearchParams(searchParams),
+    [searchParams],
+  )
+  const [searchDraft, setSearchDraft] = useState(searchQuery)
+  const hasActiveFilters = Boolean(searchQuery || activeTags.length)
 
-  const updatePaging = useCallback((page, size) => {
-    const next = new URLSearchParams(searchParams)
+  useEffect(() => {
+    setSearchDraft(searchQuery)
+  }, [searchQuery])
+
+  const writeCatalogParams = useCallback(({
+    page = currentPage,
+    size = pageSize,
+    q = searchQuery,
+    tags = activeTags,
+  } = {}) => {
+    const next = new URLSearchParams()
     next.set('page', String(page))
     next.set('pageSize', String(size))
+    const query = parseQuery(q)
+    if (query) {
+      next.set('q', query)
+    }
+    ;(tags || []).forEach(tag => {
+      const normalized = parseTag(tag)
+      if (normalized) {
+        next.append('tag', normalized)
+      }
+    })
     setSearchParams(next, { replace: true })
-  }, [searchParams, setSearchParams])
+  }, [currentPage, pageSize, searchQuery, activeTags, setSearchParams])
+
+  const updatePaging = useCallback((page, size) => {
+    writeCatalogParams({ page, size })
+  }, [writeCatalogParams])
+
+  const onSearchSubmit = useCallback(value => {
+    writeCatalogParams({
+      page: 1,
+      q: parseQuery(value),
+    })
+  }, [writeCatalogParams])
+
+  const onTagFilter = useCallback(tag => {
+    const normalized = parseTag(tag)
+    if (!normalized) {
+      return
+    }
+    if (activeTags.includes(normalized)) {
+      return
+    }
+    if (activeTags.length >= MAX_FILTER_TAGS) {
+      message.warning(intl.formatMessage(
+        { id: 'project_page.tags_max_count' },
+        { max: MAX_FILTER_TAGS },
+      ))
+      return
+    }
+    writeCatalogParams({
+      page: 1,
+      tags: [...activeTags, normalized],
+    })
+  }, [activeTags, writeCatalogParams, intl])
+
+  const removeTagFilter = useCallback(tag => {
+    writeCatalogParams({
+      page: 1,
+      tags: activeTags.filter(item => item !== tag),
+    })
+  }, [activeTags, writeCatalogParams])
+
+  const clearAllFilters = useCallback(() => {
+    writeCatalogParams({
+      page: 1,
+      q: '',
+      tags: [],
+    })
+  }, [writeCatalogParams])
 
   const nextFeatureSortOrder = useCallback(list => {
     const featured = (list || []).filter(item => item.landingFeatured)
@@ -133,7 +251,10 @@ export default function PublicProjects() {
     let cancelled = false
     setLoading(true)
 
-    projectPageAPI.fetchPublicProjectPages(String(currentPage), String(pageSize))
+    projectPageAPI.fetchPublicProjectPages(String(currentPage), String(pageSize), {
+      q: searchQuery || undefined,
+      tags: activeTags,
+    })
       .then(data => {
         if (cancelled) {
           return
@@ -145,10 +266,7 @@ export default function PublicProjects() {
 
         const maxPage = Math.max(1, Math.ceil(total / pageSize) || 1)
         if (currentPage > maxPage) {
-          const next = new URLSearchParams(window.location.search)
-          next.set('page', String(maxPage))
-          next.set('pageSize', String(pageSize))
-          setSearchParams(next, { replace: true })
+          writeCatalogParams({ page: maxPage })
         }
       })
       .catch(() => {
@@ -166,7 +284,7 @@ export default function PublicProjects() {
     return () => {
       cancelled = true
     }
-  }, [currentPage, pageSize, setSearchParams])
+  }, [currentPage, pageSize, searchQuery, activeTags, writeCatalogParams])
 
   const openProject = useCallback(projectPageId => {
     navigate(`/projects/${projectPageId}`, {
@@ -366,12 +484,48 @@ animate='show'>
                   />
                 </PageSizeControl>
               </CatalogToolbar>
-              {!loading && totalRows === 0 && (
+              {!loading && totalRows === 0 && !hasActiveFilters && (
                 <SectionHint>
                   <FormattedMessage id='project_page.public_catalog_empty_hint' />
                 </SectionHint>
               )}
             </SectionHeader>
+
+            <SearchBar>
+              <Search
+                allowClear
+                value={searchDraft}
+                onChange={e => setSearchDraft(e.target.value)}
+                onSearch={onSearchSubmit}
+                enterButton
+                placeholder={intl.formatMessage({ id: 'project_page.public_catalog_search_placeholder' })}
+                aria-label={intl.formatMessage({ id: 'project_page.public_catalog_search_placeholder' })}
+              />
+              {activeTags.length > 0 && activeTags.map(tag => (
+                <ActiveFilterChip key={tag}>
+                  <FormattedMessage
+                    id='project_page.public_catalog_tag_filter'
+                    values={{ tag }}
+                  />
+                  <Tag
+                    closable
+                    onClose={e => {
+                      if (e && typeof e.preventDefault === 'function') {
+                        e.preventDefault()
+                      }
+                      removeTagFilter(tag)
+                    }}
+                    style={{ margin: 0, border: 0, background: 'transparent' }}
+                  />
+                </ActiveFilterChip>
+              ))}
+              {hasActiveFilters && (
+                <Button type='link' size='small'
+onClick={clearAllFilters}>
+                  <FormattedMessage id='project_page.public_catalog_clear_filters' />
+                </Button>
+              )}
+            </SearchBar>
 
             {loading ? (
               <SkeletonGrid aria-busy='true' aria-label={intl.formatMessage({ id: 'project_page.public_catalog_loading' })}>
@@ -385,7 +539,11 @@ animate='show'>
                   <GlobalOutlined />
                 </EmptyIcon>
                 <EmptyText>
-                  <FormattedMessage id='project_page.public_catalog_empty' />
+                  <FormattedMessage
+                    id={hasActiveFilters
+                      ? 'project_page.public_catalog_search_empty'
+                      : 'project_page.public_catalog_empty'}
+                  />
                 </EmptyText>
               </EmptyState>
             ) : (
@@ -431,6 +589,19 @@ animate='show'>
                             />
                           </AuthorName>
                         </AuthorRow>
+                        {Array.isArray(item.tags) && item.tags.length > 0 && (
+                          <ProjectTagList>
+                            {item.tags.map(tag => (
+                              <ProjectTag
+                                key={tag}
+                                type='button'
+                                onClick={() => onTagFilter(tag)}
+                              >
+                                {tag}
+                              </ProjectTag>
+                            ))}
+                          </ProjectTagList>
+                        )}
                         {isSuperAdmin && (
                           <ModerationRow>
                             {item.landingFeatured && (
