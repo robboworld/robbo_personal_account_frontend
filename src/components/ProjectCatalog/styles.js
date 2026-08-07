@@ -21,13 +21,17 @@ export const CatalogCount = styled.span`
 
 export const ProjectGrid = styled.div`
   display: grid;
-  /* 1 → 2 → 3 колонки; max 360px — одна карточка в ряду не растягивается
-     на всю ширину и остаётся по центру */
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 360px));
+  grid-template-columns: minmax(0, 360px);
   justify-content: center;
   gap: 0.875rem;
 
-  ${theme.above.large`
+  ${theme.above.small`
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+  `}
+
+  ${theme.above.med`
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
   `}
 `
@@ -156,9 +160,18 @@ export const OpenButton = styled.button`
 
 export const SkeletonGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 360px));
+  grid-template-columns: minmax(0, 360px);
   justify-content: center;
   gap: 0.875rem;
+
+  ${theme.above.small`
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+  `}
+
+  ${theme.above.med`
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  `}
 `
 
 export const SkeletonCard = styled.div`
