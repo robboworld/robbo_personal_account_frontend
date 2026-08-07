@@ -261,6 +261,73 @@ export const AuthorName = styled.span`
   white-space: nowrap;
 `
 
+export const ProjectTagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+  min-width: 0;
+`
+
+export const ProjectTag = styled.button`
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 175, 65, 0.28);
+  background: rgba(0, 175, 65, 0.08);
+  color: ${colors.accentGreen};
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: rgba(0, 175, 65, 0.16);
+    border-color: rgba(0, 175, 65, 0.45);
+    color: #009a47;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${colors.accentGreen};
+    outline-offset: 2px;
+  }
+`
+
+export const SearchBar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  margin-bottom: 1rem;
+
+  .ant-input-search {
+    flex: 1 1 220px;
+    max-width: 28rem;
+  }
+`
+
+export const ActiveFilterChip = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: ${colors.secondary};
+  background: rgba(108, 91, 123, 0.1);
+  border: 1px solid ${surface.line};
+`
+
 export const ModerationRow = styled.div`
   display: flex;
   flex-direction: column;
