@@ -78,7 +78,7 @@ const SelectLanguage = ({ variant = 'default' }) => {
                     footer={null}
                     centered
                     destroyOnClose
-                    width={360}
+                    width='min(360px, calc(100vw - 2rem))'
                     maskClosable
                     styles={{
                         mask: { background: 'rgba(24, 28, 32, 0.55)' },

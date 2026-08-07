@@ -37,7 +37,7 @@ const SiteFooter = styled.footer`
     pointer-events: none;
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     padding: 24px 0;
   }
 `
@@ -70,7 +70,7 @@ const FooterMain = styled.div`
     text-align: left;
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -92,7 +92,7 @@ const BrandCol = styled.div`
     text-align: left;
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     order: 1;
   }
 `
@@ -110,7 +110,7 @@ const PartnerCol = styled.div`
     justify-content: flex-start;
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     order: 2;
   }
 `
@@ -127,13 +127,13 @@ const FooterCol = styled.div`
     align-items: flex-start;
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     order: 3;
   }
 `
 
 const ContactsCol = styled(FooterCol)`
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     order: 4;
   }
 `
@@ -263,7 +263,7 @@ const FooterLinks = styled.ul`
     ${footerLinkStyles}
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     li {
       margin: 0 0 2px;
     }

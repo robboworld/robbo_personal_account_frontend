@@ -90,7 +90,7 @@ function* signOutSaga(action) {
 
 function* checkAuthSaga(action) {
     try {
-        const { token } = action.payload.token
+        const token = action.payload?.token
         const response = yield call(authAPI.checkAuth, token)
         console.log(response)
         yield put(checkAuthSuccess(response))

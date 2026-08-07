@@ -90,6 +90,10 @@ export const DeleteButton = styled.button`
     opacity: 1;
   }
 
+  @media (hover: none) {
+    opacity: 1;
+  }
+
   &:hover {
     color: #c0392b;
     background: rgba(192, 57, 43, 0.08);

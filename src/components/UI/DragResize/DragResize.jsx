@@ -2,17 +2,19 @@ import React, { useEffect, useState } from 'react'
 import usePortal from 'react-useportal'
 import Draggable from 'react-draggable'
 import { PropTypes } from 'prop-types'
+import { Drawer } from 'antd'
 
 import { ModalContent, ModalWindow, CloseModalButton } from './components'
 
 import Flex from '@/components/Flex'
+import { useIsLkMobile } from '@/helpers'
 
 const DragResize = ({
     open,
     setOpen,
     content,
 }) => {
-
+    const isMobile = useIsLkMobile()
     const { Portal } = usePortal({ bindTo: document.getElementById('portal') })
 
     const [currentPosition, setCurrentPosition] = useState({
@@ -36,6 +38,26 @@ const DragResize = ({
             clearTimeout(draggerTimeout)
         }
     }, [])
+
+    if (isMobile) {
+        return (
+            <Drawer
+                open={open}
+                onClose={() => setOpen(false)}
+                placement='bottom'
+                height='92dvh'
+                destroyOnClose
+                styles={{
+                    body: {
+                        padding: '0.75rem 1rem 1.25rem',
+                        overflow: 'auto',
+                    },
+                }}
+            >
+                {open ? content() : null}
+            </Drawer>
+        )
+    }
 
     return (
         open &&

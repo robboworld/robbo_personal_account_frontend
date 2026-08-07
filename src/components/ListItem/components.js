@@ -70,6 +70,12 @@ export const IconDiv = styled.div`
         color: #44A444;
         border-bottom: 1px #44A444 solid;
     }
+
+    @media (hover: none) {
+        width: auto;
+        min-width: 2.75rem;
+        padding-inline: 0.5rem;
+    }
     
     &:focus-visible {
         outline: 1px solid white;

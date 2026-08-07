@@ -35,6 +35,7 @@ import {
 
 import PlayerScratchControls from './PlayerScratchControls'
 import ProjectReactions from './ProjectReactions'
+import ProjectComments from './ProjectComments'
 
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
 import PageLayout from '@/components/PageLayout'
@@ -204,6 +205,7 @@ function GuestProjectView({ projectPageId }) {
                                     onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
                                 />
                                 <ProjectReactions projectPageId={projectPageId} />
+                                <ProjectComments projectPageId={projectPageId} />
                             </PlayerCard>
                             <MetaCard>
                                 <ProjectTitle>{displayTitle}</ProjectTitle>
@@ -292,6 +294,8 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     }, [projectPageId, token])
 
     const { projectPage, playToken, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
+    const loginState = useSelector(({ login }) => login)
+    const currentUserId = loginState?.userId || ''
     const isOwner = Boolean(projectPage?.isOwner)
 
     useEffect(() => {
@@ -547,6 +551,14 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                             onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
                         />
                         <ProjectReactions projectPageId={projectPageId} interactive />
+                        {Boolean(projectPage?.isShared) && (
+                            <ProjectComments
+                                projectPageId={projectPageId}
+                                interactive
+                                canModerate={isOwner || isSuperAdmin}
+                                currentUserId={String(currentUserId || '')}
+                            />
+                        )}
                         {!isOwner && (
                             <ViewOnlyNote>
                                 <FormattedMessage id='project_page.view_only' />

@@ -5,7 +5,6 @@ import { useParams, useSearchParams } from "react-router-dom"
 import { FormattedMessage, useIntl } from "react-intl"
 
 import Flex from "@/components/Flex"
-import Loader from "@/components/Loader"
 import AddRobboGroupWithUnitSelect from "@/components/AddRobboGroup/AddRobboGroupWithUnitSelect"
 import RobboGroup from "@/components/RobboGroup"
 import ListItem from "@/components/ListItem"
@@ -14,6 +13,7 @@ import { useActions } from "@/helpers/useActions"
 import { getRobboGroupsState } from "@/reducers/robboGroups"
 import { getRobboUnitsState } from "@/reducers/robboUnits"
 import { DragResize } from "@/components/UI"
+import { PageContent, PageToolbar } from '@/components/AccountShell'
 import {
     SUPER_ADMIN,
 } from "@/constants"
@@ -76,27 +76,27 @@ export default ({ userRole }) => {
     }
 
     return (
-        <React.Fragment>
-            <Title>
-                <FormattedMessage id='robbo_groups.title' />
-            </Title>
+        <PageContent>
+            <PageToolbar>
+                <Title level={2}>
+                    <FormattedMessage id='robbo_groups.title' />
+                </Title>
+                <Button
+                    onClick={() => setOpenAddGroup(true)} type='primary'
+                >
+                    <FormattedMessage id='robbo_groups.create_robbo_group' />
+                </Button>
+            </PageToolbar>
             <Modal
                 centered
                 title={intl.formatMessage({ id: 'robbo_groups.modal_title' })}
                 open={openAddGroup}
                 onCancel={() => setOpenAddGroup(false)}
                 footer={[]}
+                width='min(520px, calc(100vw - 2rem))'
             >
                 <AddRobboGroupWithUnitSelect robboUnitId={robboUnitId} />
             </Modal>
-            <Flex direction='row' justify='flex-end'
-                align='flex-start'>
-                <Button
-                    onClick={() => setOpenAddGroup(true)} type='primary'
-                >
-                    <FormattedMessage id='robbo_groups.create_robbo_group' />
-                </Button>
-            </Flex>
             {
                 loading ? <Spin />
                     : (
@@ -139,10 +139,12 @@ export default ({ userRole }) => {
             <Pagination
                 defaultCurrent={1} defaultPageSize={10}
                 total={countRows} current={+currentPage}
+                responsive
+                style={{ marginTop: '1.25rem', textAlign: 'center' }}
                 onChange={(page, pageSize) => {
                     setSearchParams({ page })
                 }}
             />
-        </React.Fragment>
+        </PageContent>
     )
 }

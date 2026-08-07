@@ -14,7 +14,9 @@ export default createGlobalStyle`
   html,
   body {
     width: 100%;
+    max-width: 100%;
     min-height: 100dvh;
+    overflow-x: clip;
   }
 
   body {
@@ -37,5 +39,15 @@ export default createGlobalStyle`
     min-height: 100dvh;
     background: ${robboGuestTokens.lkPageBg};
     box-sizing: border-box;
+  }
+
+  /* Mobile nav drawer: kill Ant default body padding / inset */
+  .lk-mobile-nav-drawer .ant-drawer-body {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .lk-mobile-nav-drawer .ant-drawer-content {
+    padding: 0 !important;
   }
 `

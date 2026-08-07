@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
+  CloseOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LogoutOutlined,
@@ -21,7 +22,7 @@ import {
 } from './SideBarData.jsx'
 import { mapSidebarMenuItems } from './sidebarMenu'
 
-import { signOutSuccess } from '@/actions/auth'
+import { checkAuthRequest, signOutSuccess } from '@/actions/auth'
 import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
 import {
   openLms,
@@ -37,6 +38,7 @@ import {
 } from '@/constants'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
+import { getLoginStreak } from '@/reducers/login'
 import {
   SidebarMenu,
   SidebarShell,
@@ -45,16 +47,31 @@ import {
   SidebarCollapseBtn,
   SidebarFooter,
   SidebarLogoutBtn,
+  SidebarBrand,
 } from '@/components/AccountShell'
 
 /** Build nav: primary → tools / tariffs / rest, with dividers. */
 const withSharedExploreItems = roleItems => buildSidebarItems(roleItems)
 
-export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed }) => {
+export default ({
+  selectedNavBarKey = '1',
+  collapsed = false,
+  onToggleCollapsed,
+  variant = 'desktop',
+  onNavigate,
+  onCloseDrawer,
+}) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const intl = useIntl()
   const Role = useAuthRole()
+  const loginStreak = useSelector(({ login }) => getLoginStreak(login))
+  const isDrawer = variant === 'drawer'
+  const menuCollapsed = isDrawer ? false : collapsed
+
+  useEffect(() => {
+    dispatch(checkAuthRequest(localStorage.getItem('token') || null))
+  }, [dispatch])
 
   const roleSideBarData = useMemo(() => {
     switch (Role) {
@@ -86,8 +103,8 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
   )
 
   const menuItems = useMemo(
-    () => mapSidebarMenuItems(SideBarData, collapsed),
-    [SideBarData, collapsed],
+    () => mapSidebarMenuItems(SideBarData, menuCollapsed, loginStreak),
+    [SideBarData, menuCollapsed, loginStreak],
   )
 
   const [singOutMutation] = useMutation(authMutationsGQL.SING_OUT)
@@ -128,43 +145,74 @@ export default ({ selectedNavBarKey = '1', collapsed = false, onToggleCollapsed 
       return
     }
     if (entry.external === 'lms') {
+      if (onNavigate) {
+        onNavigate()
+      }
       await openLms()
       return
     }
     navigate(entry.pathname, { state: { selectedNavBarKey: key } })
+    if (onNavigate) {
+      onNavigate()
+    }
   }
 
   return (
-    <SidebarShell $collapsed={collapsed}>
-      <SidebarTopBar $collapsed={collapsed}>
-        <SidebarCollapseBtn
-          type='button'
-          $collapsed={collapsed}
-          aria-label={collapsed
-            ? intl.formatMessage({ id: 'sidebar.expand' })
-            : intl.formatMessage({ id: 'sidebar.collapse' })}
-          onClick={onToggleCollapsed}
-        >
-          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </SidebarCollapseBtn>
-        <SidebarTopActions $collapsed={collapsed}>
-          <SelectLanguage variant='sidebar' />
-          <NotificationBell variant='sidebar' />
-        </SidebarTopActions>
+    <SidebarShell $collapsed={menuCollapsed} $drawer={isDrawer}>
+      <SidebarTopBar $collapsed={menuCollapsed} $drawer={isDrawer}>
+        {isDrawer ? (
+          <React.Fragment>
+            <SidebarBrand>
+              <FormattedMessage id='footer.brand' />
+            </SidebarBrand>
+            <SidebarTopActions $drawer>
+              <SelectLanguage variant='sidebar' />
+              <NotificationBell variant='sidebar' />
+            </SidebarTopActions>
+            <SidebarCollapseBtn
+              type='button'
+              $collapsed={false}
+              $drawer
+              aria-label={intl.formatMessage({ id: 'sidebar.close_menu' })}
+              onClick={onCloseDrawer}
+            >
+              <CloseOutlined />
+            </SidebarCollapseBtn>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <SidebarCollapseBtn
+              type='button'
+              $collapsed={collapsed}
+              aria-label={collapsed
+                ? intl.formatMessage({ id: 'sidebar.expand' })
+                : intl.formatMessage({ id: 'sidebar.collapse' })}
+              onClick={onToggleCollapsed}
+            >
+              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            </SidebarCollapseBtn>
+            <SidebarTopActions $collapsed={collapsed}>
+              <SelectLanguage variant='sidebar' />
+              <NotificationBell variant='sidebar' />
+            </SidebarTopActions>
+          </React.Fragment>
+        )}
       </SidebarTopBar>
       <SidebarMenu
         theme='light'
         mode='inline'
-        inlineCollapsed={collapsed}
-        $collapsed={collapsed}
+        inlineCollapsed={menuCollapsed}
+        inlineIndent={isDrawer ? 0 : 24}
+        $collapsed={menuCollapsed}
+        $drawer={isDrawer}
         selectedKeys={[selectedNavBarKey]}
         onClick={onMenuClick}
         items={menuItems}
       />
-      <SidebarFooter $collapsed={collapsed}>
+      <SidebarFooter $collapsed={menuCollapsed}>
         <SidebarLogoutBtn
           type='button'
-          $collapsed={collapsed}
+          $collapsed={menuCollapsed}
           onClick={() => handleLogout()}
         >
           <LogoutOutlined />

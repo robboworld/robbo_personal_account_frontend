@@ -2,6 +2,7 @@ import {
   CLIENTS_ROUTE,
   MY_PROJECTS_ROUTE,
   PROFILE_PAGE_ROUTE,
+  CUSTOMIZATION_PAGE_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
   ROBBO_GROUPS_ROUTE,
   ROBBO_UNITS_ROUTE,
@@ -24,19 +25,23 @@ import {
 const exactByRole = {
   [STUDENT]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
     [MY_PROJECTS_ROUTE]: '2',
     [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [PARENT]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
     [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [TEACHER]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
     [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [UNIT_ADMIN]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
     [MY_LICENSES_ROUTE]: 'my_licenses',
     [ROBBO_UNITS_ROUTE]: '2',
     [TEACHERS_PAGE_ROUTE]: '4',
@@ -45,6 +50,7 @@ const exactByRole = {
   },
   [SUPER_ADMIN]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
     [MY_LICENSES_ROUTE]: 'my_licenses',
     [ISSUE_LICENSE_ROUTE]: 'issue_license',
     [CLIENTS_ROUTE]: '5',
@@ -56,6 +62,7 @@ const exactByRole = {
   },
   [FREE_LISTENER]: {
     [PROFILE_PAGE_ROUTE]: '1',
+    [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
     [MY_LICENSES_ROUTE]: 'my_licenses',
   },
 }

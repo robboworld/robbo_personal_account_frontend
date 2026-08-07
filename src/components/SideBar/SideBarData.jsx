@@ -18,6 +18,7 @@ import {
   PlusCircleOutlined,
   DesktopOutlined,
   StopOutlined,
+  BgColorsOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -27,6 +28,7 @@ import {
   UNIT_ADMINS_ROUTE,
   ROBBO_UNITS_ROUTE,
   PROFILE_PAGE_ROUTE,
+  CUSTOMIZATION_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
@@ -37,6 +39,14 @@ import {
   MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
 } from '@/constants'
+
+/** Profile customization — avatar picker. */
+export const CustomizationNavItem = {
+  key: 'customization',
+  label: <FormattedMessage id='sidebar_data.customization' />,
+  pathname: CUSTOMIZATION_PAGE_ROUTE,
+  icon: <BgColorsOutlined />,
+}
 
 /** Explore — in the main nav block with home / profile / projects. */
 export const ExploreNavItem = {
@@ -70,6 +80,7 @@ const TARIFF_KEYS = new Set(['my_licenses', 'buy_license', 'issue_license'])
 const isPrimaryItem = item => (
   item.key === 'home' ||
   item.pathname === PROFILE_PAGE_ROUTE ||
+  item.pathname === CUSTOMIZATION_PAGE_ROUTE ||
   item.pathname === MY_PROJECTS_ROUTE
 )
 
@@ -94,7 +105,7 @@ const appendSection = (items, section, dividerKey) => {
 }
 
 /**
- * Order: primary (Home / Profile / Projects / Explore) →
+ * Order: primary (Home / Profile / Customization / Projects / Explore) →
  * tools → tariffs → rest, separated by dividers.
  */
 export const buildSidebarItems = roleItems => {
@@ -111,6 +122,17 @@ export const buildSidebarItems = roleItems => {
       rest.push(item)
     }
   })
+
+  // Ensure Customization sits right after Profile even if a role omitted it.
+  const hasCustomization = head.some(item => item.pathname === CUSTOMIZATION_PAGE_ROUTE)
+  if (!hasCustomization) {
+    const profileIdx = head.findIndex(item => item.pathname === PROFILE_PAGE_ROUTE)
+    if (profileIdx >= 0) {
+      head.splice(profileIdx + 1, 0, CustomizationNavItem)
+    } else {
+      head.unshift(CustomizationNavItem)
+    }
+  }
 
   let items = [...head, ExploreNavItem]
   items = appendSection(items, ToolNavItems, 'divider-tools')

@@ -342,6 +342,87 @@ export async function deleteProjectReaction(projectPageId) {
     return res.json()
 }
 
+export async function fetchProjectComments(projectPageId) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments`
+    const token = currentAccessToken()
+    const res = token
+        ? await fetchWithAuthRetry(url, { method: 'GET', headers: { Accept: 'application/json' } })
+        : await fetch(url, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            credentials: 'include',
+        })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
+export async function postProjectComment(projectPageId, { body, parentId } = {}) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments`
+    const payload = { body }
+    if (parentId) {
+        payload.parentId = parentId
+    }
+    const res = await fetchWithAuthRetry(url, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    })
+    if (!res.ok) {
+        const msg = await readFetchErrorMessage(res)
+        const err = new Error(msg)
+        if (String(msg).includes('profanity_detected')) {
+            err.code = 'profanity_detected'
+        }
+        throw err
+    }
+    return res.json()
+}
+
+export async function deleteProjectComment(projectPageId, commentId) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'DELETE',
+        headers: { Accept: 'application/json' },
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return null
+}
+
+export async function putCommentReaction(projectPageId, commentId, code) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}/reactions`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
+export async function deleteCommentReaction(projectPageId, commentId) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}/reactions`
+    const res = await fetchWithAuthRetry(url, {
+        method: 'DELETE',
+        headers: { Accept: 'application/json' },
+    })
+    if (!res.ok) {
+        throw new Error(await readFetchErrorMessage(res))
+    }
+    return res.json()
+}
+
 /** SuperAdmin: soft-delete any project with a moderation reason. */
 export async function moderateDeleteProjectPage(projectPageId, reason) {
     const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/moderate`

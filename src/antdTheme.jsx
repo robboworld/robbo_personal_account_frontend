@@ -1,5 +1,5 @@
 import React from 'react'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, message, notification } from 'antd'
 import { useSelector } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import enUS from 'antd/locale/en_US'
@@ -11,6 +11,10 @@ import EngMessages from '@/lang/en.json'
 import ZhMessages from '@/lang/zh.json'
 import { getAppState } from '@/reducers/app'
 import theme from '@/theme'
+
+// Cap toast stacks so rapid clicks (e.g. avatar pick) don't pile up.
+message.config({ maxCount: 3 })
+notification.config({ maxCount: 3 })
 
 const defaultData = {
     borderRadius: 6,

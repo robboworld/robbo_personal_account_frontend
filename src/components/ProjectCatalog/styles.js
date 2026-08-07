@@ -244,6 +244,14 @@ export const AuthorAvatar = styled.span`
   letter-spacing: 0.02em;
   color: ${colors.white};
   background: linear-gradient(145deg, ${colors.primary}, ${colors.secondary});
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 `
 
 export const AuthorName = styled.span`
