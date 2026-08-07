@@ -4,10 +4,13 @@ import { useIntl } from 'react-intl'
 
 import { projectPageAPI } from '@/api/projectPage'
 import config from '@/config'
+import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 
 import './ScratchPlayerEmbed.css'
 
 const READY_TIMEOUT_MS = 20000
+const GREEN_FLAG_RETRY_MS = 150
+const GREEN_FLAG_RETRY_MAX_MS = 15000
 const MIN_PLAYER_HEIGHT = 200
 const DEFAULT_PLAYER_HEIGHT = 400
 
@@ -28,10 +31,37 @@ function buildPlayerSrc(playToken, locale) {
     return `${base}?${params.toString()}`
 }
 
+function CoverGreenFlag() {
+    return (
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16.63 17.5'
+aria-hidden>
+            <path
+                fill='#4cbf56'
+                stroke='#45993d'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M.75,2A6.44,6.44,0,0,1,8.44,2h0a6.44,6.44,0,0,0,7.69,0V12.4a6.44,6.44,0,0,1-7.69,0h0a6.44,6.44,0,0,0-7.69,0'
+            />
+            <line
+                x1='0.75'
+                y1='16.75'
+                x2='0.75'
+                y2='0.75'
+                fill='#4cbf56'
+                stroke='#45993d'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='1.5'
+            />
+        </svg>
+    )
+}
+
 const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
     projectPageId,
     locale,
     playToken: playTokenProp,
+    preview,
     reloadKey = 0,
     onRunningChange,
 }, ref) {
@@ -40,33 +70,103 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
     const [error, setError] = useState(null)
     const [playToken, setPlayToken] = useState(playTokenProp || null)
     const [ready, setReady] = useState(false)
+    const [coverVisible, setCoverVisible] = useState(true)
     const [playerHeight, setPlayerHeight] = useState(DEFAULT_PLAYER_HEIGHT)
     const readyTimerRef = useRef(null)
+    const greenFlagRetryRef = useRef(null)
     const rootRef = useRef(null)
     const iframeRef = useRef(null)
+    const pendingGreenFlagRef = useRef(false)
+
+    const previewUrl = useMemo(() => resolveProjectPreviewUrl(preview), [preview])
+
+    const clearReadyTimer = useCallback(() => {
+        if (readyTimerRef.current) {
+            clearTimeout(readyTimerRef.current)
+            readyTimerRef.current = null
+        }
+    }, [])
+
+    const stopGreenFlagRetry = useCallback(() => {
+        if (greenFlagRetryRef.current) {
+            clearInterval(greenFlagRetryRef.current)
+            greenFlagRetryRef.current = null
+        }
+    }, [])
 
     const focusPlayer = useCallback(() => {
         if (iframeRef.current) iframeRef.current.focus()
     }, [])
 
+    const postCommand = useCallback(type => {
+        const iframe = iframeRef.current
+        if (!iframe?.contentWindow) return false
+        try {
+            iframe.contentWindow.postMessage({ type }, '*')
+        } catch (e) {
+            return false
+        }
+        if (type === 'scratch:greenFlag') {
+            window.setTimeout(() => {
+                try { iframe.focus() } catch (err) { /* ignore */ }
+            }, 0)
+        }
+        return true
+    }, [])
+
+    const startGreenFlagRetry = useCallback(() => {
+        stopGreenFlagRetry()
+        const startedAt = Date.now()
+        const ping = () => {
+            postCommand('scratch:greenFlag')
+            postCommand('scratch:clickGreenFlag')
+        }
+        ping()
+        greenFlagRetryRef.current = window.setInterval(() => {
+            if (!pendingGreenFlagRef.current) {
+                stopGreenFlagRetry()
+                return
+            }
+            if (Date.now() - startedAt > GREEN_FLAG_RETRY_MAX_MS) {
+                stopGreenFlagRetry()
+                return
+            }
+            ping()
+        }, GREEN_FLAG_RETRY_MS)
+    }, [postCommand, stopGreenFlagRetry])
+
+    const requestStopAll = useCallback(() => {
+        pendingGreenFlagRef.current = false
+        stopGreenFlagRetry()
+        postCommand('scratch:stopAll')
+        // Immediate local UI feedback; scratch:runStop confirms from player.
+        if (onRunningChange) onRunningChange(false)
+    }, [postCommand, stopGreenFlagRetry, onRunningChange])
+
+    const requestGreenFlag = useCallback(() => {
+        // Hide cover immediately so the stage is visible; keep pinging until runStart.
+        setCoverVisible(false)
+        pendingGreenFlagRef.current = true
+        startGreenFlagRetry()
+    }, [startGreenFlagRetry])
+
     useImperativeHandle(ref, () => ({
         sendCommand(type) {
-            const iframe = iframeRef.current
-            if (!iframe?.contentWindow) return
-            iframe.contentWindow.postMessage({ type }, '*')
             if (type === 'scratch:greenFlag') {
-                window.setTimeout(() => iframe.focus(), 0)
+                requestGreenFlag()
+                return
             }
+            if (type === 'scratch:stopAll') {
+                requestStopAll()
+                return
+            }
+            postCommand(type)
         },
         focusPlayer,
-    }), [focusPlayer])
-
-    const clearReadyTimer = () => {
-        if (readyTimerRef.current) {
-            clearTimeout(readyTimerRef.current)
-            readyTimerRef.current = null
-        }
-    }
+        dismissCover() {
+            setCoverVisible(false)
+        },
+    }), [focusPlayer, postCommand, requestGreenFlag, requestStopAll])
 
     const notifyIframeResize = useCallback(() => {
         const iframe = iframeRef.current
@@ -74,9 +174,21 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
         try {
             iframe.contentWindow.dispatchEvent(new Event('resize'))
         } catch (e) {
-            // cross-origin fallback — iframe resize still triggers layout in most browsers
+            // cross-origin fallback
         }
     }, [])
+
+    useEffect(() => {
+        setCoverVisible(true)
+        pendingGreenFlagRef.current = false
+        setReady(false)
+        stopGreenFlagRetry()
+    }, [projectPageId, reloadKey, stopGreenFlagRetry])
+
+    useEffect(() => () => {
+        clearReadyTimer()
+        stopGreenFlagRetry()
+    }, [clearReadyTimer, stopGreenFlagRetry])
 
     useEffect(() => {
         if (playTokenProp?.jsonUrl || playTokenProp?.playUrl) {
@@ -122,12 +234,19 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
             if (event.data.type === 'scratch:ready') {
                 clearReadyTimer()
                 setReady(true)
+                if (pendingGreenFlagRef.current) {
+                    startGreenFlagRetry()
+                }
             }
             if (event.data.type === 'scratch:error') {
                 clearReadyTimer()
+                stopGreenFlagRetry()
                 setError(event.data.message || intl.formatMessage({ id: 'project_page.player_error' }))
             }
             if (event.data.type === 'scratch:runStart') {
+                pendingGreenFlagRef.current = false
+                stopGreenFlagRetry()
+                setCoverVisible(false)
                 if (onRunningChange) onRunningChange(true)
             }
             if (event.data.type === 'scratch:runStop') {
@@ -136,7 +255,7 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
         }
         window.addEventListener('message', onMessage)
         return () => window.removeEventListener('message', onMessage)
-    }, [intl, onRunningChange])
+    }, [intl, onRunningChange, clearReadyTimer, startGreenFlagRetry, stopGreenFlagRetry])
 
     const iframeSrc = useMemo(() => {
         if (!playToken?.jsonUrl && !playToken?.playUrl) return null
@@ -145,6 +264,8 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
 
     useEffect(() => {
         setReady(false)
+        pendingGreenFlagRef.current = false
+        stopGreenFlagRetry()
         if (onRunningChange) onRunningChange(false)
         clearReadyTimer()
         if (!iframeSrc) return undefined
@@ -152,7 +273,7 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
             setError(intl.formatMessage({ id: 'project_page.player_load_timeout' }))
         }, READY_TIMEOUT_MS)
         return clearReadyTimer
-    }, [iframeSrc, reloadKey, intl, onRunningChange])
+    }, [iframeSrc, reloadKey, intl, onRunningChange, clearReadyTimer, stopGreenFlagRetry])
 
     useEffect(() => {
         const root = rootRef.current
@@ -172,15 +293,6 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
         notifyIframeResize()
     }, [playerHeight, ready, notifyIframeResize])
 
-    const handleIframeLoad = () => {
-        clearReadyTimer()
-        readyTimerRef.current = setTimeout(() => {
-            setReady(true)
-            clearReadyTimer()
-            notifyIframeResize()
-        }, 800)
-    }
-
     if (loading) {
         return <Spin style={{ width: '100%', padding: '2rem 0' }} />
     }
@@ -193,15 +305,19 @@ message={error} />
 message={intl.formatMessage({ id: 'project_page.player_empty' })} />
     }
 
+    const greenFlagLabel = intl.formatMessage({ id: 'project_page.green_flag' })
+    const coverStyle = previewUrl
+        ? { backgroundImage: `linear-gradient(180deg, rgba(13, 17, 23, 0.12) 0%, rgba(13, 17, 23, 0.5) 100%), url(${previewUrl})` }
+        : undefined
+
     return (
         <div
             ref={rootRef}
             className='scratch-player-embed'
             style={{ height: playerHeight }}
-            onMouseDown={focusPlayer}
         >
             <div className='scratch-player-embed__frame'>
-                {!ready && (
+                {!ready && !coverVisible && (
                     <div className='scratch-player-embed__loading'>
                         <Spin />
                     </div>
@@ -213,10 +329,28 @@ message={intl.formatMessage({ id: 'project_page.player_empty' })} />
                     tabIndex={0}
                     allow='autoplay'
                     sandbox='allow-scripts allow-same-origin'
-                    onLoad={handleIframeLoad}
+                    onLoad={notifyIframeResize}
                     className='scratch-player-embed__iframe'
-                    style={{ opacity: ready ? 1 : 0.3 }}
+                    style={{ opacity: ready || coverVisible ? 1 : 0.3 }}
                 />
+                {coverVisible && (
+                    <button
+                        type='button'
+                        className='scratch-player-embed__cover'
+                        style={coverStyle}
+                        aria-label={greenFlagLabel}
+                        title={greenFlagLabel}
+                        onClick={requestGreenFlag}
+                    >
+                        {!ready ? (
+                            <Spin />
+                        ) : (
+                            <span className='scratch-player-embed__cover-flag'>
+                                <CoverGreenFlag />
+                            </span>
+                        )}
+                    </button>
+                )}
             </div>
         </div>
     )

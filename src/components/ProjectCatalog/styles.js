@@ -58,16 +58,63 @@ export const ProjectCard = styled(motion.article)`
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: 0;
   min-width: 0;
   max-width: 100%;
   min-height: 148px;
-  padding: 1.125rem 1.125rem 1rem;
+  padding: 0;
   border-radius: 1rem;
   border: 1px solid ${surface.line};
   background: ${surface.card};
   box-shadow: 0 12px 32px -24px rgba(108, 91, 123, 0.4);
   overflow: hidden;
+`
+
+export const ProjectCardCover = styled.button`
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(0, 175, 65, 0.18), rgba(108, 91, 123, 0.22)),
+    #e8f5ee;
+
+  &:focus-visible {
+    outline: 2px solid ${colors.accentGreen};
+    outline-offset: -2px;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`
+
+export const ProjectCardCoverPlaceholder = styled.span`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: ${colors.accentGreen};
+  opacity: 0.55;
+`
+
+export const ProjectCardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  min-width: 0;
+  flex: 1;
+  padding: 1rem 1.125rem 1rem;
 `
 
 export const ProjectCardTop = styled.div`
@@ -175,7 +222,7 @@ export const SkeletonGrid = styled.div`
 `
 
 export const SkeletonCard = styled.div`
-  min-height: 148px;
+  min-height: 240px;
   border-radius: 1rem;
   border: 1px solid ${surface.line};
   background: linear-gradient(

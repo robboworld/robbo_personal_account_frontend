@@ -18,6 +18,7 @@ import {
 import { SUPER_ADMIN } from '@/constants'
 import { useAuthRole } from '@/helpers'
 import { displayProjectTitle } from '@/helpers/intl'
+import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import {
   ActiveFilterChip,
   AuthorAvatar,
@@ -36,6 +37,9 @@ import {
   PaginationWrap,
   ProjectCard,
   ProjectCardBody,
+  ProjectCardContent,
+  ProjectCardCover,
+  ProjectCardCoverPlaceholder,
   ProjectCardTop,
   ProjectGlyph,
   ProjectGrid,
@@ -554,113 +558,133 @@ onClick={clearAllFilters}>
                     const orderValue = orderDrafts[item.projectPageId] !== undefined
                       ? orderDrafts[item.projectPageId]
                       : (item.landingSortOrder ?? 0)
+                    const previewUrl = resolveProjectPreviewUrl(item.preview)
 
                     return (
                       <ProjectCard
                         key={item.projectPageId}
                         whileTap={{ scale: 0.995 }}
                       >
-                        <ProjectCardTop>
-                          <ProjectGlyph>
-                            <GlobalOutlined />
-                          </ProjectGlyph>
-                          <ProjectCardBody>
-                            <ProjectTitleButton
-                              type='button'
-                              onClick={() => openProject(item.projectPageId)}
-                            >
-                              {displayProjectTitle(item.title, intl)}
-                            </ProjectTitleButton>
-                            <OpenButton
-                              type='button'
-                              onClick={() => openProject(item.projectPageId)}
-                            >
-                              <FormattedMessage id='project_page.open_project' />
-                              <ArrowRightOutlined style={{ fontSize: 12 }} />
-                            </OpenButton>
-                          </ProjectCardBody>
-                        </ProjectCardTop>
-                        <AuthorRow>
-                          <AuthorAvatar>{getAuthorInitials(authorName)}</AuthorAvatar>
-                          <AuthorName>
-                            <FormattedMessage
-                              id='project_page.author_label'
-                              values={{ name: authorName }}
+                        <ProjectCardCover
+                          type='button'
+                          aria-label={displayProjectTitle(item.title, intl)}
+                          onClick={() => openProject(item.projectPageId)}
+                        >
+                          {previewUrl ? (
+                            <img
+                              src={previewUrl}
+                              alt=''
+                              loading='lazy'
                             />
-                          </AuthorName>
-                        </AuthorRow>
-                        {Array.isArray(item.tags) && item.tags.length > 0 && (
-                          <ProjectTagList>
-                            {item.tags.map(tag => (
-                              <ProjectTag
-                                key={tag}
+                          ) : (
+                            <ProjectCardCoverPlaceholder>
+                              <GlobalOutlined />
+                            </ProjectCardCoverPlaceholder>
+                          )}
+                        </ProjectCardCover>
+                        <ProjectCardContent>
+                          <ProjectCardTop>
+                            <ProjectGlyph>
+                              <GlobalOutlined />
+                            </ProjectGlyph>
+                            <ProjectCardBody>
+                              <ProjectTitleButton
                                 type='button'
-                                onClick={() => onTagFilter(tag)}
+                                onClick={() => openProject(item.projectPageId)}
                               >
-                                {tag}
-                              </ProjectTag>
-                            ))}
-                          </ProjectTagList>
-                        )}
-                        {isSuperAdmin && (
-                          <ModerationRow>
-                            {item.landingFeatured && (
-                              <ModerationBadge>
-                                <PushpinOutlined />
-                                <FormattedMessage
-                                  id='project_page.landing_on_badge'
-                                  values={{ order: item.landingSortOrder ?? 0 }}
-                                />
-                              </ModerationBadge>
-                            )}
-                            <ModerationActions>
-                              {item.landingFeatured ? (
-                                <Space size={4} wrap>
-                                  <InputNumber
-                                    size='small'
-                                    min={0}
-                                    value={orderValue}
-                                    onChange={value => setOrderDrafts(prev => ({
-                                      ...prev,
-                                      [item.projectPageId]: value,
-                                    }))}
-                                    aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
+                                {displayProjectTitle(item.title, intl)}
+                              </ProjectTitleButton>
+                              <OpenButton
+                                type='button'
+                                onClick={() => openProject(item.projectPageId)}
+                              >
+                                <FormattedMessage id='project_page.open_project' />
+                                <ArrowRightOutlined style={{ fontSize: 12 }} />
+                              </OpenButton>
+                            </ProjectCardBody>
+                          </ProjectCardTop>
+                          <AuthorRow>
+                            <AuthorAvatar>{getAuthorInitials(authorName)}</AuthorAvatar>
+                            <AuthorName>
+                              <FormattedMessage
+                                id='project_page.author_label'
+                                values={{ name: authorName }}
+                              />
+                            </AuthorName>
+                          </AuthorRow>
+                          {Array.isArray(item.tags) && item.tags.length > 0 && (
+                            <ProjectTagList>
+                              {item.tags.map(tag => (
+                                <ProjectTag
+                                  key={tag}
+                                  type='button'
+                                  onClick={() => onTagFilter(tag)}
+                                >
+                                  {tag}
+                                </ProjectTag>
+                              ))}
+                            </ProjectTagList>
+                          )}
+                          {isSuperAdmin && (
+                            <ModerationRow>
+                              {item.landingFeatured && (
+                                <ModerationBadge>
+                                  <PushpinOutlined />
+                                  <FormattedMessage
+                                    id='project_page.landing_on_badge'
+                                    values={{ order: item.landingSortOrder ?? 0 }}
                                   />
+                                </ModerationBadge>
+                              )}
+                              <ModerationActions>
+                                {item.landingFeatured ? (
+                                  <Space size={4} wrap>
+                                    <InputNumber
+                                      size='small'
+                                      min={0}
+                                      value={orderValue}
+                                      onChange={value => setOrderDrafts(prev => ({
+                                        ...prev,
+                                        [item.projectPageId]: value,
+                                      }))}
+                                      aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
+                                    />
+                                    <Button
+                                      size='small'
+                                      loading={orderBusyId === item.projectPageId}
+                                      onClick={() => saveSortOrder(item)}
+                                    >
+                                      <FormattedMessage id='project_page.landing_order_save' />
+                                    </Button>
+                                    <Button
+                                      size='small'
+                                      disabled={featureBusy}
+                                      onClick={() => removeFromLanding(item)}
+                                    >
+                                      <FormattedMessage id='project_page.landing_remove' />
+                                    </Button>
+                                  </Space>
+                                ) : (
                                   <Button
                                     size='small'
-                                    loading={orderBusyId === item.projectPageId}
-                                    onClick={() => saveSortOrder(item)}
+                                    icon={<PushpinOutlined />}
+                                    onClick={() => openFeatureModal(item)}
                                   >
-                                    <FormattedMessage id='project_page.landing_order_save' />
+                                    <FormattedMessage id='project_page.landing_add' />
                                   </Button>
-                                  <Button
-                                    size='small'
-                                    disabled={featureBusy}
-                                    onClick={() => removeFromLanding(item)}
-                                  >
-                                    <FormattedMessage id='project_page.landing_remove' />
-                                  </Button>
-                                </Space>
-                              ) : (
+                                )}
                                 <Button
                                   size='small'
-                                  icon={<PushpinOutlined />}
-                                  onClick={() => openFeatureModal(item)}
+                                  danger
+                                  icon={<DeleteOutlined />}
+                                  onClick={() => openDeleteModal(item)}
                                 >
-                                  <FormattedMessage id='project_page.landing_add' />
+                                  <FormattedMessage id='project_page.moderate_delete' />
                                 </Button>
-                              )}
-                              <Button
-                                size='small'
-                                danger
-                                icon={<DeleteOutlined />}
-                                onClick={() => openDeleteModal(item)}
-                              >
-                                <FormattedMessage id='project_page.moderate_delete' />
-                              </Button>
-                            </ModerationActions>
-                          </ModerationRow>
-                        )}
+                              </ModerationActions>
+                            </ModerationRow>
+                          )}
+                        </ProjectCardContent>
                       </ProjectCard>
                     )
                   })}

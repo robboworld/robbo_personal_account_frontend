@@ -199,6 +199,7 @@ function GuestProjectView({ projectPageId }) {
                                     ref={playerRef}
                                     projectPageId={projectPageId}
                                     playToken={playToken}
+                                    preview={projectPage?.preview}
                                     onRunningChange={setIsPlayerRunning}
                                 />
                                 <PlayerScratchControls
@@ -561,6 +562,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                             ref={playerRef}
                             projectPageId={projectPageId}
                             playToken={playToken}
+                            preview={projectPage?.preview}
                             reloadKey={playerReloadKey}
                             onRunningChange={setIsPlayerRunning}
                         />

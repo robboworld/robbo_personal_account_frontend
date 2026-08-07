@@ -19,6 +19,7 @@ import {
 } from './styles'
 
 import { displayProjectTitle } from '@/helpers/intl'
+import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import {
   CardMeta,
   CatalogCount,
@@ -28,6 +29,9 @@ import {
   OpenButton,
   ProjectCard,
   ProjectCardBody,
+  ProjectCardContent,
+  ProjectCardCover,
+  ProjectCardCoverPlaceholder,
   ProjectCardTop,
   ProjectGlyph,
   ProjectGrid,
@@ -185,6 +189,7 @@ animate='show'>
                 <ProjectGrid>
                   {projects.map(projectPage => {
                     const lastModified = formatLastModified(projectPage.lastModified, intl)
+                    const previewUrl = resolveProjectPreviewUrl(projectPage.preview)
 
                     return (
                       <ProjectCard
@@ -198,41 +203,57 @@ animate='show'>
                         >
                           <DeleteOutlined />
                         </DeleteButton>
-                        <ProjectCardTop>
-                          <ProjectGlyph>
-                            <ProjectOutlined />
-                          </ProjectGlyph>
-                          <ProjectCardBody>
-                            <ProjectTitleButton
-                              type='button'
-                              onClick={() => openProject(projectPage.projectPageId)}
-                            >
-                              {displayProjectTitle(projectPage.title, intl)}
-                            </ProjectTitleButton>
-                            {lastModified && (
-                              <CardMeta>
-                                <FormattedMessage id='project_page.last_change' />
-                                {': '}
-                                {lastModified}
-                              </CardMeta>
-                            )}
-                            <OpenButton
-                              type='button'
-                              onClick={() => openProject(projectPage.projectPageId)}
-                            >
-                              <FormattedMessage id='project_page.open_project' />
-                              <ArrowRightOutlined style={{ fontSize: 12 }} />
-                            </OpenButton>
-                            <OpenButton
-                              type='button'
-                              onClick={() => editProject(projectPage.projectPageId)}
-                              style={{ marginTop: 8 }}
-                            >
-                              <FormattedMessage id='project_page.open_in_scratch' />
-                              <ArrowRightOutlined style={{ fontSize: 12 }} />
-                            </OpenButton>
-                          </ProjectCardBody>
-                        </ProjectCardTop>
+                        <ProjectCardCover
+                          type='button'
+                          aria-label={displayProjectTitle(projectPage.title, intl)}
+                          onClick={() => openProject(projectPage.projectPageId)}
+                        >
+                          {previewUrl ? (
+                            <img src={previewUrl} alt=''
+loading='lazy' />
+                          ) : (
+                            <ProjectCardCoverPlaceholder>
+                              <ProjectOutlined />
+                            </ProjectCardCoverPlaceholder>
+                          )}
+                        </ProjectCardCover>
+                        <ProjectCardContent>
+                          <ProjectCardTop>
+                            <ProjectGlyph>
+                              <ProjectOutlined />
+                            </ProjectGlyph>
+                            <ProjectCardBody>
+                              <ProjectTitleButton
+                                type='button'
+                                onClick={() => openProject(projectPage.projectPageId)}
+                              >
+                                {displayProjectTitle(projectPage.title, intl)}
+                              </ProjectTitleButton>
+                              {lastModified && (
+                                <CardMeta>
+                                  <FormattedMessage id='project_page.last_change' />
+                                  {': '}
+                                  {lastModified}
+                                </CardMeta>
+                              )}
+                              <OpenButton
+                                type='button'
+                                onClick={() => openProject(projectPage.projectPageId)}
+                              >
+                                <FormattedMessage id='project_page.open_project' />
+                                <ArrowRightOutlined style={{ fontSize: 12 }} />
+                              </OpenButton>
+                              <OpenButton
+                                type='button'
+                                onClick={() => editProject(projectPage.projectPageId)}
+                                style={{ marginTop: 8 }}
+                              >
+                                <FormattedMessage id='project_page.open_in_scratch' />
+                                <ArrowRightOutlined style={{ fontSize: 12 }} />
+                              </OpenButton>
+                            </ProjectCardBody>
+                          </ProjectCardTop>
+                        </ProjectCardContent>
                       </ProjectCard>
                     )
                   })}

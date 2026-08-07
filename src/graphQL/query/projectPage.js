@@ -14,6 +14,7 @@ export const projectPageQueryGQL = {
                         projectPageId
                         projectId
                         lastModified
+                        preview
                     }
                     countRows
                 }
