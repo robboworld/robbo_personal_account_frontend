@@ -7,6 +7,7 @@ export const USER_PROFILE_FIELDS = `
     nickname
     email
     bio
+    avatarId
     levelOfEducation
     country
     yearOfBirth

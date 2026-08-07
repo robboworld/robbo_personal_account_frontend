@@ -33,6 +33,7 @@ import {
   LICENSES_CATALOG_ROUTE,
   PAYMENT_RECEIPT_ROUTE,
   DEVICE_LINK_ROUTE,
+  CUSTOMIZATION_PAGE_ROUTE,
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
@@ -62,6 +63,7 @@ const MySessionsPage = lazy(() => import('@/pages/Licensing/MySessions'))
 const IssueLicensePage = lazy(() => import('@/pages/Licensing/IssueLicense'))
 const DeviceLinkPage = lazy(() => import('@/pages/Licensing/DeviceLink'))
 const PaymentsReceiptPage = lazy(() => import('@/pages/Payments/Receipt'))
+const CustomizationPage = lazy(() => import('@/pages/Customization'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
 
@@ -105,6 +107,10 @@ const AppRoutes = () => (
       <Route
         path={PROFILE_PAGE_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <ProfilePage />)}
+      />
+      <Route
+        path={CUSTOMIZATION_PAGE_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <CustomizationPage />)}
       />
       <Route path={UNIT_ADMINS_ROUTE} element={wrapProtected([SUPER_ADMIN], <UnitAdminsPage />)} />
       <Route

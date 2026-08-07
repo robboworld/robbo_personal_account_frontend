@@ -300,7 +300,7 @@ overflowCount={99}>
                     footer={null}
                     centered
                     destroyOnClose
-                    width={440}
+                    width='min(440px, calc(100vw - 2rem))'
                     maskClosable
                     styles={{
                         mask: { background: 'rgba(24, 28, 32, 0.55)' },
@@ -322,7 +322,7 @@ overflowCount={99}>
                 footer={null}
                 centered
                 destroyOnClose
-                width={440}
+                width='min(440px, calc(100vw - 2rem))'
                 maskClosable
             >
                 {feed}

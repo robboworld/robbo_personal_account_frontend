@@ -14,6 +14,7 @@ import {
     CHECK_AUTH_SUCCESS,
     CHECK_AUTH_FAILED,
     CLEAR_LOGIN_STATE,
+    SET_LOGIN_STREAK,
 } from '@/constants'
 
 export const signInRequest = createAction(SIGN_IN, ({ email, password, role }) => {
@@ -65,9 +66,15 @@ export const checkAuthRequest = createAction(CHECK_AUTH, token => {
     }
 })
 export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
+    const data = response?.data || {}
+    const streak = data.loginStreak || {}
     return {
-        id: response.data.id,
-        role: response.data.role,
+        id: data.id,
+        role: data.role,
+        loginStreak: {
+            current: Number(streak.current) || 0,
+            longest: Number(streak.longest) || 0,
+        },
     }
 })
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED, error => {
@@ -75,3 +82,8 @@ export const checkAuthFailed = createAction(CHECK_AUTH_FAILED, error => {
         error,
     }
 })
+
+export const setLoginStreak = createAction(SET_LOGIN_STREAK, streak => ({
+    current: Number(streak?.current) || 0,
+    longest: Number(streak?.longest) || 0,
+}))

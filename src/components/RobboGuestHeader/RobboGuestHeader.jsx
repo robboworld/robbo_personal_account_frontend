@@ -31,7 +31,7 @@ const Main = styled.div`
     padding: 6px 28px;
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -103,7 +103,7 @@ const Center = styled.div`
     padding: 0 28px;
   }
 
-  @media screen and (max-width: 980px) {
+  @media screen and (max-width: 991px) {
     display: none;
   }
 `

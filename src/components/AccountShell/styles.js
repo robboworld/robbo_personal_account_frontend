@@ -40,11 +40,167 @@ export const PageContent = styled.div`
   width: 100%;
   max-width: 1120px;
   margin: 0 auto;
-  padding: 1.5rem 0.5rem 3rem;
+  padding: 1.25rem 1rem 2.5rem;
+  padding-bottom: max(2.5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)));
+
+  ${theme.above.small`
+    padding: 1.5rem 1rem 3rem;
+  `}
 
   ${theme.above.med`
     padding: 2rem 0.75rem 3.5rem;
   `}
+`
+
+export const MobileTopBar = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding:
+    max(0.5rem, env(safe-area-inset-top, 0px))
+    max(0.75rem, env(safe-area-inset-right, 0px))
+    0.5rem
+    max(0.75rem, env(safe-area-inset-left, 0px));
+  background: rgba(244, 248, 244, 0.92);
+  border-bottom: 1px solid ${surface.line};
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background: ${surface.page};
+  }
+`
+
+export const MobileTopBarBrand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+`
+
+export const MobileMenuBtn = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0.75rem;
+  background: rgba(0, 175, 65, 0.12);
+  color: ${colors.secondary};
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    color 0.22s ease,
+    transform 0.18s ease;
+
+  &:hover {
+    background: rgba(0, 175, 65, 0.2);
+    color: ${colors.accentGreen};
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  .anticon {
+    font-size: 1.2rem;
+  }
+`
+
+export const MobileBrandLabel = styled.span`
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: ${colors.secondary};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+export const MobileTopBarActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+`
+
+export const PageToolbar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+
+  .ant-typography {
+    margin: 0 !important;
+  }
+
+  .ant-btn {
+    min-height: 2.5rem;
+  }
+
+  ${theme.below.small`
+    .ant-btn {
+      width: 100%;
+    }
+  `}
+`
+
+export const CourseLayout = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  align-items: start;
+
+  ${theme.above.med`
+    grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+    gap: 1.75rem;
+  `}
+`
+
+export const CourseAside = styled.aside`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
+
+  .ant-avatar {
+    width: 100% !important;
+    max-width: 10rem;
+    height: auto !important;
+    aspect-ratio: 1;
+    align-self: center;
+  }
+
+  .ant-btn {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  ${theme.above.med`
+    .ant-avatar {
+      align-self: stretch;
+      max-width: none;
+    }
+  `}
+`
+
+export const CourseBody = styled.div`
+  min-width: 0;
+
+  .ant-typography {
+    word-break: break-word;
+  }
 `
 
 export const Stagger = styled(motion.div)`
@@ -493,6 +649,15 @@ export const AvatarMark = styled.div`
   color: ${colors.white};
   background: linear-gradient(145deg, ${colors.primary}, ${colors.secondary});
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 `
 
 export const ProfileHeroCopy = styled.div`
@@ -636,18 +801,28 @@ export const FormGrid = styled.div`
 
 export const FormActions = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: stretch;
   padding-top: 0.5rem;
   margin-top: 0.25rem;
   border-top: 1px solid ${surface.line};
 
   .ant-btn-primary {
-    min-width: 9rem;
+    width: 100%;
+    min-width: 0;
     height: 2.75rem;
     border-radius: 999px;
     font-weight: 600;
     box-shadow: 0 10px 24px -12px rgba(0, 175, 65, 0.55);
   }
+
+  ${theme.above.med`
+    justify-content: flex-end;
+
+    .ant-btn-primary {
+      width: auto;
+      min-width: 9rem;
+    }
+  `}
 `
 
 export const staggerContainer = {
@@ -710,6 +885,14 @@ export const SidebarShell = styled.div`
     padding: 0.5rem 0.375rem 0.65rem;
   `}
 
+  ${({ $drawer }) => $drawer && css`
+    max-height: none;
+    height: 100%;
+    border-inline-end: none;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  `}
+
   @media (prefers-reduced-motion: reduce) {
     --sidebar-collapse-duration: 1ms;
   }
@@ -733,6 +916,25 @@ export const SidebarTopBar = styled.div`
     gap: 0.35rem;
     padding: 0.35rem 0.2rem 0.5rem;
   `}
+
+  ${({ $drawer }) => $drawer && css`
+    gap: 0.35rem;
+    padding: 0.55rem 0.75rem;
+    margin: 0;
+    border-bottom: 1px solid rgba(108, 91, 123, 0.1);
+  `}
+`
+
+export const SidebarBrand = styled.span`
+  flex: 1;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: ${colors.secondary};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 export const SidebarTopActions = styled.div`
@@ -749,6 +951,12 @@ export const SidebarTopActions = styled.div`
     flex-direction: column;
     order: 2;
     transform: translateY(0.125rem);
+  `}
+
+  ${({ $drawer }) => $drawer && css`
+    order: 0;
+    flex-shrink: 0;
+    gap: 0.25rem;
   `}
 `
 
@@ -777,6 +985,13 @@ export const SidebarCollapseBtn = styled.button`
   ${({ $collapsed }) => $collapsed && css`
     margin-left: 0;
     order: 0;
+  `}
+
+  ${({ $drawer }) => $drawer && css`
+    margin-left: 0;
+    order: 2;
+    width: 2.5rem;
+    height: 2.5rem;
   `}
 
   &:hover {
@@ -811,6 +1026,10 @@ export const SidebarFooter = styled.div`
   ${({ $collapsed }) => $collapsed && css`
     padding: 0.5rem 0.15rem 0.2rem;
     align-items: stretch;
+  `}
+
+  ${({ $drawer }) => $drawer && css`
+    padding: 0.65rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
   `}
 `
 
@@ -967,6 +1186,75 @@ export const SidebarMenu = styled(Menu)`
       border-block-start-color: rgba(108, 91, 123, 0.14) !important;
     }
 
+  `}
+
+  ${({ $drawer, $collapsed }) => $drawer && !$collapsed && css`
+    && {
+      width: 100% !important;
+      padding: 0.25rem 0 !important;
+    }
+
+    &&.ant-menu-inline .ant-menu-item,
+    && .ant-menu-item {
+      display: flex !important;
+      align-items: center !important;
+      width: 100% !important;
+      max-width: none !important;
+      gap: 0.65rem;
+      min-height: 3rem;
+      margin: 0 !important;
+      padding: 0.65rem 0.85rem !important;
+      padding-inline: 0.85rem !important;
+      padding-inline-start: 0.85rem !important;
+      padding-inline-end: 0.85rem !important;
+      border-radius: 0;
+      line-height: 1.35 !important;
+    }
+
+    &&.ant-menu-inline .ant-menu-item .ant-menu-item-icon,
+    && .ant-menu-item .ant-menu-item-icon {
+      width: 1.75rem !important;
+      min-width: 1.75rem !important;
+      max-width: 1.75rem !important;
+      margin: 0 !important;
+      margin-inline-end: 0 !important;
+      flex: 0 0 1.75rem;
+    }
+
+    ${SidebarIcon} {
+      width: 1.75rem;
+      height: 1.75rem;
+      min-width: 1.75rem;
+      border-radius: 0.45rem;
+      font-size: 0.95rem;
+      background: transparent;
+
+      .anticon,
+      svg {
+        font-size: 1.05rem;
+      }
+    }
+
+    && .ant-menu-title-content {
+      display: block !important;
+      flex: 1 1 auto !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      margin: 0 !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 1rem;
+    }
+
+    && .ant-menu-item-selected ${SidebarIcon} {
+      background: transparent;
+    }
+
+    && .ant-menu-item-divider {
+      margin: 0.35rem 0.85rem !important;
+    }
   `}
 
   ${({ $collapsed }) => $collapsed && css`

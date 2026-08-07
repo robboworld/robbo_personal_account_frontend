@@ -19,7 +19,6 @@ import { SUPER_ADMIN } from '@/constants'
 import { useAuthRole } from '@/helpers'
 import { displayProjectTitle } from '@/helpers/intl'
 import {
-  AuthorAvatar,
   AuthorName,
   AuthorRow,
   CatalogCount,
@@ -38,6 +37,7 @@ import {
   SkeletonCard,
   SkeletonGrid,
 } from '@/components/ProjectCatalog/styles'
+import UserAvatar from '@/components/UserAvatar/UserAvatar'
 import {
   HeroInner,
   HeroLead,
@@ -55,20 +55,6 @@ import {
 
 const SKELETON_COUNT = 6
 const { TextArea } = Input
-
-const getAuthorInitials = name => {
-  if (!name) {
-    return '?'
-  }
-
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-  }
-
-  return name.slice(0, 2).toUpperCase()
-}
 
 export default function PublicProjects() {
   const navigate = useNavigate()
@@ -344,7 +330,11 @@ animate='show'>
                         </ProjectCardBody>
                       </ProjectCardTop>
                       <AuthorRow>
-                        <AuthorAvatar>{getAuthorInitials(authorName)}</AuthorAvatar>
+                        <UserAvatar
+                          avatarId={item.authorAvatarId}
+                          displayName={authorName}
+                          variant='compact'
+                        />
                         <AuthorName>
                           <FormattedMessage
                             id='project_page.author_label'

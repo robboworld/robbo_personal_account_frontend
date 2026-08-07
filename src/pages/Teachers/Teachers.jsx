@@ -1,6 +1,6 @@
 import React, { useState, memo } from 'react'
-import { Modal, Button, Row, Col, Typography, List } from 'antd'
-import { FormattedMessage, useIntl } from "react-intl"
+import { Modal, Button, Typography, List } from 'antd'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
@@ -9,7 +9,7 @@ import { useActions } from '@/helpers/useActions'
 import { DragResize } from '@/components/UI'
 import { deleteTeacher } from '@/actions'
 import { formatUserDisplayName } from '@/helpers'
-
+import { PageContent, PageToolbar } from '@/components/AccountShell'
 
 const { Title } = Typography
 
@@ -26,64 +26,57 @@ const Teachers = memo(({
     const actions = useActions({ deleteTeacher }, [])
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
     return (
-        <React.Fragment>
+        <PageContent>
             <Modal
                 title={intl.formatMessage({ id: 'teachers.modal_title' })}
                 open={openAddTeacher}
                 footer={[]}
                 onCancel={() => setOpenAddTeacher(false)}
+                width='min(520px, calc(100vw - 2rem))'
             >
                 <AddTeacher />
             </Modal>
-            <Row align='middle'>
-                <Col span={22}>
-                    <Title>
-                        <FormattedMessage id='teachers.title' />
-                    </Title>
-                </Col>
-                <Col span={1}>
-                    <Button type='primary' onClick={() => setOpenAddTeacher(true)}>
-                        <FormattedMessage id='teachers.create_teacher' />
-                    </Button>
-                </Col>
-            </Row>
-            <Row>
-                <Col span={24}>
-                    <List
-                        className='teachersList'
-                        loading={loading}
-                        bordered
-                        size='large'
-                        dataSource={GetAllTeachers?.teachers}
-                        pagination={{
-                            onChange: onChangePage,
-                            total: GetAllTeachers?.countRows,
-                            current: +currentPage,
-                            defaultCurrent: 1,
-                            defaultPageSize: pageSize,
-                            responsive: true,
-                        }}
-                        itemLayout='vertical'
-                        renderItem={({ userHttp }, index) => (
-                            <ListItem
-                                itemIndex={index}
-                                handleDelete={teacherIndex => actions.deleteTeacher(userHttp.id, teacherIndex)}
-                                label={formatUserDisplayName(userHttp)}
-                                key={index}
-                                render={(open, setOpen) => (
-                                    <DragResize
-                                        open={open} setOpen={setOpen}
-                                        content={() => (
-                                            <TeacherContent teacherId={userHttp.id} />
-                                        )}
-                                    />
+            <PageToolbar>
+                <Title level={2}>
+                    <FormattedMessage id='teachers.title' />
+                </Title>
+                <Button type='primary' onClick={() => setOpenAddTeacher(true)}>
+                    <FormattedMessage id='teachers.create_teacher' />
+                </Button>
+            </PageToolbar>
+            <List
+                className='teachersList'
+                loading={loading}
+                bordered
+                size='large'
+                dataSource={GetAllTeachers?.teachers}
+                pagination={{
+                    onChange: onChangePage,
+                    total: GetAllTeachers?.countRows,
+                    current: +currentPage,
+                    defaultCurrent: 1,
+                    defaultPageSize: pageSize,
+                    responsive: true,
+                }}
+                itemLayout='vertical'
+                renderItem={({ userHttp }, index) => (
+                    <ListItem
+                        itemIndex={index}
+                        handleDelete={teacherIndex => actions.deleteTeacher(userHttp.id, teacherIndex)}
+                        label={formatUserDisplayName(userHttp)}
+                        key={index}
+                        render={(open, setOpen) => (
+                            <DragResize
+                                open={open} setOpen={setOpen}
+                                content={() => (
+                                    <TeacherContent teacherId={userHttp.id} />
                                 )}
                             />
                         )}
                     />
-                </Col>
-            </Row>
-        </React.Fragment>
+                )}
+            />
+        </PageContent>
     )
 })
 

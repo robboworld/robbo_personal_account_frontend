@@ -59,11 +59,37 @@ export const authAPI = {
     },
 
     checkAuth(token) {
+        let timezone = 'UTC'
+        try {
+            timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+        } catch (_) {
+            timezone = 'UTC'
+        }
+        const headers = {
+            'X-User-Timezone': timezone,
+        }
+        if (token) {
+            headers.Authorization = `Bearer ${token}`
+        }
         return instance.get('auth/check-auth', {
             withCredentials: true,
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
+            headers,
+        })
+    },
+
+    getLoginStreak(userId) {
+        const params = userId ? { userId } : undefined
+        return instance.get('auth/login-streak', {
+            withCredentials: true,
+            headers: authHeaders(),
+            params,
+        })
+    },
+
+    incrementLoginStreak() {
+        return instance.post('auth/login-streak/increment', {}, {
+            withCredentials: true,
+            headers: authHeaders(),
         })
     },
 

@@ -1,3 +1,5 @@
+const path = require('path')
+
 const merge = require('webpack-merge')
 
 const common = require('./webpack.common.js')
@@ -10,6 +12,7 @@ module.exports = merge(common, {
     hot: true,
     inline: true,
     historyApiFallback: true,
+    contentBase: path.join(__dirname, 'public'),
     // https: {
     //   key: './cert/key.key',
     //   cert: './cert/cert.crt',
