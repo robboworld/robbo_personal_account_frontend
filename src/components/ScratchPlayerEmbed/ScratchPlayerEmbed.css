@@ -11,6 +11,7 @@
 }
 
 .scratch-player-embed__frame {
+    position: relative;
     width: 100%;
     height: calc(100% - 14px);
     box-sizing: border-box;
@@ -31,12 +32,57 @@
 .scratch-player-embed__loading {
     position: absolute;
     inset: 0;
-    bottom: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1;
     background: rgba(0, 0, 0, 0.35);
+}
+
+.scratch-player-embed__cover {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background:
+        linear-gradient(180deg, rgba(13, 17, 23, 0.15) 0%, rgba(13, 17, 23, 0.55) 100%),
+        #1b2733;
+    background-size: cover;
+    background-position: center;
+}
+
+.scratch-player-embed__cover:focus-visible {
+    outline: 3px solid #4cbf56;
+    outline-offset: -3px;
+}
+
+.scratch-player-embed__cover-flag {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    pointer-events: none;
+}
+
+.scratch-player-embed__cover-flag svg {
+    width: 2.35rem;
+    height: 2.35rem;
+}
+
+.scratch-player-embed__cover:hover .scratch-player-embed__cover-flag {
+    transform: scale(1.06);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4);
 }
 
 .scratch-player-embed__resize {

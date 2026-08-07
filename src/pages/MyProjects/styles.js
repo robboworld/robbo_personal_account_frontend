@@ -64,8 +64,9 @@ export const CreateButton = styled.button`
 
 export const DeleteButton = styled.button`
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -76,7 +77,8 @@ export const DeleteButton = styled.button`
   border-radius: 0.5rem;
   font-size: 0.875rem;
   color: ${surface.muted};
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   cursor: pointer;
   opacity: 0;
   transition:
