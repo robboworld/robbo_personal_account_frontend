@@ -27,6 +27,7 @@ import {
   EmptyIcon,
   EmptyState,
   EmptyText,
+  ModerationActions,
   ModerationBadge,
   ModerationRow,
   OpenButton,
@@ -57,8 +58,8 @@ import {
 } from '@/components/AccountShell'
 
 const SKELETON_COUNT = 6
-const PAGE_SIZE_OPTIONS = [5, 10, 20]
-const DEFAULT_PAGE_SIZE = 10
+const PAGE_SIZE_OPTIONS = [6, 12, 24]
+const DEFAULT_PAGE_SIZE = 12
 const { TextArea } = Input
 
 const parsePage = value => {
@@ -432,7 +433,7 @@ animate='show'>
                         </AuthorRow>
                         {isSuperAdmin && (
                           <ModerationRow>
-                            {item.landingFeatured ? (
+                            {item.landingFeatured && (
                               <ModerationBadge>
                                 <PushpinOutlined />
                                 <FormattedMessage
@@ -440,53 +441,53 @@ animate='show'>
                                   values={{ order: item.landingSortOrder ?? 0 }}
                                 />
                               </ModerationBadge>
-                            ) : (
-                              <span style={{ marginRight: 'auto' }} />
                             )}
-                            {item.landingFeatured ? (
-                              <Space size={4} wrap>
-                                <InputNumber
-                                  size='small'
-                                  min={0}
-                                  value={orderValue}
-                                  onChange={value => setOrderDrafts(prev => ({
-                                    ...prev,
-                                    [item.projectPageId]: value,
-                                  }))}
-                                  aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
-                                />
+                            <ModerationActions>
+                              {item.landingFeatured ? (
+                                <Space size={4}>
+                                  <InputNumber
+                                    size='small'
+                                    min={0}
+                                    value={orderValue}
+                                    onChange={value => setOrderDrafts(prev => ({
+                                      ...prev,
+                                      [item.projectPageId]: value,
+                                    }))}
+                                    aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
+                                  />
+                                  <Button
+                                    size='small'
+                                    loading={orderBusyId === item.projectPageId}
+                                    onClick={() => saveSortOrder(item)}
+                                  >
+                                    <FormattedMessage id='project_page.landing_order_save' />
+                                  </Button>
+                                  <Button
+                                    size='small'
+                                    disabled={featureBusy}
+                                    onClick={() => removeFromLanding(item)}
+                                  >
+                                    <FormattedMessage id='project_page.landing_remove' />
+                                  </Button>
+                                </Space>
+                              ) : (
                                 <Button
                                   size='small'
-                                  loading={orderBusyId === item.projectPageId}
-                                  onClick={() => saveSortOrder(item)}
+                                  icon={<PushpinOutlined />}
+                                  onClick={() => openFeatureModal(item)}
                                 >
-                                  <FormattedMessage id='project_page.landing_order_save' />
+                                  <FormattedMessage id='project_page.landing_add' />
                                 </Button>
-                                <Button
-                                  size='small'
-                                  disabled={featureBusy}
-                                  onClick={() => removeFromLanding(item)}
-                                >
-                                  <FormattedMessage id='project_page.landing_remove' />
-                                </Button>
-                              </Space>
-                            ) : (
+                              )}
                               <Button
                                 size='small'
-                                icon={<PushpinOutlined />}
-                                onClick={() => openFeatureModal(item)}
+                                danger
+                                icon={<DeleteOutlined />}
+                                onClick={() => openDeleteModal(item)}
                               >
-                                <FormattedMessage id='project_page.landing_add' />
+                                <FormattedMessage id='project_page.moderate_delete' />
                               </Button>
-                            )}
-                            <Button
-                              size='small'
-                              danger
-                              icon={<DeleteOutlined />}
-                              onClick={() => openDeleteModal(item)}
-                            >
-                              <FormattedMessage id='project_page.moderate_delete' />
-                            </Button>
+                            </ModerationActions>
                           </ModerationRow>
                         )}
                       </ProjectCard>
