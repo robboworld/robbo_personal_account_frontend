@@ -55,12 +55,15 @@ export const ProjectCard = styled(motion.article)`
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
+  min-width: 0;
+  max-width: 100%;
   min-height: 148px;
   padding: 1.125rem 1.125rem 1rem;
   border-radius: 1rem;
   border: 1px solid ${surface.line};
   background: ${surface.card};
   box-shadow: 0 12px 32px -24px rgba(108, 91, 123, 0.4);
+  overflow: hidden;
 `
 
 export const ProjectCardTop = styled.div`
@@ -250,17 +253,41 @@ export const ModerationRow = styled.div`
   flex-direction: column;
   align-items: stretch;
   gap: 0.45rem;
+  width: 100%;
+  min-width: 0;
   padding-top: 0.5rem;
   border-top: 1px solid ${surface.line};
 `
 
 export const ModerationActions = styled.div`
   display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: flex-end;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: 0.4rem;
+  width: 100%;
   min-width: 0;
+
+  > .ant-btn {
+    flex: 1 1 auto;
+    min-width: min(100%, 8.5rem);
+    max-width: 100%;
+  }
+
+  > .ant-space {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .ant-space {
+    display: flex !important;
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .ant-input-number {
+    max-width: 100%;
+  }
 `
 
 export const ModerationBadge = styled.span`
@@ -268,6 +295,7 @@ export const ModerationBadge = styled.span`
   align-items: center;
   align-self: flex-start;
   gap: 0.25rem;
+  max-width: 100%;
   padding: 0.15rem 0.45rem;
   border-radius: 0.35rem;
   font-size: 0.6875rem;

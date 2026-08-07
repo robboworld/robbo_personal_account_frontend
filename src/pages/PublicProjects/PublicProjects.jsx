@@ -444,7 +444,7 @@ animate='show'>
                             )}
                             <ModerationActions>
                               {item.landingFeatured ? (
-                                <Space size={4}>
+                                <Space size={4} wrap>
                                   <InputNumber
                                     size='small'
                                     min={0}
