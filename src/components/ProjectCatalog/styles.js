@@ -21,15 +21,13 @@ export const CatalogCount = styled.span`
 
 export const ProjectGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  /* 1 → 2 → 3 колонки; max 360px — одна карточка в ряду не растягивается
+     на всю ширину и остаётся по центру */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 360px));
+  justify-content: center;
   gap: 0.875rem;
 
-  ${theme.above.small`
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  `}
-
   ${theme.above.large`
-    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
   `}
 `
@@ -155,16 +153,9 @@ export const OpenButton = styled.button`
 
 export const SkeletonGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 360px));
+  justify-content: center;
   gap: 0.875rem;
-
-  ${theme.above.small`
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  `}
-
-  ${theme.above.large`
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  `}
 `
 
 export const SkeletonCard = styled.div`
@@ -256,18 +247,27 @@ export const AuthorName = styled.span`
 
 export const ModerationRow = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
   padding-top: 0.5rem;
   border-top: 1px solid ${surface.line};
+`
+
+export const ModerationActions = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  min-width: 0;
 `
 
 export const ModerationBadge = styled.span`
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: 0.25rem;
-  margin-right: auto;
   padding: 0.15rem 0.45rem;
   border-radius: 0.35rem;
   font-size: 0.6875rem;

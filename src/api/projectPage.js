@@ -228,7 +228,7 @@ export const projectPageAPI = {
         )
     },
 
-    getPublicProjectPages(token, page = '1', pageSize = '10') {
+    getPublicProjectPages(token, page = '1', pageSize = '12') {
         return instance.get(`projectPage/public?page=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(pageSize)}`,
             {
                 withCredentials: true,
@@ -239,7 +239,7 @@ export const projectPageAPI = {
     },
 
     /** Guest-safe public catalog (never sends Authorization). */
-    async fetchPublicProjectPages(page = '1', pageSize = '10', options = {}) {
+    async fetchPublicProjectPages(page = '1', pageSize = '12', options = {}) {
         const params = new URLSearchParams({
             page: String(page),
             pageSize: String(pageSize),
