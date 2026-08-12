@@ -34,6 +34,11 @@ import {
   PAYMENT_RECEIPT_ROUTE,
   DEVICE_LINK_ROUTE,
   CUSTOMIZATION_PAGE_ROUTE,
+  TEACHER_CLASSES_ROUTE,
+  TEACHER_CLASS_BOARD_ROUTE,
+  STUDENT_CLASSES_ROUTE,
+  JOIN_CLASS_ROUTE,
+  JOIN_CLASS_CODE_ROUTE,
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
@@ -64,6 +69,10 @@ const IssueLicensePage = lazy(() => import('@/pages/Licensing/IssueLicense'))
 const DeviceLinkPage = lazy(() => import('@/pages/Licensing/DeviceLink'))
 const PaymentsReceiptPage = lazy(() => import('@/pages/Payments/Receipt'))
 const CustomizationPage = lazy(() => import('@/pages/Customization'))
+const TeacherClassesPage = lazy(() => import('@/pages/TeacherClasses'))
+const TeacherClassBoardPage = lazy(() => import('@/pages/TeacherClassBoard'))
+const StudentClassesPage = lazy(() => import('@/pages/StudentClasses'))
+const JoinClassPage = lazy(() => import('@/pages/JoinClass'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
 
@@ -82,13 +91,18 @@ const AppRoutes = () => (
 
     {/* Public + authenticated project page (guest uses landing header; owner uses LK shell). */}
     <Route path={PROJECT_PAGE_ROUTE} element={<ProjectPage />} />
+    <Route path={JOIN_CLASS_ROUTE} element={<JoinClassPage />} />
+    <Route path={JOIN_CLASS_CODE_ROUTE} element={<JoinClassPage />} />
 
     <Route element={<AuthenticatedShell />}>
       <Route
         path={HOME_PAGE_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <HomePage />)}
       />
-      <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT], <MyProjects />)} />
+      <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <MyProjects />)} />
+      <Route path={TEACHER_CLASSES_ROUTE} element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassesPage />)} />
+      <Route path={TEACHER_CLASS_BOARD_ROUTE} element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassBoardPage />)} />
+      <Route path={STUDENT_CLASSES_ROUTE} element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <StudentClassesPage />)} />
       <Route path={PUBLIC_PROJECTS_ROUTE} element={wrapProtected(STANDARD_ROLES, <PublicProjects />)} />
       <Route path={SCRATCH_HUB_ROUTE} element={wrapProtected(STANDARD_ROLES, <ScratchHubPage />)} />
       <Route

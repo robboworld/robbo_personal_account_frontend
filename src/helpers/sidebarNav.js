@@ -20,6 +20,8 @@ import {
   PARENT,
   FREE_LISTENER,
   TEACHER,
+  TEACHER_CLASSES_ROUTE,
+  STUDENT_CLASSES_ROUTE,
 } from '@/constants'
 
 const exactByRole = {
@@ -27,6 +29,7 @@ const exactByRole = {
     [PROFILE_PAGE_ROUTE]: '1',
     [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
     [MY_PROJECTS_ROUTE]: '2',
+    [STUDENT_CLASSES_ROUTE]: 'my_classes',
     [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [PARENT]: {
@@ -37,6 +40,8 @@ const exactByRole = {
   [TEACHER]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
+    [TEACHER_CLASSES_ROUTE]: 'teacher_classes',
+    [MY_PROJECTS_ROUTE]: '2',
     [MY_LICENSES_ROUTE]: 'my_licenses',
   },
   [UNIT_ADMIN]: {
@@ -90,6 +95,14 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
 
   if (pathname === MY_SESSIONS_ROUTE) {
     return 'my_sessions'
+  }
+
+  if (pathname.startsWith(TEACHER_CLASSES_ROUTE)) {
+    return 'teacher_classes'
+  }
+
+  if (pathname.startsWith(STUDENT_CLASSES_ROUTE)) {
+    return 'my_classes'
   }
 
   const exact = exactByRole[role]?.[pathname]
