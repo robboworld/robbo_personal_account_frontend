@@ -384,10 +384,26 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         }
     }
 
-    const handlePublishToggle = () => {
-        actions.updateProjectPage(token, buildProjectPayload({
-            isShared: !projectPage.isShared,
-        }))
+    const handlePublishToggle = async () => {
+        if (!token || !projectPageId) return
+        const nextShared = !projectPage.isShared
+        try {
+            await projectPageAPI.updateProjectPage(token, buildProjectPayload({
+                isShared: nextShared,
+            }))
+            message.success(intl.formatMessage({
+                id: nextShared ? 'project_page.publish_ok' : 'project_page.unpublish_ok',
+            }))
+            actions.getProjectPageById(token, projectPageId)
+        } catch (e) {
+            const code = e?.response?.data?.code
+            if (code === 'INVALID_PROJECT_FILE') {
+                message.error(intl.formatMessage({ id: 'project_page.publish_invalid' }))
+                return
+            }
+            message.error(e?.response?.data?.error || e?.message ||
+                intl.formatMessage({ id: 'project_page.publish_error' }))
+        }
     }
 
     const handleDownloadSb3 = async () => {
@@ -418,7 +434,12 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             actions.getProjectPageById(token, projectPageId)
             setPlayerReloadKey(k => k + 1)
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'project_page.upload_sb3_error' }))
+            const code = e?.response?.data?.code
+            if (code === 'INVALID_PROJECT_FILE') {
+                message.error(intl.formatMessage({ id: 'project_page.invalid_project_file' }))
+            } else {
+                message.error(e?.message || intl.formatMessage({ id: 'project_page.upload_sb3_error' }))
+            }
         } finally {
             setUploadBusy(false)
         }

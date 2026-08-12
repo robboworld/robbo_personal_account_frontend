@@ -31,6 +31,19 @@ function buildPlayerSrc(playToken, locale) {
     return `${base}?${params.toString()}`
 }
 
+function mapPlayerErrorMessage(raw, intl) {
+    const msg = String(raw || '')
+    if (
+        msg === 'INVALID_PROJECT_FILE' ||
+        msg.includes('validationError') ||
+        msg.includes('Could not parse as a valid SB2 or SB3') ||
+        msg.includes('playUrl did not return a .sb3')
+    ) {
+        return intl.formatMessage({ id: 'project_page.invalid_project_file' })
+    }
+    return msg || intl.formatMessage({ id: 'project_page.player_error' })
+}
+
 function CoverGreenFlag() {
     return (
         <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16.63 17.5'
@@ -241,7 +254,10 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
             if (event.data.type === 'scratch:error') {
                 clearReadyTimer()
                 stopGreenFlagRetry()
-                setError(event.data.message || intl.formatMessage({ id: 'project_page.player_error' }))
+                setError(mapPlayerErrorMessage(
+                    event.data.message,
+                    intl,
+                ))
             }
             if (event.data.type === 'scratch:runStart') {
                 pendingGreenFlagRef.current = false
