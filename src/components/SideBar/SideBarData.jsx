@@ -38,6 +38,8 @@ import {
   MY_LICENSES_ROUTE,
   MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
+  TEACHER_CLASSES_ROUTE,
+  STUDENT_CLASSES_ROUTE,
 } from '@/constants'
 
 /** Profile customization — avatar picker. */
@@ -164,6 +166,12 @@ export const SidebarDataStudent = [
     label: <FormattedMessage id='sidebar_data.my_projects' />,
     pathname: MY_PROJECTS_ROUTE,
     icon: <ProjectOutlined />,
+  },
+  {
+    key: 'my_classes',
+    label: <FormattedMessage id='sidebar_data.my_classes' defaultMessage='My classes' />,
+    pathname: STUDENT_CLASSES_ROUTE,
+    icon: <GroupOutlined />,
   },
   {
     key: 'my_licenses',
@@ -295,6 +303,18 @@ export const SidebarDataTeacher = [
     label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
+  },
+  {
+    key: 'teacher_classes',
+    label: <FormattedMessage id='sidebar_data.teacher_classes' defaultMessage='Classes' />,
+    pathname: TEACHER_CLASSES_ROUTE,
+    icon: <GroupOutlined />,
+  },
+  {
+    key: '2',
+    label: <FormattedMessage id='sidebar_data.my_projects' defaultMessage='Templates' />,
+    pathname: MY_PROJECTS_ROUTE,
+    icon: <ProjectOutlined />,
   },
   {
     key: 'my_licenses',

@@ -82,10 +82,17 @@ const Logistration = () => {
     }
 
     setActiveTab(tabKey)
-    navigate(tabKey, { replace: true })
+    const params = new URLSearchParams(location.search)
+    const join = params.get('join')
+    navigate(join ? `${tabKey}?join=${encodeURIComponent(join)}` : tabKey, { replace: true })
   }
 
   if (isAuth && localStorage.getItem('token')) {
+    const params = new URLSearchParams(location.search)
+    const join = params.get('join')
+    if (join) {
+      return <Navigate to={`/join?code=${encodeURIComponent(join)}`} replace />
+    }
     return <Navigate to={HOME_PAGE_ROUTE} replace />
   }
 

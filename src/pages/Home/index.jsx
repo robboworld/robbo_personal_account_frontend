@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Empty } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 import {
@@ -56,6 +56,9 @@ import {
   UNIT_ADMIN,
   SUPER_ADMIN,
   STUDENT,
+  TEACHER,
+  TEACHER_CLASSES_ROUTE,
+  STUDENT_CLASSES_ROUTE,
 } from '@/constants'
 import { getScratchEditorUrl } from '@/utils/scratchEditor'
 
@@ -88,8 +91,28 @@ const QUICK_ACTION_DEFS = [
     titleId: 'home.action.projects.title',
     descriptionId: 'home.action.projects.description',
     path: MY_PROJECTS_ROUTE,
-    roles: [STUDENT],
+    roles: [STUDENT, TEACHER],
     iconKey: 'projects',
+    accent: 'green',
+    gridSpan: 4,
+  },
+  {
+    key: 'teacherClasses',
+    titleId: 'home.action.teacher_classes.title',
+    descriptionId: 'home.action.teacher_classes.description',
+    path: TEACHER_CLASSES_ROUTE,
+    roles: [TEACHER],
+    iconKey: 'groups',
+    accent: 'green',
+    gridSpan: 4,
+  },
+  {
+    key: 'studentClasses',
+    titleId: 'home.action.student_classes.title',
+    descriptionId: 'home.action.student_classes.description',
+    path: STUDENT_CLASSES_ROUTE,
+    roles: [STUDENT],
+    iconKey: 'groups',
     accent: 'green',
     gridSpan: 4,
   },
@@ -172,9 +195,16 @@ const NEXT_STEP_IDS = [
 
 const Home = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const intl = useIntl()
   const role = useAuthRole()
   const token = localStorage.getItem('token')
+
+  useEffect(() => {
+    const join = searchParams.get('join')
+    if (!join) return
+    navigate(`/join?code=${encodeURIComponent(join)}`, { replace: true })
+  }, [searchParams, navigate])
 
   const parsedToken = useMemo(() => {
     if (!token) {
