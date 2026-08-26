@@ -5,19 +5,12 @@ import { Navigate, useLocation, useNavigate, useOutletContext } from 'react-rout
 import { useIntl } from 'react-intl'
 
 import AuthLayout from '@/components/AuthLayout'
-import Loader from '@/components/Loader'
 import LoginContent from '@/components/PageLayoutLogin/PageLayoutLogin'
 import RegisterForm from '@/components/RegisterForm'
 import {
   backupLoginForm,
   backupRegistrationForm,
 } from '@/actions/authForms'
-import {
-  redirectToLmsRegister,
-  redirectToOidcStart,
-  resolveLoginReturnTo,
-  shouldShowLocalAuthForms,
-} from '@/helpers/oidcSession'
 import {
   formatInactiveBanDescription,
   parseInactiveLoginSearch,
@@ -32,43 +25,36 @@ const resolvePageFromPath = pathname => (
   pathname === LOGIN_PAGE_ROUTE ? LOGIN_PAGE_ROUTE : REGISTER_PAGE_ROUTE
 )
 
+const parseLoginQueryError = (search, intl) => {
+  const params = new URLSearchParams(search || '')
+  const err = params.get('err')
+  if (!err || err === 'user_inactive') {
+    return null
+  }
+  const keyByErr = {
+    user_not_found: 'login.error.user_not_found',
+    invalid_credentials: 'login.error.invalid_credentials',
+    session_limit_reached: 'sessions.limit_reached',
+  }
+  const id = keyByErr[err] || 'login.error.generic'
+  return intl.formatMessage({ id })
+}
+
 const Logistration = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
   const intl = useIntl()
-  const { oidcStatus } = useOutletContext()
+  const { showOidcLogin = false, hybridAuth = false } = useOutletContext() || {}
   const [activeTab, setActiveTab] = useState(() => resolvePageFromPath(location.pathname))
-  const showLocalAuthForms = shouldShowLocalAuthForms(oidcStatus)
   const inactiveBan = parseInactiveLoginSearch(location.search)
+  const queryLoginError = parseLoginQueryError(location.search, intl)
 
   const isAuth = useSelector(state => state.login.isAuth)
 
   useEffect(() => {
     setActiveTab(resolvePageFromPath(location.pathname))
   }, [location.pathname])
-
-  useEffect(() => {
-    if (showLocalAuthForms) {
-      return undefined
-    }
-
-    // Stay on login to show ban reason instead of bouncing back to IdP.
-    if (inactiveBan) {
-      return undefined
-    }
-
-    if (activeTab === LOGIN_PAGE_ROUTE) {
-      redirectToOidcStart(resolveLoginReturnTo(location.search), 'login')
-      return undefined
-    }
-
-    if (activeTab === REGISTER_PAGE_ROUTE) {
-      redirectToLmsRegister()
-    }
-
-    return undefined
-  }, [activeTab, location.search, showLocalAuthForms, inactiveBan])
 
   const handleOnSelect = tabKey => {
     if (tabKey === activeTab) {
@@ -96,10 +82,6 @@ const Logistration = () => {
     return <Navigate to={HOME_PAGE_ROUTE} replace />
   }
 
-  if (!showLocalAuthForms && !inactiveBan) {
-    return <Loader />
-  }
-
   const inactiveAlert = inactiveBan ? (
     <Alert
       type='error'
@@ -115,7 +97,11 @@ const Logistration = () => {
       {activeTab === LOGIN_PAGE_ROUTE ? (
         <React.Fragment>
           {inactiveAlert}
-          {showLocalAuthForms ? <LoginContent /> : null}
+          <LoginContent
+            showOidcLogin={showOidcLogin}
+            hybridAuth={hybridAuth}
+            initialLoginError={queryLoginError}
+          />
         </React.Fragment>
       ) : (
         <RegisterForm />

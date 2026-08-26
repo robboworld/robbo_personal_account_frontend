@@ -61,7 +61,7 @@ import {
 } from './landingStyles'
 
 import { projectPageAPI } from '@/api/projectPage'
-import config from '@/config'
+import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import RobboGuestHeader from '@/components/RobboGuestHeader/RobboGuestHeader'
 import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
@@ -107,17 +107,6 @@ const getAuthorInitials = name => {
     return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
   }
   return name.slice(0, 2).toUpperCase()
-}
-
-const resolvePreviewUrl = preview => {
-  if (!preview) {
-    return ''
-  }
-  if (/^https?:\/\//i.test(preview) || preview.startsWith('data:')) {
-    return preview
-  }
-  const base = (config.backendURL?.[0] || '').replace(/\/?$/, '/')
-  return `${base}${preview.replace(/^\//, '')}`
 }
 
 const LMS_COURSE_EXAMPLES = [
@@ -196,7 +185,7 @@ className={className} />
 const LandingProjectCard = ({ project, onOpen }) => {
   const title = project.title || 'Без названия'
   const authorName = project.authorName || project.authorUserId || 'Автор'
-  const previewUrl = resolvePreviewUrl(project.preview)
+  const previewUrl = resolveProjectPreviewUrl(project.preview)
   return (
     <ProjectTile
       type='button'

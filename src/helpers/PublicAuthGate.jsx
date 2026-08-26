@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import Loader from '@/components/Loader'
 import config from '@/config'
 import {
   FREE_LISTENER,
@@ -15,8 +14,8 @@ import {
 import { parseJwt, isAccessTokenExpired } from '@/helpers/jwtParser'
 import {
   fetchOidcStatus,
+  isHybridAuthEnabled,
   isOidcSsoEnabled,
-  shouldShowLocalAuthForms,
 } from '@/helpers/oidcSession'
 
 const HOME_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
@@ -59,7 +58,8 @@ async function resolveAuthGate() {
 
   try {
     const oidcStatus = await fetchOidcStatus()
-    const showLocalAuthForms = shouldShowLocalAuthForms(oidcStatus)
+    const showOidcLogin = isOidcSsoEnabled()
+    const hybridAuth = isHybridAuthEnabled(oidcStatus)
     const ssoEnabled = isOidcSsoEnabled()
 
     if (oidcStatus.authenticated) {
@@ -88,7 +88,7 @@ async function resolveAuthGate() {
 
     return {
       status: 'ok',
-      context: { oidcStatus, showLocalAuthForms },
+      context: { oidcStatus, showOidcLogin, hybridAuth },
     }
   } catch {
     if (legacyToken && isUsableLegacyToken(legacyToken)) {
@@ -102,14 +102,23 @@ async function resolveAuthGate() {
       status: 'ok',
       context: {
         oidcStatus: { authenticated: false },
-        showLocalAuthForms: !isOidcSsoEnabled(),
+        showOidcLogin: isOidcSsoEnabled(),
+        hybridAuth: false,
       },
     }
   }
 }
 
 const PublicAuthGate = () => {
-  const [gateState, setGateState] = useState({ status: 'loading' })
+  const [gateState, setGateState] = useState({
+    status: 'loading',
+    // Show AuthLayout immediately (same shell as register) instead of a Loader flash.
+    context: {
+      oidcStatus: { authenticated: false },
+      showOidcLogin: isOidcSsoEnabled(),
+      hybridAuth: false,
+    },
+  })
 
   useEffect(() => {
     let cancelled = false
@@ -124,10 +133,6 @@ const PublicAuthGate = () => {
       cancelled = true
     }
   }, [])
-
-  if (gateState.status === 'loading') {
-    return <Loader />
-  }
 
   if (gateState.status === 'redirect') {
     return <Navigate to={HOME_PAGE_ROUTE} replace />

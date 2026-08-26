@@ -1,19 +1,19 @@
-#registration-form .register-button {
+#registration-form .register-button, #login-form .register-button {
   min-width: 14.4rem;
 }
 
-#registration-form .registration-field {
+#registration-form .registration-field, #login-form .registration-field {
   margin-bottom: 1rem;
 }
 
-#registration-form .registration-field__label {
+#registration-form .registration-field__label, #login-form .registration-field__label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   color: #383838;
 }
 
-#registration-form .registration-field__input {
+#registration-form .registration-field__input, #login-form .registration-field__input {
   width: 100%;
   box-sizing: border-box;
   padding: 0.625rem 0.75rem;
@@ -24,34 +24,34 @@
   background: #fff;
 }
 
-#registration-form .registration-field__input:focus {
+#registration-form .registration-field__input:focus, #login-form .registration-field__input:focus {
   outline: none;
   border-color: #15803d;
   box-shadow: 0 0 0 1px rgba(21, 128, 61, 0.25);
 }
 
-#registration-form .registration-field--invalid .registration-field__input,
-#registration-form .registration-field--invalid .robbo-phone-input.PhoneInput {
+#registration-form .registration-field--invalid .registration-field__input, #login-form .registration-field--invalid .registration-field__input,
+#registration-form .registration-field--invalid .robbo-phone-input.PhoneInput, #login-form .registration-field--invalid .robbo-phone-input.PhoneInput {
   border-color: #ca3a2f;
 }
 
-#registration-form .registration-field__help {
+#registration-form .registration-field__help, #login-form .registration-field__help {
   margin-top: 0.375rem;
   font-size: 0.75rem;
   color: #707070;
 }
 
-#registration-form .registration-field__error {
+#registration-form .registration-field__error, #login-form .registration-field__error {
   margin-top: 0.375rem;
   font-size: 0.75rem;
   color: #ca3a2f;
 }
 
-#registration-form .registration-checkbox {
+#registration-form .registration-checkbox, #login-form .registration-checkbox {
   margin-bottom: 0.5rem;
 }
 
-#registration-form .registration-checkbox__label {
+#registration-form .registration-checkbox__label, #login-form .registration-checkbox__label {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
@@ -61,27 +61,27 @@
   color: rgba(69, 69, 69, 1);
 }
 
-#registration-form .registration-checkbox__input {
+#registration-form .registration-checkbox__input, #login-form .registration-checkbox__input {
   margin-top: 0.15rem;
   accent-color: #15803d;
   flex: 0 0 auto;
 }
 
-#registration-form .registration-checkbox__text {
+#registration-form .registration-checkbox__text, #login-form .registration-checkbox__text {
   min-width: 0;
   overflow-wrap: break-word;
 }
 
-#registration-form .inline-link {
+#registration-form .inline-link, #login-form .inline-link {
   color: #15803d;
   text-decoration: underline;
 }
 
-#registration-form .robbo-honor-consent .registration-checkbox__text {
+#registration-form .robbo-honor-consent .registration-checkbox__text, #login-form .robbo-honor-consent .registration-checkbox__text {
   display: block;
 }
 
-#registration-form .robbo-phone-input.PhoneInput {
+#registration-form .robbo-phone-input.PhoneInput, #login-form .robbo-phone-input.PhoneInput {
   display: flex;
   align-items: stretch;
   width: 100%;
@@ -91,12 +91,12 @@
   background: #fff;
 }
 
-#registration-form .robbo-phone-input.PhoneInput:focus-within {
+#registration-form .robbo-phone-input.PhoneInput:focus-within, #login-form .robbo-phone-input.PhoneInput:focus-within {
   border-color: #15803d;
   box-shadow: 0 0 0 1px rgba(21, 128, 61, 0.25);
 }
 
-#registration-form .robbo-phone-input .PhoneInputInput {
+#registration-form .robbo-phone-input .PhoneInputInput, #login-form .robbo-phone-input .PhoneInputInput {
   flex: 1 1 auto;
   min-width: 0;
   border: 0;
@@ -106,18 +106,18 @@
   background: transparent;
 }
 
-#registration-form .robbo-phone-input .PhoneInputInput:focus {
+#registration-form .robbo-phone-input .PhoneInputInput:focus, #login-form .robbo-phone-input .PhoneInputInput:focus {
   outline: none;
 }
 
-#registration-form .robbo-phone-country {
+#registration-form .robbo-phone-country, #login-form .robbo-phone-country {
   position: relative;
   align-self: stretch;
   flex: 0 0 auto;
   border-right: 1px solid #d9d9d9;
 }
 
-#registration-form .robbo-phone-country__trigger {
+#registration-form .robbo-phone-country__trigger, #login-form .robbo-phone-country__trigger {
   display: flex;
   align-items: center;
   gap: 0.375rem;
@@ -129,7 +129,7 @@
   cursor: pointer;
 }
 
-#registration-form .robbo-phone-country__menu {
+#registration-form .robbo-phone-country__menu, #login-form .robbo-phone-country__menu {
   position: absolute;
   top: calc(100% + 0.25rem);
   left: 0;
@@ -146,7 +146,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-#registration-form .robbo-phone-country__option-button {
+#registration-form .robbo-phone-country__option-button, #login-form .robbo-phone-country__option-button {
   display: flex;
   align-items: center;
   gap: 0.625rem;
@@ -159,7 +159,7 @@
   cursor: pointer;
 }
 
-#registration-form .robbo-phone-country__option--highlighted .robbo-phone-country__option-button {
+#registration-form .robbo-phone-country__option--highlighted .robbo-phone-country__option-button, #login-form .robbo-phone-country__option--highlighted .robbo-phone-country__option-button {
   background: #edf9f2;
   color: #15803d;
 }

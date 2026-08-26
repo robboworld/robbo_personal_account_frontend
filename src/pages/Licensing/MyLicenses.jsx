@@ -229,7 +229,7 @@ const MyLicensesPage = () => {
     } finally {
       setLicensesLoading(false)
     }
-  }, [])
+  }, [intl])
 
   const loadProducts = useCallback(async () => {
     setProductsLoading(true)

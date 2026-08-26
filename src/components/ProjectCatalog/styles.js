@@ -21,14 +21,16 @@ export const CatalogCount = styled.span`
 
 export const ProjectGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 360px);
+  justify-content: center;
   gap: 0.875rem;
 
   ${theme.above.small`
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
   `}
 
-  ${theme.above.large`
+  ${theme.above.med`
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
   `}
@@ -56,13 +58,63 @@ export const ProjectCard = styled(motion.article)`
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: 0;
+  min-width: 0;
+  max-width: 100%;
   min-height: 148px;
-  padding: 1.125rem 1.125rem 1rem;
+  padding: 0;
   border-radius: 1rem;
   border: 1px solid ${surface.line};
   background: ${surface.card};
   box-shadow: 0 12px 32px -24px rgba(108, 91, 123, 0.4);
+  overflow: hidden;
+`
+
+export const ProjectCardCover = styled.button`
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(0, 175, 65, 0.18), rgba(108, 91, 123, 0.22)),
+    #e8f5ee;
+
+  &:focus-visible {
+    outline: 2px solid ${colors.accentGreen};
+    outline-offset: -2px;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`
+
+export const ProjectCardCoverPlaceholder = styled.span`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: ${colors.accentGreen};
+  opacity: 0.55;
+`
+
+export const ProjectCardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  min-width: 0;
+  flex: 1;
+  padding: 1rem 1.125rem 1rem;
 `
 
 export const ProjectCardTop = styled.div`
@@ -155,20 +207,22 @@ export const OpenButton = styled.button`
 
 export const SkeletonGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 360px);
+  justify-content: center;
   gap: 0.875rem;
 
   ${theme.above.small`
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
   `}
 
-  ${theme.above.large`
+  ${theme.above.med`
     grid-template-columns: repeat(3, minmax(0, 1fr));
   `}
 `
 
 export const SkeletonCard = styled.div`
-  min-height: 148px;
+  min-height: 240px;
   border-radius: 1rem;
   border: 1px solid ${surface.line};
   background: linear-gradient(
@@ -262,20 +316,121 @@ export const AuthorName = styled.span`
   white-space: nowrap;
 `
 
-export const ModerationRow = styled.div`
+export const ProjectTagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+  min-width: 0;
+`
+
+export const ProjectTag = styled.button`
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 175, 65, 0.28);
+  background: rgba(0, 175, 65, 0.08);
+  color: ${colors.accentGreen};
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: rgba(0, 175, 65, 0.16);
+    border-color: rgba(0, 175, 65, 0.45);
+    color: #009a47;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${colors.accentGreen};
+    outline-offset: 2px;
+  }
+`
+
+export const SearchBar = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.65rem;
+  width: 100%;
+  margin-bottom: 1rem;
+
+  .ant-input-search {
+    flex: 1 1 220px;
+    max-width: 28rem;
+  }
+`
+
+export const ActiveFilterChip = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: ${colors.secondary};
+  background: rgba(108, 91, 123, 0.1);
+  border: 1px solid ${surface.line};
+`
+
+export const ModerationRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+  width: 100%;
+  min-width: 0;
   padding-top: 0.5rem;
   border-top: 1px solid ${surface.line};
+`
+
+export const ModerationActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.4rem;
+  width: 100%;
+  min-width: 0;
+
+  > .ant-btn {
+    flex: 1 1 auto;
+    min-width: min(100%, 8.5rem);
+    max-width: 100%;
+  }
+
+  > .ant-space {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .ant-space {
+    display: flex !important;
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .ant-input-number {
+    max-width: 100%;
+  }
 `
 
 export const ModerationBadge = styled.span`
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: 0.25rem;
-  margin-right: auto;
+  max-width: 100%;
   padding: 0.15rem 0.45rem;
   border-radius: 0.35rem;
   font-size: 0.6875rem;
@@ -284,4 +439,38 @@ export const ModerationBadge = styled.span`
   color: ${colors.secondary};
   background: rgba(0, 175, 65, 0.1);
   border: 1px solid rgba(0, 175, 65, 0.22);
+`
+
+export const PaginationWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding-top: 0.25rem;
+
+  .ant-pagination-item-active {
+    border-color: ${colors.accentGreen};
+  }
+
+  .ant-pagination-item-active a {
+    color: ${colors.accentGreen};
+  }
+`
+
+export const CatalogToolbar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  margin-left: auto;
+  align-self: center;
+`
+
+export const PageSizeControl = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: ${surface.muted};
+  white-space: nowrap;
 `
