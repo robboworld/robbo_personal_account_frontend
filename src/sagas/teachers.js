@@ -1,7 +1,6 @@
 import { call, takeLatest, put, select } from 'redux-saga/effects'
 import { notification } from 'antd'
 
-import { teachersAPI } from '@/api'
 import {
     createTeacher,
     createTeacherFailed,
@@ -25,8 +24,8 @@ import { teacherMutationsGraphQL, teacherQuerysGraphQL } from '@/graphQL'
 function* getTeachersSaga(action) {
     const language = yield select(state => state.app.language)
     try {
-        const { page, pageZie } = action.payload
-        const response = yield call(teacherQuerysGraphQL.GetAllTeachers, "1", "10")
+        const { page, pageSize } = action.payload
+        const response = yield call(teacherQuerysGraphQL.GetAllTeachers, page, pageSize)
         console.log(response)
 
         yield put(getTeachersSuccess(response.data.GetAllTeachers.teachers))

@@ -6,13 +6,20 @@ import {
   fetchOidcStatus,
   hasLmsPasswordFallback,
   isOidcSsoEnabled,
-  redirectToOidcStart,
 } from './oidcSession'
 
 import Loader from '@/components/Loader'
 
 import { LOGIN_PAGE_ROUTE } from '@/constants'
 import config from '@/config'
+
+const navigateToLogin = (navigate, pathname, search) => {
+  const returnTo = `${pathname}${search || ''}`
+  navigate(
+    `${LOGIN_PAGE_ROUTE}?return_to=${encodeURIComponent(returnTo)}`,
+    { replace: true },
+  )
+}
 
 const OidcSessionContext = createContext(null)
 
@@ -89,12 +96,12 @@ export const OidcSessionProvider = ({ children }) => {
             return
           }
 
-          // No password session — fallback to mock/prod OIDC.
-          redirectToOidcStart(`${location.pathname}${location.search}`)
+          // No password session — send to LK login (silent SSO / OIDC button).
+          navigateToLogin(navigate, location.pathname, location.search)
           return
         }
 
-        redirectToOidcStart(`${location.pathname}${location.search}`)
+        navigateToLogin(navigate, location.pathname, location.search)
       } catch {
         if (!cancelled) {
           let token = localStorage.getItem('token')
@@ -110,7 +117,7 @@ export const OidcSessionProvider = ({ children }) => {
             setLoading(false)
             return
           }
-          navigate(LOGIN_PAGE_ROUTE, { replace: true })
+          navigateToLogin(navigate, location.pathname, location.search)
         }
       }
     }

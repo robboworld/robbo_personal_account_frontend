@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useIntl, FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import theme from '@/theme'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
@@ -393,8 +393,7 @@ aria-hidden>
 
 const RobboSiteFooter = () => {
   const intl = useIntl()
-  const { locale: intlLocale = 'ru' } = intl
-  const [locale] = intlLocale.split('-')
+  const [locale] = String(intl.locale || 'ru').split('-')
 
   return (
   <React.Fragment>

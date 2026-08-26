@@ -228,7 +228,7 @@ export const projectPageAPI = {
         )
     },
 
-    getPublicProjectPages(token, page = '1', pageSize = '20') {
+    getPublicProjectPages(token, page = '1', pageSize = '12') {
         return instance.get(`projectPage/public?page=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(pageSize)}`,
             {
                 withCredentials: true,
@@ -239,7 +239,7 @@ export const projectPageAPI = {
     },
 
     /** Guest-safe public catalog (never sends Authorization). */
-    async fetchPublicProjectPages(page = '1', pageSize = '20', options = {}) {
+    async fetchPublicProjectPages(page = '1', pageSize = '12', options = {}) {
         const params = new URLSearchParams({
             page: String(page),
             pageSize: String(pageSize),
@@ -247,6 +247,16 @@ export const projectPageAPI = {
         if (options.featured) {
             params.set('featured', String(options.featured))
         }
+        if (options.q) {
+            params.set('q', String(options.q))
+        }
+        const tags = Array.isArray(options.tags)
+            ? options.tags
+            : (options.tag ? [options.tag] : [])
+        tags
+            .map(t => String(t || '').trim())
+            .filter(Boolean)
+            .forEach(tag => params.append('tag', tag))
         const url = `${backendBase()}projectPage/public?${params.toString()}`
         const res = await fetch(url, {
             method: 'GET',

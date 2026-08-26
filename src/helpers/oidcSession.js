@@ -46,13 +46,58 @@ export const redirectToOidcLogout = (returnTo = '/?logged_out=1') => {
 
 export const isOidcSsoEnabled = () => LK_SSO_WITH_LMS_ENABLED
 
+/**
+ * Verify LMS credentials and issue BFF session cookie without IdP redirect.
+ * Keeps the user on /login UI until a same-origin navigate to return_to.
+ * @returns {Promise<{ok: true, email?: string, return_to?: string}|{ok: false, error: string}>}
+ */
+export const passwordLoginOidc = async (usernameOrEmail, password, returnTo = HOME_PAGE_ROUTE) => {
+  const response = await fetch(`${apiBase()}/auth/oidc/password-login`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: usernameOrEmail,
+      email: usernameOrEmail,
+      password,
+      return_to: returnTo,
+    }),
+  })
+  let data = {}
+  try {
+    data = await response.json()
+  } catch {
+    data = {}
+  }
+  if (response.ok && data?.ok) {
+    return {
+      ok: true,
+      email: data.email || usernameOrEmail,
+      return_to: data.return_to || returnTo,
+    }
+  }
+  return {
+    ok: false,
+    error: data?.error || (response.status === 401 ? 'invalid_credentials' : 'generic'),
+  }
+}
+
+/** @deprecated use passwordLoginOidc — kept for callers that only need a check */
+export const verifyOidcLoginCredentials = async (usernameOrEmail, password) => {
+  const result = await passwordLoginOidc(usernameOrEmail, password, HOME_PAGE_ROUTE)
+  if (result.ok) {
+    return { ok: true, email: result.email }
+  }
+  return { ok: false, error: result.error }
+}
+
 export const hasLmsPasswordFallback = status => Boolean(status?.lms_password_fallback)
 
 /**
- * Local Ant Design login/register only when SSO is off.
- * When LK_SSO_WITH_LMS_ENABLED: /login always goes to OIDC (mock/prod IdP).
- * AUTH_LMS_PASSWORD_FALLBACK enables POST /auth/sign-in for Scratch dropdown —
- * it must NOT switch the LK login page to password forms.
+ * Pure local password forms (SSO off). When SSO is on, /login shows AuthLayout
+ * with an OIDC button; hybrid mode also shows SignInForm under the button.
+ * AUTH_LMS_PASSWORD_FALLBACK enables POST /auth/sign-in for Scratch dropdown
+ * and hybrid LK login — it does not hide the OIDC button.
  */
 export const shouldShowLocalAuthForms = () => !isOidcSsoEnabled()
 

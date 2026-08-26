@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ArrowRightOutlined,
   DeleteOutlined,
   GlobalOutlined,
   PushpinOutlined,
 } from '@ant-design/icons'
-import { Button, Input, InputNumber, Modal, Space, message } from 'antd'
+import { Button, Input, InputNumber, Modal, Pagination, Select, Space, Tag, message } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 import {
@@ -18,22 +18,34 @@ import {
 import { SUPER_ADMIN } from '@/constants'
 import { useAuthRole } from '@/helpers'
 import { displayProjectTitle } from '@/helpers/intl'
+import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import {
+  ActiveFilterChip,
   AuthorName,
   AuthorRow,
   CatalogCount,
+  CatalogToolbar,
   EmptyIcon,
   EmptyState,
   EmptyText,
+  ModerationActions,
   ModerationBadge,
   ModerationRow,
   OpenButton,
+  PageSizeControl,
+  PaginationWrap,
   ProjectCard,
   ProjectCardBody,
+  ProjectCardContent,
+  ProjectCardCover,
+  ProjectCardCoverPlaceholder,
   ProjectCardTop,
   ProjectGlyph,
   ProjectGrid,
+  ProjectTag,
+  ProjectTagList,
   ProjectTitleButton,
+  SearchBar,
   SkeletonCard,
   SkeletonGrid,
 } from '@/components/ProjectCatalog/styles'
@@ -54,15 +66,67 @@ import {
 } from '@/components/AccountShell'
 
 const SKELETON_COUNT = 6
-const { TextArea } = Input
+const PAGE_SIZE_OPTIONS = [6, 12, 24]
+const DEFAULT_PAGE_SIZE = 12
+const MAX_FILTER_TAGS = 5
+const MAX_TAG_LEN = 25
+const { TextArea, Search } = Input
+
+const parsePage = value => {
+  const n = Number.parseInt(String(value || ''), 10)
+  return Number.isFinite(n) && n >= 1 ? n : 1
+}
+
+const parsePageSize = value => {
+  const n = Number.parseInt(String(value || ''), 10)
+  return PAGE_SIZE_OPTIONS.includes(n) ? n : DEFAULT_PAGE_SIZE
+}
+
+const parseQuery = value => String(value || '').trim()
+
+const parseTag = value => {
+  const raw = String(value || '').trim().toLowerCase()
+    .replace(/_/g, '-')
+    .replace(/\s+/g, '-')
+  if (!raw) {
+    return ''
+  }
+  const cleaned = raw.replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '')
+  if (!cleaned || cleaned.length > MAX_TAG_LEN) {
+    return ''
+  }
+  return cleaned
+}
+
+const parseTagsFromSearchParams = params => {
+  const rawParts = [
+    ...params.getAll('tag'),
+    ...(params.get('tags') ? [params.get('tags')] : []),
+  ]
+  const seen = new Set()
+  const out = []
+  rawParts.forEach(raw => {
+    String(raw || '').split(',').forEach(part => {
+      const tag = parseTag(part)
+      if (!tag || seen.has(tag) || out.length >= MAX_FILTER_TAGS) {
+        return
+      }
+      seen.add(tag)
+      out.push(tag)
+    })
+  })
+  return out
+}
 
 export default function PublicProjects() {
   const navigate = useNavigate()
   const intl = useIntl()
+  const [searchParams, setSearchParams] = useSearchParams()
   const authRole = useAuthRole()
   const isSuperAdmin = Number(authRole) === SUPER_ADMIN
   const [loading, setLoading] = useState(true)
   const [projects, setProjects] = useState([])
+  const [totalRows, setTotalRows] = useState(0)
 
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleteReason, setDeleteReason] = useState('')
@@ -72,6 +136,98 @@ export default function PublicProjects() {
   const [featureBusy, setFeatureBusy] = useState(false)
   const [orderDrafts, setOrderDrafts] = useState({})
   const [orderBusyId, setOrderBusyId] = useState(null)
+
+  const currentPage = useMemo(
+    () => parsePage(searchParams.get('page')),
+    [searchParams],
+  )
+  const pageSize = useMemo(
+    () => parsePageSize(searchParams.get('pageSize')),
+    [searchParams],
+  )
+  const searchQuery = useMemo(
+    () => parseQuery(searchParams.get('q')),
+    [searchParams],
+  )
+  const activeTags = useMemo(
+    () => parseTagsFromSearchParams(searchParams),
+    [searchParams],
+  )
+  const [searchDraft, setSearchDraft] = useState(searchQuery)
+  const hasActiveFilters = Boolean(searchQuery || activeTags.length)
+
+  useEffect(() => {
+    setSearchDraft(searchQuery)
+  }, [searchQuery])
+
+  const writeCatalogParams = useCallback(({
+    page = currentPage,
+    size = pageSize,
+    q = searchQuery,
+    tags = activeTags,
+  } = {}) => {
+    const next = new URLSearchParams()
+    next.set('page', String(page))
+    next.set('pageSize', String(size))
+    const query = parseQuery(q)
+    if (query) {
+      next.set('q', query)
+    }
+    ;(tags || []).forEach(tag => {
+      const normalized = parseTag(tag)
+      if (normalized) {
+        next.append('tag', normalized)
+      }
+    })
+    setSearchParams(next, { replace: true })
+  }, [currentPage, pageSize, searchQuery, activeTags, setSearchParams])
+
+  const updatePaging = useCallback((page, size) => {
+    writeCatalogParams({ page, size })
+  }, [writeCatalogParams])
+
+  const onSearchSubmit = useCallback(value => {
+    writeCatalogParams({
+      page: 1,
+      q: parseQuery(value),
+    })
+  }, [writeCatalogParams])
+
+  const onTagFilter = useCallback(tag => {
+    const normalized = parseTag(tag)
+    if (!normalized) {
+      return
+    }
+    if (activeTags.includes(normalized)) {
+      return
+    }
+    if (activeTags.length >= MAX_FILTER_TAGS) {
+      message.warning(intl.formatMessage(
+        { id: 'project_page.tags_max_count' },
+        { max: MAX_FILTER_TAGS },
+      ))
+      return
+    }
+    writeCatalogParams({
+      page: 1,
+      tags: [...activeTags, normalized],
+    })
+  }, [activeTags, writeCatalogParams, intl])
+
+  const removeTagFilter = useCallback(tag => {
+    writeCatalogParams({
+      page: 1,
+      tags: activeTags.filter(item => item !== tag),
+    })
+  }, [activeTags, writeCatalogParams])
+
+  const clearAllFilters = useCallback(() => {
+    writeCatalogParams({
+      page: 1,
+      q: '',
+      tags: [],
+    })
+  }, [writeCatalogParams])
 
   const nextFeatureSortOrder = useCallback(list => {
     const featured = (list || []).filter(item => item.landingFeatured)
@@ -85,15 +241,28 @@ export default function PublicProjects() {
     let cancelled = false
     setLoading(true)
 
-    projectPageAPI.fetchPublicProjectPages()
+    projectPageAPI.fetchPublicProjectPages(String(currentPage), String(pageSize), {
+      q: searchQuery || undefined,
+      tags: activeTags,
+    })
       .then(data => {
-        if (!cancelled) {
-          setProjects(data?.projectPages || [])
+        if (cancelled) {
+          return
+        }
+        const pages = data?.projectPages || []
+        const total = Number(data?.countRows) || 0
+        setProjects(pages)
+        setTotalRows(total)
+
+        const maxPage = Math.max(1, Math.ceil(total / pageSize) || 1)
+        if (currentPage > maxPage) {
+          writeCatalogParams({ page: maxPage })
         }
       })
       .catch(() => {
         if (!cancelled) {
           setProjects([])
+          setTotalRows(0)
         }
       })
       .finally(() => {
@@ -105,7 +274,7 @@ export default function PublicProjects() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [currentPage, pageSize, searchQuery, activeTags, writeCatalogParams])
 
   const openProject = useCallback(projectPageId => {
     navigate(`/projects/${projectPageId}`, {
@@ -138,7 +307,13 @@ export default function PublicProjects() {
     setDeleteBusy(true)
     try {
       await moderateDeleteProjectPage(deleteTarget.projectPageId, reason)
-      setProjects(prev => prev.filter(item => item.projectPageId !== deleteTarget.projectPageId))
+      const nextTotal = Math.max(0, totalRows - 1)
+      const nextProjects = projects.filter(item => item.projectPageId !== deleteTarget.projectPageId)
+      setProjects(nextProjects)
+      setTotalRows(nextTotal)
+      if (nextProjects.length === 0 && currentPage > 1) {
+        updatePaging(currentPage - 1, pageSize)
+      }
       message.success(intl.formatMessage({ id: 'project_page.moderate_delete_ok' }))
       setDeleteTarget(null)
       setDeleteReason('')
@@ -247,8 +422,16 @@ export default function PublicProjects() {
 
   const projectCountLabel = intl.formatMessage(
     { id: 'project_page.public_catalog_count' },
-    { count: projects.length },
+    { count: totalRows },
   )
+
+  const onPaginationChange = page => {
+    updatePaging(parsePage(page), pageSize)
+  }
+
+  const onPageSizeChange = value => {
+    updatePaging(1, parsePageSize(value))
+  }
 
   return (
     <PageContent>
@@ -271,15 +454,68 @@ animate='show'>
               <SectionTitle>
                 <FormattedMessage id='project_page.public_catalog_list_title' />
               </SectionTitle>
-              {!loading && projects.length > 0 && (
-                <CatalogCount>{projectCountLabel}</CatalogCount>
-              )}
-              {!loading && projects.length === 0 && (
+              <CatalogToolbar>
+                {!loading && totalRows > 0 && (
+                  <CatalogCount>{projectCountLabel}</CatalogCount>
+                )}
+                <PageSizeControl htmlFor='public-projects-page-size'>
+                  <FormattedMessage id='project_page.public_catalog_page_size' />
+                  <Select
+                    id='public-projects-page-size'
+                    size='small'
+                    value={pageSize}
+                    onChange={onPageSizeChange}
+                    options={PAGE_SIZE_OPTIONS.map(size => ({
+                      value: size,
+                      label: String(size),
+                    }))}
+                    style={{ width: 72 }}
+                    aria-label={intl.formatMessage({ id: 'project_page.public_catalog_page_size' })}
+                  />
+                </PageSizeControl>
+              </CatalogToolbar>
+              {!loading && totalRows === 0 && !hasActiveFilters && (
                 <SectionHint>
                   <FormattedMessage id='project_page.public_catalog_empty_hint' />
                 </SectionHint>
               )}
             </SectionHeader>
+
+            <SearchBar>
+              <Search
+                allowClear
+                value={searchDraft}
+                onChange={e => setSearchDraft(e.target.value)}
+                onSearch={onSearchSubmit}
+                enterButton
+                placeholder={intl.formatMessage({ id: 'project_page.public_catalog_search_placeholder' })}
+                aria-label={intl.formatMessage({ id: 'project_page.public_catalog_search_placeholder' })}
+              />
+              {activeTags.length > 0 && activeTags.map(tag => (
+                <ActiveFilterChip key={tag}>
+                  <FormattedMessage
+                    id='project_page.public_catalog_tag_filter'
+                    values={{ tag }}
+                  />
+                  <Tag
+                    closable
+                    onClose={e => {
+                      if (e && typeof e.preventDefault === 'function') {
+                        e.preventDefault()
+                      }
+                      removeTagFilter(tag)
+                    }}
+                    style={{ margin: 0, border: 0, background: 'transparent' }}
+                  />
+                </ActiveFilterChip>
+              ))}
+              {hasActiveFilters && (
+                <Button type='link' size='small'
+onClick={clearAllFilters}>
+                  <FormattedMessage id='project_page.public_catalog_clear_filters' />
+                </Button>
+              )}
+            </SearchBar>
 
             {loading ? (
               <SkeletonGrid aria-busy='true' aria-label={intl.formatMessage({ id: 'project_page.public_catalog_loading' })}>
@@ -293,118 +529,170 @@ animate='show'>
                   <GlobalOutlined />
                 </EmptyIcon>
                 <EmptyText>
-                  <FormattedMessage id='project_page.public_catalog_empty' />
+                  <FormattedMessage
+                    id={hasActiveFilters
+                      ? 'project_page.public_catalog_search_empty'
+                      : 'project_page.public_catalog_empty'}
+                  />
                 </EmptyText>
               </EmptyState>
             ) : (
-              <ProjectGrid>
-                {projects.map(item => {
-                  const authorName = item.authorName || item.authorUserId || '?'
-                  const orderValue = orderDrafts[item.projectPageId] !== undefined
-                    ? orderDrafts[item.projectPageId]
-                    : (item.landingSortOrder ?? 0)
+              <React.Fragment>
+                <ProjectGrid>
+                  {projects.map(item => {
+                    const authorName = item.authorName || item.authorUserId || '?'
+                    const orderValue = orderDrafts[item.projectPageId] !== undefined
+                      ? orderDrafts[item.projectPageId]
+                      : (item.landingSortOrder ?? 0)
+                    const previewUrl = resolveProjectPreviewUrl(item.preview)
 
-                  return (
-                    <ProjectCard
-                      key={item.projectPageId}
-                      whileTap={{ scale: 0.995 }}
-                    >
-                      <ProjectCardTop>
-                        <ProjectGlyph>
-                          <GlobalOutlined />
-                        </ProjectGlyph>
-                        <ProjectCardBody>
-                          <ProjectTitleButton
-                            type='button'
-                            onClick={() => openProject(item.projectPageId)}
-                          >
-                            {displayProjectTitle(item.title, intl)}
-                          </ProjectTitleButton>
-                          <OpenButton
-                            type='button'
-                            onClick={() => openProject(item.projectPageId)}
-                          >
-                            <FormattedMessage id='project_page.open_project' />
-                            <ArrowRightOutlined style={{ fontSize: 12 }} />
-                          </OpenButton>
-                        </ProjectCardBody>
-                      </ProjectCardTop>
-                      <AuthorRow>
-                        <UserAvatar
-                          avatarId={item.authorAvatarId}
-                          displayName={authorName}
-                          variant='compact'
-                        />
-                        <AuthorName>
-                          <FormattedMessage
-                            id='project_page.author_label'
-                            values={{ name: authorName }}
-                          />
-                        </AuthorName>
-                      </AuthorRow>
-                      {isSuperAdmin && (
-                        <ModerationRow>
-                          {item.landingFeatured ? (
-                            <ModerationBadge>
-                              <PushpinOutlined />
+                    return (
+                      <ProjectCard
+                        key={item.projectPageId}
+                        whileTap={{ scale: 0.995 }}
+                      >
+                        <ProjectCardCover
+                          type='button'
+                          aria-label={displayProjectTitle(item.title, intl)}
+                          onClick={() => openProject(item.projectPageId)}
+                        >
+                          {previewUrl ? (
+                            <img
+                              src={previewUrl}
+                              alt=''
+                              loading='lazy'
+                            />
+                          ) : (
+                            <ProjectCardCoverPlaceholder>
+                              <GlobalOutlined />
+                            </ProjectCardCoverPlaceholder>
+                          )}
+                        </ProjectCardCover>
+                        <ProjectCardContent>
+                          <ProjectCardTop>
+                            <ProjectGlyph>
+                              <GlobalOutlined />
+                            </ProjectGlyph>
+                            <ProjectCardBody>
+                              <ProjectTitleButton
+                                type='button'
+                                onClick={() => openProject(item.projectPageId)}
+                              >
+                                {displayProjectTitle(item.title, intl)}
+                              </ProjectTitleButton>
+                              <OpenButton
+                                type='button'
+                                onClick={() => openProject(item.projectPageId)}
+                              >
+                                <FormattedMessage id='project_page.open_project' />
+                                <ArrowRightOutlined style={{ fontSize: 12 }} />
+                              </OpenButton>
+                            </ProjectCardBody>
+                          </ProjectCardTop>
+                          <AuthorRow>
+                            <UserAvatar
+                              avatarId={item.authorAvatarId}
+                              displayName={authorName}
+                              variant='compact'
+                            />
+                            <AuthorName>
                               <FormattedMessage
-                                id='project_page.landing_on_badge'
-                                values={{ order: item.landingSortOrder ?? 0 }}
+                                id='project_page.author_label'
+                                values={{ name: authorName }}
                               />
-                            </ModerationBadge>
-                          ) : (
-                            <span style={{ marginRight: 'auto' }} />
+                            </AuthorName>
+                          </AuthorRow>
+                          {Array.isArray(item.tags) && item.tags.length > 0 && (
+                            <ProjectTagList>
+                              {item.tags.map(tag => (
+                                <ProjectTag
+                                  key={tag}
+                                  type='button'
+                                  onClick={() => onTagFilter(tag)}
+                                >
+                                  {tag}
+                                </ProjectTag>
+                              ))}
+                            </ProjectTagList>
                           )}
-                          {item.landingFeatured ? (
-                            <Space size={4} wrap>
-                              <InputNumber
-                                size='small'
-                                min={0}
-                                value={orderValue}
-                                onChange={value => setOrderDrafts(prev => ({
-                                  ...prev,
-                                  [item.projectPageId]: value,
-                                }))}
-                                aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
-                              />
-                              <Button
-                                size='small'
-                                loading={orderBusyId === item.projectPageId}
-                                onClick={() => saveSortOrder(item)}
-                              >
-                                <FormattedMessage id='project_page.landing_order_save' />
-                              </Button>
-                              <Button
-                                size='small'
-                                disabled={featureBusy}
-                                onClick={() => removeFromLanding(item)}
-                              >
-                                <FormattedMessage id='project_page.landing_remove' />
-                              </Button>
-                            </Space>
-                          ) : (
-                            <Button
-                              size='small'
-                              icon={<PushpinOutlined />}
-                              onClick={() => openFeatureModal(item)}
-                            >
-                              <FormattedMessage id='project_page.landing_add' />
-                            </Button>
+                          {isSuperAdmin && (
+                            <ModerationRow>
+                              {item.landingFeatured && (
+                                <ModerationBadge>
+                                  <PushpinOutlined />
+                                  <FormattedMessage
+                                    id='project_page.landing_on_badge'
+                                    values={{ order: item.landingSortOrder ?? 0 }}
+                                  />
+                                </ModerationBadge>
+                              )}
+                              <ModerationActions>
+                                {item.landingFeatured ? (
+                                  <Space size={4} wrap>
+                                    <InputNumber
+                                      size='small'
+                                      min={0}
+                                      value={orderValue}
+                                      onChange={value => setOrderDrafts(prev => ({
+                                        ...prev,
+                                        [item.projectPageId]: value,
+                                      }))}
+                                      aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
+                                    />
+                                    <Button
+                                      size='small'
+                                      loading={orderBusyId === item.projectPageId}
+                                      onClick={() => saveSortOrder(item)}
+                                    >
+                                      <FormattedMessage id='project_page.landing_order_save' />
+                                    </Button>
+                                    <Button
+                                      size='small'
+                                      disabled={featureBusy}
+                                      onClick={() => removeFromLanding(item)}
+                                    >
+                                      <FormattedMessage id='project_page.landing_remove' />
+                                    </Button>
+                                  </Space>
+                                ) : (
+                                  <Button
+                                    size='small'
+                                    icon={<PushpinOutlined />}
+                                    onClick={() => openFeatureModal(item)}
+                                  >
+                                    <FormattedMessage id='project_page.landing_add' />
+                                  </Button>
+                                )}
+                                <Button
+                                  size='small'
+                                  danger
+                                  icon={<DeleteOutlined />}
+                                  onClick={() => openDeleteModal(item)}
+                                >
+                                  <FormattedMessage id='project_page.moderate_delete' />
+                                </Button>
+                              </ModerationActions>
+                            </ModerationRow>
                           )}
-                          <Button
-                            size='small'
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => openDeleteModal(item)}
-                          >
-                            <FormattedMessage id='project_page.moderate_delete' />
-                          </Button>
-                        </ModerationRow>
-                      )}
-                    </ProjectCard>
-                  )
-                })}
-              </ProjectGrid>
+                        </ProjectCardContent>
+                      </ProjectCard>
+                    )
+                  })}
+                </ProjectGrid>
+
+                {totalRows > pageSize && (
+                  <PaginationWrap>
+                    <Pagination
+                      current={currentPage}
+                      pageSize={pageSize}
+                      total={totalRows}
+                      onChange={onPaginationChange}
+                      showSizeChanger={false}
+                      responsive
+                    />
+                  </PaginationWrap>
+                )}
+              </React.Fragment>
             )}
           </Panel>
         </motion.div>
