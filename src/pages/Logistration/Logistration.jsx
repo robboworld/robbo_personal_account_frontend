@@ -5,6 +5,7 @@ import { Navigate, useLocation, useNavigate, useOutletContext } from 'react-rout
 import { useIntl } from 'react-intl'
 
 import AuthLayout from '@/components/AuthLayout'
+import Loader from '@/components/Loader'
 import LoginContent from '@/components/PageLayoutLogin/PageLayoutLogin'
 import RegisterForm from '@/components/RegisterForm'
 import {
@@ -15,6 +16,10 @@ import {
   formatInactiveBanDescription,
   parseInactiveLoginSearch,
 } from '@/helpers/inactiveLogin'
+import {
+  redirectToOidcStart,
+  resolveLoginReturnTo,
+} from '@/helpers/oidcSession'
 import {
   HOME_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
@@ -51,10 +56,24 @@ const Logistration = () => {
   const queryLoginError = parseLoginQueryError(location.search, intl)
 
   const isAuth = useSelector(state => state.login.isAuth)
+  const stayOnLoginForOidcError = Boolean(inactiveBan || queryLoginError)
+  const redirectLoginToMock = (
+    showOidcLogin &&
+    activeTab === LOGIN_PAGE_ROUTE &&
+    !stayOnLoginForOidcError
+  )
 
   useEffect(() => {
     setActiveTab(resolvePageFromPath(location.pathname))
   }, [location.pathname])
+
+  useEffect(() => {
+    if (!redirectLoginToMock) {
+      return undefined
+    }
+    redirectToOidcStart(resolveLoginReturnTo(location.search), 'login')
+    return undefined
+  }, [redirectLoginToMock, location.search])
 
   const handleOnSelect = tabKey => {
     if (tabKey === activeTab) {
@@ -80,6 +99,10 @@ const Logistration = () => {
       return <Navigate to={`/join?code=${encodeURIComponent(join)}`} replace />
     }
     return <Navigate to={HOME_PAGE_ROUTE} replace />
+  }
+
+  if (redirectLoginToMock) {
+    return <Loader />
   }
 
   const inactiveAlert = inactiveBan ? (

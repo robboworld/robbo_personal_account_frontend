@@ -290,6 +290,15 @@ export const MainContent = styled.div`
 `
 
 export const AuthFormStyles = styled.div`
+  .session-limit-kick-btn {
+    margin-top: 0.5rem;
+    height: auto;
+    padding: 0.35rem 0.75rem;
+    font-weight: 600;
+    white-space: normal;
+    text-align: left;
+  }
+
   .ant-form-item {
     margin-bottom: 1.25rem;
   }

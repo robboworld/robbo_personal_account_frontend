@@ -75,6 +75,7 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
     locale,
     playToken: playTokenProp,
     preview,
+    previewCacheKey,
     reloadKey = 0,
     onRunningChange,
 }, ref) {
@@ -91,7 +92,10 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
     const iframeRef = useRef(null)
     const pendingGreenFlagRef = useRef(false)
 
-    const previewUrl = useMemo(() => resolveProjectPreviewUrl(preview), [preview])
+    const previewUrl = useMemo(
+        () => resolveProjectPreviewUrl(preview, previewCacheKey),
+        [preview, previewCacheKey],
+    )
 
     const clearReadyTimer = useCallback(() => {
         if (readyTimerRef.current) {

@@ -3,6 +3,8 @@ const robboGuestTokens = {
   green: '#00af41',
   greenDark: '#007a2e',
   greenLight: '#e8f8ef',
+  // Temporary: match baked mascot photo fill so header + intro read as one field.
+  heroGreen: '#029340',
   coal: '#383838',
   grey: '#989898',
   bodyMuted: '#515661',
@@ -17,7 +19,7 @@ const robboGuestTokens = {
   cardShadowHover: '0 6px 20px rgba(0, 0, 0, 0.1)',
   topbarHeight: '75px',
   topbarHeightMobile: '55px',
-  topbarBg: '#00af41',
+  topbarBg: '#029340',
   fontFamily:
     "'ProximaNova', 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif",
   heroBtnRadius: '23px',

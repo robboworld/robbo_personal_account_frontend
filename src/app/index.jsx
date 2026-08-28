@@ -7,6 +7,7 @@ import {
   REGISTER_PAGE_ROUTE,
   PROJECT_PAGE_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
+  EXPLORE_ROUTE,
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
   OIDC_CALLBACK_ROUTE,
@@ -49,6 +50,7 @@ import ProfilePage from '@/pages/Profile'
 import Logistration from '@/pages/Logistration'
 
 const Landing = lazy(() => import('@/pages/Landing'))
+const Explore = lazy(() => import('@/pages/Explore'))
 const MyProjects = lazy(() => import('@/pages/MyProjects'))
 const PublicProjects = lazy(() => import('@/pages/PublicProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
@@ -83,6 +85,7 @@ const wrapProtected = (allowedRoles, element) => (
 const AppRoutes = () => (
   <Routes>
     <Route path='/' element={<Landing />} />
+    <Route path={EXPLORE_ROUTE} element={<Explore />} />
     <Route path={OIDC_CALLBACK_ROUTE} element={<OidcCallback />} />
     <Route element={<PublicAuthGate />}>
       <Route path={LOGIN_PAGE_ROUTE} element={<Logistration />} />

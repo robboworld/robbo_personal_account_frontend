@@ -18,6 +18,7 @@ import {
   PaginationWrap,
 } from './styles'
 
+import { formatDateTime } from '@/helpers/formatDateTime'
 import { displayProjectTitle } from '@/helpers/intl'
 import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import {
@@ -58,22 +59,6 @@ import { openScratchEditor } from '@/utils/scratchEditor'
 
 const { confirm } = Modal
 const SKELETON_COUNT = 6
-
-const formatLastModified = (value, intl) => {
-  if (!value) {
-    return null
-  }
-
-  try {
-    return intl.formatDate(new Date(value), {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  } catch {
-    return value
-  }
-}
 
 const MyProjects = ({
   GetProjectPages,
@@ -188,8 +173,8 @@ animate='show'>
               <React.Fragment>
                 <ProjectGrid>
                   {projects.map(projectPage => {
-                    const lastModified = formatLastModified(projectPage.lastModified, intl)
-                    const previewUrl = resolveProjectPreviewUrl(projectPage.preview)
+                    const lastModified = formatDateTime(projectPage.lastModified, intl.locale)
+                    const previewUrl = resolveProjectPreviewUrl(projectPage.preview, projectPage.lastModified)
 
                     return (
                       <ProjectCard
@@ -229,7 +214,7 @@ loading='lazy' />
                               >
                                 {displayProjectTitle(projectPage.title, intl)}
                               </ProjectTitleButton>
-                              {lastModified && (
+                              {lastModified !== '—' && (
                                 <CardMeta>
                                   <FormattedMessage id='project_page.last_change' />
                                   {': '}

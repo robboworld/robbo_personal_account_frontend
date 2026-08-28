@@ -34,12 +34,13 @@ export const authAPI = {
             })
     },
 
-    signIn(email, password, role) {
+    signIn(email, password, role, kickOtherSessions = false) {
         return instance.post('auth/sign-in',
             {
                 email: email,
                 password: password,
                 role: role,
+                kickOtherSessions: Boolean(kickOtherSessions),
             },
             {
                 withCredentials: true,

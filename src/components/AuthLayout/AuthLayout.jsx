@@ -22,8 +22,6 @@ import {
   AuthFooterLinks,
   AuthTextLink,
 } from './styles'
-// DEV ONLY — remove this import + <DevSuperAdminLoginButton /> to drop the button.
-import DevSuperAdminLoginButton from './DevSuperAdminLoginButton'
 
 import {
   LANDING_PAGE_ROUTE,
@@ -54,8 +52,6 @@ const AuthLayout = ({ selectedPage, onTabSelect, children }) => {
                 src='/static/logo.png'
               />
             </HeroLogoLink>
-            {/* DEV ONLY — remove with DevSuperAdminLoginButton files */}
-            <DevSuperAdminLoginButton />
             <HeroTitle className='display-2'>
               <HeroTitleLine className='auth-hero-title-line'>
                 <FormattedMessage id='auth_layout.hero_line_1' />

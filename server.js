@@ -12,6 +12,7 @@ app.use(bodyParser.json())
 // shadow dist/index.html for GET /, causing a blank white screen.
 app.use(express.static(path.join(__dirname, 'dist')))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use('/static', express.static(path.join(__dirname, 'static')))
 
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))

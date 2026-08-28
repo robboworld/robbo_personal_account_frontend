@@ -581,6 +581,7 @@
     "sessions.unknown_mode": "Session",
     "sessions.unknown_ua": "Unknown browser",
     "sessions.limit_reached": "Concurrent session limit reached. End an active session to sign in.",
+    "sessions.kick_others": "Sign out of other sessions",
     "licensing.cloud_quota": "云存储",
     "licensing.session_limit": "会话",
     "licensing.unlimited": "无限制",

@@ -1,5 +1,5 @@
-import React, { memo, useEffect, useRef } from 'react'
-import { Button, Form, Input, notification } from 'antd'
+import React, { memo, useEffect, useRef, useState } from 'react'
+import { Alert, Button, Form, Input, notification } from 'antd'
 import { PropTypes } from 'prop-types'
 import { useMutation } from '@apollo/client'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useIntl, FormattedMessage } from 'react-intl'
 
 import { backupLoginFormBegin } from '@/actions/authForms'
+import { authAPI } from '@/api'
 import { HOME_PAGE_ROUTE, LMS_URL } from '@/constants'
 import { authMutationsGQL } from '@/graphQL'
 import { formatInactiveBanDescription } from '@/helpers/inactiveLogin'
@@ -41,12 +42,15 @@ const SignInForm = memo(({ handleSubmit }) => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const restoredRef = useRef(false)
+  const [sessionLimitReached, setSessionLimitReached] = useState(false)
+  const [kicking, setKicking] = useState(false)
 
   const backedUpFormData = useSelector(state => state.authForms.loginFormData)
   const shouldBackupLogin = useSelector(state => state.authForms.shouldBackupLogin)
 
-  const [login] = useMutation(authMutationsGQL.SIGN_IN, {
+  const [login, { loading: signingIn }] = useMutation(authMutationsGQL.SIGN_IN, {
     onCompleted: ({ SingIn }) => {
+      setSessionLimitReached(false)
       localStorage.setItem('token', SingIn.accessToken)
       navigate(HOME_PAGE_ROUTE)
     },
@@ -54,18 +58,10 @@ const SignInForm = memo(({ handleSubmit }) => {
       const graphQLError = error?.graphQLErrors?.[0]
       const code = graphQLError?.extensions?.code
       if (code === 'SESSION_LIMIT_REACHED' || String(error?.message || '').includes('SESSION_LIMIT_REACHED')) {
-        notification.error({
-          message: intl.formatMessage({ id: 'notification.error_message' }),
-          description: (
-            <span>
-              {intl.formatMessage({ id: 'sessions.limit_reached' })}
-              {' '}
-              <a href='/sessions'>{intl.formatMessage({ id: 'sessions.title' })}</a>
-            </span>
-          ),
-        })
+        setSessionLimitReached(true)
         return
       }
+      setSessionLimitReached(false)
       if (code === 'USER_INACTIVE') {
         const ban = graphQLError?.extensions?.ban || null
         notification.error({
@@ -113,6 +109,37 @@ const SignInForm = memo(({ handleSubmit }) => {
     }
   }, [shouldBackupLogin, form, dispatch])
 
+  const handleKickOthers = async () => {
+    try {
+      await form.validateFields()
+    } catch {
+      return
+    }
+    const { emailOrUsername, password } = form.getFieldsValue()
+    setKicking(true)
+    try {
+      const response = await authAPI.signIn(emailOrUsername, password, 0, true)
+      const token = response?.data?.accessToken
+      if (!token) {
+        throw new Error('missing_token')
+      }
+      localStorage.setItem('token', token)
+      navigate(HOME_PAGE_ROUTE)
+    } catch (error) {
+      const code = error?.response?.data?.code
+      if (code === 'SESSION_LIMIT_REACHED') {
+        setSessionLimitReached(true)
+      } else {
+        notification.error({
+          message: intl.formatMessage({ id: 'notification.error_message' }),
+          description: error?.response?.data?.error || error?.message,
+        })
+      }
+    } finally {
+      setKicking(false)
+    }
+  }
+
   return (
     <Form
       id='sign-in-form'
@@ -121,6 +148,7 @@ const SignInForm = memo(({ handleSubmit }) => {
       layout='vertical'
       requiredMark={false}
       onFinish={({ emailOrUsername, password }) => {
+        setSessionLimitReached(false)
         login({
           variables: {
             input: {
@@ -133,6 +161,26 @@ const SignInForm = memo(({ handleSubmit }) => {
       }}
       form={form}
     >
+      {sessionLimitReached ? (
+        <Alert
+          type='error'
+          showIcon
+          style={{ marginBottom: 16 }}
+          message={intl.formatMessage({ id: 'sessions.limit_reached' })}
+          description={(
+            <Button
+              type='primary'
+              size='small'
+              htmlType='button'
+              className='session-limit-kick-btn'
+              loading={kicking}
+              onClick={handleKickOthers}
+            >
+              <FormattedMessage id='sessions.kick_others' />
+            </Button>
+          )}
+        />
+      ) : null}
       <Form.Item
         name='emailOrUsername'
         label={intl.formatMessage({ id: 'login.user.identity.label' })}
@@ -174,6 +222,7 @@ const SignInForm = memo(({ handleSubmit }) => {
           htmlType='submit'
           size='large'
           className='login-form-button'
+          loading={signingIn || kicking}
         >
           <FormattedMessage id='sign_in_form.sign_in' />
         </Button>

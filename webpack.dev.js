@@ -12,7 +12,12 @@ module.exports = merge(common, {
     hot: true,
     inline: true,
     historyApiFallback: true,
-    contentBase: path.join(__dirname, 'public'),
+    // public/ → /avatars; static/ → /static (logo, landing photos, fonts)
+    contentBase: [
+      path.join(__dirname, 'public'),
+      path.join(__dirname, 'static'),
+    ],
+    contentBasePublicPath: ['/', '/static'],
     // https: {
     //   key: './cert/key.key',
     //   cert: './cert/cert.crt',

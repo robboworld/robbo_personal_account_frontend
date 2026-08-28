@@ -99,8 +99,10 @@ const BrandCol = styled.div`
 
 const PartnerCol = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-width: 0;
   width: 100%;
   max-width: 100%;
@@ -209,6 +211,18 @@ const PartnerLogo = styled.img`
   background: transparent;
   padding: 0;
   border-radius: 4px;
+`
+
+const PartnerCaption = styled.span`
+  max-width: 16em;
+  color: #989898;
+  font-size: clamp(11px, 1.1vw, 13px);
+  line-height: 1.35;
+  text-align: center;
+
+  @media (min-width: 1200px) {
+    text-align: left;
+  }
 `
 
 const FooterHeading = styled.h2`
@@ -427,6 +441,9 @@ const RobboSiteFooter = () => {
               alt={intl.formatMessage({ id: 'footer.partner_fasie_alt' })}
             />
           </PartnerLink>
+          <PartnerCaption>
+            <FormattedMessage id='footer.partner_fasie_alt' />
+          </PartnerCaption>
         </PartnerCol>
 
         <FooterCol as='nav' aria-label={intl.formatMessage({ id: 'footer.docs_aria' })}>
