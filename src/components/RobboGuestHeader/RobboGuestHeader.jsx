@@ -10,15 +10,13 @@ const Topbar = styled.header`
   z-index: 1000;
   width: 100%;
   background: ${robboGuestTokens.topbarBg};
-  box-shadow: none;
 `
 
 const Main = styled.div`
-  position: relative;
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   column-gap: 16px;
   width: 100%;
   max-width: 1600px;
@@ -32,18 +30,12 @@ const Main = styled.div`
   }
 
   @media screen and (max-width: 991px) {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
     min-height: ${robboGuestTokens.topbarHeightMobile};
     padding-top: calc(6px + env(safe-area-inset-top, 0px));
   }
 `
 
 const Leading = styled.div`
-  position: relative;
-  z-index: 2;
   display: flex;
   align-items: center;
   min-width: 0;
@@ -78,6 +70,10 @@ const Wordmark = styled.span`
   letter-spacing: 0.04em;
   line-height: 1.1;
   text-transform: uppercase;
+
+  @media screen and (max-width: 575.98px) {
+    font-size: 22px;
+  }
 `
 
 const Reg = styled.sup`
@@ -87,59 +83,7 @@ const Reg = styled.sup`
   vertical-align: super;
 `
 
-const Center = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  padding: 0 20px;
-  pointer-events: none;
-  text-align: center;
-  z-index: 1;
-
-  @media (min-width: 992px) {
-    padding: 0 28px;
-  }
-
-  @media screen and (max-width: 991px) {
-    display: none;
-  }
-`
-
-const Tagline = styled.a`
-  margin: 0;
-  max-width: 100%;
-  padding: 0 15px;
-  pointer-events: auto;
-  font-family: ${robboGuestTokens.fontFamily};
-  font-size: clamp(14px, 1.55vw, 18px);
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #fff !important;
-  line-height: 1.4;
-  text-decoration: none !important;
-  transition: opacity 0.3s ease;
-
-  &:hover,
-  &:focus {
-    color: #fff !important;
-    opacity: 0.95;
-    text-decoration: none !important;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 3px;
-  }
-`
-
 const Trailing = styled.div`
-  position: relative;
-  z-index: 2;
-  grid-column: 2;
-  justify-self: end;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -169,12 +113,16 @@ const TopbarBtn = styled(Link)`
   border-radius: 18px;
   white-space: nowrap;
   text-decoration: none !important;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 
   &:hover,
   &:focus {
     opacity: 0.94;
     text-decoration: none !important;
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 
   &:focus-visible {
@@ -192,13 +140,13 @@ const TopbarBtn = styled(Link)`
 `
 
 const BtnSolid = styled(TopbarBtn)`
-  color: #000 !important;
+  color: ${robboGuestTokens.greenDark} !important;
   background-color: #fff;
   border: 1px solid transparent;
 `
 
 const BtnOutline = styled(TopbarBtn)`
-  color: #333 !important;
+  color: ${robboGuestTokens.greenDark} !important;
   background-color: #fff;
   border: 1px solid #fff !important;
 `
@@ -208,17 +156,12 @@ const RobboGuestHeader = () => (
     <Main>
       <Leading>
         <BrandLink to='/' aria-label='РОББО — на главную'>
-          <Wordmark aria-hidden>
+          <Wordmark>
             РОББО
             <Reg>®</Reg>
           </Wordmark>
         </BrandLink>
       </Leading>
-      <Center>
-        <Tagline href='#content' aria-label='Личный кабинет РОББО — образовательная экосистема'>
-          Личный кабинет РОББО — образовательная экосистема
-        </Tagline>
-      </Center>
       <Trailing>
         <Actions>
           <BtnSolid to='/login'>Вход</BtnSolid>

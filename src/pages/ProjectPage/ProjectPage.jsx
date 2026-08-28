@@ -199,6 +199,7 @@ function GuestProjectView({ projectPageId }) {
                                     projectPageId={projectPageId}
                                     playToken={playToken}
                                     preview={projectPage?.preview}
+                                    previewCacheKey={projectPage?.lastModified}
                                     onRunningChange={setIsPlayerRunning}
                                 />
                                 <PlayerScratchControls
@@ -426,7 +427,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     const handleUploadSb3 = async event => {
         const file = event.target.files?.[0]
         event.target.value = ''
-        if (!file || !token || !projectPageId) return
+        if (!file || !projectPageId) return
         if (!file.name.toLowerCase().endsWith('.sb3')) {
             message.error(intl.formatMessage({ id: 'project_page.upload_sb3_invalid' }))
             return
@@ -452,12 +453,15 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     const handleUploadPreview = async event => {
         const file = event.target.files?.[0]
         event.target.value = ''
-        if (!file || !token || !projectPageId) return
+        if (!file || !projectPageId) {
+            return
+        }
         setPreviewBusy(true)
         try {
             await uploadProjectPreview(token, projectPageId, file)
             message.success('Превью проекта обновлено')
             actions.getProjectPageById(token, projectPageId)
+            setPlayerReloadKey(k => k + 1)
         } catch (e) {
             message.error(e?.message || intl.formatMessage({ id: 'notification.error_message' }))
         } finally {
@@ -588,6 +592,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                             projectPageId={projectPageId}
                             playToken={playToken}
                             preview={projectPage?.preview}
+                            previewCacheKey={projectPage?.lastModified}
                             reloadKey={playerReloadKey}
                             onRunningChange={setIsPlayerRunning}
                         />

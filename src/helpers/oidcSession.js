@@ -16,17 +16,20 @@ export const fetchOidcStatus = async () => {
   return response.json()
 }
 
-export const redirectToOidcStart = (returnTo = '', prompt = 'login') => {
-  window.location.replace(buildOidcStartUrl(returnTo, prompt))
+export const redirectToOidcStart = (returnTo = '', prompt = 'login', kickOtherSessions = false) => {
+  window.location.replace(buildOidcStartUrl(returnTo, prompt, kickOtherSessions))
 }
 
-export const buildOidcStartUrl = (returnTo = '', prompt = 'login') => {
+export const buildOidcStartUrl = (returnTo = '', prompt = 'login', kickOtherSessions = false) => {
   const startUrl = new URL(`${apiBase()}/auth/oidc/start`)
   if (returnTo) {
     startUrl.searchParams.set('return_to', returnTo)
   }
   if (prompt) {
     startUrl.searchParams.set('prompt', prompt)
+  }
+  if (kickOtherSessions) {
+    startUrl.searchParams.set('kick_other_sessions', '1')
   }
   return startUrl.toString()
 }
@@ -51,7 +54,12 @@ export const isOidcSsoEnabled = () => LK_SSO_WITH_LMS_ENABLED
  * Keeps the user on /login UI until a same-origin navigate to return_to.
  * @returns {Promise<{ok: true, email?: string, return_to?: string}|{ok: false, error: string}>}
  */
-export const passwordLoginOidc = async (usernameOrEmail, password, returnTo = HOME_PAGE_ROUTE) => {
+export const passwordLoginOidc = async (
+  usernameOrEmail,
+  password,
+  returnTo = HOME_PAGE_ROUTE,
+  { kickOtherSessions = false } = {},
+) => {
   const response = await fetch(`${apiBase()}/auth/oidc/password-login`, {
     method: 'POST',
     credentials: 'include',
@@ -61,6 +69,7 @@ export const passwordLoginOidc = async (usernameOrEmail, password, returnTo = HO
       email: usernameOrEmail,
       password,
       return_to: returnTo,
+      kickOtherSessions: Boolean(kickOtherSessions),
     }),
   })
   let data = {}
@@ -94,12 +103,11 @@ export const verifyOidcLoginCredentials = async (usernameOrEmail, password) => {
 export const hasLmsPasswordFallback = status => Boolean(status?.lms_password_fallback)
 
 /**
- * Pure local password forms (SSO off). When SSO is on, /login shows AuthLayout
- * with an OIDC button; hybrid mode also shows SignInForm under the button.
- * AUTH_LMS_PASSWORD_FALLBACK enables POST /auth/sign-in for Scratch dropdown
- * and hybrid LK login — it does not hide the OIDC button.
+ * Local Ant Design login/register when SSO is off, or password fallback is on.
+ * Pure OIDC (SSO on, fallback off) sends /login to mock/IdP via /auth/oidc/start.
  */
-export const shouldShowLocalAuthForms = () => !isOidcSsoEnabled()
+export const shouldShowLocalAuthForms = status =>
+  !isOidcSsoEnabled() || hasLmsPasswordFallback(status)
 
 /** Scratch (and other API clients) may use password while LK UI uses OIDC. */
 export const isHybridAuthEnabled = status =>

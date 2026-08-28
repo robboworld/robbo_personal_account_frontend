@@ -5,58 +5,67 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   AboutHighlight,
   AboutIntro,
-  AboutPanel,
   AboutStat,
   AboutStats,
-  AboutTagline,
   Accent,
-  ContentWrap,
-  CourseCard,
-  CourseCardBody,
-  CourseCardCta,
-  CourseCardDesc,
-  CourseCardImage,
-  CourseCardMedia,
-  CourseCardMediaShade,
-  CourseCardMeta,
-  CourseCardTitle,
-  CourseGrid,
+  Band,
+  BandHead,
+  BandInner,
+  BandLink,
+  BandWhite,
+  CreateCol,
+  CreateGrid,
+  CreateKicker,
+  CreateMedia,
+  CreateText,
   CtaBtn,
   CtaGhost,
   CtaRow,
-  Eyebrow,
-  GalleryGrid,
-  HeroInner,
-  HeroLede,
-  HeroTitle,
+  EducatorsGrid,
+  EducatorsVisual,
+  FeaturedGrid,
+  Intro,
+  IntroActions,
+  IntroBtnGhost,
+  IntroBtnPrimary,
+  IntroCopy,
+  IntroInner,
+  IntroLede,
+  IntroLinks,
+  IntroMascot,
+  IntroTitle,
+  IntroVisual,
   Lead,
   Main,
-  MediaRow,
+  MediaThumb,
+  DestCard,
+  DestKicker,
+  DestText,
+  DestTitle,
+  OlympiadDests,
   PageRoot,
   ProjectTile,
   ProjectTileAuthor,
   ProjectTileBody,
-  ProjectTileGlyph,
   ProjectTileMedia,
-  ProjectTileMeta,
   ProjectTileTitle,
-  ProjectTileTop,
   ProjectsEmpty,
-  SectionCard,
   SectionTitle,
+  SkipLink,
   StatLabel,
   StatValue,
-  StepIndex,
-  StepRow,
-  StepStack,
-  Subtitle,
-  Timeline,
-  TimelineBody,
-  TimelineDate,
-  TimelineDetail,
-  TimelineRow,
-  TimelineTitle,
-  VideoCard,
+  Stage,
+  StageCard,
+  StageDate,
+  StageDetail,
+  StageIndex,
+  StageTitle,
+  StageTrack,
+  TariffCard,
+  TariffGrid,
+  TariffList,
+  TariffName,
+  TariffPrice,
   sectionReveal,
 } from './landingStyles'
 
@@ -66,9 +75,14 @@ import RobboGuestHeader from '@/components/RobboGuestHeader/RobboGuestHeader'
 import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
-
+import { getScratchEditorUrl } from '@/utils/scratchEditor'
+import { EXPLORE_ROUTE, MY_LICENSES_ROUTE, REGISTER_PAGE_ROUTE } from '@/constants'
 
 const LandingGlobal = createGlobalStyle`
+  html.landing-page-active {
+    scroll-behavior: smooth;
+  }
+
   html.landing-page-active,
   html.landing-page-active body,
   html.landing-page-active #root {
@@ -89,103 +103,102 @@ const ABOUT_HIGHLIGHTS = [
   },
 ]
 
-const OFFICIAL_IMGS = [
-  'official_img_1.png',
-  'official_img2.jpg',
-  'official_img3.jpg',
-  'official_img4.jpg',
-]
+const STORY_MEDIA = ['vid1.mp4', 'vid2.mp4', 'vid3.mp4']
+const ROBOT_MEDIA = ['official_img2.jpg', 'official_img3.jpg', 'official_img4.jpg']
 
-const LANDING_PROJECTS_LIMIT = 3
-
-const getAuthorInitials = name => {
-  if (!name) {
-    return '?'
-  }
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-  }
-  return name.slice(0, 2).toUpperCase()
-}
-
-const LMS_COURSE_EXAMPLES = [
-  {
-    id: 'course-v1:ROBBO+C4+November',
-    title: 'Дистанционные образовательные технологии в преподавании робототехники',
-    startLabel: 'Старт: 28.02.2022',
-    description:
-      'Курс для педагогов: дистанционные занятия по программированию роботов и 3D-моделированию, доступ к базе учебных проектов РОББО.',
-    imageUrl:
-      'https://online.robbo.ru/asset-v1:ROBBO+C4+November+type@asset+block@WLmgY3KijMg1.jpg',
-    aboutUrl: 'https://online.robbo.ru/courses/course-v1:ROBBO+C4+November/about',
-  },
-  {
-    id: 'course-v1:Robbo+AC002+June',
-    title: 'Секреты Scratch',
-    startLabel: 'Старт: 05.07.2023',
-    description:
-      'Курс для новичков в программировании. Вы разработаете свою анимационную историю и сможете отправить её на Scratch-олимпиаду.',
-    imageUrl:
-      'https://online.robbo.ru/asset-v1:Robbo+AC002+June+type@asset+block@%D0%97%D0%90%D0%A1%D0%A2%D0%90%D0%92%D0%9A%D0%90.jpg',
-    aboutUrl: 'https://online.robbo.ru/courses/course-v1:Robbo+AC002+June/about',
-  },
-]
+const LANDING_PROJECTS_LIMIT = 5
 
 const OLYMPIAD_TIMELINE = [
   {
     period: 'дек 2025 — фев 2026',
     title: 'Региональные туры',
     detail:
-      'В отдельных инициативных регионах. Победители получают дополнительные баллы на межрегиональном этапе.',
+      'Прошли в инициативных регионах. Победители получали дополнительные баллы в межрегионе.',
   },
   {
-    period: 'март — май 2026',
+    period: 'март — июнь 2026',
     title: 'Приём заявок на межрегиональные туры',
     detail:
-      'Подача заявок открывается на страницах туров по федеральным округам — конкретные даты определяет оргкомитет каждого межрегиона.',
+      'Даты задавал оргкомитет каждого федерального округа на странице своего тура.',
   },
   {
     period: 'фев — июнь 2026',
     title: 'Межрегиональные туры',
     detail:
-      'Заочный конкурс в каждом федеральном округе России по дисциплинам Scratch и RobboScratch.',
-  },
-  {
-    period: '19 июня 2026',
-    title: 'Предварительные результаты межрегиональных туров',
-    detail: 'Публикация на страницах соответствующих межрегиональных туров.',
-    highlight: true,
+      'Заочный конкурс по округам в дисциплинах Scratch и RobboScratch.',
   },
   {
     period: 'июнь — июль 2026',
     title: 'Общероссийский отбор',
     detail:
-      'Проекты-победители межрегиональных туров выходят в национальный отбор; лучшие формируют российскую команду.',
+      'Победители межрегионов вышли в национальный отбор; лучшие вошли в команду России.',
+  },
+  {
+    period: 'август 2026',
+    title: 'Российский этап завершён',
+    detail:
+      'X Всероссийская Scratch-Олимпиада 2026 закрыта. Победители приглашены на международный финал.',
   },
   {
     period: 'сентябрь 2026',
-    title: 'Финал Scratch-Олимпиады',
-    detail: 'Международный этап и награждение победителей.',
+    title: 'Международный финал',
+    detail: 'Финал X Международной Scratch-Олимпиады и награждение.',
+    highlight: true,
   },
 ]
 
-function pickOfficial(n) {
-  return Array.from(
-    { length: n },
-    () => OFFICIAL_IMGS[Math.floor(Math.random() * OFFICIAL_IMGS.length)],
-  )
-}
-
-const MediaImage = ({ src, className }) => (
-  <img src={src} alt=''
-className={className} />
-)
+const TARIFFS = [
+  {
+    id: 'free',
+    name: 'Free',
+    price: '0 ₽',
+    featured: false,
+    items: [
+      '10 МБ на один проект, не общее облако',
+      '1 устройство и 1 веб-сессия',
+      'До 20 проектов',
+      'Без автообновления RS3',
+    ],
+    cta: 'Начать бесплатно',
+    to: REGISTER_PAGE_ROUTE,
+    ghost: true,
+  },
+  {
+    id: 'individual',
+    name: 'Individual',
+    price: '1 990 ₽ / год',
+    featured: true,
+    items: [
+      '100 МБ облака под все проекты',
+      '2 устройства и 2 сессии',
+      'Автообновление RS3',
+      '365 дней',
+    ],
+    cta: 'Купить',
+    to: `${MY_LICENSES_ROUTE}#buy`,
+    ghost: false,
+  },
+  {
+    id: 'class',
+    name: 'Class',
+    price: '4 990 ₽ / год',
+    featured: false,
+    items: [
+      '500 МБ облака под все проекты',
+      '20 устройств и 20 сессий',
+      'Автообновление RS3',
+      'Один аккаунт на текущем этапе',
+    ],
+    cta: 'Купить',
+    to: `${MY_LICENSES_ROUTE}#buy`,
+    ghost: false,
+  },
+]
 
 const LandingProjectCard = ({ project, onOpen }) => {
   const title = project.title || 'Без названия'
   const authorName = project.authorName || project.authorUserId || 'Автор'
-  const previewUrl = resolveProjectPreviewUrl(project.preview)
+  const previewUrl = resolveProjectPreviewUrl(project.preview, project.lastModified)
   return (
     <ProjectTile
       type='button'
@@ -201,26 +214,23 @@ const LandingProjectCard = ({ project, onOpen }) => {
           />
         ) : null}
       </ProjectTileMedia>
-      <ProjectTileTop>
-        <ProjectTileGlyph aria-hidden>{getAuthorInitials(authorName)}</ProjectTileGlyph>
-        <ProjectTileBody>
-          <ProjectTileTitle>{title}</ProjectTileTitle>
-          <ProjectTileMeta>Открыть проект →</ProjectTileMeta>
-        </ProjectTileBody>
-      </ProjectTileTop>
-      <ProjectTileAuthor>{authorName}</ProjectTileAuthor>
+      <ProjectTileBody>
+        <ProjectTileTitle>{title}</ProjectTileTitle>
+        <ProjectTileAuthor>{authorName}</ProjectTileAuthor>
+      </ProjectTileBody>
     </ProjectTile>
   )
 }
 
 const Landing = () => {
   const navigate = useNavigate()
+  const createHref = getScratchEditorUrl()
+  const staticBase = '/static'
 
   useEffect(() => {
-    document.title = 'РОББО — личный кабинет и образовательная экосистема'
+    document.title = 'РОББО — придумывай истории, игры и анимации'
   }, [])
 
-  // After OIDC/password logout: clear FE token left on :3030 (Scratch clears only its origin).
   useEffect(() => {
     const params = new URLSearchParams(window.location.search || '')
     const loggedOut = params.get('logged_out') === '1'
@@ -243,18 +253,8 @@ const Landing = () => {
     }
   }, [])
 
-  const staticBase = '/static'
-  const [v1to3, setV1to3] = useState([])
-  const [v4to6, setV4to6] = useState([])
   const [galleryProjects, setGalleryProjects] = useState([])
   const [projectsLoading, setProjectsLoading] = useState(true)
-  const [trailerImg, setTrailerImg] = useState('')
-
-  useEffect(() => {
-    setV1to3(pickOfficial(3))
-    setV4to6(pickOfficial(3))
-    setTrailerImg(pickOfficial(1)[0])
-  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -294,229 +294,64 @@ const Landing = () => {
     <PageRoot>
       <RobboGuestFonts />
       <LandingGlobal />
+      <SkipLink href='#content'>К содержанию</SkipLink>
       <RobboGuestHeader />
       <Main id='content'>
-        <ContentWrap>
-          <SectionCard {...sectionReveal}>
-            <HeroInner>
-              <div>
-                <HeroTitle>
-                  Личный кабинет РОББО — единая точка входа в экосистему
-                </HeroTitle>
-                <HeroLede>
-                  Профиль, обучение в LMS, Scratch-проекты на scratch.ru и единый
-                  вход без повторной авторизации — для учеников, педагогов и
-                  родителей.
-                </HeroLede>
-              </div>
-              <AboutPanel aria-labelledby='about-robbo'>
-                <AboutTagline id='about-robbo'>Открытые технологии будущего</AboutTagline>
-                <AboutStats role='list'>
-                  <AboutStat role='listitem'>
-                    <StatValue>19</StatValue>
-                    <StatLabel>лет на рынке</StatLabel>
-                  </AboutStat>
-                  <AboutStat role='listitem'>
-                    <StatValue>44</StatValue>
-                    <StatLabel>стран мира</StatLabel>
-                  </AboutStat>
-                </AboutStats>
-                <AboutIntro>
-                  Уже 19 лет мы внедряем технологии на базе открытого кода (Open
-                  Source), развиваем робототехнику и занимаемся системной
-                  интеграцией сложных инженерных систем. Наши продукты и методики
-                  востребованы в <Accent>44 странах мира</Accent>.
-                </AboutIntro>
-                <ul style={{ margin: 0, padding: 0 }}>
-                  {ABOUT_HIGHLIGHTS.map(({ accent, text }) => (
-                    <AboutHighlight key={accent}>
-                      <span aria-hidden>•</span>
-                      <span>
-                        <Accent>{accent}</Accent> {text}
-                      </span>
-                    </AboutHighlight>
-                  ))}
-                </ul>
-              </AboutPanel>
-            </HeroInner>
-          </SectionCard>
+        <Intro>
+          <IntroInner>
+            <IntroCopy>
+              <IntroTitle>Придумывай истории, игры и анимации</IntroTitle>
+              <IntroLede>
+                Делись проектами и программируй роботов РОББО
+              </IntroLede>
+              <IntroActions>
+                <IntroBtnPrimary href={createHref}>Начать создавать</IntroBtnPrimary>
+                <IntroBtnGhost as={Link} to={EXPLORE_ROUTE}>Смотреть проекты</IntroBtnGhost>
+              </IntroActions>
+            </IntroCopy>
+            <IntroVisual>
+              <IntroMascot
+                src={`${staticBase}/robbo-hero-mascot.webp`}
+                alt='Робот РОББО'
+                width='420'
+                height='420'
+              />
+            </IntroVisual>
+          </IntroInner>
+        </Intro>
 
-          <SectionCard {...sectionReveal}>
-            <Eyebrow>
-              Scratch.ru — российская суверенная онлайн-платформа для визуального
-              программирования
-            </Eyebrow>
-            <SectionTitle>
-              Scratch.ru – визуальное программирование на русском языке!
-            </SectionTitle>
-            <Subtitle>1.1. о программировании Виртуальных исполнителей алгоритмов</Subtitle>
-            <Lead>
-              Scratch.ru — среда для создания проектов игр, викторин, мультфильмов,
-              анимационных историй.
-            </Lead>
-            <MediaRow>
-              {v1to3.map((file, idx) => (
-                <VideoCard key={`${file}-${idx}`}>
-                  <MediaImage src={`${staticBase}/${file}`} />
-                </VideoCard>
-              ))}
-            </MediaRow>
-            <CtaBtn href='https://scratch.ru/' target='_blank'
-rel='noreferrer'>
-              НАЧАТЬ ПРОГРАММИРОВАТЬ
-            </CtaBtn>
+        <IntroLinks aria-label='Кому это полезно'>
+          <a href='#about'>О РОББО</a>
+          <a href='#educators'>Педагогам</a>
+          <a href='#educators'>Родителям</a>
+        </IntroLinks>
 
-            <Subtitle>1.2. о программировании РОБОТОВ - реальных исполнителей алгоритмов</Subtitle>
-            <Lead>Scratch.ru среда для программирования роботов РОББО</Lead>
-            <MediaRow>
-              {v4to6.map((file, idx) => (
-                <VideoCard key={`${file}-${idx}`}>
-                  <MediaImage src={`${staticBase}/${file}`} />
-                </VideoCard>
-              ))}
-            </MediaRow>
-            <CtaBtn href='https://scratch.ru/' target='_blank'
-rel='noreferrer'>
-              НАЧАТЬ ПРОГРАММИРОВАТЬ РОБОТА РОББО
-            </CtaBtn>
-          </SectionCard>
-
-          <SectionCard {...sectionReveal}>
-            <SectionTitle>2. LMS — обучение на платформе РОББО</SectionTitle>
+        <Band id='featured' {...sectionReveal}>
+          <BandInner>
+            <BandHead>
+              <SectionTitle>Избранные проекты</SectionTitle>
+              <BandLink as={Link} to={EXPLORE_ROUTE}>Все проекты</BandLink>
+            </BandHead>
             <Lead>
-              Система дистанционного обучения на базе Open edX: курсы, прогресс,
-              зачисления и сертификаты. Каталог курсов живёт в LMS — личный кабинет
-              открывает его по единому входу (SSO).
-            </Lead>
-            <Subtitle>2.1. Как это работает</Subtitle>
-            <StepStack>
-              <StepRow>
-                <StepIndex>1</StepIndex>
-                Войдите в личный кабинет РОББО — профиль и роль подтягиваются из
-                единой учётной записи.
-              </StepRow>
-              <StepRow>
-                <StepIndex>2</StepIndex>
-                Нажмите «LMS» в меню — откроется платформа online.robbo.ru с
-                бесшовной авторизацией.
-              </StepRow>
-              <StepRow>
-                <StepIndex>3</StepIndex>
-                Проходите курсы, отслеживайте прогресс и возвращайтесь в ЛК за
-                проектами и уведомлениями.
-              </StepRow>
-            </StepStack>
-            <Subtitle>2.2. Примеры курсов</Subtitle>
-            <Lead>
-              «Секреты Scratch» — для детей от 7 лет. Отдельные программы — для
-              педагогов и членов жюри номинаций Scratch и RobboScratch.
-            </Lead>
-            <CourseGrid>
-              {LMS_COURSE_EXAMPLES.map(
-                ({ id, title, startLabel, description, imageUrl, aboutUrl }, index) => (
-                  <CourseCard
-                    key={id}
-                    href={aboutUrl}
-                    target='_blank'
-                    rel='noreferrer'
-                    aria-label={`${title} — открыть курс в LMS`}
-                  >
-                    <CourseCardMedia>
-                      <CourseCardImage
-                        src={imageUrl}
-                        alt=''
-                        loading={index === 0 ? 'eager' : 'lazy'}
-                        fetchPriority={index === 0 ? 'high' : 'auto'}
-                      />
-                      <CourseCardMediaShade aria-hidden='true' />
-                    </CourseCardMedia>
-                    <CourseCardBody>
-                      <CourseCardTitle>{title}</CourseCardTitle>
-                      <CourseCardMeta>{startLabel}</CourseCardMeta>
-                      <CourseCardDesc>{description}</CourseCardDesc>
-                      <CourseCardCta>Подробнее о курсе →</CourseCardCta>
-                    </CourseCardBody>
-                  </CourseCard>
-                ),
-              )}
-            </CourseGrid>
-            <CtaRow>
-              <CtaBtn as={Link} to='/login'>
-                Войти в личный кабинет
-              </CtaBtn>
-              <CtaGhost href='https://online.robbo.ru' target='_blank'
-rel='noreferrer'>
-                Открыть LMS
-              </CtaGhost>
-              <CtaGhost href='https://support.robbo.world/' target='_blank'
-rel='noreferrer'>
-                Центр поддержки РОББО
-              </CtaGhost>
-            </CtaRow>
-          </SectionCard>
-
-          <SectionCard {...sectionReveal}>
-            <SectionTitle>3. Scratch-олимпиада и сообщество</SectionTitle>
-            <Subtitle>3.1. Scratch-олимпиада</Subtitle>
-            <Lead>
-              Всероссийская Scratch-Олимпиада по креативному программированию —
-              ежегодный заочный конкурс в дисциплинах Scratch и RobboScratch.
-              Участники создают оригинальные проекты без единственно верного
-              решения; жюри оценивает идею, качество воплощения и проектное
-              мышление. Сезон 2026 стартовал.
-            </Lead>
-            <Subtitle>Лента ключевых дат</Subtitle>
-            <Timeline>
-              {OLYMPIAD_TIMELINE.map(({ period, title, detail, highlight }) => (
-                <TimelineRow key={period + title} $highlight={highlight}>
-                  <TimelineDate>{period}</TimelineDate>
-                  <TimelineBody>
-                    <TimelineTitle>{title}</TimelineTitle>
-                    <TimelineDetail>{detail}</TimelineDetail>
-                  </TimelineBody>
-                </TimelineRow>
-              ))}
-            </Timeline>
-            <Subtitle>3.2. Трейлер олимпиады</Subtitle>
-            {trailerImg && (
-              <VideoCard style={{ maxWidth: 520, margin: '0.75rem 0' }}>
-                <MediaImage src={`${staticBase}/${trailerImg}`} />
-              </VideoCard>
-            )}
-            <CtaRow>
-              <CtaBtn href='https://creativeprogramming.org/' target='_blank'
-rel='noreferrer'>
-                УЗНАТЬ БОЛЬШЕ про МЕЖДУНАРОДНУЮ Scratch-Олимпиаду
-              </CtaBtn>
-              <CtaGhost href='https://robbo.ru/olymp/' target='_blank'
-rel='noreferrer'>
-                УЗНАТЬ БОЛЬШЕ про Российский этап
-              </CtaGhost>
-            </CtaRow>
-            <Subtitle>Примеры проектов</Subtitle>
-            <Lead>
-              Избранные публичные Scratch-проекты — анимированные истории, игры и
-              робототехнические работы. Нажмите на карточку, чтобы открыть проект
-              без входа в личный кабинет.
+              Истории, игры и работы с роботами — открываются без входа
             </Lead>
             {projectsLoading ? (
-              <GalleryGrid aria-busy='true'>
-                {Array.from({ length: 3 }, (_, idx) => (
+              <FeaturedGrid aria-busy='true'>
+                {Array.from({ length: 5 }, (_, idx) => (
                   <ProjectTile
                     key={`gallery-skeleton-${idx}`}
                     as='div'
                     aria-hidden
-                    style={{ minHeight: 220, opacity: 0.55, pointerEvents: 'none' }}
+                    style={{ minHeight: 180, opacity: 0.5, pointerEvents: 'none' }}
                   />
                 ))}
-              </GalleryGrid>
+              </FeaturedGrid>
             ) : galleryProjects.length === 0 ? (
               <ProjectsEmpty>
-                Избранных проектов для лендинга пока нет. Администратор может отметить
-                публичный проект флагом landing_featured (SuperAdmin: страница публичных проектов).
+                Пока нет избранных проектов. Загляните в обзор.
               </ProjectsEmpty>
             ) : (
-              <GalleryGrid>
+              <FeaturedGrid>
                 {galleryProjects.map((project, idx) => (
                   <LandingProjectCard
                     key={`${project.projectPageId}-g-${idx}`}
@@ -524,40 +359,206 @@ rel='noreferrer'>
                     onOpen={openProject}
                   />
                 ))}
-              </GalleryGrid>
+              </FeaturedGrid>
             )}
-            <Subtitle>3.3. Педагогам и родителям</Subtitle>
+          </BandInner>
+        </Band>
+
+        <BandWhite id='create' {...sectionReveal}>
+          <BandInner>
+            <SectionTitle>Создавай на Scratch.ru</SectionTitle>
             <Lead>
-              Курс «Секреты Scratch» — для детей от 7 лет. Участники разработают
-              анимационную историю и смогут отправить её на Scratch-олимпиаду.
+              Одна среда на русском: игры, викторины, мультфильмы — и те же
+              блоки для реальных роботов РОББО.
             </Lead>
-            <CtaBtn
-              href='https://online.robbo.ru/courses/course-v1:Robbo+AC002+June/about'
-              target='_blank'
-              rel='noreferrer'
-            >
-              НАЧНИ бесплатно ИЗУЧЕНИЕ Scratch
-            </CtaBtn>
-            <Subtitle>3.4. Критерии оценки работ в дисциплине Scratch</Subtitle>
+            <CreateGrid>
+              <CreateCol>
+                <CreateKicker>Истории, игры и анимации</CreateKicker>
+                <CreateText>
+                  Собирайте проекты на экране и делитесь ими в галерее.
+                </CreateText>
+                <CreateMedia>
+                  {STORY_MEDIA.map(file => (
+                    <MediaThumb key={file}>
+                      <video
+                        src={`${staticBase}/${file}`}
+                        muted
+                        loop
+                        autoPlay
+                        playsInline
+                        preload='metadata'
+                      />
+                    </MediaThumb>
+                  ))}
+                </CreateMedia>
+                <CtaBtn href={createHref}>Начать программировать</CtaBtn>
+              </CreateCol>
+              <CreateCol>
+                <CreateKicker>Роботы РОББО</CreateKicker>
+                <CreateText>
+                  Та же среда — для реальных исполнителей, не только спрайтов.
+                </CreateText>
+                <CreateMedia>
+                  {ROBOT_MEDIA.map(file => (
+                    <MediaThumb key={file}>
+                      <img
+                        src={`${staticBase}/${file}`}
+                        alt=''
+                        loading='lazy'
+                      />
+                    </MediaThumb>
+                  ))}
+                </CreateMedia>
+              </CreateCol>
+            </CreateGrid>
+          </BandInner>
+        </BandWhite>
+
+        <Band id='tariffs' {...sectionReveal}>
+          <BandInner>
+            <SectionTitle>Тарифы RS3</SectionTitle>
             <Lead>
-              Курс для членов жюри дисциплины Scratch в рамках Российского
-              национального отборочного этапа.
+              Лицензия задаёт облако, число устройств и одновременных входов в
+              ЛК и веб-редактор. Покупка — в личном кабинете, после входа.
             </Lead>
-            <CtaBtn href='https://robbo.ru/olymp/expert/' target='_blank'
-rel='noreferrer'>
-              СТАТЬ ЭКСПЕРТОМ ПРОВЕРКИ РАБОТ В дисциплине Scratch
-            </CtaBtn>
-            <Subtitle>3.5. Критерии оценки работ в дисциплине RobboScratch</Subtitle>
+            <TariffGrid>
+              {TARIFFS.map(plan => (
+                <TariffCard key={plan.id} $featured={plan.featured}>
+                  <TariffName>{plan.name}</TariffName>
+                  <TariffPrice>{plan.price}</TariffPrice>
+                  <TariffList>
+                    {plan.items.map(item => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </TariffList>
+                  {plan.ghost ? (
+                    <CtaGhost as={Link} to={plan.to}>{plan.cta}</CtaGhost>
+                  ) : (
+                    <CtaBtn as={Link} to={plan.to}>{plan.cta}</CtaBtn>
+                  )}
+                </TariffCard>
+              ))}
+            </TariffGrid>
+          </BandInner>
+        </Band>
+
+        <BandWhite id='olympiad' {...sectionReveal}>
+          <BandInner>
+            <SectionTitle>Scratch-олимпиада</SectionTitle>
             <Lead>
-              Курс для членов жюри дисциплины RobboScratch — креативное
-              программирование с роботами РОББО.
+              Ежегодный конкурс креативного программирования: Scratch и
+              RobboScratch. Сейчас август 2026: российский этап сезона уже
+              завершён, идёт подготовка к международному финалу в сентябре.
             </Lead>
-            <CtaBtn href='https://robbo.ru/olymp/expert/' target='_blank'
-rel='noreferrer'>
-              СТАТЬ ЭКСПЕРТОМ ПРОВЕРКИ РАБОТ В дисциплине RobboScratch
-            </CtaBtn>
-          </SectionCard>
-        </ContentWrap>
+            <StageTrack>
+              {OLYMPIAD_TIMELINE.map(({ period, title, detail, highlight }, idx) => (
+                <Stage key={period + title}>
+                  <StageIndex $highlight={highlight}>
+                    {String(idx + 1).padStart(2, '0')}
+                  </StageIndex>
+                  <StageCard $highlight={highlight}>
+                    <StageDate>{period}</StageDate>
+                    <StageTitle>{title}</StageTitle>
+                    <StageDetail>{detail}</StageDetail>
+                  </StageCard>
+                </Stage>
+              ))}
+            </StageTrack>
+            <OlympiadDests>
+              <DestCard
+                href='https://creativeprogramming.org/'
+                target='_blank'
+                rel='noreferrer'
+                $primary
+              >
+                <DestKicker>Сейчас</DestKicker>
+                <DestTitle>Международный финал</DestTitle>
+                <DestText>
+                  Сентябрь 2026. Победители российского этапа приглашены.
+                </DestText>
+              </DestCard>
+              <DestCard
+                href='https://robbo.ru/olymp/'
+                target='_blank'
+                rel='noreferrer'
+              >
+                <DestKicker>Россия</DestKicker>
+                <DestTitle>Результаты российского этапа</DestTitle>
+                <DestText>
+                  X Всероссийская Scratch-Олимпиада 2026 завершена
+                </DestText>
+              </DestCard>
+            </OlympiadDests>
+          </BandInner>
+        </BandWhite>
+
+        <Band id='educators' {...sectionReveal}>
+          <BandInner>
+            <EducatorsGrid>
+              <div>
+                <SectionTitle>Педагогам и родителям</SectionTitle>
+                <Lead>
+                  Дети от 7 лет собирают анимационные истории и могут подать
+                  работу на олимпиаду. Жюри — отдельные критерии для Scratch и
+                  RobboScratch.
+                </Lead>
+                <CtaRow>
+                  <CtaGhost
+                    href='https://robbo.ru/olymp/expert/'
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    Стать экспертом Scratch
+                  </CtaGhost>
+                  <CtaGhost
+                    href='https://robbo.ru/olymp/expert/'
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    Стать экспертом RobboScratch
+                  </CtaGhost>
+                </CtaRow>
+              </div>
+              <EducatorsVisual>
+                <img
+                  src={`${staticBase}/official_img_1.png`}
+                  alt=''
+                />
+              </EducatorsVisual>
+            </EducatorsGrid>
+          </BandInner>
+        </Band>
+
+        <BandWhite id='about' {...sectionReveal}>
+          <BandInner>
+            <SectionTitle>Открытые технологии будущего</SectionTitle>
+            <AboutStats role='list'>
+              <AboutStat role='listitem'>
+                <StatValue>19</StatValue>
+                <StatLabel>лет на рынке</StatLabel>
+              </AboutStat>
+              <AboutStat role='listitem'>
+                <StatValue>44</StatValue>
+                <StatLabel>стран мира</StatLabel>
+              </AboutStat>
+            </AboutStats>
+            <AboutIntro>
+              С 19 лет внедряем технологии на открытом коде, развиваем
+              робототехнику и инженерные системы. Продукты и методики используют
+              в <Accent>44 странах</Accent>.
+            </AboutIntro>
+            <ul style={{ margin: 0, padding: 0 }}>
+              {ABOUT_HIGHLIGHTS.map(({ accent, text }) => (
+                <AboutHighlight key={accent}>
+                  <span aria-hidden>•</span>
+                  <span>
+                    <Accent>{accent}</Accent> {text}
+                  </span>
+                </AboutHighlight>
+              ))}
+            </ul>
+          </BandInner>
+        </BandWhite>
       </Main>
       <RobboSiteFooter />
     </PageRoot>

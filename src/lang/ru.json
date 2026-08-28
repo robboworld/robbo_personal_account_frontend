@@ -611,6 +611,7 @@
     "sessions.unknown_mode": "Сессия",
     "sessions.unknown_ua": "Неизвестный браузер",
     "sessions.limit_reached": "Достигнут лимит одновременных сессий. Завершите одну из активных сессий, чтобы войти.",
+    "sessions.kick_others": "Выйти из всех других сессий",
     "sessions.current": "Это устройство",
     "sessions.revoke_current_confirm": "Завершить сессию на этом устройстве? Вы будете разлогинены.",
     "licensing.cloud_quota": "Облако",

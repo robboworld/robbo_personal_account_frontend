@@ -17,12 +17,14 @@ import {
 } from '@/api/projectPage'
 import { SUPER_ADMIN } from '@/constants'
 import { useAuthRole } from '@/helpers'
+import { formatDateTime } from '@/helpers/formatDateTime'
 import { displayProjectTitle } from '@/helpers/intl'
 import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import {
   ActiveFilterChip,
   AuthorName,
   AuthorRow,
+  CardMeta,
   CatalogCount,
   CatalogToolbar,
   EmptyIcon,
@@ -544,7 +546,7 @@ onClick={clearAllFilters}>
                     const orderValue = orderDrafts[item.projectPageId] !== undefined
                       ? orderDrafts[item.projectPageId]
                       : (item.landingSortOrder ?? 0)
-                    const previewUrl = resolveProjectPreviewUrl(item.preview)
+                    const previewUrl = resolveProjectPreviewUrl(item.preview, item.lastModified)
 
                     return (
                       <ProjectCard
@@ -580,6 +582,11 @@ onClick={clearAllFilters}>
                               >
                                 {displayProjectTitle(item.title, intl)}
                               </ProjectTitleButton>
+                              <CardMeta>
+                                <FormattedMessage id='project_page.last_change' />
+                                {': '}
+                                {formatDateTime(item.lastModified, intl.locale)}
+                              </CardMeta>
                               <OpenButton
                                 type='button'
                                 onClick={() => openProject(item.projectPageId)}

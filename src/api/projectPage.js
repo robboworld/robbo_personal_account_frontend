@@ -250,6 +250,9 @@ export const projectPageAPI = {
         if (options.q) {
             params.set('q', String(options.q))
         }
+        if (options.sort) {
+            params.set('sort', String(options.sort))
+        }
         const tags = Array.isArray(options.tags)
             ? options.tags
             : (options.tag ? [options.tag] : [])
@@ -266,7 +269,8 @@ export const projectPageAPI = {
         if (!res.ok) {
             throw new Error(res.statusText || 'Failed to load public projects')
         }
-        return res.json()
+        const data = await res.json()
+        return data
     },
 
     /** Guest-safe project page + playToken (never sends Authorization). */
@@ -498,7 +502,8 @@ export async function uploadProjectPreview(token, projectPageId, file) {
         body: formData,
     }, { fallbackToken: token })
     if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
+        const errText = await readFetchErrorMessage(res)
+        throw new Error(errText)
     }
     return res.json()
 }
