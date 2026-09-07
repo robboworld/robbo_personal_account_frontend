@@ -140,13 +140,13 @@ const TopbarBtn = styled(Link)`
 `
 
 const BtnSolid = styled(TopbarBtn)`
-  color: ${robboGuestTokens.greenDark} !important;
+  color: ${robboGuestTokens.green} !important;
   background-color: #fff;
-  border: 1px solid transparent;
+  border: 1px solid #fff;
 `
 
 const BtnOutline = styled(TopbarBtn)`
-  color: ${robboGuestTokens.greenDark} !important;
+  color: ${robboGuestTokens.green} !important;
   background-color: #fff;
   border: 1px solid #fff !important;
 `

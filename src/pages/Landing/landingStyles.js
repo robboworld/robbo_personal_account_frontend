@@ -147,24 +147,23 @@ const introBtn = css`
 export const IntroBtnPrimary = styled.a`
   ${introBtn}
   background: ${t.white};
-  color: ${t.greenDark} !important;
+  color: ${t.green} !important;
   border: 1px solid ${t.white};
   box-shadow: 0 8px 20px rgba(0, 70, 28, 0.18);
 
   &:hover {
-    color: ${t.greenDark} !important;
+    color: ${t.green} !important;
   }
 `
 
 export const IntroBtnGhost = styled.a`
   ${introBtn}
-  background: transparent;
-  color: ${t.white} !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  background: ${t.white};
+  color: ${t.green} !important;
+  border: 1px solid ${t.white};
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: ${t.white} !important;
+    color: ${t.green} !important;
   }
 `
 
@@ -185,7 +184,7 @@ export const IntroMascot = styled.img`
   display: block;
   width: min(100%, 420px);
   height: auto;
-  filter: drop-shadow(0 12px 20px rgba(2, 147, 64, 0.18));
+  filter: drop-shadow(0 12px 20px rgba(0, 175, 65, 0.18));
   pointer-events: none;
   user-select: none;
 `
@@ -484,16 +483,24 @@ const pillBtn = css`
 
 export const CtaBtn = styled.a`
   ${pillBtn}
-  background: ${t.green};
-  color: ${t.white} !important;
-  border: 1px solid ${t.green};
+  background: ${t.white};
+  color: ${t.green} !important;
+  border: 1.5px solid ${t.green};
+
+  &:hover {
+    background: ${t.greenLight};
+  }
 `
 
 export const CtaGhost = styled.a`
   ${pillBtn}
   background: ${t.white};
-  color: ${t.greenDark} !important;
+  color: ${t.green} !important;
   border: 1.5px solid ${t.green};
+
+  &:hover {
+    background: ${t.greenLight};
+  }
 `
 
 export const CtaRow = styled.div`
