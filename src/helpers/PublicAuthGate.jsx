@@ -17,6 +17,7 @@ import {
   isHybridAuthEnabled,
   isOidcSsoEnabled,
 } from '@/helpers/oidcSession'
+import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 
 const HOME_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
 
@@ -37,7 +38,7 @@ async function tryRefreshAccessToken() {
   if (!data?.accessToken) {
     return null
   }
-  localStorage.setItem('token', data.accessToken)
+  setAccessToken(data.accessToken)
   return data.accessToken
 }
 
@@ -54,7 +55,7 @@ function isUsableLegacyToken(token) {
 }
 
 async function resolveAuthGate() {
-  const legacyToken = localStorage.getItem('token')
+  const legacyToken = getAccessToken()
 
   try {
     const oidcStatus = await fetchOidcStatus()
@@ -80,10 +81,10 @@ async function resolveAuthGate() {
         return { status: 'redirect' }
       }
       if (legacyToken) {
-        localStorage.removeItem('token')
+        clearAccessToken()
       }
     } else if (legacyToken) {
-      localStorage.removeItem('token')
+      clearAccessToken()
     }
 
     return {
@@ -95,7 +96,7 @@ async function resolveAuthGate() {
       return { status: 'redirect' }
     }
     if (legacyToken) {
-      localStorage.removeItem('token')
+      clearAccessToken()
     }
 
     return {

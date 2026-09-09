@@ -1,10 +1,11 @@
 import config from '@/config'
+import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 
 const apiBase = () => (config.backendURL && config.backendURL[0]) ? config.backendURL[0].replace(/\/$/, '') : 'http://localhost:8080'
 
 function authHeaders(extra = {}) {
-    const h = { 'Content-Type': 'application/json', ...extra }
-    const t = localStorage.getItem('token')
+    const h = { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...extra }
+    const t = getAccessToken()
     if (t && t !== 'null') {
         h.Authorization = `Bearer ${t}`
     }
@@ -24,7 +25,7 @@ async function refreshAccessToken() {
     if (!accessToken) {
         throw new Error('Session expired')
     }
-    localStorage.setItem('token', accessToken)
+    setAccessToken(accessToken)
     return accessToken
 }
 
@@ -55,7 +56,7 @@ async function notifyFetch(path, init = {}) {
     try {
         await refreshAccessToken()
     } catch (e) {
-        localStorage.removeItem('token')
+        clearAccessToken()
         throw e
     }
 

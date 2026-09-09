@@ -11,13 +11,14 @@ import {
 import { authMutationsGraphQL, graphQLClient } from '@/graphQL'
 import { formatMessageId } from '@/helpers/intl'
 import { redirectToOidcStart } from '@/helpers/oidcSession'
+import { setAccessToken } from '@/helpers/accessTokenMemory'
 
 function* signInSaga(action) {
     try {
         const { email, password, role } = action.payload
         const response = yield call(authMutationsGraphQL.SingIn, email, password, role)
         console.log(response)
-        localStorage.setItem('token', response.data.SingIn.accessToken)
+        setAccessToken(response.data.SingIn.accessToken)
         yield put(signInSucces(response.data.SingIn))
     } catch (e) {
         console.log(e.response)
@@ -35,7 +36,7 @@ function* signUpSaga(action) {
         const { user, role } = action.payload
         const response = yield call(authAPI.signUp, user, role)
         console.log(response)
-        localStorage.setItem('token', response.data.accessToken)
+        setAccessToken(response.data.accessToken)
         yield put(signUpSuccess(response))
     } catch (e) {
         console.log(e.response)

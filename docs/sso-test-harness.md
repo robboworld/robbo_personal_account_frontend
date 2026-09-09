@@ -1,24 +1,18 @@
-# SSO test harness (LK -> LMS)
+# SSO test harness (LK + LMS + Scratch)
 
-## Scope
-- Authorization Code + PKCE redirect.
-- Callback processing and error normalization.
-- Identity link persistence by `external_sub`.
+Единственный контур: BFF `/auth/oidc/start` → IdP → `/auth/oidc/callback` на API.
 
 ## Happy path
-1. Enable `LK_SSO_WITH_LMS_ENABLED=true`.
-2. Fill required OIDC env vars.
-3. Open LK and click `LMS`.
-4. After callback, user is redirected to `/home`.
-5. Check localStorage has `lk_lms_identity_link`.
+1. `LK_SSO_WITH_LMS_ENABLED=true`, IdP = Tutor (или `./setup.sh --oidc-mock`).
+2. `/login` → вход через edx → cookie `lk_bff_session`.
+3. Кнопка LMS / `/mycourses` → `start?return_to=<LMS_URL>&prompt=none` без второго пароля.
+4. Редактор: status → при необходимости `start?return_to=<editor>` → save sb3.
+5. Logout → BFF (+ IdP end_session если настроен).
 
 ## Negative cases
-- Invalid state: modify callback URL `state` and verify `invalid_state`.
-- Expired code: replay old callback URL and verify `expired_code`/`network_error`.
-- Missing sub: simulate malformed id_token in mocked token endpoint.
-- Access denied: simulate `error=access_denied` callback.
+- Чужой `return_to=https://evil.example` → редирект на `/home`.
+- Replay callback `state` → `invalid_state`.
+- `error=access_denied` от IdP.
 
-## Observability expectations
-- `authorize_redirect_started` appears once per attempt.
-- `sso_success` appears once on successful callback.
-- `sso_error` includes `reason` and optional `details`.
+## Observability
+- Консоль FE: `[lms-sso] authorize_redirect_started` с `flow: 'bff'`.

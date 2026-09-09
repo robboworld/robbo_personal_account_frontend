@@ -11,6 +11,7 @@ import { authAPI } from '@/api'
 import { HOME_PAGE_ROUTE, LMS_URL } from '@/constants'
 import { authMutationsGQL } from '@/graphQL'
 import { formatInactiveBanDescription } from '@/helpers/inactiveLogin'
+import { setAccessToken } from '@/helpers/accessTokenMemory'
 
 const LMS_RESET_PASSWORD_URL = `${LMS_URL}/authn/reset`
 
@@ -51,7 +52,7 @@ const SignInForm = memo(({ handleSubmit }) => {
   const [login, { loading: signingIn }] = useMutation(authMutationsGQL.SIGN_IN, {
     onCompleted: ({ SingIn }) => {
       setSessionLimitReached(false)
-      localStorage.setItem('token', SingIn.accessToken)
+      setAccessToken(SingIn.accessToken)
       navigate(HOME_PAGE_ROUTE)
     },
     onError: error => {
@@ -123,7 +124,7 @@ const SignInForm = memo(({ handleSubmit }) => {
       if (!token) {
         throw new Error('missing_token')
       }
-      localStorage.setItem('token', token)
+      setAccessToken(token)
       navigate(HOME_PAGE_ROUTE)
     } catch (error) {
       const code = error?.response?.data?.code

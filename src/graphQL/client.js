@@ -8,6 +8,7 @@ import { authMutationsGQL } from './mutation'
 import config from '@/config'
 import { readStoredLanguage } from '@/helpers/intl'
 import { buildInactiveLoginURL } from '@/helpers/inactiveLogin'
+import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 
 
 const httpLink = createHttpLink({
@@ -16,12 +17,13 @@ const httpLink = createHttpLink({
 })
 
 const authLink = setContext((_, { headers }) => {
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     return {
         headers: {
             ...headers,
             authorization: token ? `Bearer ${token}` : "",
             'Accept-Language': readStoredLanguage(),
+            'X-Requested-With': 'XMLHttpRequest',
         },
     }
 })
@@ -35,7 +37,7 @@ const retryLink = new RetryLink({
         max: 3,
         retryIf: async error => {
             if (error && error.result.ExpiredBy && error.statusCode === 401) {
-                localStorage.removeItem('token')
+                clearAccessToken()
                 const accessToken = await refreshToken()
                 return true
             }
@@ -47,7 +49,7 @@ const errorLink = onError(({ networkError }) => {
     const result = typeof networkError?.result === 'object' ? networkError.result : null
     const code = result?.code || networkError?.result?.code || networkError?.bodyText
     if (networkError?.statusCode === 403 && code === 'USER_INACTIVE') {
-        localStorage.removeItem('token')
+        clearAccessToken()
         window.location.assign(buildInactiveLoginURL(result?.ban || null))
     }
 })
@@ -63,10 +65,10 @@ const refreshToken = async () => {
             mutation: authMutationsGQL.REFRESH_TOKEN,
         })
         const accessToken = refreshResolverResponse.data?.Refresh.accessToken
-        localStorage.setItem('token', accessToken || '')
+        setAccessToken(accessToken || '')
         return accessToken
     } catch (err) {
-        localStorage.clear()
+        clearAccessToken()
         console.error(err)
         throw err
     }
