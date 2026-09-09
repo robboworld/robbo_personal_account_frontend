@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Divider } from 'antd'
 import { FormattedMessage } from 'react-intl'
 import PropTypes from 'prop-types'
@@ -21,7 +21,23 @@ const LoginContent = ({
 }) => {
   const actions = useActions({ signInRequest, signUpRequest }, [])
   const location = useLocation()
-  const sessionLimitReached = new URLSearchParams(location.search || '').get('err') === 'session_limit_reached'
+  const params = new URLSearchParams(location.search || '')
+  const sessionLimitReached = params.get('err') === 'session_limit_reached'
+  const ssoAttempted = params.get('sso_attempted') === '1'
+  const silentStarted = useRef(false)
+
+  // Direct /login (e.g. after LMS login): try silent IdP SSO once.
+  useEffect(() => {
+    if (!showOidcLogin || ssoAttempted || sessionLimitReached || silentStarted.current) {
+      return undefined
+    }
+    if (initialLoginError) {
+      return undefined
+    }
+    silentStarted.current = true
+    redirectToOidcStart(resolveLoginReturnTo(location.search), 'none')
+    return undefined
+  }, [showOidcLogin, ssoAttempted, sessionLimitReached, initialLoginError, location.search])
 
   if (children) {
     return <React.Fragment>{children}</React.Fragment>
@@ -32,6 +48,8 @@ const LoginContent = ({
   }
 
   const showPasswordForm = !showOidcLogin || hybridAuth
+  // While auto-redirecting to silent SSO, keep the button visible but avoid double-click noise.
+  const awaitingSilent = showOidcLogin && !ssoAttempted && !sessionLimitReached && !initialLoginError
 
   return (
     <React.Fragment>
@@ -61,6 +79,7 @@ const LoginContent = ({
             type='primary'
             size='large'
             block
+            disabled={awaitingSilent}
             onClick={() => startOidc(false)}
           >
             <FormattedMessage id='auth_login.oidc_button' />

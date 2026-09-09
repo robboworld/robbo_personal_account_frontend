@@ -22,8 +22,9 @@ export const redirectToOidcStart = (returnTo = '', prompt = 'login', kickOtherSe
 
 export const buildOidcStartUrl = (returnTo = '', prompt = 'login', kickOtherSessions = false) => {
   const startUrl = new URL(`${apiBase()}/auth/oidc/start`)
-  if (returnTo) {
-    startUrl.searchParams.set('return_to', returnTo)
+  const safeReturnTo = allowlistedReturnTo(returnTo)
+  if (safeReturnTo) {
+    startUrl.searchParams.set('return_to', safeReturnTo)
   }
   if (prompt) {
     startUrl.searchParams.set('prompt', prompt)
@@ -37,8 +38,9 @@ export const buildOidcStartUrl = (returnTo = '', prompt = 'login', kickOtherSess
 /** Clears BFF cookie on backend, then redirects to IdP logout or FE landing. */
 export const buildOidcLogoutUrl = (returnTo = '/?logged_out=1') => {
   const logoutUrl = new URL(`${apiBase()}/auth/oidc/logout`)
-  if (returnTo) {
-    logoutUrl.searchParams.set('return_to', returnTo)
+  const safeReturnTo = allowlistedReturnTo(returnTo)
+  if (safeReturnTo) {
+    logoutUrl.searchParams.set('return_to', safeReturnTo)
   }
   return logoutUrl.toString()
 }
@@ -117,6 +119,43 @@ export const redirectToLmsRegister = () => {
   window.location.replace(`${LMS_URL}/register`)
 }
 
+const allowlistedReturnTo = raw => {
+  const value = String(raw || '').trim()
+  if (!value || value.startsWith('//') || value.includes('\n') || value.includes('\r')) {
+    return HOME_PAGE_ROUTE
+  }
+  if (value.startsWith('/') && !value.startsWith('//')) {
+    return value
+  }
+  try {
+    const parsed = new URL(value)
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return HOME_PAGE_ROUTE
+    }
+    const allowed = new Set()
+    const add = origin => {
+      try {
+        allowed.add(new URL(origin).origin)
+      } catch {
+        // ignore
+      }
+    }
+    add(window.location.origin)
+    add(LMS_URL)
+    add('http://localhost:8601')
+    add('http://127.0.0.1:8601')
+    add('http://localhost:5001')
+    add('http://127.0.0.1:5001')
+    add('https://scratch.ru')
+    if (allowed.has(parsed.origin)) {
+      return value
+    }
+  } catch {
+    return HOME_PAGE_ROUTE
+  }
+  return HOME_PAGE_ROUTE
+}
+
 export const resolveLoginReturnTo = search => {
   const params = new URLSearchParams(search || '')
   const returnTo = params.get('return_to')
@@ -125,8 +164,8 @@ export const resolveLoginReturnTo = search => {
   }
 
   try {
-    return decodeURIComponent(returnTo)
+    return allowlistedReturnTo(decodeURIComponent(returnTo))
   } catch {
-    return returnTo
+    return allowlistedReturnTo(returnTo)
   }
 }

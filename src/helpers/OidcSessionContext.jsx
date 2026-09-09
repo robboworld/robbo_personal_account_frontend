@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import { parseJwt, isAccessTokenExpired } from './jwtParser'
 import {
+  buildOidcStartUrl,
   fetchOidcStatus,
   hasLmsPasswordFallback,
   isOidcSsoEnabled,
@@ -10,15 +11,13 @@ import {
 
 import Loader from '@/components/Loader'
 
-import { LOGIN_PAGE_ROUTE } from '@/constants'
+import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 import config from '@/config'
 
-const navigateToLogin = (navigate, pathname, search) => {
+/** Silent SSO via IdP session (e.g. already logged into Tutor LMS). */
+const redirectToSilentOidc = (pathname, search) => {
   const returnTo = `${pathname}${search || ''}`
-  navigate(
-    `${LOGIN_PAGE_ROUTE}?return_to=${encodeURIComponent(returnTo)}`,
-    { replace: true },
-  )
+  window.location.replace(buildOidcStartUrl(returnTo, 'none'))
 }
 
 const OidcSessionContext = createContext(null)
@@ -35,7 +34,7 @@ async function tryRefreshLegacyAccessToken() {
   if (!data?.accessToken) {
     return null
   }
-  localStorage.setItem('token', data.accessToken)
+  setAccessToken(data.accessToken)
   return data.accessToken
 }
 
@@ -55,7 +54,6 @@ function sessionFromLegacyToken(token) {
 
 export const OidcSessionProvider = ({ children }) => {
   const location = useLocation()
-  const navigate = useNavigate()
   const [session, setSession] = useState(isOidcSsoEnabled() ? null : {})
   const [loading, setLoading] = useState(isOidcSsoEnabled())
 
@@ -81,11 +79,11 @@ export const OidcSessionProvider = ({ children }) => {
         // Password login from Scratch (or LK forms) sets HttpOnly refresh_token on API host.
         // Accept that session before falling back to OIDC/mock.
         if (hasLmsPasswordFallback(status)) {
-          let token = localStorage.getItem('token')
+          let token = getAccessToken()
           if (!token || isAccessTokenExpired(token)) {
             token = await tryRefreshLegacyAccessToken()
             if (!token) {
-              localStorage.removeItem('token')
+              clearAccessToken()
             }
           }
 
@@ -96,19 +94,20 @@ export const OidcSessionProvider = ({ children }) => {
             return
           }
 
-          // No password session — send to LK login (silent SSO / OIDC button).
-          navigateToLogin(navigate, location.pathname, location.search)
+          // No password session — try silent IdP SSO, then login UI.
+          redirectToSilentOidc(location.pathname, location.search)
           return
         }
 
-        navigateToLogin(navigate, location.pathname, location.search)
+        // Pure OIDC: silent first (LMS/Scratch already logged into Tutor).
+        redirectToSilentOidc(location.pathname, location.search)
       } catch {
         if (!cancelled) {
-          let token = localStorage.getItem('token')
+          let token = getAccessToken()
           if (!token || isAccessTokenExpired(token)) {
             token = await tryRefreshLegacyAccessToken()
             if (!token) {
-              localStorage.removeItem('token')
+              clearAccessToken()
             }
           }
           const legacy = sessionFromLegacyToken(token)
@@ -117,7 +116,7 @@ export const OidcSessionProvider = ({ children }) => {
             setLoading(false)
             return
           }
-          navigateToLogin(navigate, location.pathname, location.search)
+          redirectToSilentOidc(location.pathname, location.search)
         }
       }
     }
@@ -126,7 +125,7 @@ export const OidcSessionProvider = ({ children }) => {
     return () => {
       cancelled = true
     }
-  }, [location.pathname, location.search, navigate])
+  }, [location.pathname, location.search])
 
   if (loading) {
     return <Loader />

@@ -5,6 +5,9 @@ export const LMS_URL = process.env.LMS_URL || 'https://online.robbo.ru'
 
 export const LK_SSO_WITH_LMS_ENABLED = process.env.LK_SSO_WITH_LMS_ENABLED === 'true'
 
+/** Temporary: sidebar LMS opens LMS_URL without BFF (local Tutor while IdP is still mock). */
+export const LMS_OPEN_DIRECT = process.env.LMS_OPEN_DIRECT === 'true'
+
 export const OIDC_ISSUER = process.env.OIDC_ISSUER || ''
 export const OIDC_AUTHORIZATION_ENDPOINT = process.env.OIDC_AUTHORIZATION_ENDPOINT || ''
 export const OIDC_TOKEN_ENDPOINT = process.env.OIDC_TOKEN_ENDPOINT || ''

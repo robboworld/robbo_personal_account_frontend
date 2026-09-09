@@ -2,6 +2,7 @@ import instance from './instance'
 
 import config from '@/config'
 import { readStoredLanguage } from '@/helpers/intl'
+import { getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 
 function parseContentDispositionFilename(cd) {
     if (!cd)
@@ -26,7 +27,7 @@ function backendBase() {
 }
 
 function currentAccessToken(fallback) {
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     if (token && token !== 'null') {
         return token
     }
@@ -46,7 +47,7 @@ async function refreshAccessToken() {
     if (!accessToken) {
         throw new Error('Session expired')
     }
-    localStorage.setItem('token', accessToken)
+    setAccessToken(accessToken)
     return accessToken
 }
 
@@ -89,6 +90,7 @@ async function readFetchErrorMessage(res) {
 export async function fetchWithAuthRetry(url, init = {}, options = {}) {
     const buildInit = token => {
         const headers = new Headers(init.headers || {})
+        headers.set('X-Requested-With', 'XMLHttpRequest')
         if (token) {
             headers.set('Authorization', `Bearer ${token}`)
         } else {
