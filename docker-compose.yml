@@ -1,34 +1,14 @@
-# ЛК frontend + Scratch player (preview).
-# Без network_mode: host — на Docker Desktop (macOS/Windows) host-network не
-# публикует порты на localhost хоста; bridge + ports работает и на Linux.
-#
-# Редактор локально — webpack-dev-server RobboScratch (:8601), см. SCRATCH_EDITOR_URL в .env.
-# scratch-gui (:5001) — только player.html для preview на странице проекта.
-# Перед сборкой player-образа (если обновляете preview):
-#   cd /path/to/RobboScratch && ./scripts/build.sh --release web dca vm gui
-#   rsync -a --delete .../robboscratch3_gui/build/ .../robbo_personal_account/robboscratch3_gui/build/
+# ЛК frontend (SPA + Express).
+# Preview-плеер проекта — внешний URL (RobboScratch build), см. SCRATCH_PLAYER_URL в .env.
 name: robbo_personal_account_frontend
 
 services:
   web:
     restart: unless-stopped
     build: .
-    # ENTRYPOINT in Dockerfile is already `yarn start --port 3030`; do not set
-    # `command: yarn start` or the process becomes `yarn start --port 3030 yarn start` and exits 1.
     stdin_open: true
     ports:
       - "3030:3030"
     environment:
       - PORT=3030
       - HOST=0.0.0.0
-    depends_on:
-      - scratch-gui
-
-  scratch-gui:
-    image: robboscratch-gui:local
-    build:
-      context: ${SCRATCH_GUI_CONTEXT:-../robboscratch3_gui}
-      dockerfile: deploy/Dockerfile
-    restart: unless-stopped
-    ports:
-      - "5001:80"
