@@ -32,6 +32,7 @@ import {
   redirectToOidcLogout,
   useAuthRole,
 } from '@/helpers'
+import { broadcastAuthLogout } from '@/helpers/authEcosystemSync'
 import {
   LANDING_PAGE_ROUTE,
   LOGIN_PAGE_ROUTE,
@@ -117,10 +118,11 @@ export default ({
   }
 
   const handleLogout = async () => {
-    // OIDC BFF: session lives in cookie — GraphQL SingOut alone cannot clear it.
+    // OIDC BFF: clear BFF cookie + LMS session, then return to landing.
     if (isOidcSsoEnabled()) {
       clearLocalSession()
-      redirectToOidcLogout(`${LANDING_PAGE_ROUTE}?logged_out=1`)
+      broadcastAuthLogout()
+      redirectToOidcLogout()
       return
     }
 

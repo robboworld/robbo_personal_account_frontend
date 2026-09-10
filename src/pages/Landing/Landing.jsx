@@ -70,6 +70,7 @@ import {
 } from './landingStyles'
 
 import { projectPageAPI } from '@/api/projectPage'
+import { broadcastAuthLogout, clearLocalAuthArtifacts } from '@/helpers/authEcosystemSync'
 import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import RobboGuestHeader from '@/components/RobboGuestHeader/RobboGuestHeader'
 import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
@@ -238,6 +239,8 @@ const Landing = () => {
     if (!loggedOut && !sessionExpired) {
       return undefined
     }
+    clearLocalAuthArtifacts()
+    broadcastAuthLogout()
     localStorage.removeItem('token')
     params.delete('logged_out')
     params.delete('session_expired')
