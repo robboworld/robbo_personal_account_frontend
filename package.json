@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "dev": "node --openssl-legacy-provider ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --open --config webpack.dev.js",
-    "build": "node --openssl-legacy-provider ./node_modules/webpack/bin/webpack.js --config webpack.prod.js",
+    "dev": "node scripts/run-webpack.js ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --open --config webpack.dev.js",
+    "build": "node scripts/run-webpack.js ./node_modules/webpack/bin/webpack.js --config webpack.prod.js",
     "eslint:test": "eslint src --ext .js,.jsx",
     "eslint:fix": "eslint --fix src --ext .js,.jsx",
     "i18n:check": "node scripts/i18n-check.js",

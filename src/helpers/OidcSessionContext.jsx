@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { parseJwt, isAccessTokenExpired } from './jwtParser'
 import {
@@ -7,7 +7,14 @@ import {
   fetchOidcStatus,
   hasLmsPasswordFallback,
   isOidcSsoEnabled,
+  LK_LOGOUT_RETURN_TO,
 } from './oidcSession'
+import {
+  broadcastAuthLogout,
+  clearLocalAuthArtifacts,
+  startBffSessionWatch,
+  subscribeAuthLogout,
+} from './authEcosystemSync'
 
 import Loader from '@/components/Loader'
 
@@ -54,8 +61,37 @@ function sessionFromLegacyToken(token) {
 
 export const OidcSessionProvider = ({ children }) => {
   const location = useLocation()
+  const navigate = useNavigate()
   const [session, setSession] = useState(isOidcSsoEnabled() ? null : {})
   const [loading, setLoading] = useState(isOidcSsoEnabled())
+  const sessionRef = useRef(session)
+
+  useEffect(() => {
+    sessionRef.current = session
+  }, [session])
+
+  const handleRemoteLogout = () => {
+    clearLocalAuthArtifacts()
+    setSession({ authenticated: false })
+    navigate(LK_LOGOUT_RETURN_TO, { replace: true })
+  }
+
+  useEffect(() => {
+    if (!isOidcSsoEnabled()) {
+      return undefined
+    }
+
+    const unsubscribeBroadcast = subscribeAuthLogout(handleRemoteLogout)
+    const stopWatch = startBffSessionWatch({
+      isAuthenticated: () => Boolean(sessionRef.current?.authenticated),
+      onSessionLost: handleRemoteLogout,
+    })
+
+    return () => {
+      unsubscribeBroadcast()
+      stopWatch()
+    }
+  }, [navigate])
 
   useEffect(() => {
     if (!isOidcSsoEnabled()) {

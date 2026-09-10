@@ -35,18 +35,31 @@ export const buildOidcStartUrl = (returnTo = '', prompt = 'login', kickOtherSess
   return startUrl.toString()
 }
 
-/** Clears BFF cookie on backend, then redirects to IdP logout or FE landing. */
-export const buildOidcLogoutUrl = (returnTo = '/?logged_out=1') => {
+/** Product-scoped BFF logout (path-only; Open edX HTML-escapes '&' in redirect_url). */
+export const oidcLogoutPath = product => {
+  const name = product === 'rs' || product === 'lms' ? product : 'lk'
+  return `${apiBase()}/auth/oidc/logout/${name}`
+}
+
+/** Relative path on LK FE after logout (landing). */
+export const LK_LOGOUT_RETURN_TO = '/?logged_out=1'
+
+/** Clears BFF cookie, then LMS session, then product landing. */
+export const buildOidcLogoutUrl = (returnTo = LK_LOGOUT_RETURN_TO, { skipIdp = false } = {}) => {
+  if (!skipIdp) {
+    return oidcLogoutPath('lk')
+  }
   const logoutUrl = new URL(`${apiBase()}/auth/oidc/logout`)
   const safeReturnTo = allowlistedReturnTo(returnTo)
   if (safeReturnTo) {
     logoutUrl.searchParams.set('return_to', safeReturnTo)
   }
+  logoutUrl.searchParams.set('skip_idp', '1')
   return logoutUrl.toString()
 }
 
-export const redirectToOidcLogout = (returnTo = '/?logged_out=1') => {
-  window.location.assign(buildOidcLogoutUrl(returnTo))
+export const redirectToOidcLogout = (returnTo = LK_LOGOUT_RETURN_TO, options) => {
+  window.location.assign(buildOidcLogoutUrl(returnTo, options))
 }
 
 export const isOidcSsoEnabled = () => LK_SSO_WITH_LMS_ENABLED
