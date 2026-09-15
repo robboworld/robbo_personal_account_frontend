@@ -48,6 +48,7 @@ import { ProtectedRoute, PublicAuthGate } from '@/helpers'
 import HomePage from '@/pages/Home'
 import ProfilePage from '@/pages/Profile'
 import Logistration from '@/pages/Logistration'
+import RegisterEntry from '@/pages/RegisterEntry'
 
 const Landing = lazy(() => import('@/pages/Landing'))
 const Explore = lazy(() => import('@/pages/Explore'))
@@ -89,7 +90,7 @@ const AppRoutes = () => (
     <Route path={OIDC_CALLBACK_ROUTE} element={<OidcCallback />} />
     <Route element={<PublicAuthGate />}>
       <Route path={LOGIN_PAGE_ROUTE} element={<Logistration />} />
-      <Route path={REGISTER_PAGE_ROUTE} element={<Logistration />} />
+      <Route path={REGISTER_PAGE_ROUTE} element={<RegisterEntry />} />
     </Route>
 
     {/* Public + authenticated project page (guest uses landing header; owner uses LK shell). */}

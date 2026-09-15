@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import PropTypes from 'prop-types'
 import { Button, Input } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -68,7 +69,7 @@ const RegistrationTextField = ({
   </div>
 )
 
-const RegisterForm = () => {
+const RegisterForm = ({ showOidcAfterSignupHint = false }) => {
   const intl = useIntl()
   const dispatch = useDispatch()
   const actions = useActions({ signUpRequest }, [])
@@ -230,6 +231,12 @@ onSubmit={handleSubmit} noValidate>
           onBlur={() => handleFieldBlur('honor_code')}
         />
 
+        {showOidcAfterSignupHint && (
+          <p className='registration-field__help' style={{ marginBottom: 16 }}>
+            <FormattedMessage id='registration.oidc.after_signup_hint' />
+          </p>
+        )}
+
         <Button
           type='primary'
           htmlType='submit'
@@ -243,6 +250,10 @@ onSubmit={handleSubmit} noValidate>
       </form>
     </AuthFormStyles>
   )
+}
+
+RegisterForm.propTypes = {
+  showOidcAfterSignupHint: PropTypes.bool,
 }
 
 export default RegisterForm

@@ -15,7 +15,7 @@ export const OIDC_JWKS_URI = process.env.OIDC_JWKS_URI || ''
 export const OIDC_USERINFO_ENDPOINT = process.env.OIDC_USERINFO_ENDPOINT || ''
 export const OIDC_CLIENT_ID = process.env.OIDC_CLIENT_ID || ''
 export const OIDC_REDIRECT_URI = process.env.OIDC_REDIRECT_URI || ''
-export const OIDC_SCOPES = process.env.OIDC_SCOPES || 'openid profile email'
+export const OIDC_SCOPES = process.env.OIDC_SCOPES || 'email profile user_id'
 export const OIDC_LOGOUT_ENDPOINT = process.env.OIDC_LOGOUT_ENDPOINT || ''
 export const OIDC_POST_LOGOUT_REDIRECT_URI = process.env.OIDC_POST_LOGOUT_REDIRECT_URI || ''
 

@@ -77,7 +77,8 @@ import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { getScratchEditorUrl } from '@/utils/scratchEditor'
-import { EXPLORE_ROUTE, MY_LICENSES_ROUTE, REGISTER_PAGE_ROUTE } from '@/constants'
+import { EXPLORE_ROUTE, MY_LICENSES_ROUTE, REGISTER_PAGE_ROUTE, LK_SSO_WITH_LMS_ENABLED } from '@/constants'
+import { lmsRegisterUrl } from '@/helpers/oidcSession'
 
 const LandingGlobal = createGlobalStyle`
   html.landing-page-active {
@@ -147,6 +148,9 @@ const OLYMPIAD_TIMELINE = [
   },
 ]
 
+const FREE_REGISTER_TARGET = LK_SSO_WITH_LMS_ENABLED ? lmsRegisterUrl() : REGISTER_PAGE_ROUTE
+const FREE_REGISTER_EXTERNAL = LK_SSO_WITH_LMS_ENABLED
+
 const TARIFFS = [
   {
     id: 'free',
@@ -160,7 +164,8 @@ const TARIFFS = [
       'Без автообновления RS3',
     ],
     cta: 'Начать бесплатно',
-    to: REGISTER_PAGE_ROUTE,
+    to: FREE_REGISTER_TARGET,
+    external: FREE_REGISTER_EXTERNAL,
     ghost: true,
   },
   {
@@ -420,7 +425,11 @@ const Landing = () => {
                     ))}
                   </TariffList>
                   {plan.ghost ? (
-                    <CtaGhost as={Link} to={plan.to}>{plan.cta}</CtaGhost>
+                    plan.external ? (
+                      <CtaGhost as='a' href={plan.to}>{plan.cta}</CtaGhost>
+                    ) : (
+                      <CtaGhost as={Link} to={plan.to}>{plan.cta}</CtaGhost>
+                    )
                   ) : (
                     <CtaBtn as={Link} to={plan.to}>{plan.cta}</CtaBtn>
                   )}

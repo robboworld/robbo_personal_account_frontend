@@ -28,8 +28,9 @@ import {
   LOGIN_PAGE_ROUTE,
   REGISTER_PAGE_ROUTE,
 } from '@/constants'
+import { lmsRegisterUrl, openEdxLoginUrlAtBuild } from '@/helpers/oidcSession'
 
-const AuthLayout = ({ selectedPage, onTabSelect, children }) => {
+const AuthLayout = ({ selectedPage, onTabSelect, openEdxAuthOnly = false, children }) => {
   const navigate = useNavigate()
   const intl = useIntl()
 
@@ -37,6 +38,8 @@ const AuthLayout = ({ selectedPage, onTabSelect, children }) => {
     event.preventDefault()
     onTabSelect(tabKey)
   }
+
+  const registerHref = openEdxAuthOnly ? lmsRegisterUrl() : REGISTER_PAGE_ROUTE
 
   return (
     <AuthShell className='robbo-auth-standalone-shell'>
@@ -74,8 +77,10 @@ const AuthLayout = ({ selectedPage, onTabSelect, children }) => {
                       role='tab'
                       $active={selectedPage === REGISTER_PAGE_ROUTE}
                       aria-selected={selectedPage === REGISTER_PAGE_ROUTE}
-                      href={REGISTER_PAGE_ROUTE}
-                      onClick={event => handleTabClick(event, REGISTER_PAGE_ROUTE)}
+                      href={registerHref}
+                      onClick={openEdxAuthOnly
+                        ? undefined
+                        : event => handleTabClick(event, REGISTER_PAGE_ROUTE)}
                     >
                       <FormattedMessage id='auth_layout.tab_register' />
                     </AuthTabLink>
@@ -112,6 +117,7 @@ const AuthLayout = ({ selectedPage, onTabSelect, children }) => {
 AuthLayout.propTypes = {
   selectedPage: PropTypes.oneOf([LOGIN_PAGE_ROUTE, REGISTER_PAGE_ROUTE]).isRequired,
   onTabSelect: PropTypes.func.isRequired,
+  openEdxAuthOnly: PropTypes.bool,
   children: PropTypes.node.isRequired,
 }
 

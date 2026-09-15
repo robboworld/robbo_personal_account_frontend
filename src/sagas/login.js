@@ -10,7 +10,7 @@ import {
 } from '@/actions'
 import { authMutationsGraphQL, graphQLClient } from '@/graphQL'
 import { formatMessageId } from '@/helpers/intl'
-import { redirectToOidcStart } from '@/helpers/oidcSession'
+import { redirectToOidcStart, fetchOidcStatus, hasLmsPasswordFallback, isOidcSsoEnabled } from '@/helpers/oidcSession'
 import { setAccessToken } from '@/helpers/accessTokenMemory'
 
 function* signInSaga(action) {
@@ -36,8 +36,19 @@ function* signUpSaga(action) {
         const { user, role } = action.payload
         const response = yield call(authAPI.signUp, user, role)
         console.log(response)
-        setAccessToken(response.data.accessToken)
-        yield put(signUpSuccess(response))
+
+        if (response.data?.next === 'oidc' || response.data?.ok) {
+            const status = yield call(fetchOidcStatus)
+            if (isOidcSsoEnabled() && !hasLmsPasswordFallback(status)) {
+                redirectToOidcStart('/home', 'login')
+                return
+            }
+        }
+
+        if (response.data?.accessToken) {
+            setAccessToken(response.data.accessToken)
+            yield put(signUpSuccess(response))
+        }
     } catch (e) {
         console.log(e.response)
         const language = yield select(state => state.app.language)

@@ -129,7 +129,59 @@ export const isHybridAuthEnabled = status =>
   isOidcSsoEnabled() && hasLmsPasswordFallback(status)
 
 export const redirectToLmsRegister = () => {
-  window.location.replace(`${LMS_URL}/register`)
+  window.location.replace(lmsRegisterUrl())
+}
+
+/** Pure OIDC prod: SSO on, no LMS password fallback — LK auth forms hidden. */
+export const shouldUseOpenEdxAuthOnly = status =>
+  isOidcSsoEnabled() && !hasLmsPasswordFallback(status)
+
+export const redirectToOidcLogin = (search = '', prompt = 'login') => {
+  redirectToOidcStart(resolveLoginReturnTo(search), prompt)
+}
+
+/** Header / guest CTA login when SSO-only (build-time LMS_URL + runtime BFF start). */
+export const openEdxLoginUrlAtBuild = () => buildOidcStartUrl(HOME_PAGE_ROUTE, 'login')
+
+/**
+ * Open edX registration URL; optional return after signup (allowlisted).
+ * @param {string} [returnAfterRegister] defaults to LMS origin with trailing slash
+ */
+export const lmsRegisterUrl = returnAfterRegister => {
+  const lmsBase = String(LMS_URL || '').replace(/\/$/, '')
+  const url = new URL(`${lmsBase}/register`)
+  url.searchParams.set('next', returnAfterRegister || `${lmsBase}/`)
+  return url.toString()
+}
+
+export const parseOidcCallbackError = (search, intl) => {
+  const params = new URLSearchParams(search || '')
+  const err = params.get('err')
+  if (!err || err === 'user_inactive') {
+    return null
+  }
+  const keyByErr = {
+    user_not_found: 'login.error.user_not_found',
+    invalid_credentials: 'login.error.invalid_credentials',
+    session_limit_reached: 'sessions.limit_reached',
+    auth_retry: 'login.error.auth_retry',
+    token_invalid: 'login.error.token_invalid',
+  }
+  const id = keyByErr[err] || 'login.error.generic'
+  return intl.formatMessage({ id })
+}
+
+export const shouldBlockOpenEdxAuthRedirect = search => {
+  const params = new URLSearchParams(search || '')
+  return Boolean(params.get('err'))
+}
+
+export const stripOidcErrorParams = search => {
+  const params = new URLSearchParams(search || '')
+  params.delete('err')
+  params.delete('sso_attempted')
+  const query = params.toString()
+  return query ? `?${query}` : ''
 }
 
 const allowlistedReturnTo = raw => {

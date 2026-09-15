@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl'
 
 import AuthLayout from '@/components/AuthLayout'
 import Loader from '@/components/Loader'
+import OidcAuthErrorFallback from '@/components/OidcAuthErrorFallback'
 import LoginContent from '@/components/PageLayoutLogin/PageLayoutLogin'
 import RegisterForm from '@/components/RegisterForm'
 import {
@@ -17,8 +18,8 @@ import {
   parseInactiveLoginSearch,
 } from '@/helpers/inactiveLogin'
 import {
-  redirectToOidcStart,
-  resolveLoginReturnTo,
+  redirectToOidcLogin,
+  shouldBlockOpenEdxAuthRedirect,
 } from '@/helpers/oidcSession'
 import {
   HOME_PAGE_ROUTE,
@@ -40,6 +41,8 @@ const parseLoginQueryError = (search, intl) => {
     user_not_found: 'login.error.user_not_found',
     invalid_credentials: 'login.error.invalid_credentials',
     session_limit_reached: 'sessions.limit_reached',
+    auth_retry: 'login.error.auth_retry',
+    token_invalid: 'login.error.token_invalid',
   }
   const id = keyByErr[err] || 'login.error.generic'
   return intl.formatMessage({ id })
@@ -53,27 +56,28 @@ const Logistration = () => {
   const { showOidcLogin = false, hybridAuth = false } = useOutletContext() || {}
   const [activeTab, setActiveTab] = useState(() => resolvePageFromPath(location.pathname))
   const inactiveBan = parseInactiveLoginSearch(location.search)
+  const openEdxAuthOnly = showOidcLogin && !hybridAuth
   const queryLoginError = parseLoginQueryError(location.search, intl)
+  const blockOidcRedirect = shouldBlockOpenEdxAuthRedirect(location.search)
+  const redirectLoginToOidc = (
+    openEdxAuthOnly &&
+    activeTab === LOGIN_PAGE_ROUTE &&
+    !blockOidcRedirect
+  )
 
   const isAuth = useSelector(state => state.login.isAuth)
-  const stayOnLoginForOidcError = Boolean(inactiveBan || queryLoginError)
-  const redirectLoginToMock = (
-    showOidcLogin &&
-    activeTab === LOGIN_PAGE_ROUTE &&
-    !stayOnLoginForOidcError
-  )
 
   useEffect(() => {
     setActiveTab(resolvePageFromPath(location.pathname))
   }, [location.pathname])
 
   useEffect(() => {
-    if (!redirectLoginToMock) {
+    if (!redirectLoginToOidc) {
       return undefined
     }
-    redirectToOidcStart(resolveLoginReturnTo(location.search), 'login')
+    redirectToOidcLogin(location.search, 'login')
     return undefined
-  }, [redirectLoginToMock, location.search])
+  }, [redirectLoginToOidc, location.search])
 
   const handleOnSelect = tabKey => {
     if (tabKey === activeTab) {
@@ -92,7 +96,7 @@ const Logistration = () => {
     navigate(join ? `${tabKey}?join=${encodeURIComponent(join)}` : tabKey, { replace: true })
   }
 
-  if (isAuth && localStorage.getItem('token')) {
+  if (isAuth) {
     const params = new URLSearchParams(location.search)
     const join = params.get('join')
     if (join) {
@@ -101,7 +105,24 @@ const Logistration = () => {
     return <Navigate to={HOME_PAGE_ROUTE} replace />
   }
 
-  if (redirectLoginToMock) {
+  if (openEdxAuthOnly && activeTab === LOGIN_PAGE_ROUTE) {
+    if (blockOidcRedirect) {
+      const inactiveAlert = inactiveBan ? (
+        <Alert
+          type='error'
+          showIcon
+          style={{ marginBottom: 16, whiteSpace: 'pre-line' }}
+          message={intl.formatMessage({ id: 'login.inactive.heading' })}
+          description={formatInactiveBanDescription(intl, inactiveBan)}
+        />
+      ) : null
+      return (
+        <OidcAuthErrorFallback
+          search={location.search}
+          inactiveAlert={inactiveAlert}
+        />
+      )
+    }
     return <Loader />
   }
 
@@ -116,7 +137,11 @@ const Logistration = () => {
   ) : null
 
   return (
-    <AuthLayout selectedPage={activeTab} onTabSelect={handleOnSelect}>
+    <AuthLayout
+      selectedPage={activeTab}
+      onTabSelect={handleOnSelect}
+      openEdxAuthOnly={openEdxAuthOnly}
+    >
       {activeTab === LOGIN_PAGE_ROUTE ? (
         <React.Fragment>
           {inactiveAlert}
@@ -127,7 +152,7 @@ const Logistration = () => {
           />
         </React.Fragment>
       ) : (
-        <RegisterForm />
+        <RegisterForm showOidcAfterSignupHint={showOidcLogin && !hybridAuth} />
       )}
     </AuthLayout>
   )

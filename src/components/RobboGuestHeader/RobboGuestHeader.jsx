@@ -1,8 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import robboGuestTokens from '@/theme/robboGuestTokens'
+import { LK_SSO_WITH_LMS_ENABLED } from '@/constants'
+import { lmsRegisterUrl, openEdxLoginUrlAtBuild } from '@/helpers/oidcSession'
 
 const Topbar = styled.header`
   position: sticky;
@@ -41,7 +42,7 @@ const Leading = styled.div`
   min-width: 0;
 `
 
-const BrandLink = styled(Link)`
+const BrandLink = styled.a`
   display: inline-flex;
   align-items: center;
   line-height: 1;
@@ -98,7 +99,7 @@ const Actions = styled.div`
   margin: 0;
 `
 
-const TopbarBtn = styled(Link)`
+const TopbarBtn = styled.a`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -151,11 +152,14 @@ const BtnOutline = styled(TopbarBtn)`
   border: 1px solid #fff !important;
 `
 
+const loginHref = LK_SSO_WITH_LMS_ENABLED ? openEdxLoginUrlAtBuild() : '/login'
+const registerHref = LK_SSO_WITH_LMS_ENABLED ? lmsRegisterUrl() : '/register'
+
 const RobboGuestHeader = () => (
   <Topbar role='banner'>
     <Main>
       <Leading>
-        <BrandLink to='/' aria-label='РОББО — на главную'>
+        <BrandLink href='/' aria-label='РОББО — на главную'>
           <Wordmark>
             РОББО
             <Reg>®</Reg>
@@ -164,8 +168,8 @@ const RobboGuestHeader = () => (
       </Leading>
       <Trailing>
         <Actions>
-          <BtnSolid to='/login'>Вход</BtnSolid>
-          <BtnOutline to='/register'>Регистрация</BtnOutline>
+          <BtnSolid href={loginHref}>Вход</BtnSolid>
+          <BtnOutline href={registerHref}>Регистрация</BtnOutline>
         </Actions>
       </Trailing>
     </Main>

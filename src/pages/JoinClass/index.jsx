@@ -4,7 +4,8 @@ import { useNavigate, useParams, useSearchParams, Link } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
 
 import * as api from '@/api/teacherClass'
-import { LOGIN_PAGE_ROUTE, REGISTER_PAGE_ROUTE, STUDENT_CLASSES_ROUTE, HOME_PAGE_ROUTE } from '@/constants'
+import { LOGIN_PAGE_ROUTE, STUDENT_CLASSES_ROUTE, HOME_PAGE_ROUTE } from '@/constants'
+import { lmsRegisterUrl } from '@/helpers/oidcSession'
 import { parseJwt } from '@/helpers'
 
 const { Title, Paragraph, Text } = Typography
@@ -56,7 +57,8 @@ const JoinClassPage = () => {
   const doJoin = async () => {
     if (!isLoggedIn) {
       const join = slug || manualCode || codeFromQuery
-      navigate(`${REGISTER_PAGE_ROUTE}?join=${encodeURIComponent(join)}`)
+      const returnTo = `${window.location.origin}/join?code=${encodeURIComponent(join)}`
+      window.location.assign(lmsRegisterUrl(returnTo))
       return
     }
     setJoining(true)
