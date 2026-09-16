@@ -62,6 +62,13 @@ export const redirectToOidcLogout = (returnTo = LK_LOGOUT_RETURN_TO, options) =>
   window.location.assign(buildOidcLogoutUrl(returnTo, options))
 }
 
+/** LK sidebar logout: BFF → LMS logout → LK landing. */
+export const buildOidcLogoutLkUrl = () => `${apiBase()}/auth/oidc/logout/lk`
+
+export const redirectToOidcLogoutLK = () => {
+  window.location.assign(buildOidcLogoutLkUrl())
+}
+
 export const isOidcSsoEnabled = () => LK_SSO_WITH_LMS_ENABLED
 
 /**

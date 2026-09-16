@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Input, Result, Space, Typography, message, Spin } from 'antd'
 import { useNavigate, useParams, useSearchParams, Link } from 'react-router-dom'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import * as api from '@/api/teacherClass'
 import { LOGIN_PAGE_ROUTE, STUDENT_CLASSES_ROUTE, HOME_PAGE_ROUTE } from '@/constants'
@@ -15,6 +15,7 @@ const JoinClassPage = () => {
   const [search] = useSearchParams()
   const codeFromQuery = search.get('code') || ''
   const navigate = useNavigate()
+  const intl = useIntl()
   const [preview, setPreview] = useState(null)
   const [manualCode, setManualCode] = useState(codeFromQuery)
   const [loading, setLoading] = useState(true)
@@ -43,7 +44,7 @@ const JoinClassPage = () => {
         if (!cancelled) setPreview(data)
       } catch (e) {
         if (!cancelled) {
-          setError(e?.response?.data?.error || 'Class not found')
+          setError(e?.response?.data?.error || intl.formatMessage({ id: 'join_class.not_found' }))
           setPreview(null)
         }
       } finally {
@@ -52,7 +53,7 @@ const JoinClassPage = () => {
     }
     run()
     return () => { cancelled = true }
-  }, [slug, key])
+  }, [slug, key, intl])
 
   const doJoin = async () => {
     if (!isLoggedIn) {
@@ -64,10 +65,10 @@ const JoinClassPage = () => {
     setJoining(true)
     try {
       await api.joinClass(slug ? { slug } : { code: manualCode || codeFromQuery })
-      message.success('Welcome to the class!')
+      message.success(intl.formatMessage({ id: 'join_class.welcome' }))
       navigate(STUDENT_CLASSES_ROUTE)
     } catch (e) {
-      message.error(e?.response?.data?.error || 'Join failed')
+      message.error(e?.response?.data?.error || intl.formatMessage({ id: 'join_class.join_failed' }))
     } finally {
       setJoining(false)
     }
@@ -86,7 +87,7 @@ const JoinClassPage = () => {
       <div style={{ maxWidth: 480, margin: '10vh auto', padding: 24 }}>
         <Card>
           <Title level={3}>
-            <FormattedMessage id='join_class.enter_code' defaultMessage='Enter class code' />
+            <FormattedMessage id='join_class.enter_code' />
           </Title>
           <Space.Compact style={{ width: '100%' }}>
             <Input
@@ -100,11 +101,13 @@ const JoinClassPage = () => {
               type='primary'
               onClick={() => navigate(`/join?code=${encodeURIComponent(manualCode.trim())}`)}
             >
-              Continue
+              <FormattedMessage id='join_class.continue' />
             </Button>
           </Space.Compact>
           <Paragraph style={{ marginTop: 16 }}>
-            <Link to={HOME_PAGE_ROUTE}>Home</Link>
+            <Link to={HOME_PAGE_ROUTE}>
+              <FormattedMessage id='join_class.home' />
+            </Link>
           </Paragraph>
         </Card>
       </div>
@@ -115,9 +118,13 @@ const JoinClassPage = () => {
     return (
       <Result
         status='404'
-        title={<FormattedMessage id='join_class.not_found' defaultMessage='Invite not found' />}
+        title={<FormattedMessage id='join_class.not_found' />}
         subTitle={error}
-        extra={<Button type='primary' onClick={() => navigate('/join')}>Try another code</Button>}
+        extra={(
+          <Button type='primary' onClick={() => navigate('/join')}>
+            <FormattedMessage id='join_class.try_another' />
+          </Button>
+        )}
       />
     )
   }
@@ -133,32 +140,31 @@ const JoinClassPage = () => {
     >
       <Card style={{ width: '100%', maxWidth: 440, borderRadius: 16 }} styles={{ body: { padding: 32 } }}>
         <Text type='secondary'>
-          <FormattedMessage id='join_class.eyebrow' defaultMessage='Join class' />
+          <FormattedMessage id='join_class.eyebrow' />
         </Text>
         <Title level={2} style={{ marginTop: 8 }}>{preview.displayName}</Title>
         {preview.ownerName && (
           <Paragraph type='secondary'>
-            <FormattedMessage id='join_class.teacher' defaultMessage='Teacher' />: {preview.ownerName}
+            <FormattedMessage id='join_class.teacher' />: {preview.ownerName}
           </Paragraph>
         )}
         <Paragraph type='secondary' style={{ fontSize: 12 }}>{preview.edxCourseId}</Paragraph>
-        <Space direction='vertical' style={{ width: '100%', marginTop: 24 }}
-size='middle'>
-          <Button type='primary' size='large'
-block loading={joining}
-onClick={doJoin}>
+        <Space direction='vertical' style={{ width: '100%', marginTop: 24 }} size='middle'>
+          <Button type='primary' size='large' block loading={joining} onClick={doJoin}>
             {isLoggedIn
-              ? <FormattedMessage id='join_class.join' defaultMessage='Join class' />
-              : <FormattedMessage id='join_class.register_join' defaultMessage='Sign up and join' />}
+              ? <FormattedMessage id='join_class.join' />
+              : <FormattedMessage id='join_class.register_join' />}
           </Button>
           {!isLoggedIn && (
-            <Button size='large' block
-onClick={() => {
-              const join = slug || manualCode || codeFromQuery
-              navigate(`${LOGIN_PAGE_ROUTE}?join=${encodeURIComponent(join)}`)
-            }}
+            <Button
+              size='large'
+              block
+              onClick={() => {
+                const join = slug || manualCode || codeFromQuery
+                navigate(`${LOGIN_PAGE_ROUTE}?join=${encodeURIComponent(join)}`)
+              }}
             >
-              <FormattedMessage id='join_class.login_join' defaultMessage='Log in and join' />
+              <FormattedMessage id='join_class.login_join' />
             </Button>
           )}
         </Space>

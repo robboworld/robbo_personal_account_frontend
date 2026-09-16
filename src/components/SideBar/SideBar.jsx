@@ -29,17 +29,14 @@ import {
   clearLmsIdentityLink,
   buildPostLogoutUrl,
   isOidcSsoEnabled,
-  redirectToOidcLogout,
+  redirectToOidcLogoutLK,
   useAuthRole,
 } from '@/helpers'
 import { broadcastAuthLogout } from '@/helpers/authEcosystemSync'
-import {
-  LANDING_PAGE_ROUTE,
-  LOGIN_PAGE_ROUTE,
-} from '@/constants'
+import { getScratchEditorUrl } from '@/utils/scratchEditor'
+import { LOGIN_PAGE_ROUTE } from '@/constants'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
-import { getLoginStreak } from '@/reducers/login'
 import {
   SidebarMenu,
   SidebarShell,
@@ -66,7 +63,6 @@ export default ({
   const navigate = useNavigate()
   const intl = useIntl()
   const Role = useAuthRole()
-  const loginStreak = useSelector(({ login }) => getLoginStreak(login))
   const isDrawer = variant === 'drawer'
   const menuCollapsed = isDrawer ? false : collapsed
 
@@ -104,8 +100,8 @@ export default ({
   )
 
   const menuItems = useMemo(
-    () => mapSidebarMenuItems(SideBarData, menuCollapsed, loginStreak),
-    [SideBarData, menuCollapsed, loginStreak],
+    () => mapSidebarMenuItems(SideBarData, menuCollapsed),
+    [SideBarData, menuCollapsed],
   )
 
   const [singOutMutation] = useMutation(authMutationsGQL.SING_OUT)
@@ -122,7 +118,7 @@ export default ({
     if (isOidcSsoEnabled()) {
       clearLocalSession()
       broadcastAuthLogout()
-      redirectToOidcLogout()
+      redirectToOidcLogoutLK()
       return
     }
 
@@ -151,6 +147,13 @@ export default ({
         onNavigate()
       }
       await openLms()
+      return
+    }
+    if (entry.external === 'scratch') {
+      if (onNavigate) {
+        onNavigate()
+      }
+      window.location.assign(getScratchEditorUrl())
       return
     }
     navigate(entry.pathname, { state: { selectedNavBarKey: key } })

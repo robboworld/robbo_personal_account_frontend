@@ -14,6 +14,11 @@ app.use(express.static(path.join(__dirname, 'dist')))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/static', express.static(path.join(__dirname, 'static')))
 
+// /scratch without trailing slash hits the protected SPA hub; editor lives at /scratch/.
+app.get('/scratch', function (req, res) {
+  res.redirect(301, '/scratch/')
+})
+
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })

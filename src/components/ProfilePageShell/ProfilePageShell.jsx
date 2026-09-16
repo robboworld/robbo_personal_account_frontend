@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { PropTypes } from 'prop-types'
-import { Alert, Button, Skeleton, message } from 'antd'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { Alert, Skeleton } from 'antd'
+import { FormattedMessage } from 'react-intl'
 import { motion } from 'framer-motion'
-import { useDispatch, useSelector } from 'react-redux'
-import styled from 'styled-components'
 
 import {
   MetaChip,
@@ -19,18 +17,7 @@ import {
   staggerItem,
 } from '@/components/AccountShell'
 import UserAvatar from '@/components/UserAvatar/UserAvatar'
-import LoginStreakBadge from '@/components/LoginStreakBadge/LoginStreakBadge'
 import UserBanPanel from '@/components/UserBanPanel'
-import { setLoginStreak } from '@/actions/auth'
-import { authAPI } from '@/api'
-import { getLoginStreak } from '@/reducers/login'
-
-const SubtitleRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem;
-`
 
 const ProfilePageBody = ({
   profile,
@@ -39,9 +26,6 @@ const ProfilePageBody = ({
   accessUpdate,
   peekUserId,
   peekUserRole,
-  streak,
-  onIncrementStreak,
-  incrementBusy,
   children,
 }) => (
   <React.Fragment>
@@ -55,29 +39,11 @@ const ProfilePageBody = ({
         <ProfileTitle>
           <FormattedMessage id='profile.title' />
         </ProfileTitle>
-        <SubtitleRow>
-          <ProfileSubtitle>
-            {profile?.fullName || profile?.nickname || profile?.email || (
-              <FormattedMessage id='profile.loading' />
-            )}
-          </ProfileSubtitle>
-          {profile ? (
-            <LoginStreakBadge
-              current={streak?.current}
-              longest={streak?.longest}
-            />
-          ) : null}
-          {profile && !accessUpdate && !peekUserId && onIncrementStreak ? (
-            <Button
-              size='small'
-              type='dashed'
-              loading={incrementBusy}
-              onClick={onIncrementStreak}
-            >
-              <FormattedMessage id='streak.increment_test' />
-            </Button>
-          ) : null}
-        </SubtitleRow>
+        <ProfileSubtitle>
+          {profile?.fullName || profile?.nickname || profile?.email || (
+            <FormattedMessage id='profile.loading' />
+          )}
+        </ProfileSubtitle>
         {profile && accessUpdate && (
           <ProfileMeta>
             <MetaChip>
@@ -99,8 +65,7 @@ const ProfilePageBody = ({
     )}
 
     <ProfileFormCard variants={staggerItem}>
-      <Skeleton active loading={loading}
-paragraph={{ rows: 8 }}>
+      <Skeleton active loading={loading} paragraph={{ rows: 8 }}>
         {children}
         {peekUserId ? (
           <UserBanPanel lmsUserId={peekUserId} peekUserRole={peekUserRole} />
@@ -120,73 +85,8 @@ const ProfilePageShell = ({
   embedded = false,
   children,
 }) => {
-  const intl = useIntl()
-  const dispatch = useDispatch()
-  const ownStreak = useSelector(({ login }) => getLoginStreak(login))
-  const [peekStreak, setPeekStreak] = useState({ current: 0, longest: 0 })
-  const [incrementBusy, setIncrementBusy] = useState(false)
-
-  useEffect(() => {
-    let cancelled = false
-    if (peekUserId) {
-      authAPI.getLoginStreak(peekUserId)
-        .then(res => {
-          if (cancelled) {
-            return
-          }
-          const data = res?.data || {}
-          setPeekStreak({
-            current: Number(data.current) || 0,
-            longest: Number(data.longest) || 0,
-          })
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setPeekStreak({ current: 0, longest: 0 })
-          }
-        })
-      return () => {
-        cancelled = true
-      }
-    }
-    authAPI.getLoginStreak()
-      .then(res => {
-        if (cancelled) {
-          return
-        }
-        const data = res?.data || {}
-        dispatch(setLoginStreak({
-          current: Number(data.current) || 0,
-          longest: Number(data.longest) || 0,
-        }))
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
-    }
-  }, [peekUserId, dispatch])
-
-  const streak = peekUserId ? peekStreak : ownStreak
-
-  const onIncrementStreak = async () => {
-    setIncrementBusy(true)
-    try {
-      const res = await authAPI.incrementLoginStreak()
-      const data = res?.data || {}
-      dispatch(setLoginStreak({
-        current: Number(data.current) || 0,
-        longest: Number(data.longest) || 0,
-      }))
-    } catch (e) {
-      message.error(e?.message || intl.formatMessage({ id: 'streak.increment_error' }))
-    } finally {
-      setIncrementBusy(false)
-    }
-  }
-
   const body = (
-    <motion.div variants={staggerContainer} initial='hidden'
-animate='show'>
+    <motion.div variants={staggerContainer} initial='hidden' animate='show'>
       <ProfilePageBody
         profile={profile}
         loading={loading}
@@ -194,9 +94,6 @@ animate='show'>
         accessUpdate={accessUpdate}
         peekUserId={peekUserId}
         peekUserRole={peekUserRole}
-        streak={streak}
-        onIncrementStreak={onIncrementStreak}
-        incrementBusy={incrementBusy}
       >
         {children}
       </ProfilePageBody>

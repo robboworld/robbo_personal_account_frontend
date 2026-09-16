@@ -33,7 +33,6 @@ import {
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
   USERS_ROUTE,
-  SCRATCH_HUB_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
   MY_LICENSES_ROUTE,
   MY_SESSIONS_ROUTE,
@@ -63,7 +62,8 @@ export const ToolNavItems = [
   {
     key: 'scratch',
     label: <FormattedMessage id='sidebar_data.scratch_ru' />,
-    pathname: SCRATCH_HUB_ROUTE,
+    pathname: '#scratch',
+    external: 'scratch',
     icon: <CodeOutlined />,
     iconAccent: 'green',
   },
@@ -169,7 +169,7 @@ export const SidebarDataStudent = [
   },
   {
     key: 'my_classes',
-    label: <FormattedMessage id='sidebar_data.my_classes' defaultMessage='My classes' />,
+    label: <FormattedMessage id='sidebar_data.my_classes' />,
     pathname: STUDENT_CLASSES_ROUTE,
     icon: <GroupOutlined />,
   },
