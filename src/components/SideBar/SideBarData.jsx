@@ -306,7 +306,7 @@ export const SidebarDataTeacher = [
   },
   {
     key: 'teacher_classes',
-    label: <FormattedMessage id='sidebar_data.teacher_classes' defaultMessage='Classes' />,
+    label: <FormattedMessage id='sidebar_data.teacher_classes' />,
     pathname: TEACHER_CLASSES_ROUTE,
     icon: <GroupOutlined />,
   },
