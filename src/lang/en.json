@@ -883,5 +883,8 @@
     "explore.category.games": "Games",
     "explore.category.music": "Music",
     "project_page.preview_updated": "Project preview updated",
-    "teacher_class.name_placeholder": "Grade 10A"
+    "teacher_class.name_placeholder": "Grade 10A",
+    "project_page.save_ok": "Changes saved.",
+    "project_page.save_error": "Could not save the changes.",
+    "project_page.opening_editor": "Opening the editor…"
 }

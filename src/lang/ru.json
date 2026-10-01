@@ -883,5 +883,8 @@
     "explore.category.games": "Игры",
     "explore.category.music": "Музыка",
     "project_page.preview_updated": "Превью проекта обновлено",
-    "teacher_class.name_placeholder": "10А"
+    "teacher_class.name_placeholder": "10А",
+    "project_page.save_ok": "Изменения сохранены.",
+    "project_page.save_error": "Не удалось сохранить изменения.",
+    "project_page.opening_editor": "Открываем редактор…"
 }

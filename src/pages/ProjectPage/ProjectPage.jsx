@@ -64,7 +64,6 @@ import { getProjectPageState } from '@/reducers/projectPage'
 import {
     getProjectPageById,
     clearProjectPageState,
-    updateProjectPage,
 } from '@/actions'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
@@ -285,6 +284,9 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     const [uploadBusy, setUploadBusy] = useState(false)
     const [previewBusy, setPreviewBusy] = useState(false)
     const [deleteBusy, setDeleteBusy] = useState(false)
+    const [saveBusy, setSaveBusy] = useState(false)
+    const [publishBusy, setPublishBusy] = useState(false)
+    const [openingEditor, setOpeningEditor] = useState(false)
     const [playerReloadKey, setPlayerReloadKey] = useState(0)
     const [isPlayerRunning, setIsPlayerRunning] = useState(false)
     const [moderateOpen, setModerateOpen] = useState(false)
@@ -303,7 +305,6 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
-        updateProjectPage,
     }, [])
 
     const [form] = Form.useForm()
@@ -377,6 +378,9 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     ])
 
     const seeInsideHandler = () => {
+        // Same-tab navigation to the editor: show progress until the page unloads.
+        setOpeningEditor(true)
+        message.loading(intl.formatMessage({ id: 'project_page.opening_editor' }), 0)
         openScratchEditor(projectPageId)
     }
 
@@ -394,9 +398,32 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         }
     }
 
+    const handleSave = async ({ title, instruction, notes, tags }) => {
+        // No token check: SSO sessions have none (the BFF cookie authenticates), and the
+        // old `!token` guards made these buttons silently do nothing there.
+        if (!projectPageId || saveBusy) return
+        setSaveBusy(true)
+        try {
+            await projectPageAPI.updateProjectPage(token, buildProjectPayload({
+                title,
+                instruction,
+                notes,
+                tags: Array.isArray(tags) ? tags : [],
+            }))
+            message.success(intl.formatMessage({ id: 'project_page.save_ok' }))
+            actions.getProjectPageById(token, projectPageId)
+        } catch (e) {
+            message.error(e?.response?.data?.error || e?.message ||
+                intl.formatMessage({ id: 'project_page.save_error' }))
+        } finally {
+            setSaveBusy(false)
+        }
+    }
+
     const handlePublishToggle = async () => {
-        if (!token || !projectPageId) return
+        if (!projectPageId || publishBusy) return
         const nextShared = !projectPage.isShared
+        setPublishBusy(true)
         try {
             await projectPageAPI.updateProjectPage(token, buildProjectPayload({
                 isShared: nextShared,
@@ -413,11 +440,13 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             }
             message.error(e?.response?.data?.error || e?.message ||
                 intl.formatMessage({ id: 'project_page.publish_error' }))
+        } finally {
+            setPublishBusy(false)
         }
     }
 
     const handleDownloadSb3 = async () => {
-        if (!token || !projectPageId) return
+        if (!projectPageId) return
         setDownloadBusy(true)
         try {
             await downloadProjectSb3(token, projectPageId, projectPage?.title)
@@ -631,14 +660,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                                 className='project-page-form'
                                 layout='vertical'
                                 form={form}
-                                onFinish={({ title, instruction, notes, tags }) => {
-                                    actions.updateProjectPage(token, buildProjectPayload({
-                                        title,
-                                        instruction,
-                                        notes,
-                                        tags: Array.isArray(tags) ? tags : [],
-                                    }))
-                                }}
+                                onFinish={handleSave}
                             >
                                 <Form.Item
                                     name='title'
@@ -758,7 +780,8 @@ readOnly={!isOwner} />
                                     </MetaLabel>
                                     <ActionsGroup>
                                         {canEditTags && (
-                                            <PrimaryAction type='primary' htmlType='submit'>
+                                            <PrimaryAction type='primary' htmlType='submit'
+loading={saveBusy}>
                                                 <FormattedMessage id='project_page.save' />
                                             </PrimaryAction>
                                         )}
@@ -766,6 +789,7 @@ readOnly={!isOwner} />
                                             <ActionButton
                                                 type={projectPage.isShared ? 'default' : 'primary'}
                                                 htmlType='button'
+                                                loading={publishBusy}
                                                 onClick={handlePublishToggle}
                                             >
                                                 <FormattedMessage
@@ -814,7 +838,11 @@ readOnly={!isOwner} />
                                             </React.Fragment>
                                         )}
                                         {isOwner && (
-                                            <ScratchAction type='primary' onClick={seeInsideHandler}>
+                                            <ScratchAction
+                                                type='primary'
+                                                loading={openingEditor}
+                                                onClick={seeInsideHandler}
+                                            >
                                                 <FormattedMessage id='project_page.open_in_scratch' />
                                             </ScratchAction>
                                         )}

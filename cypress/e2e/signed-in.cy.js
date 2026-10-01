@@ -57,4 +57,54 @@ describe('signed-in pages (stubbed session)', () => {
     cy.contains('Выдать тариф') // a SuperAdmin item: the menu has rendered
     cy.get('body').should('not.contain', 'Клиенты')
   })
+
+  describe('project page actions give feedback', () => {
+    const page = {
+      projectPageId: 'p1',
+      projectId: 'pr1',
+      title: 'Robot dance',
+      instruction: '',
+      notes: '',
+      isShared: false,
+      isOwner: true,
+      authorUserId: STUDENT.id,
+      tags: [],
+      preview: '',
+      lastModified: '2026-09-01T00:00:00Z',
+    }
+
+    beforeEach(() => {
+      signInAs()
+      cy.intercept('GET', '**/projectPage/p1', { projectPage: page, playToken: null }).as('page')
+    })
+
+    it('save shows a spinner and a confirmation', () => {
+      cy.intercept('PUT', '**/projectPage/', req => {
+        req.reply({ delay: 400, body: {} })
+      }).as('save')
+      cy.visit('/projects/p1')
+      cy.contains('button', 'Сохранить').click()
+      cy.contains('button', 'Сохранить').should('have.class', 'ant-btn-loading')
+      cy.wait('@save')
+      cy.contains('Изменения сохранены.')
+    })
+
+    it('save reports a failure', () => {
+      cy.intercept('PUT', '**/projectPage/', { statusCode: 500, body: { error: 'storage unavailable' } })
+      cy.visit('/projects/p1')
+      cy.contains('button', 'Сохранить').click()
+      cy.contains('storage unavailable')
+    })
+
+    it('publish shows a spinner and the result', () => {
+      cy.intercept('PUT', '**/projectPage/', req => {
+        req.reply({ delay: 400, body: {} })
+      }).as('publish')
+      cy.visit('/projects/p1')
+      cy.contains('button', 'Опубликовать проект').click()
+      cy.contains('button', 'Опубликовать проект').should('have.class', 'ant-btn-loading')
+      cy.wait('@publish').its('request.body.projectPage.isShared').should('eq', true)
+      cy.contains('Проект опубликован.')
+    })
+  })
 })
