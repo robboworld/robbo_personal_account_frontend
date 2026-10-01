@@ -1,6 +1,6 @@
 import React from "react"
 import { Space, List } from "antd"
-import { useQuery } from "@apollo/client"
+import { useQuery } from '@apollo/client/react'
 import { PropTypes } from 'prop-types'
 
 import ListItem from "@/components/ListItem"

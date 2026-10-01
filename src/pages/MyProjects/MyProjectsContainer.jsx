@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { notification } from 'antd'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { useSearchParams } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 

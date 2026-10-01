@@ -1,7 +1,8 @@
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { Alert, Button, Form, Input, notification } from 'antd'
 import { PropTypes } from 'prop-types'
-import { useMutation } from '@apollo/client'
+import { CombinedGraphQLErrors } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useIntl, FormattedMessage } from 'react-intl'
@@ -56,7 +57,8 @@ const SignInForm = memo(({ handleSubmit }) => {
       navigate(HOME_PAGE_ROUTE)
     },
     onError: error => {
-      const graphQLError = error?.graphQLErrors?.[0]
+      // Apollo 4: GraphQL errors arrive as CombinedGraphQLErrors (.errors), not .graphQLErrors.
+      const graphQLError = CombinedGraphQLErrors.is(error) ? error.errors[0] : undefined
       const code = graphQLError?.extensions?.code
       if (code === 'SESSION_LIMIT_REACHED' || String(error?.message || '').includes('SESSION_LIMIT_REACHED')) {
         setSessionLimitReached(true)

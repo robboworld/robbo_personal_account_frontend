@@ -4,7 +4,7 @@ import { CheckOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 
 import {
   HeroInner,

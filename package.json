@@ -30,7 +30,7 @@
     }
   },
   "dependencies": {
-    "@apollo/client": "~3.13.9",
+    "@apollo/client": "^4",
     "@cospired/i18n-iso-languages": "4.2.0",
     "@emotion/styled": "^11.10.4",
     "antd": "^5.29.3",
@@ -60,6 +60,7 @@
     "redux": "^4.0.4",
     "redux-actions": "^2.6.5",
     "redux-saga": "^1.5.1",
+    "rxjs": "^7",
     "styled-components": "^5.3.11",
     "yup": "^0.27.0"
   },

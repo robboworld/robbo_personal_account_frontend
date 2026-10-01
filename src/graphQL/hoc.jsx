@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 
 /**
  * Drop-in for the graphql() HOC that Apollo 4 removed, for the legacy-section containers.

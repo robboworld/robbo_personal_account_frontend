@@ -2,7 +2,7 @@ import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { ApolloProvider } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client/react'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 
