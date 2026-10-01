@@ -29,6 +29,7 @@ import { useAuthRole } from '@/helpers'
 import { parseJwt } from '@/helpers/jwtParser'
 import { useOidcSession } from '@/helpers/OidcSessionContext'
 import { isOidcSsoEnabled } from '@/helpers/oidcSession'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 import './UserBanPanel.css'
 
@@ -52,7 +53,7 @@ const useSelfUserId = () => {
   if (isOidcSsoEnabled() && oidcSession?.authenticated) {
     return oidcSession?.edx_user_id || oidcSession?.sub || ''
   }
-  const token = localStorage.getItem('token')
+  const token = getAccessToken()
   if (!token) return ''
   try {
     return parseJwt(token).Id || ''

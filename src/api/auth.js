@@ -1,5 +1,7 @@
 import instance from './instance'
 
+import { getAccessToken } from '@/helpers/accessTokenMemory'
+
 export const authAPI = {
     signUp(user) {
         const {
@@ -110,6 +112,6 @@ export const authAPI = {
 }
 
 function authHeaders() {
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     return token ? { Authorization: `Bearer ${token}` } : {}
 }

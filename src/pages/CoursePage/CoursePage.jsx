@@ -22,13 +22,14 @@ import {
     PageContent,
     PageToolbar,
 } from '@/components/AccountShell'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const { Title } = Typography
 
 export default ({ userRole }) => {
     const [open, setOpen] = useState(false)
     const intl = useIntl()
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     const { coursePageId } = useParams()
     const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 

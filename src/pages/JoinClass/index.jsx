@@ -5,8 +5,9 @@ import { FormattedMessage, useIntl } from 'react-intl'
 
 import * as api from '@/api/teacherClass'
 import { LOGIN_PAGE_ROUTE, STUDENT_CLASSES_ROUTE, HOME_PAGE_ROUTE } from '@/constants'
-import { lmsRegisterUrl } from '@/helpers/oidcSession'
+import { fetchOidcStatus, isOidcSsoEnabled, lmsRegisterUrl } from '@/helpers/oidcSession'
 import { parseJwt } from '@/helpers'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const { Title, Paragraph, Text } = Typography
 
@@ -22,9 +23,27 @@ const JoinClassPage = () => {
   const [joining, setJoining] = useState(false)
   const [error, setError] = useState(null)
 
-  const token = localStorage.getItem('token')
+  // Public route (no OIDC session provider): ask the BFF whether an SSO session exists,
+  // otherwise SSO users were treated as guests and sent to LMS registration.
+  const [ssoAuthenticated, setSsoAuthenticated] = useState(false)
+  useEffect(() => {
+    if (!isOidcSsoEnabled()) {
+      return undefined
+    }
+    let cancelled = false
+    fetchOidcStatus()
+      .then(status => {
+        if (!cancelled) setSsoAuthenticated(!!status?.authenticated)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const token = getAccessToken()
   const claims = token ? parseJwt(token) : null
-  const isLoggedIn = !!(claims?.Id || claims?.id || claims?.sub)
+  const isLoggedIn = ssoAuthenticated || !!(claims?.Id || claims?.id || claims?.sub)
 
   const key = slug || manualCode || codeFromQuery
 
@@ -149,8 +168,18 @@ const JoinClassPage = () => {
           </Paragraph>
         )}
         <Paragraph type='secondary' style={{ fontSize: 12 }}>{preview.edxCourseId}</Paragraph>
-        <Space direction='vertical' style={{ width: '100%', marginTop: 24 }} size='middle'>
-          <Button type='primary' size='large' block loading={joining} onClick={doJoin}>
+        <Space
+          direction='vertical'
+          style={{ width: '100%', marginTop: 24 }}
+          size='middle'
+        >
+          <Button
+            type='primary'
+            size='large'
+            block
+            loading={joining}
+            onClick={doJoin}
+          >
             {isLoggedIn
               ? <FormattedMessage id='join_class.join' />
               : <FormattedMessage id='join_class.register_join' />}

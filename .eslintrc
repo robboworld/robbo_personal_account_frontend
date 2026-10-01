@@ -34,6 +34,13 @@
       }
     ],
     "no-unused-vars": "warn",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "CallExpression[callee.object.name='localStorage'][arguments.0.value='token']",
+        "message": "The access token lives in memory: use getAccessToken / setAccessToken / clearAccessToken from @/helpers/accessTokenMemory."
+      }
+    ],
     "operator-linebreak": "warn",
     "react-hooks/rules-of-hooks": "warn",
     // "react-hooks/exhaustive-deps": "warn",
@@ -98,6 +105,14 @@
       ],
       "rules": {
         "react/jsx-filename-extension": "off"
+      }
+    },
+    {
+      "files": [
+        "src/helpers/accessTokenMemory.js"
+      ],
+      "rules": {
+        "no-restricted-syntax": "off"
       }
     }
   ]

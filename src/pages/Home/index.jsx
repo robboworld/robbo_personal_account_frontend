@@ -60,6 +60,7 @@ import {
   STUDENT_CLASSES_ROUTE,
   SCRATCH_HUB_ROUTE,
 } from '@/constants'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const ACTION_ICONS = {
   profile: UserOutlined,
@@ -197,7 +198,7 @@ const Home = () => {
   const [searchParams] = useSearchParams()
   const intl = useIntl()
   const role = useAuthRole()
-  const token = localStorage.getItem('token')
+  const token = getAccessToken()
 
   useEffect(() => {
     const join = searchParams.get('join')

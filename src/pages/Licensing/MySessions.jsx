@@ -17,6 +17,7 @@ import {
 import { authAPI } from '@/api/auth'
 import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
 import { LANDING_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
+import { clearAccessToken } from '@/helpers/accessTokenMemory'
 
 const { Text } = Typography
 
@@ -33,7 +34,7 @@ const formatWhen = (iso, locale) => {
 }
 
 const forceSessionExpiredLogout = () => {
-  localStorage.removeItem('token')
+  clearAccessToken()
   if (isOidcSsoEnabled()) {
     redirectToOidcLogout(`${LANDING_PAGE_ROUTE}?session_expired=1`)
     return

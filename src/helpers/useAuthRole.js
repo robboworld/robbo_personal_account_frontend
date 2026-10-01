@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { parseJwt } from './jwtParser'
 import { useOidcSession } from './OidcSessionContext'
 import { isOidcSsoEnabled } from './oidcSession'
+import { getAccessToken } from './accessTokenMemory'
 
 /** Role for UI: OIDC BFF session when SSO on, else legacy JWT Role from localStorage. */
 export function useAuthRole() {
@@ -13,7 +14,7 @@ export function useAuthRole() {
       return oidcSession?.role ?? null
     }
 
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     if (!token) {
       return null
     }

@@ -46,6 +46,7 @@ import {
   SidebarLogoutBtn,
   SidebarBrand,
 } from '@/components/AccountShell'
+import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
 
 /** Build nav: primary → tools / tariffs / rest, with dividers. */
 const withSharedExploreItems = roleItems => buildSidebarItems(roleItems)
@@ -66,7 +67,7 @@ export default ({
   const menuCollapsed = isDrawer ? false : collapsed
 
   useEffect(() => {
-    dispatch(checkAuthRequest(localStorage.getItem('token') || null))
+    dispatch(checkAuthRequest(getAccessToken() || null))
   }, [dispatch])
 
   const roleSideBarData = useMemo(() => {
@@ -108,7 +109,7 @@ export default ({
   const clearLocalSession = () => {
     dispatch(signOutSuccess())
     graphQLClient.resetStore()
-    localStorage.removeItem('token')
+    clearAccessToken()
     clearLmsIdentityLink()
   }
 

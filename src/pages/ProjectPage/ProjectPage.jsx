@@ -68,6 +68,7 @@ import {
 import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { ProjectTag, ProjectTagList } from '@/components/ProjectCatalog/styles'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 
 const { TextArea } = Input
@@ -944,7 +945,7 @@ style={{ width: '100%' }}>
 }
 
 function readStoredAccessToken() {
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     if (!token || token === 'null') {
         return null
     }

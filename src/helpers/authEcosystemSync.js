@@ -30,7 +30,7 @@ export function subscribeAuthLogout (callback) {
 export function clearLocalAuthArtifacts () {
   clearAccessToken()
   try {
-    localStorage.removeItem('token')
+    clearAccessToken()
   } catch {
     // ignore
   }

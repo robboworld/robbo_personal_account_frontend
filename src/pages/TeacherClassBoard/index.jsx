@@ -14,6 +14,7 @@ import * as api from '@/api/teacherClass'
 import { projectPageAPI } from '@/api/projectPage'
 import { TEACHER_CLASSES_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const { Text, Paragraph } = Typography
 const { TextArea } = Input
@@ -100,7 +101,7 @@ const TeacherClassBoardPage = () => {
   useEffect(() => { refreshBoard() }, [refreshBoard])
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     if (!token) return
     projectPageAPI.getAllProjectPages(token).then(res => {
       const pages = res?.data?.projectPages || []

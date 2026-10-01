@@ -79,6 +79,7 @@ import robboGuestTokens from '@/theme/robboGuestTokens'
 import { getScratchEditorUrl } from '@/utils/scratchEditor'
 import { EXPLORE_ROUTE, MY_LICENSES_ROUTE, REGISTER_PAGE_ROUTE, LK_SSO_WITH_LMS_ENABLED } from '@/constants'
 import { lmsRegisterUrl } from '@/helpers/oidcSession'
+import { clearAccessToken } from '@/helpers/accessTokenMemory'
 
 const LandingGlobal = createGlobalStyle`
   html.landing-page-active {
@@ -245,7 +246,7 @@ const Landing = () => {
     }
     clearLocalAuthArtifacts()
     broadcastAuthLogout()
-    localStorage.removeItem('token')
+    clearAccessToken()
     params.delete('logged_out')
     params.delete('session_expired')
     const next = params.toString()

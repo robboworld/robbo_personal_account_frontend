@@ -11,7 +11,7 @@ import {
 import { authMutationsGraphQL, graphQLClient } from '@/graphQL'
 import { formatMessageId } from '@/helpers/intl'
 import { redirectToOidcStart, fetchOidcStatus, hasLmsPasswordFallback, isOidcSsoEnabled } from '@/helpers/oidcSession'
-import { setAccessToken } from '@/helpers/accessTokenMemory'
+import { clearAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 
 function* signInSaga(action) {
     try {
@@ -93,7 +93,7 @@ function* signOutSaga(action) {
         graphQLClient.resetStore()
         console.log(response)
         yield put(signOutSuccess())
-        localStorage.removeItem('token')
+        clearAccessToken()
     } catch (e) {
         console.log(e.response)
         yield put(signOutFailed(e.message))

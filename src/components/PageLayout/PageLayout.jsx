@@ -18,6 +18,7 @@ import {
 import { parseJwt, getSelectedNavBarKeyFromPath, useIsLkMobile } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
 import robboGuestTokens from '@/theme/robboGuestTokens'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const { Sider, Content } = Layout
 const SIDEBAR_COLLAPSED_STORAGE_KEY = 'lk_sidebar_collapsed'
@@ -56,7 +57,7 @@ const PageLayout = ({ children }) => {
     }
     let role
     try {
-      const token = localStorage.getItem('token')
+      const token = getAccessToken()
       if (token) {
         role = parseJwt(token).Role
       }

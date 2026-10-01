@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import { projectPageAPI } from '@/api/projectPage'
 import config from '@/config'
 import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 import './ScratchPlayerEmbed.css'
 
@@ -216,7 +217,7 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
         }
 
         let cancelled = false
-        const token = localStorage.getItem('token')
+        const token = getAccessToken()
         if (!token || !projectPageId) {
             setError(intl.formatMessage({ id: 'project_page.player_error' }))
             setLoading(false)

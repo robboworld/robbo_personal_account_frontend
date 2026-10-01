@@ -19,6 +19,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const { TextArea } = Input
 
@@ -28,7 +29,7 @@ const SendNotification = () => {
   const [announceForm] = Form.useForm()
   const [loadingP, setLoadingP] = useState(false)
   const [loadingA, setLoadingA] = useState(false)
-  const token = localStorage.getItem('token')
+  const token = getAccessToken()
   const payload = token ? parseJwt(token) : {}
   const roleNum = Number(payload.Role)
   const isSuper = roleNum === SUPER_ADMIN
