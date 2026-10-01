@@ -19,6 +19,13 @@ import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
 import { LANDING_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { clearAccessToken } from '@/helpers/accessTokenMemory'
 
+// Session auth modes from the backend (licensing AuthMode*) -> readable labels.
+const AUTH_MODE_LABELS = {
+  oidc_bff: 'sessions.mode.oidc_bff',
+  lms_db: 'sessions.mode.lms_db',
+  legacy_jwt: 'sessions.mode.legacy_jwt',
+}
+
 const { Text } = Typography
 
 const formatWhen = (iso, locale) => {
@@ -127,7 +134,7 @@ animate='show'>
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                         <Text strong>
-                          {session.authMode || intl.formatMessage({ id: 'sessions.unknown_mode' })}
+                          {intl.formatMessage({ id: AUTH_MODE_LABELS[session.authMode] || 'sessions.unknown_mode' })}
                         </Text>
                         {session.isCurrent ? (
                           <Tag color='green'>{intl.formatMessage({ id: 'sessions.current' })}</Tag>

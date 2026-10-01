@@ -886,5 +886,8 @@
     "teacher_class.name_placeholder": "10А",
     "project_page.save_ok": "Изменения сохранены.",
     "project_page.save_error": "Не удалось сохранить изменения.",
-    "project_page.opening_editor": "Открываем редактор…"
+    "project_page.opening_editor": "Открываем редактор…",
+    "sessions.mode.oidc_bff": "Вход через LMS",
+    "sessions.mode.lms_db": "Вход по паролю LMS",
+    "sessions.mode.legacy_jwt": "Старый вход"
 }

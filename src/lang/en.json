@@ -886,5 +886,8 @@
     "teacher_class.name_placeholder": "Grade 10A",
     "project_page.save_ok": "Changes saved.",
     "project_page.save_error": "Could not save the changes.",
-    "project_page.opening_editor": "Opening the editor…"
+    "project_page.opening_editor": "Opening the editor…",
+    "sessions.mode.oidc_bff": "Signed in via LMS",
+    "sessions.mode.lms_db": "Signed in with LMS password",
+    "sessions.mode.legacy_jwt": "Legacy sign-in"
 }

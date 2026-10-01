@@ -51,6 +51,22 @@ describe('signed-in pages (stubbed session)', () => {
     cy.get('.ant-menu-item-selected').should('contain', 'Мои тарифы')
   })
 
+  it('sessions show readable sign-in methods', () => {
+    signInAs()
+    cy.intercept('GET', '**/auth/sessions', {
+      sessions: [
+        { id: 's1', authMode: 'oidc_bff', userAgent: 'Firefox', isCurrent: true },
+        { id: 's2', authMode: 'lms_db', userAgent: 'Chrome' },
+        { id: 's3', authMode: 'something_new', userAgent: 'Safari' },
+      ],
+    })
+    cy.visit('/sessions')
+    cy.contains('Вход через LMS')
+    cy.contains('Вход по паролю LMS')
+    cy.contains('Сессия')
+    cy.get('body').should('not.contain', 'oidc_bff').and('not.contain', 'lms_db')
+  })
+
   it('sidebar hides legacy database sections', () => {
     signInAs({ ...STUDENT, role: 5 })
     cy.visit('/profile')
