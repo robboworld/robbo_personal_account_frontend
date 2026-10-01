@@ -16,7 +16,6 @@ import { profileMutationsGraphQL } from '@/graphQL/mutation'
 function* getProfileByAccessTokenSaga({ payload }) {
     try {
         const response = yield call(profileAPI.getProfileById)
-        console.log(response)
 
         yield put(getProfileByIdSuccess(response.data.userHttp))
     } catch (e) {
@@ -29,7 +28,6 @@ function* updateProfileSaga({ payload }) {
     try {
         const { profile, role } = payload
         const response = yield call(profileMutationsGraphQL.UpdateProfile, { input: profile }, role)
-        console.log(response)
 
         yield put(updateProfileSuccess(response))
         notification.success({

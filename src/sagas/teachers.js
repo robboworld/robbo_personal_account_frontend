@@ -26,7 +26,6 @@ function* getTeachersSaga(action) {
     try {
         const { page, pageSize } = action.payload
         const response = yield call(teacherQuerysGraphQL.GetAllTeachers, page, pageSize)
-        console.log(response)
 
         yield put(getTeachersSuccess(response.data.GetAllTeachers.teachers))
     } catch (e) {
@@ -43,7 +42,6 @@ function* deleteTeacherSaga(action) {
     try {
         const { teacherId, teacherIndex } = action.payload
         const response = yield call(teacherMutationsGraphQL.DeleteTeacher, teacherId)
-        console.log(response)
 
         yield put(deleteTeacherSuccess(response.data.DeleteTeacher, teacherIndex))
         notification.success({
@@ -64,7 +62,6 @@ function* createTeacherSaga(action) {
     try {
         const { teacher } = action.payload
         const response = yield call(teacherMutationsGraphQL.CreateTeacher, { input: teacher })
-        console.log(response)
 
         yield put(createTeacherSuccess(response.data.CreateTeacher))
         notification.success({
@@ -85,7 +82,6 @@ function* setTeacherForRobboGroupSaga(action) {
     try {
         const { teacherId, robboGroupId } = action.payload
         const response = yield call(teacherMutationsGraphQL.SetTeacherForRobboGroup, teacherId, robboGroupId)
-        console.log(response)
 
         yield put(setTeacherForRobboGroupSuccess(response.data.SetTeacherForRobboGroup))
         notification.success({
@@ -106,7 +102,6 @@ function* deleteTeacherForRobboGroupSaga(action) {
     try {
         const { teacherId, robboGroupId } = action.payload
         const response = yield call(teacherMutationsGraphQL.DeleteTeacherForRobboGroup, teacherId, robboGroupId)
-        console.log(response)
 
         yield put(deleteTeacherForRobboGroupSuccess(response.data.DeleteTeacherForRobboGroup))
         notification.success({

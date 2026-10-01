@@ -39,9 +39,9 @@ export const authAPI = {
     signIn(email, password, role, kickOtherSessions = false) {
         return instance.post('auth/sign-in',
             {
-                email: email,
-                password: password,
-                role: role,
+                email,
+                password,
+                role,
                 kickOtherSessions: Boolean(kickOtherSessions),
             },
             {

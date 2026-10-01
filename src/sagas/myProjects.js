@@ -38,7 +38,6 @@ function* getAllProjectPagesSaga(action) {
     try {
         const { token } = action.payload
         const response = yield call(projectPageAPI.getAllProjectPages, token)
-        console.log(response)
 
         yield put(getAllProjectPagesSuccess(response))
     } catch (e) {
@@ -64,7 +63,6 @@ function* createProjectPageSaga(action) {
     try {
         const { token } = action.payload
         const response = yield call(projectPageAPI.createProjectPage, token)
-        console.log(response)
         yield put(createProjectPageSuccess(response))
     } catch (e) {
         yield put(createProjectPageFailed(e.message))
@@ -75,7 +73,6 @@ function* updateProjectPageSaga(action) {
     try {
         const { token, projectPage } = action.payload
         const response = yield call(projectPageAPI.updateProjectPage, token, projectPage)
-        console.log(response)
         yield put(updateProjectPageSuccess(response))
         yield put(getProjectPageById(token, projectPage.projectPageId))
     } catch (e) {
@@ -86,8 +83,7 @@ function* updateProjectPageSaga(action) {
 function* deleteProjectPageSaga(action) {
     try {
         const { token, projectPageId, projectPageIndex } = action.payload
-        const response = yield call(projectPageAPI.deleteProjectPage, token, projectPageId)
-        console.log(response)
+        yield call(projectPageAPI.deleteProjectPage, token, projectPageId)
 
         yield put(deleteProjectPageSuccess(projectPageIndex))
     } catch (e) {
@@ -98,7 +94,6 @@ function* deleteProjectPageSaga(action) {
 function* getProjectPagesByAccessTokenSaga(action) {
     try {
         const result = yield call(projectPageQueryGraphQL.GetProjectPagesByAccessToken)
-        console.log(result)
         yield put(getProjectPageByAccessTokenSuccess(result.data.GetAllProjectPagesByAccessToken.projectPages))
     } catch (e) {
         yield put(getProjectPageByAccessTokenFailed(e.message))

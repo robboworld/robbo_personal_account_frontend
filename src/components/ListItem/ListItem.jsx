@@ -31,7 +31,6 @@ const ListItem = ({
                 handleDelete(itemIndex)
             },
             onCancel() {
-                console.log('Cancel')
             },
         })
     }

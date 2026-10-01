@@ -23,7 +23,6 @@ const ChildrenTab = ({
     const [openAddChildren, setOpenAddChildren] = useState(false)
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
-    console.log(SearchStudentsResult?.SearchStudentsByEmail?.countRows)
     const loadMoreData = () => {
         SearchStudent(email)
     }
@@ -95,7 +94,7 @@ const ChildrenTab = ({
                                         label={formatUserDisplayName(userHttp)}
                                         handleClick={() => CreateStudentParentRelation({
                                             variables: {
-                                                parentId: parentId,
+                                                parentId,
                                                 childId: userHttp.id,
                                             },
                                         })}

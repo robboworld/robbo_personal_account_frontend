@@ -28,7 +28,7 @@ import {
   LOGIN_PAGE_ROUTE,
   REGISTER_PAGE_ROUTE,
 } from '@/constants'
-import { lmsRegisterUrl, openEdxLoginUrlAtBuild } from '@/helpers/oidcSession'
+import { lmsRegisterUrl } from '@/helpers/oidcSession'
 
 const AuthLayout = ({ selectedPage, onTabSelect, openEdxAuthOnly = false, children }) => {
   const navigate = useNavigate()

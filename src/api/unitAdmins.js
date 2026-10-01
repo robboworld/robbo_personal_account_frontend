@@ -54,12 +54,12 @@ export const unitAdminsAPI = {
         const { email, password, nickname, firstname, lastname, middlename } = unitAdmin
         return instance.post('users/unitAdmin',
             {
-                email: email,
-                password: password,
-                nickname: nickname,
-                firstname: firstname,
-                lastname: lastname,
-                middlename: middlename,
+                email,
+                password,
+                nickname,
+                firstname,
+                lastname,
+                middlename,
             },
             {
                 withCredentials: true,

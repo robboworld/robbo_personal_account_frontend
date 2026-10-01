@@ -174,7 +174,7 @@ export const projectPageAPI = {
     updateProjectPage(token, projectPage) {
         return instance.put('projectPage/',
             {
-                projectPage: projectPage,
+                projectPage,
             },
             {
                 headers: {

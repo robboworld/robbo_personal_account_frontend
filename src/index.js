@@ -1,6 +1,6 @@
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 
-import React, { StrictMode } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { ApolloProvider } from '@apollo/client'
 import { BrowserRouter } from 'react-router-dom'

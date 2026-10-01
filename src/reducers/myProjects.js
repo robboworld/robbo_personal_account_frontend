@@ -20,7 +20,6 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getAllProjectPagesSuccess](state, action) {
-        console.log(action)
         return { ...state, loading: false, projectPages: action.payload.response.data.projectPages }
     },
     [getAllProjectPagesFailed](state, action) {

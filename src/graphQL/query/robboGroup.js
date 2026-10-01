@@ -150,7 +150,6 @@ export const robboGroupsQuerysGraphQL = {
     },
 
     GetRobboGroupsByTeacherId(teacherId, page, pageSize) {
-        console.log(page, pageSize)
         return graphQLClient.query(
             {
                 query: robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_TEACHER_ID,

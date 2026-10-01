@@ -5,7 +5,6 @@ import {
   HomeOutlined,
   UserOutlined,
   ProjectOutlined,
-  CreditCardOutlined,
   TeamOutlined,
   NotificationOutlined,
   SafetyCertificateOutlined,

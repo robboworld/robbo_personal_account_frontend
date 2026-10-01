@@ -12,7 +12,6 @@ const AddRobboGroup = memo(({
     robboUnitId,
     CreateRobboGroup,
 }) => {
-    console.log(robboUnitId)
     return (
         <Col span={24}>
             <RobboGroupForm

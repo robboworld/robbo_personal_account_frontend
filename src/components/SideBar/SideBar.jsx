@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
   CloseOutlined,

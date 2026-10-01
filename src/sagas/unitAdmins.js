@@ -35,7 +35,6 @@ function* getUnitAdminsSaga(action) {
     try {
         const { page, pageSize } = action.payload
         const response = yield call(unitAdminQuerysGraphQL.GetAllUnitAdmins, page, pageSize)
-        console.log(response)
 
         yield put(getUnitAdminsSuccess(response.data.GetAllUnitAdmins.unitAdmins))
     } catch (e) {
@@ -49,7 +48,6 @@ function* createUnitAdminSaga(action) {
     try {
         const { unitAdmin } = action.payload
         const response = yield call(unitAdminMutationsGraphQL.CreateUnitAdmin, { input: unitAdmin })
-        console.log(response)
 
         yield put(createUnitAdminSuccess(response.data.CreateUnitAdmin))
         notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_create_success') })
@@ -64,7 +62,6 @@ function* deleteUnitAdminSaga(action) {
     try {
         const { unitAdminId, unitAdminIndex } = action.payload
         const response = yield call(unitAdminMutationsGraphQL.DeleteUnitAdmin, unitAdminId)
-        console.log(response)
 
         yield put(deleteUnitAdminSuccess(response.data.DeleteUnitAdmin, unitAdminIndex))
         notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_delete_success') })
@@ -79,7 +76,6 @@ function* searchUnitAdminsByEmailSaga(action) {
     try {
         const { token, email } = action.payload
         const response = yield call(unitAdminsAPI.searchUnitAdminsByEmail, token, email)
-        console.log(response)
 
         yield put(searchUnitAdminsByEmailSuccess(response.data))
     } catch (e) {
@@ -92,9 +88,7 @@ function* setNewUnitAdminForRobboUnitSaga(action) {
     const language = yield select(state => state.app.language)
     try {
         const { unitAdminId, robboUnitId } = action.payload
-        console.log(action)
         const response = yield call(unitAdminMutationsGraphQL.SetNewUnitAdminForRobboUnit, unitAdminId, robboUnitId)
-        console.log(response)
 
         yield put(setNewUnitAdminForRobboUnitSuccess(response.data.SetNewUnitAdminForRobboUnit))
         notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_assigned_success') })
@@ -109,7 +103,6 @@ function* getUnitAdminsByRobboUnitIdSaga(action) {
     try {
         const { token, robboUnitId } = action.payload
         const response = yield call(unitAdminsAPI.getUnitAdminsByRobboUnitId, token, robboUnitId)
-        console.log(response)
 
         yield put(getUnitAdminsByRobboUnitIdSuccess(response.data))
     } catch (e) {
@@ -122,9 +115,7 @@ function* deleteUnitAdminForRobboUnitSaga(action) {
     const language = yield select(state => state.app.language)
     try {
         const { token, unitAdminId, robboUnitId } = action.payload
-        console.log(action)
         const response = yield call(unitAdminsAPI.deleteUnitAdminForRobboUnit, token, unitAdminId, robboUnitId)
-        console.log(response)
 
         yield put(deleteUnitAdminForRobboUnitSuccess(response))
         notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_unassigned_success') })

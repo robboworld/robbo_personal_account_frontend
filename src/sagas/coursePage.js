@@ -31,7 +31,6 @@ function* createCourseAccessRelationStudentSaga({ payload }) {
     try {
         const { courseId, studentId } = payload
         const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationStudent, { input: { courseId, studentId } })
-        console.log(response)
 
         yield put(createCourseAccessRelationStudentSuccess(response.data.CreateAccessCourseRelationStudent))
         notification.success({ message: '', description: formatMessageId(language, 'notification.access_added_success') })
@@ -46,7 +45,6 @@ function* createCourseAccessRelationTeacherSaga({ payload }) {
     try {
         const { courseId, teacherId } = payload
         const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationTeacher, { input: { courseId, teacherId } })
-        console.log(response)
 
         yield put(createCourseAccessRelationTeacherSuccess(response.data.CreateAccessCourseRelationTeacher))
         notification.success({ message: '', description: formatMessageId(language, 'notification.access_added_success') })
@@ -61,7 +59,6 @@ function* createCourseAccessRelationUnitAdminSaga({ payload }) {
     try {
         const { courseId, unitAdminId } = payload
         const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationUnitAdmin, { input: { courseId, unitAdminId } })
-        console.log(response)
 
         yield put(createCourseAccessRelationUnitAdminSuccess(response.data.CreateAccessCourseRelationUnitAdmin))
         notification.success({ message: '', description: formatMessageId(language, 'notification.access_added_success') })
@@ -76,7 +73,6 @@ function* createCourseAccessRelationRobboUnitSaga({ payload }) {
     try {
         const { courseId, robboUnitId } = payload
         const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationRobboUnit, { input: { courseId, robboUnitId } })
-        console.log(response)
 
         yield put(createCourseAccessRelationRobboUnitSuccess(response.data.CreateAccessCourseRelationRobboUnit))
         notification.success({ message: '', description: formatMessageId(language, 'notification.access_added_success') })
@@ -91,7 +87,6 @@ function* createCourseAccessRelationRobboGroupSaga({ payload }) {
     try {
         const { courseId, robboGroupId } = payload
         const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationRobboGroup, { input: { courseId, robboGroupId } })
-        console.log(response)
 
         yield put(createCourseAccessRelationRobboGroupSuccess(response.data.CreateAccessCourseRelationStudent))
         notification.success({ message: '', description: formatMessageId(language, 'notification.access_added_success') })
@@ -106,7 +101,6 @@ function* deleteCourseAccessRelationStudentSaga({ payload }) {
     try {
         const { courseId, studentId } = payload
         const response = yield call(coursePageMutationsGraphQL.DeleteAccessCourseRelationStudent, { courseId, studentId })
-        console.log(response)
 
         yield put(deleteCourseAccessRelationStudentSuccess(response.data.DeleteAccessCourseRelationStudent))
         notification.success({ message: '', description: formatMessageId(language, 'notification.access_removed_success') })

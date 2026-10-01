@@ -46,7 +46,6 @@ function* getClientsSaga({ payload }) {
     try {
         const { page, pageSize } = payload
         const response = yield call(parentQuerysGraphQL.GetAllParents, page, pageSize)
-        console.log(response)
         yield put(getClientsSuccess(response.data.GetAllParents))
     } catch (e) {
         yield put(getClientsFailed(e.message))
@@ -59,7 +58,6 @@ function* getClientByIdSaga({ payload }) {
     try {
         const { id } = payload
         const response = yield call(parentQuerysGraphQL.GetParentById, { parentId: id })
-        console.log(response)
         yield put(getClientPageByIdSuccess(response.data.GetParentById))
     } catch (e) {
         yield put(getClientPageByIdFailed(e.message))
@@ -72,7 +70,6 @@ function* createParentSaga({ payload }) {
     try {
         const { parent } = payload
         const response = yield call(parentMutationsGraphQL.CreateParent, { input: parent })
-        console.log(response)
         yield put(createParentSuccess(response.data.CreateParent))
         notification.success({ message: '', description: formatMessageId(language, 'notification.parent_create_success') })
     } catch (e) {
@@ -86,7 +83,6 @@ function* deleteParentSaga({ payload }) {
     try {
         const { parentId, parentIndex } = payload
         const response = yield call(parentMutationsGraphQL.DeleteParent, { parentId })
-        console.log(response)
 
         yield put(deleteParentSuccess(response.data.DeleteParent, parentIndex))
         notification.success({ message: '', description: formatMessageId(language, 'notification.parent_delete_success') })
@@ -101,7 +97,6 @@ function* createChildrenSaga({ payload }) {
     try {
         const { child, parentId } = payload
         const response = yield call(studentMutationsGraphQL.CreateStudent, { input: { ...child, parentId } })
-        console.log(response)
 
         yield put(createChildrenSuccess(response.data, child))
         notification.success({ message: '', description: formatMessageId(language, 'notification.student_create_success') })
@@ -116,7 +111,6 @@ function* deleteChildSaga({ payload }) {
     try {
         const { childId, childIndex } = payload
         const response = yield call(studentMutationsGraphQL.DeleteStudent, { studentId: childId })
-        console.log(response)
 
         yield put(deleteChildSuccess(response.data.DeleteStudent, childIndex))
         notification.success({ message: '', description: formatMessageId(language, 'notification.student_delete_success') })
@@ -130,8 +124,7 @@ function* getChildrenByParentIdSaga({ payload }) {
     const language = yield select(state => state.app.language)
     try {
         const { parentId } = payload
-        const response = yield call(studentQuerysGraphQL.GetStudentsByParentId, { parentId: parentId })
-        console.log(response)
+        const response = yield call(studentQuerysGraphQL.GetStudentsByParentId, { parentId })
 
         yield put(getChildrenByParentIdSuccess(response.data.GetStudentsByParentId.students))
     } catch (e) {
@@ -145,7 +138,6 @@ function* searchStudentSaga({ payload }) {
     try {
         const { input } = payload
         const response = yield call(studentQuerysGraphQL.SearchStudentsByEmail, { email: input })
-        console.log(response)
 
         yield put(searchStudentSuccess(response.data.SearchStudentsByEmail.students))
     } catch (e) {
@@ -159,7 +151,6 @@ function* createStudentParentRelationSaga({ payload }) {
     try {
         const { parentId, childId } = payload
         const response = yield call(studentMutationsGraphQL.CreateStudentParentRelation, { parentId, childId })
-        console.log(response)
 
         yield put(createRelationSuccess(response.data))
         notification.success({ message: '', description: formatMessageId(language, 'notification.student_added_success') })

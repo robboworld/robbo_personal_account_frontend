@@ -16,12 +16,12 @@ export const clientsAPI = {
         const { email, password, nickname, firstname, lastname, middlename } = parent
         return instance.post('users/parent',
             {
-                email: email,
-                password: password,
-                nickname: nickname,
-                firstname: firstname,
-                lastname: lastname,
-                middlename: middlename,
+                email,
+                password,
+                nickname,
+                firstname,
+                lastname,
+                middlename,
             },
             {
                 withCredentials: true,
@@ -44,17 +44,17 @@ export const clientsAPI = {
             {
                 student: {
                     userHttp: {
-                        email: email,
-                        password: password,
-                        nickname: nickname,
-                        firstname: firstname,
-                        lastname: lastname,
-                        middlename: middlename,
+                        email,
+                        password,
+                        nickname,
+                        firstname,
+                        lastname,
+                        middlename,
                     },
                     // robboUnitId: 'null',
                     // robboGroupId: 'null',
                 },
-                parentId: parentId,
+                parentId,
 
             },
             {

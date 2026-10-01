@@ -1,5 +1,3 @@
-import { gql } from "@apollo/client"
-
 import {
     graphQLClient,
     parentQuerysGQL,
@@ -69,7 +67,7 @@ export const profileMutationsGraphQL = {
                 mutation: gqlString,
                 variables: input,
                 ...update,
-                refetchQueries: refetchQueries,
+                refetchQueries,
             },
         )
     },

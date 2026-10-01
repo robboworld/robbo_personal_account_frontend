@@ -20,7 +20,6 @@ function* signInSaga(action) {
         setAccessToken(response.data.SingIn.accessToken)
         yield put(signInSucces(response.data.SingIn))
     } catch (e) {
-        console.log(e.response)
         const errText = String(e?.response?.data?.error || e?.response?.data || '')
         if (errText.includes('legacy sign-in disabled') && !errText.includes('sign-up disabled')) {
             redirectToOidcStart('/home', 'login')
@@ -50,7 +49,6 @@ function* signUpSaga(action) {
             yield put(signUpSuccess(response))
         }
     } catch (e) {
-        console.log(e.response)
         const language = yield select(state => state.app.language)
         const errorData = e?.response?.data
         const apiError = typeof errorData === 'string'
@@ -89,13 +87,11 @@ function* signUpSaga(action) {
 
 function* signOutSaga(action) {
     try {
-        const response = yield call(authAPI.signOut)
+        yield call(authAPI.signOut)
         graphQLClient.resetStore()
-        console.log(response)
         yield put(signOutSuccess())
         clearAccessToken()
     } catch (e) {
-        console.log(e.response)
         yield put(signOutFailed(e.message))
     }
 }
@@ -104,10 +100,8 @@ function* checkAuthSaga(action) {
     try {
         const token = action.payload?.token
         const response = yield call(authAPI.checkAuth, token)
-        console.log(response)
         yield put(checkAuthSuccess(response))
     } catch (e) {
-        console.log(e.response)
         yield put(checkAuthFailed(e?.message))
     }
 }

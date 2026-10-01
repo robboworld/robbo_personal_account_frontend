@@ -23,7 +23,6 @@ function* getAllCoursePagesSaga(action) {
     try {
         const { token } = action.payload
         const response = yield call(coursePageAPI.getAllCoursePages, token)
-        console.log(response)
 
         yield put(getAllCoursePagesSuccess(response.data.results))
     } catch (e) {
@@ -36,7 +35,6 @@ function* getCoursePageByIdSaga(action) {
         const { token } = action.payload
         const { id } = action.payload
         const response = yield call(coursePageAPI.getCoursePageById, token, id)
-        console.log(response)
 
         yield put(getCoursePageByIdSuccess(response.data))
     } catch (e) {
@@ -48,7 +46,6 @@ function* getCoursePagesByUserSaga(action) {
     const language = yield select(state => state.app.language)
     try {
         const response = yield call(coursePageQuerysGraphQL.GetCoursesByUser)
-        console.log(response)
 
         yield put(getCoursePagesByUserSuccess(response.data?.GetCoursesByUser?.results))
     } catch (e) {

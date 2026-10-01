@@ -10,7 +10,6 @@ import {
   LK_LOGOUT_RETURN_TO,
 } from './oidcSession'
 import {
-  broadcastAuthLogout,
   clearLocalAuthArtifacts,
   startBffSessionWatch,
   subscribeAuthLogout,

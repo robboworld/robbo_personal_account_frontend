@@ -45,7 +45,7 @@ const RobboGroupCard = ({
                                 input: {
                                     id: GetRobboGroupById?.id,
                                     robboUnitId: GetRobboGroupById?.robboUnitId,
-                                    name: name,
+                                    name,
                                 },
                             },
                         })

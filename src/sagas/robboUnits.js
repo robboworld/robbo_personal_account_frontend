@@ -32,7 +32,6 @@ function* getAllRobboUnitsSaga({ payload }) {
     try {
         const { page, pageSize } = payload
         const response = yield call(robboUnitQuerysGraphQL.GetAllRobboUnits, "1", "10")
-        console.log(response)
 
         yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
     } catch (e) {
@@ -46,7 +45,6 @@ function* getRobboUnitsByUnitAdminIdSaga({ payload }) {
     try {
         const { page, pageSize } = payload
         const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitsByAccessToken, page, pageSize)
-        console.log(response)
 
         yield put(getRobboUnitsByUnitAdminIdSuccess(response.data.GetRobboUnitsByAccessToken))
     } catch (e) {
@@ -60,7 +58,6 @@ function* getRobboUnitByIdSaga(action) {
     try {
         const { robboUnitId } = action.payload
         const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitById, { robboUnitId })
-        console.log(response)
 
         yield put(getRobboUnitByIdSuccess(response.data))
     } catch (e) {
@@ -74,7 +71,6 @@ function* deleteRobboUnitSaga({ payload }) {
     try {
         const { robboUnitId, robboUnitIndex } = payload
         const response = yield call(robboUnitMutationsGraphQL.DeleteRobboUnit, { robboUnitId })
-        console.log(response)
 
         yield put(deleteRobboUnitSuccess(response.data.DeleteRobboUnit, robboUnitIndex))
         notification.success({ message: '', description: formatMessageId(language, 'notification.unit_delete_success') })
@@ -89,7 +85,6 @@ function* createRobboUnitSaga(action) {
     try {
         const { robboUnit } = action.payload
         const response = yield call(robboUnitMutationsGraphQL.CreateRobboUnit, { input: robboUnit })
-        console.log(response)
 
         yield put(createRobboUnitSuccess(response.data.CreateRobboUnit))
         notification.success({ message: '', description: formatMessageId(language, 'notification.robbo_unit_create_success') })
@@ -104,7 +99,6 @@ function* updateRobboUnitSaga({ payload }) {
     try {
         const { robboUnit } = payload
         const response = yield call(robboUnitMutationsGraphQL.UpdateRobboUnit, { input: robboUnit })
-        console.log(response)
 
         yield put(updateRobboUnitSuccess(response.data.UpdateRobboUnit))
         notification.success({ message: '', description: formatMessageId(language, 'notification.unit_update_success') })

@@ -1,6 +1,5 @@
 import { gql } from "@apollo/client"
 
-import { graphQLClient } from "@/graphQL"
 import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
 
 export const superAdminMutationsGQL = {
