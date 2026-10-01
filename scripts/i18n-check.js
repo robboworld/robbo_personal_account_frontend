@@ -4,6 +4,9 @@ const fs = require('fs')
 const path = require('path')
 
 const LANG_DIR = path.join(__dirname, '../src/lang')
+const SRC_DIR = path.join(__dirname, '../src')
+// Static message ids in code: id='x.y', id: 'x.y', formatMessageId(lang, 'x.y').
+const ID_PATTERN = /(?:\bid\s*[=:]\s*\{?\s*|formatMessageId\([^,]+,\s*)['"]([a-z][\w-]*(?:\.[\w-]+)+)['"]/g
 const LOCALES = ['ru', 'en', 'zh']
 
 function loadLocale(code) {
@@ -13,6 +16,25 @@ function loadLocale(code) {
 
 function realKeys(messages) {
   return Object.keys(messages).filter(k => !k.startsWith('/'))
+}
+
+function listSourceFiles(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) return listSourceFiles(full)
+    return /\.(js|jsx)$/.test(entry.name) ? [full] : []
+  })
+}
+
+function idsUsedInCode() {
+  const used = new Map()
+  listSourceFiles(SRC_DIR).forEach(file => {
+    const text = fs.readFileSync(file, 'utf8')
+    for (const match of text.matchAll(ID_PATTERN)) {
+      if (!used.has(match[1])) used.set(match[1], path.relative(SRC_DIR, file))
+    }
+  })
+  return used
 }
 
 function main() {
@@ -37,6 +59,15 @@ function main() {
       }
     })
   })
+
+  // Ids used in code but missing from every locale render the English defaultMessage
+  // (or the raw id) in the Russian UI.
+  const missingEverywhere = [...idsUsedInCode()].filter(([id]) => LOCALES.every(code => !keySets[code].has(id)))
+  if (missingEverywhere.length) {
+    failed = true
+    console.error(`\n${missingEverywhere.length} id(s) used in code are missing from all locales:`)
+    missingEverywhere.slice(0, 40).forEach(([id, file]) => console.error(`  - ${id} (${file})`))
+  }
 
   if (failed) {
     process.exit(1)
