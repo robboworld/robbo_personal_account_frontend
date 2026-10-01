@@ -338,3 +338,37 @@ export const SessionsLink = styled(Link)`
     text-decoration: underline;
   }
 `
+
+// "In development" section: readable heading with a grey badge, greyed and inert content.
+export const SoonHeader = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+
+  ${PanelSectionTitle} {
+    margin: 0;
+  }
+`
+
+export const SoonBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid ${surface.line};
+  background: rgba(0, 0, 0, 0.04);
+  color: ${surface.muted};
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+`
+
+export const SoonContent = styled.div`
+  filter: grayscale(1);
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+`

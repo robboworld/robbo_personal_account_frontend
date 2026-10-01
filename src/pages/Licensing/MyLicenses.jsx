@@ -26,6 +26,9 @@ import {
   SeatItem,
   SeatList,
   SessionsLink,
+  SoonBadge,
+  SoonContent,
+  SoonHeader,
   SplitGrid,
   StatusHint,
   StatusPills,
@@ -416,10 +419,15 @@ animate='show'>
 
         <motion.div variants={staggerItem}>
           <SplitGrid>
-            <GlassPanel>
-              <PanelSectionTitle>
-                {intl.formatMessage({ id: 'licensing.devices_title' })}
-              </PanelSectionTitle>
+            <GlassPanel aria-labelledby='licensing-devices-title'>
+              <SoonHeader>
+                <PanelSectionTitle id='licensing-devices-title'>
+                  {intl.formatMessage({ id: 'licensing.devices_title' })}
+                </PanelSectionTitle>
+                <SoonBadge>{intl.formatMessage({ id: 'common.in_development' })}</SoonBadge>
+              </SoonHeader>
+              {/* Device management is not finished: shown greyed out and inert (no mouse or keyboard). */}
+              <SoonContent inert='' aria-disabled='true'>
               {licensesLoading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
                   <Spin />
@@ -463,6 +471,7 @@ animate='show'>
                   ))}
                 </SeatList>
               )}
+              </SoonContent>
             </GlassPanel>
 
             {entitlements ? (

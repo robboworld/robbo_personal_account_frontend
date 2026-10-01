@@ -64,6 +64,15 @@ describe('signed-in pages (stubbed session)', () => {
     cy.get('body').should('not.contain', 'ava1')
   })
 
+  it('linked devices are marked as in development and inert', () => {
+    signInAs()
+    cy.visit('/licenses')
+    cy.contains('Привязанные устройства').parent().contains('В разработке')
+    cy.contains('Привязанные устройства').closest('section, div').parent()
+      .find('[inert]').should('exist')
+      .within(() => cy.contains('a', 'Мои сессии').should('exist'))
+  })
+
   it('sessions show readable sign-in methods', () => {
     signInAs()
     cy.intercept('GET', '**/auth/sessions', {

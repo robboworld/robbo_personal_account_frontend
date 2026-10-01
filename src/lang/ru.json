@@ -889,5 +889,6 @@
     "project_page.opening_editor": "Открываем редактор…",
     "sessions.mode.oidc_bff": "Вход через LMS",
     "sessions.mode.lms_db": "Вход по паролю LMS",
-    "sessions.mode.legacy_jwt": "Старый вход"
+    "sessions.mode.legacy_jwt": "Старый вход",
+    "common.in_development": "В разработке"
 }
