@@ -2,16 +2,19 @@
   "extends": [
     "standard",
     "standard-react",
-    "prettier",
-    "prettier/react"
+    "plugin:react-hooks/recommended",
+    "prettier"
   ],
   "plugins": [
-    "prettier",
-    "react-hooks",
     "cypress",
     "import"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "env": {
     "node": true,
     "browser": true,
@@ -42,8 +45,11 @@
       }
     ],
     "operator-linebreak": "warn",
-    "react-hooks/rules-of-hooks": "warn",
-    // "react-hooks/exhaustive-deps": "warn",
+    // Classic JSX runtime: JSX references React and the components it renders.
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "react/jsx-closing-tag-location": 2,
     "react/jsx-closing-bracket-location": "off",
     "react/jsx-max-props-per-line": [
