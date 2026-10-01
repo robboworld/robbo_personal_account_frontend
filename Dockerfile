@@ -1,4 +1,6 @@
-FROM node:18-alpine
+# Build stage: full install + webpack. dotenv-webpack bakes .env into the bundle here;
+# the file never reaches the runtime image (its values are public in the bundle anyway).
+FROM node:18-alpine AS build
 WORKDIR /app
 
 # Cypress postinstall тянет тяжёлый бинарник (Electron/браузер) — в образе приложения
@@ -14,4 +16,19 @@ RUN yarn install --frozen-lockfile --network-timeout 100000
 COPY . /app
 RUN NODE_OPTIONS=--openssl-legacy-provider yarn build
 
-ENTRYPOINT ["yarn", "start", "--port", "3030"]
+# Runtime stage: Express server + built assets only, no sources, devDependencies or .env.
+FROM node:18-alpine
+WORKDIR /app
+ENV NODE_ENV=production PORT=3030
+
+COPY package.json yarn.lock ./
+RUN yarn install --production --frozen-lockfile --ignore-scripts --network-timeout 100000 \
+    && yarn cache clean
+COPY server.js ./
+COPY public ./public
+COPY static ./static
+COPY --from=build /app/dist ./dist
+
+USER node
+EXPOSE 3030
+CMD ["node", "server.js"]

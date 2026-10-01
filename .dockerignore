@@ -1,6 +1,12 @@
 node_modules
 dist
 .git
+.github
+.vscode
 cypress
+cert
+docs
+coverage
 *.log
 .DS_Store
+.env.*.example
