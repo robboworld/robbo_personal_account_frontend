@@ -30,8 +30,9 @@ import {
 function* getAllRobboUnitsSaga({ payload }) {
     const language = yield select(state => state.app.language)
     try {
-        const { page, pageSize } = payload
-        const response = yield call(robboUnitQuerysGraphQL.GetAllRobboUnits, "1", "10")
+        // The request's page size was ignored (always 1/10), so the unit picker lost units past 10.
+        const { page = '1', pageSize = '10' } = payload || {}
+        const response = yield call(robboUnitQuerysGraphQL.GetAllRobboUnits, String(page), String(pageSize))
 
         yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
     } catch (e) {
