@@ -46,26 +46,6 @@ export const parentQuerysGQL = {
         }
     }
     `,
-
-    SEARCH_PARENT_BY_EMAIL: gql`
-     query SearchParentsByEmail($email: String!, $page: String!, $pageSize: String!) {
-        SearchParentsByEmail(email: $email, page: $page, pageSize: $pageSize) {
-                ... on ParentHttpList{
-                    parents {
-                        userHttp{
-                            id
-                            lastname
-                            firstname
-                            middlename
-                        }
-                    }
-                }
-                ... on Error{
-                    message
-                }
-            }
-        }
-    `,
 }
 
 export const parentQuerysGraphQL = {
@@ -83,15 +63,6 @@ export const parentQuerysGraphQL = {
             {
                 query: parentQuerysGQL.GET_PARENT_BY_ID,
                 variables: parentId,
-            },
-        )
-    },
-
-    SearchParentByEmail(email) {
-        return graphQLClient.query(
-            {
-                query: parentQuerysGQL.SEARCH_PARENT_BY_EMAIL,
-                variables: email,
             },
         )
     },
