@@ -45,6 +45,12 @@ describe('signed-in pages (stubbed session)', () => {
     }
   })
 
+  it('a directly opened page highlights its own menu item (SSO session, no token)', () => {
+    signInAs()
+    cy.visit('/licenses')
+    cy.get('.ant-menu-item-selected').should('contain', 'Мои тарифы')
+  })
+
   it('sidebar hides legacy database sections', () => {
     signInAs({ ...STUDENT, role: 5 })
     cy.visit('/profile')

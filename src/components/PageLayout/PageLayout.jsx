@@ -15,10 +15,9 @@ import {
   MobileTopBarActions,
   MobileTopBarBrand,
 } from '@/components/AccountShell'
-import { parseJwt, getSelectedNavBarKeyFromPath, useIsLkMobile } from '@/helpers'
+import { getSelectedNavBarKeyFromPath, useAuthRole, useIsLkMobile } from '@/helpers'
 import { HOME_PAGE_ROUTE } from '@/constants'
 import robboGuestTokens from '@/theme/robboGuestTokens'
-import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const { Sider, Content } = Layout
 const SIDEBAR_COLLAPSED_STORAGE_KEY = 'lk_sidebar_collapsed'
@@ -47,6 +46,7 @@ const PageLayout = ({ children }) => {
   )
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
+  const role = useAuthRole()
   const selectedNavBarKey = useMemo(() => {
     const fromState = location.state?.selectedNavBarKey
     if (fromState != null && fromState !== '') {
@@ -55,17 +55,10 @@ const PageLayout = ({ children }) => {
     if (location.pathname === HOME_PAGE_ROUTE) {
       return 'home'
     }
-    let role
-    try {
-      const token = getAccessToken()
-      if (token) {
-        role = parseJwt(token).Role
-      }
-    } catch (_) {
-      /* ignore */
-    }
+    // The role from the access token alone is unknown in SSO (BFF cookie) sessions, which
+    // left every directly opened page highlighting "Profile".
     return getSelectedNavBarKeyFromPath(role, location.pathname)
-  }, [location.pathname, location.state])
+  }, [location.pathname, location.state, role])
 
   useEffect(() => {
     if (!isMobile) {
@@ -176,9 +169,9 @@ const PageLayout = ({ children }) => {
         placement='left'
         open={isMobile && mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}
-        width='min(100vw - 1rem, 24rem)'
+        size='min(100vw - 1rem, 24rem)'
         closable={false}
-        destroyOnClose={false}
+        destroyOnHidden={false}
         className='lk-mobile-nav-drawer'
         styles={{
           body: {
@@ -190,7 +183,7 @@ const PageLayout = ({ children }) => {
             background: robboGuestTokens.lkPageBg,
             border: 'none',
           },
-          content: {
+          section: {
             padding: 0,
             border: 'none',
             boxShadow: '2px 0 16px rgba(56, 56, 56, 0.12)',
