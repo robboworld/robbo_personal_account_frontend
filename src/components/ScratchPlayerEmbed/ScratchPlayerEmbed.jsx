@@ -366,7 +366,9 @@ title={intl.formatMessage({ id: 'project_page.player_empty' })} />
                 {coverVisible && (
                     <button
                         type='button'
-                        className='scratch-player-embed__cover'
+                        // No uploaded preview: once the player is ready its first stage frame
+                        // shows through a light cover and serves as the preview.
+                        className={`scratch-player-embed__cover${!previewUrl && ready ? ' scratch-player-embed__cover--stage' : ''}`}
                         style={coverStyle}
                         aria-label={greenFlagLabel}
                         title={greenFlagLabel}

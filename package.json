@@ -33,7 +33,8 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1",
-      "^axios$": "axios/dist/node/axios.cjs"
+      "^axios$": "axios/dist/node/axios.cjs",
+      "\\.css$": "<rootDir>/src/__mocks__/styleMock.js"
     }
   },
   "dependencies": {

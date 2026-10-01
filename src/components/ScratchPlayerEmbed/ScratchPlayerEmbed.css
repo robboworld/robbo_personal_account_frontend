@@ -57,6 +57,10 @@
     background-position: center;
 }
 
+.scratch-player-embed__cover--stage {
+    background: linear-gradient(180deg, rgba(13, 17, 23, 0) 40%, rgba(13, 17, 23, 0.35) 100%);
+}
+
 .scratch-player-embed__cover:focus-visible {
     outline: 3px solid #4cbf56;
     outline-offset: -3px;
