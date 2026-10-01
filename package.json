@@ -19,6 +19,13 @@
     "landing:restore:legacy": "sh scripts/restore-landing-legacy.sh",
     "docker:rebuild": "docker compose build web && docker compose up -d --force-recreate web"
   },
+  "resolutions": {
+    "@babel/runtime": "^7.26.10",
+    "@babel/traverse": "^7.23.2",
+    "lodash": "^4.18.1",
+    "lodash-es": "^4.18.1",
+    "yaml": "^1.10.3"
+  },
   "jest": {
     "testEnvironment": "jsdom",
     "roots": [
@@ -41,7 +48,7 @@
     "express": "^4.21.2",
     "formik": "^2.4.9",
     "framer-motion": "6.5.1",
-    "graphql": "^16.6.0",
+    "graphql": "^16.14.2",
     "i18n-iso-countries": "4.3.1",
     "libphonenumber-js": "^1.11.0",
     "prop-types": "^15.8.1",
@@ -62,8 +69,7 @@
     "redux-actions": "^2.6.5",
     "redux-saga": "^1.5.1",
     "rxjs": "^7",
-    "styled-components": "^5.3.11",
-    "yup": "^0.27.0"
+    "styled-components": "^5.3.11"
   },
   "devDependencies": {
     "@babel/cli": "^7",
