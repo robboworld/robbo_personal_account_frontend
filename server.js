@@ -6,14 +6,24 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
 
-// Bundles are not content-hashed (bundle.js, N.bundle.js), so browsers must revalidate
-// (ETag) on every load; otherwise a cached bundle.js asks for chunks of an older build.
+// Webpack output names carry a content hash, so those files never change: cache them for a
+// year. Everything else (index.html above all) is revalidated, so a deploy is picked up on
+// the next load and the new index.html points at the new hashes.
 const noCache = (res) => res.setHeader('Cache-Control', 'no-cache')
+const HASHED_ASSET = /\.[0-9a-f]{8}\.(js|css)$|^\/?assets\//
+const distHeaders = (res, filePath) => {
+  const rel = path.relative(path.join(__dirname, 'dist'), filePath)
+  if (HASHED_ASSET.test(rel)) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+  } else {
+    noCache(res)
+  }
+}
 
 // Serve webpack build first — public/index.html has no <script> and would
 // shadow dist/index.html for GET /, causing a blank white screen.
 // index: false sends "/" to the SPA fallback below (same headers as every route).
-app.use(express.static(path.join(__dirname, 'dist'), { index: false, setHeaders: noCache }))
+app.use(express.static(path.join(__dirname, 'dist'), { index: false, setHeaders: distHeaders }))
 app.use(express.static(path.join(__dirname, 'public'), { index: false }))
 app.use('/static', express.static(path.join(__dirname, 'static')))
 

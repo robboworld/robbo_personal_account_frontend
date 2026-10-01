@@ -1,5 +1,6 @@
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const TerserPlugin = require('terser-webpack-plugin')
+
 const common = require('./webpack.common.js')
 
 module.exports = merge(common, {
@@ -8,11 +9,13 @@ module.exports = merge(common, {
     minimize: true,
     minimizer: [
       new TerserPlugin({
-        cache: true,
         parallel: true,
         extractComments: 'all',
-        test: /\.(js|jsx)(\?.*)?$/i,
       }),
     ],
+  },
+  performance: {
+    // antd + Apollo exceed the 244 KiB hint; chunk sizes are tracked by hand.
+    hints: false,
   },
 })
