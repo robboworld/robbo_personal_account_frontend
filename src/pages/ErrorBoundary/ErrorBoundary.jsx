@@ -12,12 +12,13 @@ export default class ErrorBoundary extends Component {
         }
     }
 
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error }
+    }
+
     componentDidCatch(error, errorInfo) {
-        this.setState({
-            hasError: true,
-            error,
-            errorInfo,
-        })
+        this.setState({ errorInfo })
+        console.error('Unhandled UI error', error, errorInfo)
     }
 
     render() {

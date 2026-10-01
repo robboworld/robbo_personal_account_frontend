@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache, createHttpLink, from } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
-import { onError } from "apollo-link-error"
+import { onError } from '@apollo/client/link/error'
 import { RetryLink } from "@apollo/client/link/retry"
 
 import { authMutationsGQL } from './mutation'
@@ -35,11 +35,17 @@ const retryLink = new RetryLink({
     },
     attempts: {
         max: 3,
+        // Network errors have no .result: reading error.result.ExpiredBy threw a TypeError.
         retryIf: async error => {
-            if (error && error.result.ExpiredBy && error.statusCode === 401) {
-                clearAccessToken()
-                const accessToken = await refreshToken()
+            if (!error?.result?.ExpiredBy || error?.statusCode !== 401) {
+                return false
+            }
+            clearAccessToken()
+            try {
+                await refreshToken()
                 return true
+            } catch (_) {
+                return false
             }
         },
     },

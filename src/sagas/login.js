@@ -17,7 +17,6 @@ function* signInSaga(action) {
     try {
         const { email, password, role } = action.payload
         const response = yield call(authMutationsGraphQL.SingIn, email, password, role)
-        console.log(response)
         setAccessToken(response.data.SingIn.accessToken)
         yield put(signInSucces(response.data.SingIn))
     } catch (e) {
@@ -27,7 +26,9 @@ function* signInSaga(action) {
             redirectToOidcStart('/home', 'login')
             return
         }
-        yield put(signInFailed(e.response.data))
+        // Apollo errors have no .response: reading e.response.data threw inside the catch
+        // and aborted the root saga (all sagas stopped).
+        yield put(signInFailed(e?.response?.data ?? e?.message))
     }
 }
 
@@ -35,7 +36,6 @@ function* signUpSaga(action) {
     try {
         const { user, role } = action.payload
         const response = yield call(authAPI.signUp, user, role)
-        console.log(response)
 
         if (response.data?.next === 'oidc' || response.data?.ok) {
             const status = yield call(fetchOidcStatus)
