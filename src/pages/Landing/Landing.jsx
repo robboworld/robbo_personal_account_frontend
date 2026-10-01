@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { createGlobalStyle } from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import {
   AboutHighlight,
@@ -97,12 +98,12 @@ const LandingGlobal = createGlobalStyle`
 
 const ABOUT_HIGHLIGHTS = [
   {
-    accent: 'Институты развития:',
-    text: 'лидерский проект АСИ, Лидер НТИ, резидент «Сколково» и кластера «Ломоносов».',
+    accent: { id: 'landing.about.institutions_accent' },
+    text: { id: 'landing.about.institutions_text' },
   },
   {
-    accent: 'При поддержке:',
-    text: 'Минпромторг, Минцифры, Минобрнауки, Минэкономразвития.',
+    accent: { id: 'landing.about.support_accent' },
+    text: { id: 'landing.about.support_text' },
   },
 ]
 
@@ -112,39 +113,34 @@ const LANDING_PROJECTS_LIMIT = 5
 
 const OLYMPIAD_TIMELINE = [
   {
-    period: 'дек 2025 — фев 2026',
-    title: 'Региональные туры',
-    detail:
-      'Прошли в инициативных регионах. Победители получали дополнительные баллы в межрегионе.',
+    period: { id: 'landing.olympiad.stage1.period' },
+    title: { id: 'landing.olympiad.stage1.title' },
+    detail: { id: 'landing.olympiad.stage1.detail' },
   },
   {
-    period: 'март — июнь 2026',
-    title: 'Приём заявок на межрегиональные туры',
-    detail:
-      'Даты задавал оргкомитет каждого федерального округа на странице своего тура.',
+    period: { id: 'landing.olympiad.stage2.period' },
+    title: { id: 'landing.olympiad.stage2.title' },
+    detail: { id: 'landing.olympiad.stage2.detail' },
   },
   {
-    period: 'фев — июнь 2026',
-    title: 'Межрегиональные туры',
-    detail:
-      'Заочный конкурс по округам в дисциплинах Scratch и RobboScratch.',
+    period: { id: 'landing.olympiad.stage3.period' },
+    title: { id: 'landing.olympiad.stage3.title' },
+    detail: { id: 'landing.olympiad.stage3.detail' },
   },
   {
-    period: 'июнь — июль 2026',
-    title: 'Общероссийский отбор',
-    detail:
-      'Победители межрегионов вышли в национальный отбор; лучшие вошли в команду России.',
+    period: { id: 'landing.olympiad.stage4.period' },
+    title: { id: 'landing.olympiad.stage4.title' },
+    detail: { id: 'landing.olympiad.stage4.detail' },
   },
   {
-    period: 'август 2026',
-    title: 'Российский этап завершён',
-    detail:
-      'X Всероссийская Scratch-Олимпиада 2026 закрыта. Победители приглашены на международный финал.',
+    period: { id: 'landing.olympiad.stage5.period' },
+    title: { id: 'landing.olympiad.stage5.title' },
+    detail: { id: 'landing.olympiad.stage5.detail' },
   },
   {
-    period: 'сентябрь 2026',
-    title: 'Международный финал',
-    detail: 'Финал X Международной Scratch-Олимпиады и награждение.',
+    period: { id: 'landing.olympiad.stage6.period' },
+    title: { id: 'landing.olympiad.stage6.title' },
+    detail: { id: 'landing.olympiad.stage6.detail' },
     highlight: true,
   },
 ]
@@ -156,15 +152,15 @@ const TARIFFS = [
   {
     id: 'free',
     name: 'Free',
-    price: '0 ₽',
+    price: { id: 'landing.tariffs.free.price' },
     featured: false,
     items: [
-      '10 МБ на один проект, не общее облако',
-      '1 устройство и 1 веб-сессия',
-      'До 20 проектов',
-      'Без автообновления RS3',
+      { id: 'landing.tariffs.free.item1' },
+      { id: 'landing.tariffs.free.item2' },
+      { id: 'landing.tariffs.free.item3' },
+      { id: 'landing.tariffs.free.item4' },
     ],
-    cta: 'Начать бесплатно',
+    cta: { id: 'landing.tariffs.free.cta' },
     to: FREE_REGISTER_TARGET,
     external: FREE_REGISTER_EXTERNAL,
     ghost: true,
@@ -172,44 +168,45 @@ const TARIFFS = [
   {
     id: 'individual',
     name: 'Individual',
-    price: '1 990 ₽ / год',
+    price: { id: 'landing.tariffs.individual.price' },
     featured: true,
     items: [
-      '100 МБ облака под все проекты',
-      '2 устройства и 2 сессии',
-      'Автообновление RS3',
-      '365 дней',
+      { id: 'landing.tariffs.individual.item1' },
+      { id: 'landing.tariffs.individual.item2' },
+      { id: 'landing.tariffs.auto_update' },
+      { id: 'landing.tariffs.individual.item4' },
     ],
-    cta: 'Купить',
+    cta: { id: 'landing.tariffs.buy' },
     to: `${MY_LICENSES_ROUTE}#buy`,
     ghost: false,
   },
   {
     id: 'class',
     name: 'Class',
-    price: '4 990 ₽ / год',
+    price: { id: 'landing.tariffs.class.price' },
     featured: false,
     items: [
-      '500 МБ облака под все проекты',
-      '20 устройств и 20 сессий',
-      'Автообновление RS3',
-      'Один аккаунт на текущем этапе',
+      { id: 'landing.tariffs.class.item1' },
+      { id: 'landing.tariffs.class.item2' },
+      { id: 'landing.tariffs.auto_update' },
+      { id: 'landing.tariffs.class.item4' },
     ],
-    cta: 'Купить',
+    cta: { id: 'landing.tariffs.buy' },
     to: `${MY_LICENSES_ROUTE}#buy`,
     ghost: false,
   },
 ]
 
 const LandingProjectCard = ({ project, onOpen }) => {
-  const title = project.title || 'Без названия'
-  const authorName = project.authorName || project.authorUserId || 'Автор'
+  const intl = useIntl()
+  const title = project.title || intl.formatMessage({ id: 'project_card.untitled' })
+  const authorName = project.authorName || project.authorUserId || intl.formatMessage({ id: 'project_card.author' })
   const previewUrl = resolveProjectPreviewUrl(project.preview, project.lastModified)
   return (
     <ProjectTile
       type='button'
       onClick={() => onOpen(project.projectPageId)}
-      aria-label={`Открыть проект «${title}»`}
+      aria-label={intl.formatMessage({ id: 'project_card.open_aria' }, { title })}
     >
       <ProjectTileMedia>
         {previewUrl ? (
@@ -229,13 +226,15 @@ const LandingProjectCard = ({ project, onOpen }) => {
 }
 
 const Landing = () => {
+  const intl = useIntl()
+  const t = descriptor => intl.formatMessage(descriptor)
   const navigate = useNavigate()
   const createHref = getScratchEditorUrl()
   const staticBase = '/static'
 
   useEffect(() => {
-    document.title = 'РОББО — придумывай истории, игры и анимации'
-  }, [])
+    document.title = intl.formatMessage({ id: 'landing.document_title' })
+  }, [intl])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search || '')
@@ -302,25 +301,25 @@ const Landing = () => {
     <PageRoot>
       <RobboGuestFonts />
       <LandingGlobal />
-      <SkipLink href='#content'>К содержанию</SkipLink>
+      <SkipLink href='#content'><FormattedMessage id='landing.skip_to_content' /></SkipLink>
       <RobboGuestHeader />
       <Main id='content'>
         <Intro>
           <IntroInner>
             <IntroCopy>
-              <IntroTitle>Придумывай истории, игры и анимации</IntroTitle>
+              <IntroTitle><FormattedMessage id='landing.intro.title' /></IntroTitle>
               <IntroLede>
-                Делись проектами и программируй роботов РОББО
+                <FormattedMessage id='landing.intro.lede' />
               </IntroLede>
               <IntroActions>
-                <IntroBtnPrimary href={createHref}>Начать создавать</IntroBtnPrimary>
-                <IntroBtnGhost as={Link} to={EXPLORE_ROUTE}>Смотреть проекты</IntroBtnGhost>
+                <IntroBtnPrimary href={createHref}><FormattedMessage id='landing.intro.start' /></IntroBtnPrimary>
+                <IntroBtnGhost as={Link} to={EXPLORE_ROUTE}><FormattedMessage id='landing.intro.explore' /></IntroBtnGhost>
               </IntroActions>
             </IntroCopy>
             <IntroVisual>
               <IntroMascot
                 src={`${staticBase}/robbo-hero-mascot.webp`}
-                alt='Робот РОББО'
+                alt={intl.formatMessage({ id: 'landing.intro.mascot_alt' })}
                 width='420'
                 height='420'
               />
@@ -328,20 +327,20 @@ const Landing = () => {
           </IntroInner>
         </Intro>
 
-        <IntroLinks aria-label='Кому это полезно'>
-          <a href='#about'>О РОББО</a>
-          <a href='#educators'>Педагогам</a>
-          <a href='#educators'>Родителям</a>
+        <IntroLinks aria-label={intl.formatMessage({ id: 'landing.links.aria' })}>
+          <a href='#about'><FormattedMessage id='landing.links.about' /></a>
+          <a href='#educators'><FormattedMessage id='landing.links.educators' /></a>
+          <a href='#educators'><FormattedMessage id='landing.links.parents' /></a>
         </IntroLinks>
 
         <Band id='featured' {...sectionReveal}>
           <BandInner>
             <BandHead>
-              <SectionTitle>Избранные проекты</SectionTitle>
-              <BandLink as={Link} to={EXPLORE_ROUTE}>Все проекты</BandLink>
+              <SectionTitle><FormattedMessage id='landing.featured.title' /></SectionTitle>
+              <BandLink as={Link} to={EXPLORE_ROUTE}><FormattedMessage id='landing.featured.all' /></BandLink>
             </BandHead>
             <Lead>
-              Истории, игры и работы с роботами — открываются без входа
+              <FormattedMessage id='landing.featured.lead' />
             </Lead>
             {projectsLoading ? (
               <FeaturedGrid aria-busy='true'>
@@ -356,7 +355,7 @@ const Landing = () => {
               </FeaturedGrid>
             ) : galleryProjects.length === 0 ? (
               <ProjectsEmpty>
-                Пока нет избранных проектов. Загляните в обзор.
+                <FormattedMessage id='landing.featured.empty' />
               </ProjectsEmpty>
             ) : (
               <FeaturedGrid>
@@ -374,23 +373,22 @@ const Landing = () => {
 
         <BandWhite id='create' {...sectionReveal}>
           <BandInner>
-            <SectionTitle>Создавай на Scratch.ru</SectionTitle>
+            <SectionTitle><FormattedMessage id='landing.create.title' /></SectionTitle>
             <Lead>
-              Одна среда на русском: игры, викторины, мультфильмы — и те же
-              блоки для реальных роботов РОББО.
+              <FormattedMessage id='landing.create.lead' />
             </Lead>
             <CreateGrid>
               <CreateCol>
-                <CreateKicker>Истории, игры и анимации</CreateKicker>
+                <CreateKicker><FormattedMessage id='landing.create.stories_kicker' /></CreateKicker>
                 <CreateText>
-                  Собирайте проекты на экране и делитесь ими в галерее.
+                  <FormattedMessage id='landing.create.stories_text' />
                 </CreateText>
-                <CtaBtn href={createHref}>Начать программировать</CtaBtn>
+                <CtaBtn href={createHref}><FormattedMessage id='landing.create.stories_cta' /></CtaBtn>
               </CreateCol>
               <CreateCol>
-                <CreateKicker>Роботы РОББО</CreateKicker>
+                <CreateKicker><FormattedMessage id='landing.create.robots_kicker' /></CreateKicker>
                 <CreateText>
-                  Та же среда — для реальных исполнителей, не только спрайтов.
+                  <FormattedMessage id='landing.create.robots_text' />
                 </CreateText>
                 <CreateMedia>
                   {ROBOT_MEDIA.map(file => (
@@ -410,29 +408,28 @@ const Landing = () => {
 
         <Band id='tariffs' {...sectionReveal}>
           <BandInner>
-            <SectionTitle>Тарифы RS3</SectionTitle>
+            <SectionTitle><FormattedMessage id='landing.tariffs.title' /></SectionTitle>
             <Lead>
-              Лицензия задаёт облако, число устройств и одновременных входов в
-              ЛК и веб-редактор. Покупка — в личном кабинете, после входа.
+              <FormattedMessage id='landing.tariffs.lead' />
             </Lead>
             <TariffGrid>
               {TARIFFS.map(plan => (
                 <TariffCard key={plan.id} $featured={plan.featured}>
                   <TariffName>{plan.name}</TariffName>
-                  <TariffPrice>{plan.price}</TariffPrice>
+                  <TariffPrice>{t(plan.price)}</TariffPrice>
                   <TariffList>
                     {plan.items.map(item => (
-                      <li key={item}>{item}</li>
+                      <li key={item.id}>{t(item)}</li>
                     ))}
                   </TariffList>
                   {plan.ghost ? (
                     plan.external ? (
-                      <CtaGhost as='a' href={plan.to}>{plan.cta}</CtaGhost>
+                      <CtaGhost as='a' href={plan.to}>{t(plan.cta)}</CtaGhost>
                     ) : (
-                      <CtaGhost as={Link} to={plan.to}>{plan.cta}</CtaGhost>
+                      <CtaGhost as={Link} to={plan.to}>{t(plan.cta)}</CtaGhost>
                     )
                   ) : (
-                    <CtaBtn as={Link} to={plan.to}>{plan.cta}</CtaBtn>
+                    <CtaBtn as={Link} to={plan.to}>{t(plan.cta)}</CtaBtn>
                   )}
                 </TariffCard>
               ))}
@@ -442,22 +439,20 @@ const Landing = () => {
 
         <BandWhite id='olympiad' {...sectionReveal}>
           <BandInner>
-            <SectionTitle>Scratch-олимпиада</SectionTitle>
+            <SectionTitle><FormattedMessage id='landing.olympiad.title' /></SectionTitle>
             <Lead>
-              Ежегодный конкурс креативного программирования: Scratch и
-              RobboScratch. Сейчас август 2026: российский этап сезона уже
-              завершён, идёт подготовка к международному финалу в сентябре.
+              <FormattedMessage id='landing.olympiad.lead' />
             </Lead>
             <StageTrack>
               {OLYMPIAD_TIMELINE.map(({ period, title, detail, highlight }, idx) => (
-                <Stage key={period + title}>
+                <Stage key={title.id}>
                   <StageIndex $highlight={highlight}>
                     {String(idx + 1).padStart(2, '0')}
                   </StageIndex>
                   <StageCard $highlight={highlight}>
-                    <StageDate>{period}</StageDate>
-                    <StageTitle>{title}</StageTitle>
-                    <StageDetail>{detail}</StageDetail>
+                    <StageDate>{t(period)}</StageDate>
+                    <StageTitle>{t(title)}</StageTitle>
+                    <StageDetail>{t(detail)}</StageDetail>
                   </StageCard>
                 </Stage>
               ))}
@@ -469,10 +464,10 @@ const Landing = () => {
                 rel='noreferrer'
                 $primary
               >
-                <DestKicker>Сейчас</DestKicker>
-                <DestTitle>Международный финал</DestTitle>
+                <DestKicker><FormattedMessage id='landing.olympiad.dest_final.kicker' /></DestKicker>
+                <DestTitle><FormattedMessage id='landing.olympiad.dest_final.title' /></DestTitle>
                 <DestText>
-                  Сентябрь 2026. Победители российского этапа приглашены.
+                  <FormattedMessage id='landing.olympiad.dest_final.text' />
                 </DestText>
               </DestCard>
               <DestCard
@@ -480,10 +475,10 @@ const Landing = () => {
                 target='_blank'
                 rel='noreferrer'
               >
-                <DestKicker>Россия</DestKicker>
-                <DestTitle>Результаты российского этапа</DestTitle>
+                <DestKicker><FormattedMessage id='landing.olympiad.dest_russia.kicker' /></DestKicker>
+                <DestTitle><FormattedMessage id='landing.olympiad.dest_russia.title' /></DestTitle>
                 <DestText>
-                  X Всероссийская Scratch-Олимпиада 2026 завершена
+                  <FormattedMessage id='landing.olympiad.dest_russia.text' />
                 </DestText>
               </DestCard>
             </OlympiadDests>
@@ -494,11 +489,9 @@ const Landing = () => {
           <BandInner>
             <EducatorsGrid>
               <div>
-                <SectionTitle>Педагогам и родителям</SectionTitle>
+                <SectionTitle><FormattedMessage id='landing.educators.title' /></SectionTitle>
                 <Lead>
-                  Дети от 7 лет собирают анимационные истории и могут подать
-                  работу на олимпиаду. Жюри — отдельные критерии для Scratch и
-                  RobboScratch.
+                  <FormattedMessage id='landing.educators.lead' />
                 </Lead>
                 <CtaRow>
                   <CtaGhost
@@ -506,14 +499,14 @@ const Landing = () => {
                     target='_blank'
                     rel='noreferrer'
                   >
-                    Стать экспертом Scratch
+                    <FormattedMessage id='landing.educators.expert_scratch' />
                   </CtaGhost>
                   <CtaGhost
                     href='https://robbo.ru/olymp/expert/'
                     target='_blank'
                     rel='noreferrer'
                   >
-                    Стать экспертом RobboScratch
+                    <FormattedMessage id='landing.educators.expert_robboscratch' />
                   </CtaGhost>
                 </CtaRow>
               </div>
@@ -529,28 +522,29 @@ const Landing = () => {
 
         <BandWhite id='about' {...sectionReveal}>
           <BandInner>
-            <SectionTitle>Открытые технологии будущего</SectionTitle>
+            <SectionTitle><FormattedMessage id='landing.about.title' /></SectionTitle>
             <AboutStats role='list'>
               <AboutStat role='listitem'>
                 <StatValue>19</StatValue>
-                <StatLabel>лет на рынке</StatLabel>
+                <StatLabel><FormattedMessage id='landing.about.years' /></StatLabel>
               </AboutStat>
               <AboutStat role='listitem'>
                 <StatValue>44</StatValue>
-                <StatLabel>стран мира</StatLabel>
+                <StatLabel><FormattedMessage id='landing.about.countries' /></StatLabel>
               </AboutStat>
             </AboutStats>
             <AboutIntro>
-              С 19 лет внедряем технологии на открытом коде, развиваем
-              робототехнику и инженерные системы. Продукты и методики используют
-              в <Accent>44 странах</Accent>.
+              <FormattedMessage
+                id='landing.about.intro'
+                values={{ accent: chunks => <Accent>{chunks}</Accent> }}
+              />
             </AboutIntro>
             <ul style={{ margin: 0, padding: 0 }}>
               {ABOUT_HIGHLIGHTS.map(({ accent, text }) => (
-                <AboutHighlight key={accent}>
+                <AboutHighlight key={accent.id}>
                   <span aria-hidden>•</span>
                   <span>
-                    <Accent>{accent}</Accent> {text}
+                    <Accent>{t(accent)}</Accent> {t(text)}
                   </span>
                 </AboutHighlight>
               ))}

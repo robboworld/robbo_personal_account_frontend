@@ -171,7 +171,7 @@ function GuestProjectView({ projectPageId }) {
                             icon={<ArrowLeftOutlined />}
                             onClick={() => navigate(LANDING_PAGE_ROUTE)}
                         >
-                            На главную
+                            <FormattedMessage id='project_page.back_to_home' />
                         </BackButton>
                         {projectPage?.authorName && (
                             <AuthorText>
@@ -189,7 +189,7 @@ function GuestProjectView({ projectPageId }) {
                             <ProjectTitle>{intl.formatMessage({ id: 'project_page.player_error' })}</ProjectTitle>
                             <ViewOnlyNote>{error}</ViewOnlyNote>
                             <div style={{ marginTop: '1rem' }}>
-                                <Link to={LANDING_PAGE_ROUTE}>Вернуться на лендинг</Link>
+                                <Link to={LANDING_PAGE_ROUTE}><FormattedMessage id='project_page.back_to_landing' /></Link>
                             </div>
                         </PlayerCard>
                     ) : (
@@ -460,7 +460,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         setPreviewBusy(true)
         try {
             await uploadProjectPreview(token, projectPageId, file)
-            message.success('Превью проекта обновлено')
+            message.success(intl.formatMessage({ id: 'project_page.preview_updated' }))
             actions.getProjectPageById(token, projectPageId)
             setPlayerReloadKey(k => k + 1)
         } catch (e) {
@@ -805,7 +805,7 @@ readOnly={!isOwner} />
                                                     loading={previewBusy}
                                                     onClick={() => previewInputRef.current?.click()}
                                                 >
-                                                    Загрузить превью
+                                                    <FormattedMessage id='project_page.upload_preview' />
                                                 </ActionButton>
                                             </React.Fragment>
                                         )}

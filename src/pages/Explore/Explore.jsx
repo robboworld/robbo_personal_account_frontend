@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import {
   Avatar,
@@ -40,11 +41,11 @@ import RobboGuestFonts from '@/theme/robboGuestFonts'
 const PAGE_SIZE = 16
 
 const CATEGORIES = [
-  { id: 'all', label: 'Все', tag: '' },
-  { id: 'animations', label: 'Анимации', tag: 'animations' },
-  { id: 'art', label: 'Арт', tag: 'art' },
-  { id: 'games', label: 'Игры', tag: 'games' },
-  { id: 'music', label: 'Музыка', tag: 'music' },
+  { key: 'all', label: { id: 'explore.category.all' }, tag: '' },
+  { key: 'animations', label: { id: 'explore.category.animations' }, tag: 'animations' },
+  { key: 'art', label: { id: 'explore.category.art' }, tag: 'art' },
+  { key: 'games', label: { id: 'explore.category.games' }, tag: 'games' },
+  { key: 'music', label: { id: 'explore.category.music' }, tag: 'music' },
 ]
 
 const initials = name => {
@@ -80,8 +81,9 @@ viewBox='0 0 24 24' aria-hidden>
 )
 
 const ExploreCard = ({ project, onOpen }) => {
-  const title = project.title || 'Без названия'
-  const authorName = project.authorName || project.authorUserId || 'Автор'
+  const intl = useIntl()
+  const title = project.title || intl.formatMessage({ id: 'project_card.untitled' })
+  const authorName = project.authorName || project.authorUserId || intl.formatMessage({ id: 'project_card.author' })
   const previewUrl = resolveProjectPreviewUrl(project.preview)
   const avatarSrc = isValidAvatarId(project.authorAvatarId)
     ? getAvatarSrc(project.authorAvatarId)
@@ -90,7 +92,7 @@ const ExploreCard = ({ project, onOpen }) => {
     <Card
       type='button'
       onClick={() => onOpen(project.projectPageId)}
-      aria-label={`Открыть проект «${title}»`}
+      aria-label={intl.formatMessage({ id: 'project_card.open_aria' }, { title })}
     >
       <Thumb>
         {previewUrl ? (
@@ -115,6 +117,7 @@ const ExploreCard = ({ project, onOpen }) => {
 }
 
 const Explore = () => {
+  const intl = useIntl()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTag = String(searchParams.get('tag') || '').trim().toLowerCase()
@@ -125,8 +128,8 @@ const Explore = () => {
   const [loadingMore, setLoadingMore] = useState(false)
 
   useEffect(() => {
-    document.title = 'Обзор — РОББО'
-  }, [])
+    document.title = intl.formatMessage({ id: 'explore.document_title' })
+  }, [intl])
 
   useLayoutEffect(() => {
     document.documentElement.classList.add('explore-page-active')
@@ -218,22 +221,22 @@ const Explore = () => {
       <Main>
         <Banner>
           <BannerInner>
-            <BannerTitle>Обзор</BannerTitle>
+            <BannerTitle><FormattedMessage id='explore.title' /></BannerTitle>
           </BannerInner>
         </Banner>
         <TabBar>
-          <Tabs aria-label='Разделы обзора'>
+          <Tabs aria-label={intl.formatMessage({ id: 'explore.tabs_aria' })}>
             <Tab $active>
               <TabIcon>
                 <ProjectFlag />
               </TabIcon>
-              Проекты
+              <FormattedMessage id='explore.tab_projects' />
             </Tab>
             <Tab aria-disabled='true'>
               <TabIcon $muted>
                 <StudioIcon />
               </TabIcon>
-              Студии
+              <FormattedMessage id='explore.tab_studios' />
             </Tab>
           </Tabs>
         </TabBar>
@@ -241,15 +244,15 @@ const Explore = () => {
           <Filters>
             {CATEGORIES.map(cat => (
               <Pill
-                key={cat.id}
+                key={cat.key}
                 type='button'
                 $active={(cat.tag || '') === activeTag}
                 onClick={() => setTag(cat.tag)}
               >
-                {cat.label}
+                {intl.formatMessage(cat.label)}
               </Pill>
             ))}
-            <SortHint>Популярные</SortHint>
+            <SortHint><FormattedMessage id='explore.sort_popular' /></SortHint>
           </Filters>
           {loading ? (
             <Grid aria-busy='true'>
@@ -268,7 +271,7 @@ $mt='0.35rem' />
               ))}
             </Grid>
           ) : projects.length === 0 ? (
-            <Empty>Пока нет открытых проектов в этой категории.</Empty>
+            <Empty><FormattedMessage id='explore.empty' /></Empty>
           ) : (
             <Grid>
               {projects.map((project, idx) => (
@@ -286,7 +289,7 @@ $mt='0.35rem' />
               disabled={loadingMore}
               onClick={loadMore}
             >
-              {loadingMore ? 'Загрузка…' : 'Загрузить ещё'}
+              {intl.formatMessage({ id: loadingMore ? 'explore.loading' : 'explore.load_more' })}
             </LoadMore>
           ) : null}
         </Inner>

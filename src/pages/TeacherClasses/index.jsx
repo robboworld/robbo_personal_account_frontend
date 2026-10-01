@@ -137,7 +137,7 @@ onFinish={onCreate}>
             label={<FormattedMessage id='teacher_class.name' defaultMessage='Class name' />}
             rules={[{ required: true }]}
           >
-            <Input placeholder='10А' />
+            <Input placeholder={intl.formatMessage({ id: 'teacher_class.name_placeholder' })} />
           </Form.Item>
           <Form.Item
             name='courseId'

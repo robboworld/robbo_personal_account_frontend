@@ -1,9 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { useSelector } from 'react-redux'
 
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { LK_SSO_WITH_LMS_ENABLED } from '@/constants'
 import { lmsRegisterUrl, openEdxLoginUrlAtBuild } from '@/helpers/oidcSession'
+import { changeLanguage } from '@/actions'
+import { useActions } from '@/helpers/useActions'
+import { getAppState } from '@/reducers/app'
 
 const Topbar = styled.header`
   position: sticky;
@@ -155,25 +160,50 @@ const BtnOutline = styled(TopbarBtn)`
 const loginHref = LK_SSO_WITH_LMS_ENABLED ? openEdxLoginUrlAtBuild() : '/login'
 const registerHref = LK_SSO_WITH_LMS_ENABLED ? lmsRegisterUrl() : '/register'
 
-const RobboGuestHeader = () => (
-  <Topbar role='banner'>
-    <Main>
-      <Leading>
-        <BrandLink href='/' aria-label='РОББО — на главную'>
-          <Wordmark>
-            РОББО
-            <Reg>®</Reg>
-          </Wordmark>
-        </BrandLink>
-      </Leading>
-      <Trailing>
-        <Actions>
-          <BtnSolid href={loginHref}>Вход</BtnSolid>
-          <BtnOutline href={registerHref}>Регистрация</BtnOutline>
-        </Actions>
-      </Trailing>
-    </Main>
-  </Topbar>
-)
+// Same size as the sign-in buttons; outlined in white so it reads as secondary.
+const LangToggle = styled(TopbarBtn).attrs({ as: 'button' })`
+  min-width: 36px;
+  padding: 0 12px;
+  color: #fff !important;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+`
+
+const RobboGuestHeader = () => {
+  const intl = useIntl()
+  const { language } = useSelector(({ app }) => getAppState(app))
+  const actions = useActions({ changeLanguage }, [])
+  // Two interface languages: the toggle offers the other one.
+  const nextLanguage = language === 'en' ? 'ru' : 'en'
+  return (
+    <Topbar role='banner'>
+      <Main>
+        <Leading>
+          <BrandLink href='/' aria-label={intl.formatMessage({ id: 'guest_header.home_aria' })}>
+            <Wordmark>
+              <FormattedMessage id='guest_header.brand' />
+              <Reg>®</Reg>
+            </Wordmark>
+          </BrandLink>
+        </Leading>
+        <Trailing>
+          <Actions>
+            <LangToggle
+              type='button'
+              lang={nextLanguage}
+              aria-label={intl.formatMessage({ id: 'guest_header.switch_language' })}
+              onClick={() => actions.changeLanguage(nextLanguage)}
+            >
+              <FormattedMessage id='guest_header.switch_language_short' />
+            </LangToggle>
+            <BtnSolid href={loginHref}><FormattedMessage id='guest_header.sign_in' /></BtnSolid>
+            <BtnOutline href={registerHref}><FormattedMessage id='guest_header.sign_up' /></BtnOutline>
+          </Actions>
+        </Trailing>
+      </Main>
+    </Topbar>
+  )
+}
 
 export default RobboGuestHeader
