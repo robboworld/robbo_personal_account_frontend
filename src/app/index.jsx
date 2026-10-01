@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 import {
   HOME_PAGE_ROUTE,
@@ -83,9 +83,16 @@ const wrapProtected = (allowedRoles, element) => (
   <ProtectedRoute allowedRoles={allowedRoles}>{element}</ProtectedRoute>
 )
 
+// Legacy /scratch links (editor used to live there): keep the query, e.g. ?projectPageId=.
+const LegacyScratchRedirect = () => {
+  const { search } = useLocation()
+  return <Navigate to={`${SCRATCH_HUB_ROUTE}${search}`} replace />
+}
+
 const AppRoutes = () => (
   <Routes>
     <Route path='/' element={<Landing />} />
+    <Route path='/scratch' element={<LegacyScratchRedirect />} />
     <Route path={EXPLORE_ROUTE} element={<Explore />} />
     <Route path={OIDC_CALLBACK_ROUTE} element={<OidcCallback />} />
     <Route element={<PublicAuthGate />}>

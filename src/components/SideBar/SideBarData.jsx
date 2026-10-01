@@ -34,6 +34,7 @@ import {
   SEND_NOTIFICATION_ROUTE,
   USERS_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
+  SCRATCH_HUB_ROUTE,
   MY_LICENSES_ROUTE,
   MY_SESSIONS_ROUTE,
   ISSUE_LICENSE_ROUTE,
@@ -62,8 +63,7 @@ export const ToolNavItems = [
   {
     key: 'scratch',
     label: <FormattedMessage id='sidebar_data.scratch_ru' />,
-    pathname: '#scratch',
-    external: 'scratch',
+    pathname: SCRATCH_HUB_ROUTE,
     icon: <CodeOutlined />,
     iconAccent: 'green',
   },

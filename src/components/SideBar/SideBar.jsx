@@ -33,7 +33,6 @@ import {
   useAuthRole,
 } from '@/helpers'
 import { broadcastAuthLogout } from '@/helpers/authEcosystemSync'
-import { getScratchEditorUrl } from '@/utils/scratchEditor'
 import { LOGIN_PAGE_ROUTE } from '@/constants'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
@@ -147,13 +146,6 @@ export default ({
         onNavigate()
       }
       await openLms()
-      return
-    }
-    if (entry.external === 'scratch') {
-      if (onNavigate) {
-        onNavigate()
-      }
-      window.location.assign(getScratchEditorUrl())
       return
     }
     navigate(entry.pathname, { state: { selectedNavBarKey: key } })

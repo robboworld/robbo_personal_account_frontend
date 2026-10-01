@@ -14,9 +14,13 @@ app.use(express.static(path.join(__dirname, 'dist')))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/static', express.static(path.join(__dirname, 'static')))
 
-// /scratch without trailing slash hits the protected SPA hub; editor lives at /scratch/.
-app.get('/scratch', function (req, res) {
-  res.redirect(301, '/scratch/')
+// Legacy /scratch links pointed at the editor; the hub is a separate LK route.
+// Only the exact path (with or without trailing slash) and the query string is kept
+// (legacy ?projectPageId=... links).
+app.get(['/scratch', '/scratch/'], function (req, res) {
+  const queryStart = req.originalUrl.indexOf('?')
+  const query = queryStart >= 0 ? req.originalUrl.slice(queryStart) : ''
+  res.redirect(302, '/scratch-hub' + query)
 })
 
 app.get('/*', function (req, res) {

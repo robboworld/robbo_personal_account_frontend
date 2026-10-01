@@ -23,7 +23,6 @@ import {
   ActionGrid,
   ActionIcon,
   ActionTile,
-  ActionTileLink,
   ActionTitle,
   HeroInner,
   HeroLead,
@@ -59,8 +58,8 @@ import {
   TEACHER,
   TEACHER_CLASSES_ROUTE,
   STUDENT_CLASSES_ROUTE,
+  SCRATCH_HUB_ROUTE,
 } from '@/constants'
-import { getScratchEditorUrl } from '@/utils/scratchEditor'
 
 const ACTION_ICONS = {
   profile: UserOutlined,
@@ -129,7 +128,7 @@ const QUICK_ACTION_DEFS = [
     key: 'create',
     titleId: 'home.action.create.title',
     descriptionId: 'home.action.create.description',
-    scratchEditor: true,
+    path: SCRATCH_HUB_ROUTE,
     iconKey: 'create',
     accent: 'green',
     gridSpan: 4,
@@ -278,22 +277,14 @@ animate='show'>
                 <ActionGrid>
                   {quickActions.map(action => {
                     const Icon = ACTION_ICONS[action.iconKey] || ArrowRightOutlined
-                    const href = action.scratchEditor
-                      ? getScratchEditorUrl()
-                      : action.href
-                    const Tile = href ? ActionTileLink : ActionTile
-                    const tileProps = href
-                      ? { href }
-                      : { onClick: () => handleAction(action) }
-
                     return (
-                      <Tile
+                      <ActionTile
                         key={action.key}
                         $featured={action.featured}
                         $wide={action.wide}
                         $gridSpan={action.gridSpan}
                         whileTap={{ scale: 0.99 }}
-                        {...tileProps}
+                        onClick={() => handleAction(action)}
                       >
                         <ActionIcon $accent={action.accent}>
                           <Icon />
@@ -308,7 +299,7 @@ animate='show'>
                           <FormattedMessage id='home.go_to' />
                           <ArrowRightOutlined style={{ fontSize: 12 }} />
                         </ActionCta>
-                      </Tile>
+                      </ActionTile>
                     )
                   })}
                 </ActionGrid>

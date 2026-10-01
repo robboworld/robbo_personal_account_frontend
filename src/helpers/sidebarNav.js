@@ -80,7 +80,7 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
     return undefined
   }
 
-  if (pathname === SCRATCH_HUB_ROUTE) {
+  if (pathname === SCRATCH_HUB_ROUTE || pathname === `${SCRATCH_HUB_ROUTE}/`) {
     return 'scratch'
   }
 
