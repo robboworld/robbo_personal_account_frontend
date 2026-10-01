@@ -28,11 +28,53 @@ import theme from '@/theme'
 
 const { colors } = theme
 
+// Spacing scale for this page: between sections, inside a section, title to hint.
+const PanelBody = styled.div`
+  --section-gap: 1.75rem;
+  --block-gap: 1rem;
+  --heading-gap: 0.3rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+`
+
+const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-gap);
+  min-width: 0;
+`
+
+const SectionHeading = styled.header`
+  display: flex;
+  flex-direction: column;
+  gap: var(--heading-gap);
+  line-height: 1.35;
+`
+
 const PreviewRow = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  min-width: 0;
+`
+
+const PreviewText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  line-height: 1.35;
+`
+
+const PreviewName = styled.strong`
+  overflow-wrap: anywhere;
+`
+
+const PreviewMeta = styled.span`
+  color: ${surface.muted};
+  font-size: 0.875rem;
 `
 
 const AvatarGrid = styled.div`
@@ -100,7 +142,6 @@ const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1.25rem;
 `
 
 const CustomizationPage = () => {
@@ -168,36 +209,44 @@ const CustomizationPage = () => {
         </HeroPanel>
 
         <Panel as={motion.section} variants={staggerItem}>
-          <SectionTitle>
-            <FormattedMessage id='customization.current' />
-          </SectionTitle>
-          <SectionHint>
-            <FormattedMessage id='customization.current_hint' />
-          </SectionHint>
-          {loading && !profile ? (
-            <Spin />
-          ) : (
-            <PreviewRow>
-              <UserAvatar
-                avatarId={selectedId}
-                displayName={displayName}
-                variant='hero'
-              />
-              <div>
-                <strong>{displayName || '—'}</strong>
-                <div style={{ color: surface.muted, fontSize: '0.875rem' }}>
-                  {selectedId
-                    ? intl.formatMessage({ id: 'customization.selected' }, { id: selectedId })
-                    : intl.formatMessage({ id: 'customization.using_initials' })}
-                </div>
-              </div>
-            </PreviewRow>
-          )}
+          <PanelBody>
+          <Section aria-labelledby='customization-current'>
+            <SectionHeading>
+              <SectionTitle id='customization-current'>
+                <FormattedMessage id='customization.current' />
+              </SectionTitle>
+              <SectionHint>
+                <FormattedMessage id='customization.current_hint' />
+              </SectionHint>
+            </SectionHeading>
+            {loading && !profile ? (
+              <Spin />
+            ) : (
+              <PreviewRow>
+                <UserAvatar
+                  avatarId={selectedId}
+                  displayName={displayName}
+                  variant='hero'
+                />
+                <PreviewText>
+                  <PreviewName>{displayName || '—'}</PreviewName>
+                  <PreviewMeta>
+                    {selectedId
+                      ? intl.formatMessage({ id: 'customization.selected' }, { id: selectedId })
+                      : intl.formatMessage({ id: 'customization.using_initials' })}
+                  </PreviewMeta>
+                </PreviewText>
+              </PreviewRow>
+            )}
+          </Section>
 
-          <SectionTitle>
-            <FormattedMessage id='customization.pick' />
-          </SectionTitle>
-          <AvatarGrid>
+          <Section aria-labelledby='customization-pick'>
+            <SectionHeading>
+              <SectionTitle id='customization-pick'>
+                <FormattedMessage id='customization.pick' />
+              </SectionTitle>
+            </SectionHeading>
+            <AvatarGrid>
             {AVATAR_CATALOG.map(item => {
               const selected = selectedId === item.id
               return (
@@ -222,17 +271,19 @@ const CustomizationPage = () => {
                 </AvatarCard>
               )
             })}
-          </AvatarGrid>
+            </AvatarGrid>
 
-          <Actions>
-            <Button
-              onClick={onReset}
-              disabled={saving || !selectedId}
-              loading={saving}
-            >
-              <FormattedMessage id='customization.reset' />
-            </Button>
-          </Actions>
+            <Actions>
+              <Button
+                onClick={onReset}
+                disabled={saving || !selectedId}
+                loading={saving}
+              >
+                <FormattedMessage id='customization.reset' />
+              </Button>
+            </Actions>
+          </Section>
+          </PanelBody>
         </Panel>
       </Stagger>
     </PageContent>
