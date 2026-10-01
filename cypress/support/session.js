@@ -21,6 +21,16 @@ const userHttp = user => ({
   role: user.role,
 })
 
+const projectPageNode = (id, title) => ({
+  __typename: 'ProjectPageHttp',
+  title,
+  linkScratch: '',
+  projectPageId: id,
+  projectId: `1${id}`,
+  lastModified: '2026-09-01T00:00:00Z',
+  preview: '',
+})
+
 export const GRAPHQL_FIXTURES = {
   GetUser: () => ({
     GetUser: { __typename: 'StudentHttp', userHttp: userHttp(STUDENT), robboGroupId: '', robboUnitId: '' },
@@ -35,8 +45,8 @@ export const GRAPHQL_FIXTURES = {
     GetAllProjectPagesByAccessToken: {
       __typename: 'ProjectPageHttpList',
       projectPages: [
-        { __typename: 'ProjectPageHttp', title: 'Robot dance', linkScratch: '', projectPageId: '1', projectId: '11', lastModified: '2026-09-01T00:00:00Z', preview: '' },
-        { __typename: 'ProjectPageHttp', title: 'Space quiz', linkScratch: '', projectPageId: '2', projectId: '12', lastModified: '2026-09-02T00:00:00Z', preview: '' },
+        projectPageNode('1', 'Robot dance'),
+        projectPageNode('2', 'Space quiz'),
       ],
       countRows: 2,
     },
