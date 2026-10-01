@@ -56,6 +56,7 @@ import { openScratchEditor } from '@/utils/scratchEditor'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
 import { formatDateTime } from '@/helpers/formatDateTime'
 import { RequireAuth, fetchOidcStatus, isAccessTokenExpired, isOidcSsoEnabled, useAuthRole } from '@/helpers'
+import { hasLmsPasswordFallback } from '@/helpers/oidcSession'
 import { useActions } from '@/helpers/useActions'
 import { displayProjectTitle } from '@/helpers/intl'
 import Loader from '@/components/Loader'
@@ -970,34 +971,39 @@ export default () => {
         let cancelled = false
 
         const run = async () => {
-            let token = readStoredAccessToken()
-            if (token) {
+            const done = probeResult => {
                 if (!cancelled) {
-                    setProbe({ status: 'auth', token })
+                    setProbe(probeResult)
                 }
+            }
+            const token = readStoredAccessToken()
+            if (token) {
+                done({ status: 'auth', token })
                 return
             }
 
-            token = await tryRefreshAccessToken()
-            if (token) {
-                if (!cancelled) {
-                    setProbe({ status: 'auth', token })
-                }
-                return
-            }
-
+            // SSO: ask for the session first. A BFF cookie session needs no access token, and
+            // /auth/refresh can only help after a password login (refresh_token cookie): calling
+            // it first meant two failed refresh requests on every project page.
+            let refreshUseful = true
             if (isOidcSsoEnabled()) {
                 try {
                     const status = await fetchOidcStatus()
                     if (status?.authenticated) {
-                        token = await tryRefreshAccessToken()
-                        if (!cancelled) {
-                            setProbe({ status: 'auth', token: token || '' })
-                        }
+                        done({ status: 'auth', token: '' })
                         return
                     }
+                    refreshUseful = hasLmsPasswordFallback(status)
                 } catch (_) {
-                    // fall through to guest
+                    // status unavailable: still try a password session below
+                }
+            }
+
+            if (refreshUseful) {
+                const refreshed = await tryRefreshAccessToken()
+                if (refreshed) {
+                    done({ status: 'auth', token: refreshed })
+                    return
                 }
             }
 
