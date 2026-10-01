@@ -7,8 +7,8 @@ WORKDIR /app
 # не нужен и сильно раздувает шаг Yarn «[4/4] Building fresh packages».
 ENV CYPRESS_INSTALL_BINARY=0
 
-# Husky не ставит git-hooks в CI; в контейнере .git обычно нет.
-ENV CI=true
+# Git-хуки в образе не нужны (и .git в контексте сборки нет).
+ENV CI=true HUSKY=0
 
 # Иначе первый yarn install идёт без lockfile → свежие минорные версии ломают webpack 4 в образе.
 COPY package.json yarn.lock ./
