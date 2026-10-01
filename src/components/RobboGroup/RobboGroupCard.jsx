@@ -9,7 +9,7 @@ import { robboGroupQuerysGQL, robboGroupMutationsGQL } from "@/graphQL"
 
 const RobboGroupCard = ({
     robboGroupId,
-    disableСhanges,
+    disableChanges,
     data: {
         GetRobboGroupById,
         loading,
@@ -33,7 +33,7 @@ const RobboGroupCard = ({
                     name='normal_robbo_group_card'
                     className='robbo-group-form'
                     labelWrap
-                    disabled={disableСhanges}
+                    disabled={disableChanges}
                     {...layout}
                     form={form}
                     initialValues={{
@@ -76,7 +76,7 @@ const RobboGroupCard = ({
 
 const RobboGroupCardContainer = ({
     robboGroupId,
-    disableСhanges,
+    disableChanges,
 
 }) => {
     const intl = useIntl()
@@ -84,7 +84,7 @@ const RobboGroupCardContainer = ({
         <WithGraphQLComponent
             intl={intl}
             robboGroupId={robboGroupId}
-            disableСhanges={disableСhanges}
+            disableChanges={disableChanges}
         />
     )
 }
@@ -124,7 +124,7 @@ const WithGraphQLComponent = compose(
 
 RobboGroupCard.propTypes = {
     robboGroupId: PropTypes.string.isRequired,
-    disableСhanges: PropTypes.bool,
+    disableChanges: PropTypes.bool,
 }
 
 export default RobboGroupCardContainer

@@ -47,7 +47,7 @@ export default ({ teacherId }) => {
                                     <RobboGroup
                                         robboUnitId={robboGroup.robboUnitId}
                                         robboGroupId={robboGroup.id}
-                                        disableСhanges
+                                        disableChanges
                                     />
                                 )}
                             />

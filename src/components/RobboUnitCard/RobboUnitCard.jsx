@@ -7,7 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { robboUnitMutationsGQL, robboUnitQuerysGQL } from "@/graphQL"
 
 const RobboUnitCard = ({
-    disableСhanges,
+    disableChanges,
     data: {
         GetRobboUnitById,
         loading,
@@ -69,7 +69,7 @@ const RobboUnitCard = ({
 
 const RobboUnitCardContainer = ({
     robboUnitId,
-    disableСhanges,
+    disableChanges,
 
 }) => {
     const intl = useIntl()
@@ -106,7 +106,7 @@ const RobboUnitCardContainer = ({
     return (
         <WithGraphQLComponent
             robboUnitId={robboUnitId}
-            disableСhanges={disableСhanges}
+            disableChanges={disableChanges}
         />
     )
 }

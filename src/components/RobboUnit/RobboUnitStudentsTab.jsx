@@ -15,7 +15,7 @@ const { Search } = Input
 
 const RobboUnitStudentsTab = ({
     robboUnitId,
-    disableСhanges,
+    disableChanges,
     GetStudents,
     email,
     SearchStudent,
@@ -55,13 +55,13 @@ const RobboUnitStudentsTab = ({
                 )}
             />
             <Button
-                type='primary' disabled={disableСhanges}
+                type='primary' disabled={disableChanges}
                 onClick={() => setOpenSearchSection(!openSearchSection)}
             >
                 <FormattedMessage id='robbo_unit_card.add_student' />
             </Button>
             <Button
-                type='primary' disabled={disableСhanges}
+                type='primary' disabled={disableChanges}
                 onClick={setOpenAddChildren}
             >
                 <FormattedMessage id='robbo_unit_card.create_student' />
@@ -105,7 +105,7 @@ const RobboUnitStudentsTab = ({
 
 RobboUnitStudentsTab.propTypes = {
     robboUnitId: PropTypes.string.isRequired,
-    disableСhanges: PropTypes.bool,
+    disableChanges: PropTypes.bool,
 }
 
 export default RobboUnitStudentsTab

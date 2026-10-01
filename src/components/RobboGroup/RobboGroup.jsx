@@ -11,7 +11,7 @@ import RobboStudentsTabContainer from "./RobboGroupStudentsTabContainer"
 const RobboGroup = ({
     robboUnitId,
     robboGroupId,
-    disableСhanges,
+    disableChanges,
 }) => {
     const intl = useIntl()
     return (
@@ -24,7 +24,7 @@ const RobboGroup = ({
                     key: '1',
                     children:
                         <RobboGroupCard
-                            robboGroupId={robboGroupId} disableСhanges={disableСhanges}
+                            robboGroupId={robboGroupId} disableChanges={disableChanges}
                         />,
                 },
                 {
@@ -34,7 +34,7 @@ const RobboGroup = ({
                         <RobboStudentsTabContainer
                             robboGroupId={robboGroupId}
                             robboUnitId={robboUnitId}
-                            disableСhanges={disableСhanges}
+                            disableChanges={disableChanges}
                         />,
                 },
                 {
@@ -55,7 +55,7 @@ const RobboGroup = ({
 RobboGroup.propTypes = {
     robboUnitId: PropTypes.string,
     robboGroupId: PropTypes.string.isRequired,
-    disableСhanges: PropTypes.bool,
+    disableChanges: PropTypes.bool,
 }
 
 export default RobboGroup
