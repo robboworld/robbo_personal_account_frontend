@@ -1,105 +1,66 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { notification } from 'antd'
-import { graphql } from '@apollo/client/react/hoc'
+import { useMutation, useQuery } from '@apollo/client'
 import { useSearchParams } from 'react-router-dom'
 import { useIntl } from 'react-intl'
-import { compose } from 'redux'
 
 import MyProjects from './MyProjects'
 
 import { projectPageMutationGQL, projectPageQueryGQL } from '@/graphQL'
 import { openScratchEditor } from '@/utils/scratchEditor'
 
+const PAGE_SIZE = '5'
+
 const MyProjectsContainer = () => {
     const intl = useIntl()
     const [searchParams, setSearchParams] = useSearchParams()
     const currentPage = searchParams.get('page') || '1'
-    const pageSize = '5'
+    const variables = { page: currentPage, pageSize: PAGE_SIZE }
 
-    const onChangePage = page => {
-        setSearchParams({ page })
-    }
+    const notifyError = error => notification.error({
+        message: intl.formatMessage({ id: 'notification.error_message' }),
+        description: error?.message,
+    })
 
-    const WithGraphQLComponent = compose(
-        graphql(
-            projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN,
-            {
-                options: props => {
-                    return {
-                        fetchPolicy: 'network-only',
-                        variables: {
-                            page: props.currentPage,
-                            pageSize: props.pageSize,
-                        },
-                        onError: error => {
-                            notification.error({
-                                message: intl.formatMessage({ id: 'notification.error_message' }),
-                                description: error?.message,
-                            })
-                        },
-                    }
-                },
-                name: 'GetProjectPages',
-            }),
-        graphql(
-            projectPageMutationGQL.DELETE_PROJECT_PAGE,
-            {
-                options: props => {
-                    return {
-                        refetchQueries: [
-                            {
-                                query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN,
-                                variables: {
-                                    page: props.currentPage,
-                                    pageSize: props.pageSize,
-                                },
-                            },
-                        ],
-                        onCompleted: () => {
-                            notification.success({ description: props.intl.formatMessage({ id: 'notification.project_page_deleted_success' }) })
-                        },
-                        onError: error => {
-                            notification.error({
-                                message: props.intl.formatMessage({ id: 'notification.error_message' }),
-                                description: error?.message,
-                            })
-                        },
-                    }
-                },
-                name: 'DeleteProjectPage',
-            },
-        ),
-        graphql(
-            projectPageMutationGQL.CREATE_PROJECT_PAGE,
-            {
-                options: props => {
-                    return {
-                        onCompleted: data => {
-                            const created = data?.CreateProjectPage
-                            if (created?.projectPageId) {
-                                openScratchEditor(created.projectPageId)
-                            }
-                        },
-                        onError: error => {
-                            notification.error({
-                                message: props.intl.formatMessage({ id: 'notification.error_message' }),
-                                description: error?.message,
-                            })
-                        },
-                    }
-                },
-                name: 'CreateProjectPage',
-            },
-        ),
-    )
-        (MyProjects)
+    const projectPages = useQuery(projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN, {
+        fetchPolicy: 'network-only',
+        variables,
+    })
+    useEffect(() => {
+        if (projectPages.error) {
+            notifyError(projectPages.error)
+        }
+        // notifyError only formats the message; re-run on a new error, not on a new intl.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [projectPages.error])
+
+    const [deleteProjectPage] = useMutation(projectPageMutationGQL.DELETE_PROJECT_PAGE, {
+        refetchQueries: [{ query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN, variables }],
+        onCompleted: () => notification.success({
+            description: intl.formatMessage({ id: 'notification.project_page_deleted_success' }),
+        }),
+        onError: notifyError,
+    })
+
+    const [createProjectPage, createState] = useMutation(projectPageMutationGQL.CREATE_PROJECT_PAGE, {
+        onCompleted: data => {
+            const created = data?.CreateProjectPage
+            if (created?.projectPageId) {
+                openScratchEditor(created.projectPageId)
+            }
+        },
+        onError: notifyError,
+    })
 
     return (
-        <WithGraphQLComponent
-            intl={intl}
-            pageSize={pageSize}
+        <MyProjects
+            GetProjectPages={{ ...projectPages.data, loading: projectPages.loading, error: projectPages.error }}
+            DeleteProjectPage={deleteProjectPage}
+            CreateProjectPage={createProjectPage}
+            creating={createState.loading}
+            pageSize={PAGE_SIZE}
             currentPage={currentPage}
-            onChangePage={onChangePage}
+            onChangePage={page => setSearchParams({ page })}
         />
     )
 }

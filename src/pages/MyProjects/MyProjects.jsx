@@ -64,6 +64,7 @@ const MyProjects = ({
   GetProjectPages,
   DeleteProjectPage,
   CreateProjectPage,
+  creating,
   pageSize,
   currentPage,
   onChangePage,
@@ -75,7 +76,6 @@ const MyProjects = ({
   const projectData = GetProjectPages?.GetAllProjectPagesByAccessToken
   const projects = projectData?.projectPages || []
   const totalRows = projectData?.countRows || 0
-  const creating = CreateProjectPage?.loading
 
   const openProject = useCallback(projectPageId => {
     navigate(`/projects/${projectPageId}`, {
