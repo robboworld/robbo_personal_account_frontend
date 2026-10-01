@@ -29,17 +29,12 @@ export function subscribeAuthLogout (callback) {
 
 export function clearLocalAuthArtifacts () {
   clearAccessToken()
-  try {
-    clearAccessToken()
-  } catch {
-    // ignore
-  }
   clearLmsIdentityLink()
 }
 
 /**
- * Poll BFF /auth/oidc/status so logout in another product (shared cookie on :8080)
- * clears UI in this tab without manual refresh.
+ * Poll BFF /auth/oidc/status while the tab is visible so logout in another product
+ * (shared cookie on :8080) clears UI in this tab without manual refresh.
  */
 export function startBffSessionWatch ({
   isAuthenticated,
@@ -54,7 +49,10 @@ export function startBffSessionWatch ({
   let stopped = false
 
   const runCheck = async () => {
-    if (stopped) {
+    // Hidden tabs do not poll: every open tab used to hit the backend every few seconds.
+    // A tab that becomes visible checks at once (onVisibility), so a logout elsewhere
+    // still shows up as soon as the user looks at it.
+    if (stopped || document.visibilityState === 'hidden') {
       return
     }
     try {
