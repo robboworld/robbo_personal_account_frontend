@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { parseJwt, isAccessTokenExpired } from './jwtParser'
@@ -55,11 +55,11 @@ export const OidcSessionProvider = ({ children }) => {
     sessionRef.current = session
   }, [session])
 
-  const handleRemoteLogout = () => {
+  const handleRemoteLogout = useCallback(() => {
     clearLocalAuthArtifacts()
     setSession({ authenticated: false })
     navigate(LK_LOGOUT_RETURN_TO, { replace: true })
-  }
+  }, [navigate])
 
   useEffect(() => {
     if (!isOidcSsoEnabled()) {
@@ -76,7 +76,7 @@ export const OidcSessionProvider = ({ children }) => {
       unsubscribeBroadcast()
       stopWatch()
     }
-  }, [navigate])
+  }, [handleRemoteLogout])
 
   useEffect(() => {
     if (!isOidcSsoEnabled()) {

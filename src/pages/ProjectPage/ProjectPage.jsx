@@ -313,7 +313,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         return () => {
             actions.clearProjectPageState()
         }
-    }, [projectPageId, token])
+    }, [actions, projectPageId, token])
 
     const { projectPage, playToken, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
     const loginState = useSelector(({ login }) => login)
@@ -321,13 +321,16 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     const isOwner = Boolean(projectPage?.isOwner)
     const canEditTags = isOwner || isSuperAdmin
 
+    const loadedPageId = projectPage?.projectPageId
+    const loadedLandingFeatured = projectPage?.landingFeatured
+    const loadedLandingSortOrder = projectPage?.landingSortOrder
     useEffect(() => {
-        if (!projectPage) {
+        if (!loadedPageId) {
             return
         }
-        setLandingFeaturedLocal(Boolean(projectPage.landingFeatured))
-        setLandingSortOrderLocal(Number(projectPage.landingSortOrder) || 0)
-    }, [projectPage?.projectPageId, projectPage?.landingFeatured, projectPage?.landingSortOrder])
+        setLandingFeaturedLocal(Boolean(loadedLandingFeatured))
+        setLandingSortOrderLocal(Number(loadedLandingSortOrder) || 0)
+    }, [loadedPageId, loadedLandingFeatured, loadedLandingSortOrder])
 
     useEffect(() => {
         if (loading || !projectPage?.projectPageId) return

@@ -68,7 +68,10 @@ export default ({ userRole }) => {
         return () => {
             actions.clearRobboGroupsPage()
         }
-    }, [currentPage, robboUnitId])
+        // robboUnits is only the "load once" check: re-running when it arrives would fetch
+        // the groups twice. userRole is in: it may resolve after the first render.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [actions, currentPage, robboUnitId, userRole])
 
     const handleDeleteGroup = (robboGroup, index) => {
         const groupRobboUnitId = robboGroup.robboUnitId || robboUnitId

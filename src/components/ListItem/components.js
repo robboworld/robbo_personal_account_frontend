@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 
 export const StyledListItem = styled.li`
     cursor: pointer;
@@ -98,16 +98,4 @@ export const IconSVG = styled.div`
     font-size: 20px;
     aspect-ratio: 1 / 1;
     margin-right: 0.5rem;
-`
-
-const fadeIn = keyframes`
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 `

@@ -26,7 +26,7 @@ export default ({ teacherId }) => {
         return () => {
             actions.clearRobboGroupsPage()
         }
-    }, [])
+    }, [actions, teacherId])
 
 
     return (

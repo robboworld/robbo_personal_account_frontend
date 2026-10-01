@@ -11,6 +11,8 @@ export const useActions = (actions, deps) => {
             }
             return bindActionCreators(actions, dispatch)
         },
+        // Callers pass their own deps (usually []): the action creators are module constants.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         deps ? [dispatch, ...deps] : [dispatch],
     )
 }

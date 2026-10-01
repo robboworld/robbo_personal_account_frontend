@@ -29,16 +29,17 @@ const { Title } = Typography
 export default ({ userRole }) => {
     const [open, setOpen] = useState(false)
     const intl = useIntl()
-    const token = getAccessToken()
     const { coursePageId } = useParams()
     const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
+    // Reload when the route switches courses; the token is read here so a background
+    // refresh does not refetch (and blank) the page.
     useEffect(() => {
-        actions.getCoursePageById(token, coursePageId)
+        actions.getCoursePageById(getAccessToken(), coursePageId)
         return () => {
             actions.clearCoursePageState()
         }
-    }, [])
+    }, [actions, coursePageId])
 
     const loading = useSelector(state => getCoursePageLoading(state.coursePage))
     const coursePage = useSelector(state => getCoursePage(state.coursePage))
