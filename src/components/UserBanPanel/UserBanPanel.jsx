@@ -226,14 +226,14 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
       </Typography.Title>
 
       {isBanned && activeBan ? (
-        <Space direction='vertical' size='middle'
+        <Space orientation='vertical' size='middle'
 style={{ width: '100%' }}>
           <Alert
             type='error'
             showIcon
-            message={<FormattedMessage id='moderation.banned_alert' />}
+            title={<FormattedMessage id='moderation.banned_alert' />}
             description={(
-              <Space direction='vertical' size={4}>
+              <Space orientation='vertical' size={4}>
                 <Paragraph style={{ marginBottom: 0 }}>
                   <Text strong><FormattedMessage id='moderation.col_reason' />:</Text>
                   {' '}

@@ -28,7 +28,7 @@ const ChildrenTab = ({
     }
 
     return (
-        <Space direction='vertical' style={{ margin: '0.5rem' }}>
+        <Space orientation='vertical' style={{ margin: '0.5rem' }}>
             <List
                 bordered
                 loading={GetStudents?.loading}

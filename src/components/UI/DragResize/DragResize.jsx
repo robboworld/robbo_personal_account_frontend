@@ -45,8 +45,8 @@ const DragResize = ({
                 open={open}
                 onClose={() => setOpen(false)}
                 placement='bottom'
-                height='92dvh'
-                destroyOnClose
+                size='92dvh'
+                destroyOnHidden
                 styles={{
                     body: {
                         padding: '0.75rem 1rem 1.25rem',

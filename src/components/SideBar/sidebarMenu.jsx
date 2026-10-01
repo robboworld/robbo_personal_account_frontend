@@ -24,9 +24,12 @@ export const withSidebarIcon = (item, collapsed = false) => {
   }
 
   const accent = getSidebarIconAccent(item)
+  // antd 6 passes unknown item fields to the <li>: keep routing data out of the DOM
+  // (clicks resolve the entry by key in SideBar).
+  const { iconAccent, pathname, external, ...menuItem } = item
 
   return {
-    ...item,
+    ...menuItem,
     'data-icon-accent': accent,
     icon: (
       <SidebarIcon $accent={accent} $collapsed={collapsed}>

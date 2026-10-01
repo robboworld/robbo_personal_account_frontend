@@ -26,7 +26,7 @@ const GroupsTab = ({
     const actions = useActions({ setTeacherForRobboGroupRequest, deleteTeacherForRobboGroupRequest }, [])
     const [openSearchSection, setOpenSearchSection] = useState(false)
     return (
-        <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
+        <Space orientation='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             <List
                 loading={GetRobboGroups?.loading}
                 bordered
@@ -105,7 +105,7 @@ const WithGraphQLComponent = compose(
                     },
                     onError: error => {
                         notification.error({
-                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
                             description: error?.message,
                         })
                     },
@@ -126,7 +126,7 @@ const WithGraphQLComponent = compose(
                     },
                     onError: error => {
                         notification.error({
-                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
                             description: error?.message,
                         })
                     },

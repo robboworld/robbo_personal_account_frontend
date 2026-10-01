@@ -31,7 +31,7 @@ function* getTeachersSaga(action) {
     } catch (e) {
         yield put(getTeachersFailed(e.message))
         notification.error({
-            message: formatMessageId(language, 'notification.error_message'),
+            title: formatMessageId(language, 'notification.error_message'),
             description: e.message,
         })
     }
@@ -45,13 +45,13 @@ function* deleteTeacherSaga(action) {
 
         yield put(deleteTeacherSuccess(response.data.DeleteTeacher, teacherIndex))
         notification.success({
-            message: '',
+            title: '',
             description: formatMessageId(language, 'notification.teacher_delete_success'),
         })
     } catch (e) {
         yield put(deleteTeacherFailed(e))
         notification.error({
-            message: formatMessageId(language, 'notification.error_message'),
+            title: formatMessageId(language, 'notification.error_message'),
             description: e.message,
         })
     }
@@ -65,13 +65,13 @@ function* createTeacherSaga(action) {
 
         yield put(createTeacherSuccess(response.data.CreateTeacher))
         notification.success({
-            message: '',
+            title: '',
             description: formatMessageId(language, 'notification.teacher_create_success'),
         })
     } catch (e) {
         yield put(createTeacherFailed(e))
         notification.error({
-            message: formatMessageId(language, 'notification.error_message'),
+            title: formatMessageId(language, 'notification.error_message'),
             description: e.message,
         })
     }
@@ -85,13 +85,13 @@ function* setTeacherForRobboGroupSaga(action) {
 
         yield put(setTeacherForRobboGroupSuccess(response.data.SetTeacherForRobboGroup))
         notification.success({
-            message: '',
+            title: '',
             description: formatMessageId(language, 'notification.teacher_assigned_success'),
         })
     } catch (e) {
         yield put(setTeacherForRobboGroupFailed(e))
         notification.error({
-            message: formatMessageId(language, 'notification.error_message'),
+            title: formatMessageId(language, 'notification.error_message'),
             description: e.message,
         })
     }
@@ -105,13 +105,13 @@ function* deleteTeacherForRobboGroupSaga(action) {
 
         yield put(deleteTeacherForRobboGroupSuccess(response.data.DeleteTeacherForRobboGroup))
         notification.success({
-            message: '',
+            title: '',
             description: formatMessageId(language, 'notification.teacher_unassigned_success'),
         })
     } catch (e) {
         yield put(deleteTeacherForRobboGroupFailed(e))
         notification.error({
-            message: formatMessageId(language, 'notification.error_message'),
+            title: formatMessageId(language, 'notification.error_message'),
             description: e.message,
         })
     }

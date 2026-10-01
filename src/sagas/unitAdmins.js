@@ -39,7 +39,7 @@ function* getUnitAdminsSaga(action) {
         yield put(getUnitAdminsSuccess(response.data.GetAllUnitAdmins.unitAdmins))
     } catch (e) {
         yield put(getUnitAdminsFailed(e.message))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -50,10 +50,10 @@ function* createUnitAdminSaga(action) {
         const response = yield call(unitAdminMutationsGraphQL.CreateUnitAdmin, { input: unitAdmin })
 
         yield put(createUnitAdminSuccess(response.data.CreateUnitAdmin))
-        notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_create_success') })
+        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_create_success') })
     } catch (e) {
         yield put(createUnitAdminFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -64,10 +64,10 @@ function* deleteUnitAdminSaga(action) {
         const response = yield call(unitAdminMutationsGraphQL.DeleteUnitAdmin, unitAdminId)
 
         yield put(deleteUnitAdminSuccess(response.data.DeleteUnitAdmin, unitAdminIndex))
-        notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_delete_success') })
+        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_delete_success') })
     } catch (e) {
         yield put(deleteUnitAdminFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -80,7 +80,7 @@ function* searchUnitAdminsByEmailSaga(action) {
         yield put(searchUnitAdminsByEmailSuccess(response.data))
     } catch (e) {
         yield put(searchUnitAdminsByEmailFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -91,10 +91,10 @@ function* setNewUnitAdminForRobboUnitSaga(action) {
         const response = yield call(unitAdminMutationsGraphQL.SetNewUnitAdminForRobboUnit, unitAdminId, robboUnitId)
 
         yield put(setNewUnitAdminForRobboUnitSuccess(response.data.SetNewUnitAdminForRobboUnit))
-        notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_assigned_success') })
+        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_assigned_success') })
     } catch (e) {
         yield put(setNewUnitAdminForRobboUnitFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -107,7 +107,7 @@ function* getUnitAdminsByRobboUnitIdSaga(action) {
         yield put(getUnitAdminsByRobboUnitIdSuccess(response.data))
     } catch (e) {
         yield put(getUnitAdminsByRobboUnitIdFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -118,10 +118,10 @@ function* deleteUnitAdminForRobboUnitSaga(action) {
         const response = yield call(unitAdminsAPI.deleteUnitAdminForRobboUnit, token, unitAdminId, robboUnitId)
 
         yield put(deleteUnitAdminForRobboUnitSuccess(response))
-        notification.success({ message: '', description: formatMessageId(language, 'notification.unit_admin_unassigned_success') })
+        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_unassigned_success') })
     } catch (e) {
         yield put(deleteUnitAdminForRobboUnitFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 

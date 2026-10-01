@@ -37,9 +37,9 @@ const OidcAuthErrorFallback = ({ search, inactiveAlert }) => {
         {inactiveAlert}
         {!inactiveAlert && (
           <Alert type='error' showIcon
-message={message} style={{ marginBottom: 16 }} />
+title={message} style={{ marginBottom: 16 }} />
         )}
-        <Space direction='vertical' style={{ width: '100%' }}
+        <Space orientation='vertical' style={{ width: '100%' }}
 size='middle'>
           <Button type='primary' size='large'
 block onClick={handleRetry}>

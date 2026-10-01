@@ -328,11 +328,11 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
     }
     if (error) {
         return <Alert type='warning' showIcon
-message={error} />
+title={error} />
     }
     if (!iframeSrc) {
         return <Alert type='info' showIcon
-message={intl.formatMessage({ id: 'project_page.player_empty' })} />
+title={intl.formatMessage({ id: 'project_page.player_empty' })} />
     }
 
     const greenFlagLabel = intl.formatMessage({ id: 'project_page.green_flag' })

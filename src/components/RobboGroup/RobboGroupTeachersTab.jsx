@@ -37,7 +37,7 @@ const RobboGroupTeachersTab = ({
     }
 
     return (
-        <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
+        <Space orientation='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             <List
                 bordered
                 loading={GetTeachers?.loading}
@@ -123,7 +123,7 @@ const WithGraphQLComponent = compose(
                     },
                     onError: error => {
                         notification.error({
-                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
                             description: error?.message,
                         })
                     },
@@ -144,7 +144,7 @@ const WithGraphQLComponent = compose(
                     },
                     onError: error => {
                         notification.error({
-                            message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
                             description: error?.message,
                         })
                     },

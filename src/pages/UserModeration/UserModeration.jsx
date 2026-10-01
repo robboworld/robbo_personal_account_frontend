@@ -134,7 +134,7 @@ animate='show'>
 
         <Stagger variants={staggerItem}>
           <GlassPanel>
-            <Space direction='vertical' size='middle'
+            <Space orientation='vertical' size='middle'
 style={{ width: '100%' }}>
               <Input
                 allowClear
@@ -205,7 +205,7 @@ style={{ width: '100%' }}>
                             </Space>
                           )}
                           description={(
-                            <Space direction='vertical' size={0}>
+                            <Space orientation='vertical' size={0}>
                               {hit.email ? <Text type='secondary'>{hit.email}</Text> : null}
                               {hit.fullName ? <Text type='secondary'>{hit.fullName}</Text> : null}
                             </Space>
@@ -221,7 +221,7 @@ style={{ width: '100%' }}>
                 <Alert
                   type='info'
                   showIcon
-                  message={intl.formatMessage({ id: 'users_moderation.hint' })}
+                  title={intl.formatMessage({ id: 'users_moderation.hint' })}
                 />
               ) : null}
             </Space>

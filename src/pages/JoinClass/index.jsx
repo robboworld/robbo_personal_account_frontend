@@ -169,7 +169,7 @@ const JoinClassPage = () => {
         )}
         <Paragraph type='secondary' style={{ fontSize: 12 }}>{preview.edxCourseId}</Paragraph>
         <Space
-          direction='vertical'
+          orientation='vertical'
           style={{ width: '100%', marginTop: 24 }}
           size='middle'
         >

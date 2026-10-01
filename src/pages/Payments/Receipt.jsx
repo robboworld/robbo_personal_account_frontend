@@ -104,11 +104,11 @@ animate='show'>
               </div>
             ) : null}
             {error ? <Alert type='error' showIcon
-message={error} /> : null}
+title={error} /> : null}
             {order ? (
               <React.Fragment>
                 <Alert type={alertType} showIcon
-message={statusMessage} style={{ marginBottom: 16 }} />
+title={statusMessage} style={{ marginBottom: 16 }} />
                 <Paragraph>
                   <Text strong>{intl.formatMessage({ id: 'payments.order_number' })}: </Text>
                   <Text code copyable>{order.orderNumber}</Text>

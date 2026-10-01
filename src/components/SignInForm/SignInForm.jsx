@@ -68,7 +68,7 @@ const SignInForm = memo(({ handleSubmit }) => {
       if (code === 'USER_INACTIVE') {
         const ban = graphQLError?.extensions?.ban || null
         notification.error({
-          message: intl.formatMessage({ id: 'login.inactive.heading' }),
+          title: intl.formatMessage({ id: 'login.inactive.heading' }),
           description: (
             <span style={{ whiteSpace: 'pre-line' }}>
               {formatInactiveBanDescription(intl, ban)}
@@ -79,7 +79,7 @@ const SignInForm = memo(({ handleSubmit }) => {
         return
       }
       notification.error({
-        message: intl.formatMessage({ id: 'notification.error_message' }),
+        title: intl.formatMessage({ id: 'notification.error_message' }),
         description: error?.message,
       })
     },
@@ -134,7 +134,7 @@ const SignInForm = memo(({ handleSubmit }) => {
         setSessionLimitReached(true)
       } else {
         notification.error({
-          message: intl.formatMessage({ id: 'notification.error_message' }),
+          title: intl.formatMessage({ id: 'notification.error_message' }),
           description: error?.response?.data?.error || error?.message,
         })
       }
@@ -169,7 +169,7 @@ const SignInForm = memo(({ handleSubmit }) => {
           type='error'
           showIcon
           style={{ marginBottom: 16 }}
-          message={intl.formatMessage({ id: 'sessions.limit_reached' })}
+          title={intl.formatMessage({ id: 'sessions.limit_reached' })}
           description={(
             <Button
               type='primary'

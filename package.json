@@ -30,10 +30,11 @@
     }
   },
   "dependencies": {
+    "@ant-design/icons": "^6",
     "@apollo/client": "^4",
     "@cospired/i18n-iso-languages": "4.2.0",
     "@emotion/styled": "^11.10.4",
-    "antd": "^5.29.3",
+    "antd": "^6",
     "axios": "^1.20.0",
     "classnames": "^2.3.2",
     "country-flag-icons": "^1.5.0",

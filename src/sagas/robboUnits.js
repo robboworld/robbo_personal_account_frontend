@@ -37,7 +37,7 @@ function* getAllRobboUnitsSaga({ payload }) {
         yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
     } catch (e) {
         yield put(getRobboUnitsFailed(e.message))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -50,7 +50,7 @@ function* getRobboUnitsByUnitAdminIdSaga({ payload }) {
         yield put(getRobboUnitsByUnitAdminIdSuccess(response.data.GetRobboUnitsByAccessToken))
     } catch (e) {
         yield put(getRobboUnitsByUnitAdminIdFailed(e.message))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -63,7 +63,7 @@ function* getRobboUnitByIdSaga(action) {
         yield put(getRobboUnitByIdSuccess(response.data))
     } catch (e) {
         yield put(getRobboUnitByIdFailed(e.message))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -74,10 +74,10 @@ function* deleteRobboUnitSaga({ payload }) {
         const response = yield call(robboUnitMutationsGraphQL.DeleteRobboUnit, { robboUnitId })
 
         yield put(deleteRobboUnitSuccess(response.data.DeleteRobboUnit, robboUnitIndex))
-        notification.success({ message: '', description: formatMessageId(language, 'notification.unit_delete_success') })
+        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_delete_success') })
     } catch (e) {
         yield put(deleteRobboUnitFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -88,10 +88,10 @@ function* createRobboUnitSaga(action) {
         const response = yield call(robboUnitMutationsGraphQL.CreateRobboUnit, { input: robboUnit })
 
         yield put(createRobboUnitSuccess(response.data.CreateRobboUnit))
-        notification.success({ message: '', description: formatMessageId(language, 'notification.robbo_unit_create_success') })
+        notification.success({ title: '', description: formatMessageId(language, 'notification.robbo_unit_create_success') })
     } catch (e) {
         yield put(createRobboUnitFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 
@@ -102,10 +102,10 @@ function* updateRobboUnitSaga({ payload }) {
         const response = yield call(robboUnitMutationsGraphQL.UpdateRobboUnit, { input: robboUnit })
 
         yield put(updateRobboUnitSuccess(response.data.UpdateRobboUnit))
-        notification.success({ message: '', description: formatMessageId(language, 'notification.unit_update_success') })
+        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_update_success') })
     } catch (e) {
         yield put(updateRobboUnitFailed(e))
-        notification.error({ message: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
     }
 }
 

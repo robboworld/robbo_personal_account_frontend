@@ -112,7 +112,7 @@ const Logistration = () => {
           type='error'
           showIcon
           style={{ marginBottom: 16, whiteSpace: 'pre-line' }}
-          message={intl.formatMessage({ id: 'login.inactive.heading' })}
+          title={intl.formatMessage({ id: 'login.inactive.heading' })}
           description={formatInactiveBanDescription(intl, inactiveBan)}
         />
       ) : null
@@ -131,7 +131,7 @@ const Logistration = () => {
       type='error'
       showIcon
       style={{ marginBottom: 16, whiteSpace: 'pre-line' }}
-      message={intl.formatMessage({ id: 'login.inactive.heading' })}
+      title={intl.formatMessage({ id: 'login.inactive.heading' })}
       description={formatInactiveBanDescription(intl, inactiveBan)}
     />
   ) : null

@@ -34,7 +34,7 @@ const AddRobboUnitContainer = ({ robboUnitId }) => {
                 },
                 onError: error => {
                     notification.error({
-                        message: intl.formatMessage({ id: 'notification.error_message' }),
+                        title: intl.formatMessage({ id: 'notification.error_message' }),
                         description: error?.message,
                     })
                 },

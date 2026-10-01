@@ -30,7 +30,7 @@ export default ({ teacherId }) => {
 
 
     return (
-        <Space direction='vertical' style={{ margin: '0.5rem', width: '100%' }}>
+        <Space orientation='vertical' style={{ margin: '0.5rem', width: '100%' }}>
             <List
                 loading={loading}
                 bordered

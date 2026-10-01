@@ -245,7 +245,7 @@ key='read' onClick={event => {
                     >
                         <List.Item.Meta
                             title={
-                                <Space direction='vertical' size={0}>
+                                <Space orientation='vertical' size={0}>
                                     <Text strong={!row.readAt && row.feedKind === 'personal'}>{row.title}</Text>
                                     <Text type='secondary' style={{ fontSize: 12 }}>
                                         {row.feedKind === 'announcement'
@@ -299,9 +299,9 @@ overflowCount={99}>
                     onCancel={() => setOpen(false)}
                     footer={null}
                     centered
-                    destroyOnClose
+                    destroyOnHidden
                     width='min(440px, calc(100vw - 2rem))'
-                    maskClosable
+                    mask={{ closable: true }}
                     styles={{
                         mask: { background: 'rgba(24, 28, 32, 0.55)' },
                     }}
@@ -321,9 +321,9 @@ overflowCount={99}>
                 onCancel={() => setOpen(false)}
                 footer={null}
                 centered
-                destroyOnClose
+                destroyOnHidden
                 width='min(440px, calc(100vw - 2rem))'
-                maskClosable
+                mask={{ closable: true }}
             >
                 {feed}
             </Modal>

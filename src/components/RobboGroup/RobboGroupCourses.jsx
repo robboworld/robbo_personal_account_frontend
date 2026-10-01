@@ -70,7 +70,7 @@ const WithGraphQLComponent = graphql(
                 },
                 onError: error => {
                     notification.error({
-                        message: props.intl.formatMessage({ id: 'notification.error_message' }),
+                        title: props.intl.formatMessage({ id: 'notification.error_message' }),
                         description: error?.message,
                     })
                 },

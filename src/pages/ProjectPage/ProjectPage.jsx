@@ -901,7 +901,7 @@ style={{ width: '100%' }}>
                 okButtonProps={{ danger: true, loading: moderateBusy, disabled: moderateReason.trim().length < 3 }}
                 onOk={confirmModerateDelete}
                 onCancel={() => !moderateBusy && setModerateOpen(false)}
-                destroyOnClose
+                destroyOnHidden
             >
                 <p>
                     <FormattedMessage
@@ -924,7 +924,7 @@ style={{ width: '100%' }}>
                 okButtonProps={{ loading: featureBusy }}
                 onOk={confirmAddToLanding}
                 onCancel={() => !featureBusy && setFeatureOpen(false)}
-                destroyOnClose
+                destroyOnHidden
             >
                 <p>
                     <FormattedMessage

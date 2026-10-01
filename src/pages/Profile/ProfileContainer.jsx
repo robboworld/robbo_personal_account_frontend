@@ -54,7 +54,7 @@ const useErrorNotification = error => {
     useEffect(() => {
         if (error) {
             notification.error({
-                message: intl.formatMessage({ id: 'notification.error_message' }),
+                title: intl.formatMessage({ id: 'notification.error_message' }),
                 description: error.message,
             })
         }
@@ -88,7 +88,7 @@ const RoleProfile = ({ role, peekUserId, peekUserRole, parentId, accessUpdate })
             description: intl.formatMessage({ id: 'notification.update_profile_success' }),
         }),
         onError: error => notification.error({
-            message: intl.formatMessage({ id: 'notification.error_message' }),
+            title: intl.formatMessage({ id: 'notification.error_message' }),
             description: error?.message,
         }),
     })
@@ -132,7 +132,7 @@ const ProfileContainer = ({
         }
         return (
             <Alert type='info' showIcon
-message={intl.formatMessage({ id: 'profile.select_user' })} />
+title={intl.formatMessage({ id: 'profile.select_user' })} />
         )
     }
 
@@ -149,7 +149,7 @@ message={intl.formatMessage({ id: 'profile.select_user' })} />
         <Alert
             type='warning'
             showIcon
-            message={intl.formatMessage({ id: 'profile.unavailable' })}
+            title={intl.formatMessage({ id: 'profile.unavailable' })}
         />
     )
 }

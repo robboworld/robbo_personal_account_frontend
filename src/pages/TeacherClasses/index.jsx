@@ -159,7 +159,7 @@ onFinish={onCreate}>
         ]}
       >
         {inviteOpen && (
-          <Space direction='vertical' size='large'
+          <Space orientation='vertical' size='large'
 style={{ width: '100%' }}>
             <div>
               <Text type='secondary'><FormattedMessage id='teacher_class.code' defaultMessage='Code' /></Text>

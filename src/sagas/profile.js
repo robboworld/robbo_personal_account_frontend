@@ -31,12 +31,12 @@ function* updateProfileSaga({ payload }) {
 
         yield put(updateProfileSuccess(response))
         notification.success({
-            message: formatMessageId(language, 'notification.profile_update_short'),
+            title: formatMessageId(language, 'notification.profile_update_short'),
         })
     } catch (e) {
         yield put(updateProfileFailed(e))
         notification.error({
-            message: formatMessageId(language, 'notification.error_message'),
+            title: formatMessageId(language, 'notification.error_message'),
             description: e.message,
         })
     }

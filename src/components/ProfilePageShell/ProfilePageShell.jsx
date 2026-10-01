@@ -59,7 +59,7 @@ const ProfilePageBody = ({
         <Alert
           type='error'
           showIcon
-          message={error.message || String(error)}
+          title={error.message || String(error)}
         />
       </motion.div>
     )}

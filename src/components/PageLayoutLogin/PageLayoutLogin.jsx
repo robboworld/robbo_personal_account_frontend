@@ -58,7 +58,7 @@ const LoginContent = ({
           type='error'
           showIcon
           style={{ marginBottom: 16 }}
-          message={initialLoginError}
+          title={initialLoginError}
           description={sessionLimitReached ? (
             <Button
               type='primary'

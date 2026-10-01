@@ -76,9 +76,9 @@ const SelectLanguage = ({ variant = 'default' }) => {
                     onCancel={() => setOpen(false)}
                     footer={null}
                     centered
-                    destroyOnClose
+                    destroyOnHidden
                     width='min(360px, calc(100vw - 2rem))'
-                    maskClosable
+                    mask={{ closable: true }}
                     styles={{
                         mask: { background: 'rgba(24, 28, 32, 0.55)' },
                     }}

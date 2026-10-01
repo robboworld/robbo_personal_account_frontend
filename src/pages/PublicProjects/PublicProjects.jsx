@@ -713,7 +713,7 @@ onClick={clearAllFilters}>
         okButtonProps={{ danger: true, loading: deleteBusy, disabled: deleteReason.trim().length < 3 }}
         onOk={confirmDelete}
         onCancel={closeDeleteModal}
-        destroyOnClose
+        destroyOnHidden
       >
         <p>
           <FormattedMessage
@@ -737,7 +737,7 @@ onClick={clearAllFilters}>
         okButtonProps={{ loading: featureBusy }}
         onOk={confirmFeature}
         onCancel={closeFeatureModal}
-        destroyOnClose
+        destroyOnHidden
       >
         <p>
           <FormattedMessage

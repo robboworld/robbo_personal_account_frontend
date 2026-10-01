@@ -77,7 +77,7 @@ function* signUpSaga(action) {
         }
 
         notification.error({
-            message: formatMessageId(language, 'notification.error_message'),
+            title: formatMessageId(language, 'notification.error_message'),
             description,
         })
 
