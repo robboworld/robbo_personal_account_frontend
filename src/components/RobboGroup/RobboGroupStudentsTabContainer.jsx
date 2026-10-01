@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { notification } from 'antd'
 import { compose } from 'redux'
-import { graphql } from '@apollo/client/react/hoc'
 
 import RobboGroupStudentsTab from './RobboGroupStudentsTab'
 
+import { graphql } from '@/graphQL/hoc'
 import { studentQuerysGQL } from '@/graphQL'
 
 

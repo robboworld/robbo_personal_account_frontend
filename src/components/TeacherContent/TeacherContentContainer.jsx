@@ -1,11 +1,11 @@
 import React from 'react'
 import { compose } from 'redux'
 import { notification } from 'antd'
-import { graphql } from '@apollo/client/react/hoc'
 import { useIntl } from 'react-intl'
 
 import TeacherContent from './TeacherContent'
 
+import { graphql } from '@/graphQL/hoc'
 import { teacherMutationsGQL, teacherQuerysGQL } from '@/graphQL'
 
 const TeacherContentContainer = ({ teacherId }) => {

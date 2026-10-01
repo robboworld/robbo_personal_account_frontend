@@ -2,10 +2,10 @@ import React from 'react'
 import { compose } from 'redux'
 import { notification } from 'antd'
 import { useIntl } from 'react-intl'
-import { graphql } from '@apollo/client/react/hoc'
 
 import UnitAdminContent from './UnitAdminContent'
 
+import { graphql } from '@/graphQL/hoc'
 import { unitAdminMutationsGQL, unitAdminQuerysGQL } from '@/graphQL'
 
 const UnitAdminContentContainer = ({ unitAdminId }) => {

@@ -3,7 +3,6 @@ import { compose } from 'redux'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { Button, Space, Input, List, notification } from "antd"
-import { graphql } from '@apollo/client/react/hoc'
 
 import ListItem from "@/components/ListItem"
 import { useActions } from "@/helpers/useActions"
@@ -15,6 +14,7 @@ import {
     deleteUnitAdminForRobboUnitRequest,
 } from '@/actions'
 import { PROFILE_PAGE_ROUTE, UNIT_ADMIN } from "@/constants"
+import { graphql } from '@/graphQL/hoc'
 import { formatUserDisplayName } from '@/helpers'
 
 const { Search } = Input

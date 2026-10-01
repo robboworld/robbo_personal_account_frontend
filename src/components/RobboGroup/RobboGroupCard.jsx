@@ -1,11 +1,12 @@
 import React from 'react'
 import { compose } from 'redux'
 import { PropTypes } from 'prop-types'
-import { graphql } from '@apollo/client/react/hoc'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, Form, Input, notification, Spin } from 'antd'
 
 import { robboGroupQuerysGQL, robboGroupMutationsGQL } from "@/graphQL"
+
+import { graphql } from '@/graphQL/hoc'
 
 const RobboGroupCard = ({
     robboGroupId,

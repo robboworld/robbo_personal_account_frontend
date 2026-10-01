@@ -2,10 +2,10 @@ import React from 'react'
 import { compose } from 'redux'
 import { useIntl } from 'react-intl'
 import { notification } from 'antd'
-import { graphql } from '@apollo/client/react/hoc'
 
 import ParentContent from './ParentContent'
 
+import { graphql } from '@/graphQL/hoc'
 import { parentMutationsGQL, parentQuerysGQL } from '@/graphQL'
 
 const ParentContentContainer = ({

@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { compose } from 'redux'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Row, Button, Col, List, Input, notification } from 'antd'
-import { graphql } from '@apollo/client/react/hoc'
 
 import ListItem from "@/components/ListItem"
+import { graphql } from '@/graphQL/hoc'
 import { teacherQuerysGQL } from '@/graphQL'
 import { createCourseAccessRelationTeacherRequest } from '@/actions'
 import { useActions , formatUserDisplayName } from '@/helpers'

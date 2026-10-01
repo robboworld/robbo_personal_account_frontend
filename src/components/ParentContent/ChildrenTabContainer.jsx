@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { notification } from 'antd'
 import { compose } from 'redux'
-import { graphql } from '@apollo/client/react/hoc'
 
 import ChildrenTab from './ChildrenTab'
 
+import { graphql } from '@/graphQL/hoc'
 import { studentMutationsGQL, studentQuerysGQL } from '@/graphQL'
 import { STUDENT, PROFILE_PAGE_ROUTE } from '@/constants'
 

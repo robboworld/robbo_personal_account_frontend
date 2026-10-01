@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { graphql } from '@apollo/client/react/hoc'
 import { Space, List, notification, Row, Col, Button, Input } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { compose } from 'redux'
 
+import { graphql } from '@/graphQL/hoc'
 import ListItem from '@/components/ListItem'
 import { teacherQuerysGQL } from '@/graphQL/query'
 import { PROFILE_PAGE_ROUTE, TEACHER } from '@/constants'

@@ -2,8 +2,8 @@ import React, { memo } from 'react'
 import { PropTypes } from 'prop-types'
 import { Col, notification } from 'antd'
 import { useIntl } from 'react-intl'
-import { graphql } from '@apollo/client/react/hoc'
 
+import { graphql } from '@/graphQL/hoc'
 import RobboGroupForm from '@/components/RobboGroupForm'
 import { robboGroupMutationsGQL } from "@/graphQL"
 

@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { compose } from 'redux'
-import { graphql } from '@apollo/client/react/hoc'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Row, Button, Col, List, Input, notification } from 'antd'
 
 import ListItem from "@/components/ListItem"
+import { graphql } from '@/graphQL/hoc'
 import { robboUnitQuerysGQL } from '@/graphQL'
 import { createCourseAccessRelationRobboUnitRequest } from '@/actions'
 import { useActions } from '@/helpers'

@@ -1,8 +1,8 @@
 import React, { memo } from 'react'
 import { Col, notification } from 'antd'
 import { useIntl } from 'react-intl'
-import { graphql } from '@apollo/client/react/hoc'
 
+import { graphql } from '@/graphQL/hoc'
 import RobboUnitForm from '@/components/RobboUnitForm'
 import { robboUnitMutationsGQL } from '@/graphQL'
 

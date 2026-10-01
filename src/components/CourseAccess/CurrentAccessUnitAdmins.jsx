@@ -1,9 +1,9 @@
 import React from 'react'
 import { Row, Col, List, notification } from 'antd'
 import { useIntl } from 'react-intl'
-import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
+import { graphql } from '@/graphQL/hoc'
 import ListItem from '@/components/ListItem'
 import { coursePageQuerysGQL } from '@/graphQL'
 import { PROFILE_PAGE_ROUTE, UNIT_ADMIN } from "@/constants"

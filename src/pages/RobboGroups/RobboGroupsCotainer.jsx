@@ -1,12 +1,12 @@
 import React from 'react'
 import { notification } from 'antd'
-import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams } from 'react-router-dom'
 import { compose } from 'redux'
 import { useIntl } from 'react-intl'
 
 import RobboGroups from './RobboGroups'
 
+import { graphql } from '@/graphQL/hoc'
 import { robboGroupQuerysGQL } from '@/graphQL'
 import { SUPER_ADMIN, UNIT_ADMIN } from '@/constants'
 

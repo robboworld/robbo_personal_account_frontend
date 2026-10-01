@@ -1,11 +1,12 @@
 import React from "react"
 import { useIntl } from 'react-intl'
 import { Col, Row, List, notification } from "antd"
-import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams } from 'react-router-dom'
 
 import ListItem from "@/components/ListItem"
 import { coursePageQuerysGQL } from "@/graphQL"
+
+import { graphql } from '@/graphQL/hoc'
 
 const RobboUnitCourses = ({
     data: {

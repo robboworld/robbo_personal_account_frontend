@@ -1,9 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { notification } from 'antd'
-import { graphql } from '@apollo/client/react/hoc'
 import { useSearchParams } from 'react-router-dom'
 
+import { graphql } from '@/graphQL/hoc'
 import Clients from '@/pages/Clients'
 
 import { parentQuerysGQL } from '@/graphQL'

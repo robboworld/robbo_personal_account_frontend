@@ -1,10 +1,11 @@
 import React from "react"
 import { compose } from 'redux'
 import { Button, Form, Input, notification, Spin } from 'antd'
-import { graphql } from '@apollo/client/react/hoc'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { robboUnitMutationsGQL, robboUnitQuerysGQL } from "@/graphQL"
+
+import { graphql } from '@/graphQL/hoc'
 
 const RobboUnitCard = ({
     disableChanges,
