@@ -7,7 +7,7 @@ const LANG_DIR = path.join(__dirname, '../src/lang')
 const SRC_DIR = path.join(__dirname, '../src')
 // Static message ids in code: id='x.y', id: 'x.y', formatMessageId(lang, 'x.y').
 const ID_PATTERN = /(?:\bid\s*[=:]\s*\{?\s*|formatMessageId\([^,]+,\s*)['"]([a-z][\w-]*(?:\.[\w-]+)+)['"]/g
-const LOCALES = ['ru', 'en', 'zh']
+const LOCALES = ['ru', 'en']
 
 function loadLocale(code) {
   const filePath = path.join(LANG_DIR, `${code}.json`)

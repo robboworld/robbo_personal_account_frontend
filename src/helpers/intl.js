@@ -2,17 +2,16 @@ import { createIntl, createIntlCache } from 'react-intl'
 
 import RuMessages from '@/lang/ru.json'
 import EngMessages from '@/lang/en.json'
-import ZhMessages from '@/lang/zh.json'
 
 const intlCache = createIntlCache()
 
 const MESSAGES_BY_LANG = {
   ru: RuMessages,
   en: EngMessages,
-  zh: ZhMessages,
 }
 
-export const SUPPORTED_LANGUAGES = ['ru', 'en', 'zh']
+// A stored 'zh' (Chinese was dropped) falls back to DEFAULT_LANGUAGE.
+export const SUPPORTED_LANGUAGES = ['ru', 'en']
 export const DEFAULT_LANGUAGE = 'ru'
 export const LANGUAGE_STORAGE_KEY = 'lk-language'
 

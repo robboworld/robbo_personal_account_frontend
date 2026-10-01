@@ -4,11 +4,9 @@ import { useSelector } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import enUS from 'antd/locale/en_US'
 import ruRU from 'antd/locale/ru_RU'
-import zhCN from 'antd/locale/zh_CN'
 
 import RuMessages from '@/lang/ru.json'
 import EngMessages from '@/lang/en.json'
-import ZhMessages from '@/lang/zh.json'
 import { getAppState } from '@/reducers/app'
 import theme from '@/theme'
 
@@ -23,24 +21,13 @@ const defaultData = {
 
 const AppConfigProvider = ({ children }) => {
     const { language } = useSelector(({ app }) => getAppState(app))
-    let configLocale, intlMessages
-    switch (language) {
-        case 'ru':
-            configLocale = ruRU
-            intlMessages = RuMessages
-            break
-        case 'en':
-            configLocale = enUS
-            intlMessages = EngMessages
-            break
-        case 'zh':
-            configLocale = zhCN
-            intlMessages = ZhMessages
-    }
+    const english = language === 'en'
+    const configLocale = english ? enUS : ruRU
+    const intlMessages = english ? EngMessages : RuMessages
     return (
         <IntlProvider
             key={language}
-            locale={language}
+            locale={english ? 'en' : 'ru'}
             defaultLocale='ru'
             messages={intlMessages}
         >

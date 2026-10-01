@@ -3,17 +3,13 @@ import languages from '@cospired/i18n-iso-languages'
 
 import countriesEn from 'i18n-iso-countries/langs/en.json'
 import countriesRu from 'i18n-iso-countries/langs/ru.json'
-import countriesZh from 'i18n-iso-countries/langs/zh.json'
 import languagesEn from '@cospired/i18n-iso-languages/langs/en.json'
 import languagesRu from '@cospired/i18n-iso-languages/langs/ru.json'
-import languagesZh from '@cospired/i18n-iso-languages/langs/zh.json'
 
 countries.registerLocale(countriesEn)
 countries.registerLocale(countriesRu)
-countries.registerLocale(countriesZh)
 languages.registerLocale(languagesEn)
 languages.registerLocale(languagesRu)
-languages.registerLocale(languagesZh)
 
 const currentYear = new Date().getFullYear()
 
@@ -23,7 +19,6 @@ const GENDER_VALUES = ['m', 'f']
 const PACKAGE_LOCALES = {
   en: 'en',
   ru: 'ru',
-  zh: 'zh',
 }
 
 function resolvePackageLocale(intlLocale) {

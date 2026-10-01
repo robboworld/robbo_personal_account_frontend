@@ -58,7 +58,6 @@ const SelectLanguage = ({ variant = 'default' }) => {
     const languages = useMemo(() => ([
         { value: 'ru', label: intl.formatMessage({ id: 'header.lang_ru' }) },
         { value: 'en', label: intl.formatMessage({ id: 'header.lang_en' }) },
-        { value: 'zh', label: intl.formatMessage({ id: 'header.lang_zh' }) },
     ]), [intl])
 
     if (variant === 'sidebar') {
