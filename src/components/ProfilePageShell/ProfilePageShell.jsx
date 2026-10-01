@@ -65,7 +65,11 @@ const ProfilePageBody = ({
     )}
 
     <ProfileFormCard variants={staggerItem}>
-      <Skeleton active loading={loading} paragraph={{ rows: 8 }}>
+      <Skeleton
+        active
+        loading={loading}
+        paragraph={{ rows: 8 }}
+      >
         {children}
         {peekUserId ? (
           <UserBanPanel lmsUserId={peekUserId} peekUserRole={peekUserRole} />
@@ -86,7 +90,11 @@ const ProfilePageShell = ({
   children,
 }) => {
   const body = (
-    <motion.div variants={staggerContainer} initial='hidden' animate='show'>
+    <motion.div
+      variants={staggerContainer}
+      initial='hidden'
+      animate='show'
+    >
       <ProfilePageBody
         profile={profile}
         loading={loading}
