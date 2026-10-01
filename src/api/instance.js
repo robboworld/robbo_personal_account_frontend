@@ -1,4 +1,4 @@
-import * as axios from 'axios'
+import axios from 'axios'
 
 import config from '@/config'
 import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
@@ -16,14 +16,15 @@ instance.defaults.headers.common['Content-Type'] = 'application/json'
 instance.defaults.withCredentials = true
 
 instance.interceptors.request.use(config => {
+  // axios 1.x: config.headers is an AxiosHeaders instance (case-insensitive set/has/delete).
   const token = getAccessToken()
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  } else if (config.headers) {
-    delete config.headers.Authorization
+    config.headers.set('Authorization', `Bearer ${token}`)
+  } else {
+    config.headers.delete('Authorization')
   }
-  if (!config.headers['X-Requested-With']) {
-    config.headers['X-Requested-With'] = 'XMLHttpRequest'
+  if (!config.headers.has('X-Requested-With')) {
+    config.headers.set('X-Requested-With', 'XMLHttpRequest')
   }
   return config
 })
