@@ -47,6 +47,7 @@ import {
   SidebarBrand,
 } from '@/components/AccountShell'
 import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
+import { useLegacyAdminEnabled, withoutLegacyAdminItems } from '@/helpers/legacyAdminSection'
 
 /** Build nav: primary → tools / tariffs / rest, with dividers. */
 const withSharedExploreItems = roleItems => buildSidebarItems(roleItems)
@@ -89,9 +90,10 @@ export default ({
     }
   }, [Role])
 
+  const legacyAdminEnabled = useLegacyAdminEnabled()
   const SideBarData = useMemo(
-    () => withSharedExploreItems(roleSideBarData),
-    [roleSideBarData],
+    () => withSharedExploreItems(withoutLegacyAdminItems(roleSideBarData, legacyAdminEnabled)),
+    [roleSideBarData, legacyAdminEnabled],
   )
 
   const flatSideBarData = useMemo(
