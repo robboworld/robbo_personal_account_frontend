@@ -890,5 +890,7 @@
     "sessions.mode.oidc_bff": "Вход через LMS",
     "sessions.mode.lms_db": "Вход по паролю LMS",
     "sessions.mode.legacy_jwt": "Старый вход",
-    "common.in_development": "В разработке"
+    "common.in_development": "В разработке",
+    "payments.paused_title": "Покупка тарифа",
+    "payments.paused": "Покупки временно приостановлены. Если вас заинтересовала подписка, обратитесь в поддержку."
 }

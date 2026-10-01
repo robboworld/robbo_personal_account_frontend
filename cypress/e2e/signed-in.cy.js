@@ -73,6 +73,23 @@ describe('signed-in pages (stubbed session)', () => {
       .within(() => cy.contains('a', 'Мои сессии').should('exist'))
   })
 
+  it('buying a plan explains that purchases are paused', () => {
+    signInAs()
+    cy.intercept('GET', '**/payments/products', {
+      products: [{
+        id: 'individual', title: 'Individual', description: '', amount: '1990.00', currency: 'RUB',
+        cloudQuotaMb: 100, seatLimit: 2, sessionLimit: 2, durationDays: 365,
+      }],
+    })
+    cy.intercept('POST', '**/payments/checkout', cy.spy().as('checkout'))
+    cy.visit('/licenses')
+    cy.contains('button', 'Купить').click()
+    cy.get('.ant-modal').should('contain', 'Покупки временно приостановлены. Если вас заинтересовала подписка, обратитесь в поддержку.')
+    cy.get('.ant-modal').contains('button', 'OK').click()
+    cy.get('.ant-modal').should('not.be.visible')
+    cy.get('@checkout').should('not.have.been.called')
+  })
+
   it('sessions show readable sign-in methods', () => {
     signInAs()
     cy.intercept('GET', '**/auth/sessions', {

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Button, Empty, Progress, Spin, Typography, message, Popconfirm } from 'antd'
+import { Button, Empty, Modal, Progress, Spin, Typography, message, Popconfirm } from 'antd'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
@@ -57,7 +57,7 @@ import {
   staggerItem,
 } from '@/components/AccountShell'
 import { listMyLicenses, revokeSeat, getEntitlements } from '@/api/licensing'
-import { checkout, listProducts } from '@/api/payments'
+import { listProducts } from '@/api/payments'
 import { authAPI } from '@/api/auth'
 import { MY_SESSIONS_ROUTE } from '@/constants/router'
 
@@ -220,7 +220,6 @@ const MyLicensesPage = () => {
   const [activeSessions, setActiveSessions] = useState(0)
   const [licensesLoading, setLicensesLoading] = useState(true)
   const [productsLoading, setProductsLoading] = useState(true)
-  const [buyingId, setBuyingId] = useState(null)
 
   const loadLicenses = useCallback(async () => {
     setLicensesLoading(true)
@@ -287,24 +286,10 @@ const MyLicensesPage = () => {
     }
   }
 
-  const onBuy = async productId => {
-    setBuyingId(productId)
-    try {
-      const data = await checkout(productId)
-      if (!data?.confirmationUrl) {
-        throw new Error(intl.formatMessage({ id: 'payments.checkout_no_url' }))
-      }
-      window.location.href = data.confirmationUrl
-    } catch (e) {
-      const code = e?.response?.data?.errorCode
-      if (code === 'PAYMENT_NOT_CONFIGURED') {
-        message.error(intl.formatMessage({ id: 'payments.not_configured' }))
-      } else {
-        message.error(e?.response?.data?.error || e.message || 'Error')
-      }
-      setBuyingId(null)
-    }
-  }
+  // Purchases are paused: "Buy" explains that in a dialog instead of starting checkout.
+  // To sell again, restore the checkout(productId) call (src/api/payments.js) here.
+  const [purchasePausedOpen, setPurchasePausedOpen] = useState(false)
+  const onBuy = () => setPurchasePausedOpen(true)
 
   const activeLicenses = useMemo(
     () => (licenses || []).filter(isLicenseActive),
@@ -554,9 +539,8 @@ animate='show'>
                       <ProductActions>
                         <Button
                           type={current ? 'default' : 'primary'}
-                          loading={buyingId === product.id}
-                          disabled={!!buyingId || current}
-                          onClick={() => onBuy(product.id)}
+                          disabled={current}
+                          onClick={onBuy}
                         >
                           {current
                             ? intl.formatMessage({ id: 'payments.already_connected' })
@@ -571,6 +555,19 @@ animate='show'>
           </GlassPanel>
         </motion.div>
       </Stagger>
+      <Modal
+        open={purchasePausedOpen}
+        title={intl.formatMessage({ id: 'payments.paused_title' })}
+        onCancel={() => setPurchasePausedOpen(false)}
+        footer={(
+          <Button type='primary' onClick={() => setPurchasePausedOpen(false)}>
+            OK
+          </Button>
+        )}
+        centered
+      >
+        {intl.formatMessage({ id: 'payments.paused' })}
+      </Modal>
     </PageContent>
   )
 }
