@@ -1,8 +1,8 @@
 import instance from './instance'
 
-import config from '@/config'
 import { readStoredLanguage } from '@/helpers/intl'
-import { getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
+import { getAccessToken } from '@/helpers/accessTokenMemory'
+import { apiBase, refreshAccessToken } from '@/api/authRefresh'
 
 function parseContentDispositionFilename(cd) {
     if (!cd)
@@ -23,7 +23,7 @@ function parseContentDispositionFilename(cd) {
 }
 
 function backendBase() {
-    return config.backendURL[0].replace(/\/?$/, '/')
+    return `${apiBase()}/`
 }
 
 function currentAccessToken(fallback) {
@@ -32,32 +32,6 @@ function currentAccessToken(fallback) {
         return token
     }
     return fallback || ''
-}
-
-async function refreshAccessToken() {
-    const res = await fetch(`${backendBase()}auth/refresh`, {
-        method: 'GET',
-        credentials: 'include',
-    })
-    if (!res.ok) {
-        throw new Error('Session expired')
-    }
-    const data = await res.json()
-    const accessToken = data?.accessToken
-    if (!accessToken) {
-        throw new Error('Session expired')
-    }
-    setAccessToken(accessToken)
-    return accessToken
-}
-
-/** Soft refresh: returns new access token or null (no throw). */
-export async function tryRefreshAccessToken() {
-    try {
-        return await refreshAccessToken()
-    } catch (_) {
-        return null
-    }
 }
 
 async function readFetchErrorMessage(res) {
@@ -82,7 +56,7 @@ async function readFetchErrorMessage(res) {
 }
 
 /**
- * Authenticated fetch that reads token from localStorage and retries once after auth/refresh on 401.
+ * Authenticated fetch that uses the in-memory access token and retries once after auth/refresh on 401.
  * @param {string} url
  * @param {RequestInit} [init]
  * @param {{ fallbackToken?: string }} [options]

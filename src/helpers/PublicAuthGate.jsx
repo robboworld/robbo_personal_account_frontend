@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import config from '@/config'
 import {
   FREE_LISTENER,
   HOME_PAGE_ROUTE,
@@ -17,30 +16,10 @@ import {
   isHybridAuthEnabled,
   isOidcSsoEnabled,
 } from '@/helpers/oidcSession'
-import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
+import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
+import { tryRefreshAccessToken } from '@/api/authRefresh'
 
 const HOME_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
-
-function apiBase() {
-  const url = config.backendURL && config.backendURL[0]
-  return url ? url.replace(/\/$/, '') : 'http://localhost:8080'
-}
-
-async function tryRefreshAccessToken() {
-  const res = await fetch(`${apiBase()}/auth/refresh`, {
-    method: 'GET',
-    credentials: 'include',
-  })
-  if (!res.ok) {
-    return null
-  }
-  const data = await res.json()
-  if (!data?.accessToken) {
-    return null
-  }
-  setAccessToken(data.accessToken)
-  return data.accessToken
-}
 
 function isUsableLegacyToken(token) {
   try {

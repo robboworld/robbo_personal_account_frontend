@@ -1,7 +1,5 @@
-import config from '@/config'
-import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
-
-const apiBase = () => (config.backendURL && config.backendURL[0]) ? config.backendURL[0].replace(/\/$/, '') : 'http://localhost:8080'
+import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
+import { apiBase, refreshAccessToken } from '@/api/authRefresh'
 
 function authHeaders(extra = {}) {
     const h = { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...extra }
@@ -10,23 +8,6 @@ function authHeaders(extra = {}) {
         h.Authorization = `Bearer ${t}`
     }
     return h
-}
-
-async function refreshAccessToken() {
-    const res = await fetch(`${apiBase()}/auth/refresh`, {
-        method: 'GET',
-        credentials: 'include',
-    })
-    if (!res.ok) {
-        throw new Error('Session expired')
-    }
-    const data = await res.json()
-    const accessToken = data?.accessToken
-    if (!accessToken) {
-        throw new Error('Session expired')
-    }
-    setAccessToken(accessToken)
-    return accessToken
 }
 
 async function readErrorMessage(res) {

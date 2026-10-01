@@ -18,8 +18,8 @@ import {
 
 import Loader from '@/components/Loader'
 
-import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
-import config from '@/config'
+import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
+import { tryRefreshAccessToken } from '@/api/authRefresh'
 
 /** Silent SSO via IdP session (e.g. already logged into Tutor LMS). */
 const redirectToSilentOidc = (pathname, search) => {
@@ -30,20 +30,6 @@ const redirectToSilentOidc = (pathname, search) => {
 const OidcSessionContext = createContext(null)
 
 export const useOidcSession = () => useContext(OidcSessionContext)
-
-async function tryRefreshLegacyAccessToken() {
-  const base = (config.backendURL && config.backendURL[0]) ? config.backendURL[0].replace(/\/$/, '') : 'http://localhost:8080'
-  const res = await fetch(`${base}/auth/refresh`, { method: 'GET', credentials: 'include' })
-  if (!res.ok) {
-    return null
-  }
-  const data = await res.json()
-  if (!data?.accessToken) {
-    return null
-  }
-  setAccessToken(data.accessToken)
-  return data.accessToken
-}
 
 function sessionFromLegacyToken(token) {
   if (!token || isAccessTokenExpired(token)) {
@@ -117,7 +103,7 @@ export const OidcSessionProvider = ({ children }) => {
         if (hasLmsPasswordFallback(status)) {
           let token = getAccessToken()
           if (!token || isAccessTokenExpired(token)) {
-            token = await tryRefreshLegacyAccessToken()
+            token = await tryRefreshAccessToken()
             if (!token) {
               clearAccessToken()
             }
@@ -141,7 +127,7 @@ export const OidcSessionProvider = ({ children }) => {
         if (!cancelled) {
           let token = getAccessToken()
           if (!token || isAccessTokenExpired(token)) {
-            token = await tryRefreshLegacyAccessToken()
+            token = await tryRefreshAccessToken()
             if (!token) {
               clearAccessToken()
             }

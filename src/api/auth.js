@@ -55,12 +55,6 @@ export const authAPI = {
         })
     },
 
-    refresh() {
-        return instance.get('auth/refresh', {
-            withCredentials: true,
-        })
-    },
-
     checkAuth(token) {
         let timezone = 'UTC'
         try {

@@ -47,10 +47,10 @@ import {
     moderateDeleteProjectPage,
     projectPageAPI,
     setLandingFeatured,
-    tryRefreshAccessToken,
     uploadProjectPreview,
     uploadProjectSb3,
 } from '@/api/projectPage'
+import { tryRefreshAccessToken } from '@/api/authRefresh'
 import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE, SUPER_ADMIN } from '@/constants'
 import { openScratchEditor } from '@/utils/scratchEditor'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'

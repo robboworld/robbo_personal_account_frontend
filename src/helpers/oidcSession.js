@@ -1,10 +1,6 @@
 import config from '@/config'
+import { apiBase } from '@/api/authRefresh'
 import { HOME_PAGE_ROUTE, LK_SSO_WITH_LMS_ENABLED, LMS_URL } from '@/constants'
-
-const apiBase = () => {
-  const url = config.backendURL && config.backendURL[0]
-  return url ? url.replace(/\/$/, '') : 'http://localhost:8080'
-}
 
 export const fetchOidcStatus = async () => {
   const response = await fetch(`${apiBase()}/auth/oidc/status`, {

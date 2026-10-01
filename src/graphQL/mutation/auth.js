@@ -13,16 +13,6 @@ export const authMutationsGQL = {
         }
     `,
 
-    REFRESH_TOKEN: gql`
-        mutation {
-            Refresh{
-                ... on SingInResponse {
-                    accessToken
-                }
-            }
-        }
-    `,
-
     SING_OUT: gql`
         mutation{
             SingOut{
@@ -38,14 +28,6 @@ export const authMutationsGraphQL = {
             {
                 mutation: authMutationsGQL.SIGN_IN,
                 variables: { input: { email, password, userRole } },
-            },
-        )
-    },
-
-    Refresh() {
-        return graphQLClient.mutate(
-            {
-                mutation: authMutationsGQL.REFRESH_TOKEN,
             },
         )
     },

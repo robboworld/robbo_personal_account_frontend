@@ -6,7 +6,7 @@ import { parseJwt, isAccessTokenExpired } from './jwtParser'
 import { useOidcSession } from './OidcSessionContext'
 import { isOidcSsoEnabled } from './oidcSession'
 
-import { tryRefreshAccessToken } from '@/api/projectPage'
+import { tryRefreshAccessToken } from '@/api/authRefresh'
 import Loader from '@/components/Loader'
 import { LOGIN_PAGE_ROUTE, HOME_PAGE_ROUTE } from '@/constants'
 

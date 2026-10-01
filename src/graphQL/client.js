@@ -3,12 +3,11 @@ import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from "@apollo/client/link/retry"
 
-import { authMutationsGQL } from './mutation'
-
 import config from '@/config'
 import { readStoredLanguage } from '@/helpers/intl'
 import { buildInactiveLoginURL } from '@/helpers/inactiveLogin'
-import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
+import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
+import { refreshAccessToken } from '@/api/authRefresh'
 
 
 const httpLink = createHttpLink({
@@ -67,15 +66,9 @@ export const graphQLClient = new ApolloClient({
 
 const refreshToken = async () => {
     try {
-        const refreshResolverResponse = await graphQLClient.mutate({
-            mutation: authMutationsGQL.REFRESH_TOKEN,
-        })
-        const accessToken = refreshResolverResponse.data?.Refresh.accessToken
-        setAccessToken(accessToken || '')
-        return accessToken
+        return await refreshAccessToken()
     } catch (err) {
         clearAccessToken()
-        console.error(err)
         throw err
     }
 }

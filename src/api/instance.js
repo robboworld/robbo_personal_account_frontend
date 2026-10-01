@@ -3,7 +3,8 @@ import axios from 'axios'
 import config from '@/config'
 import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
 import { buildInactiveLoginURL } from '@/helpers/inactiveLogin'
-import { clearAccessToken, getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
+import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
+import { refreshAccessToken } from '@/api/authRefresh'
 
 const instance = axios.create()
 const [backendURL] = config.backendURL
@@ -53,12 +54,11 @@ instance.interceptors.response.use(
     if (error.response?.status === 401 && error.config && !error.config._isRetry) {
       originalRequest._isRetry = true
       try {
-        const response = await instance.get('auth/refresh', { withCredentials: true })
-        setAccessToken(response.data.accessToken)
-        return instance.request(originalRequest)
-      } catch (e) {
-        console.log('НЕ АВТОРИЗОВАН')
+        await refreshAccessToken()
+      } catch (_) {
+        throw error
       }
+      return instance.request(originalRequest)
 
     }
     throw error
