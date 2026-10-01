@@ -11,6 +11,9 @@ export const store = createStore(
   applyMiddleware(sagaMiddleware),
 )
 
-window.store = store
+if (process.env.NODE_ENV !== 'production') {
+  // Debug handle for the dev console only.
+  window.store = store
+}
 
 sagaMiddleware.run(rootSaga)

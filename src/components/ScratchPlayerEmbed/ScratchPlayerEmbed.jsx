@@ -119,8 +119,15 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
     const postCommand = useCallback(type => {
         const iframe = iframeRef.current
         if (!iframe?.contentWindow) return false
+        // Target the player origin, never '*' (the iframe could have navigated elsewhere).
+        let targetOrigin
         try {
-            iframe.contentWindow.postMessage({ type }, '*')
+            targetOrigin = new URL(iframe.src, window.location.href).origin
+        } catch (e) {
+            return false
+        }
+        try {
+            iframe.contentWindow.postMessage({ type }, targetOrigin)
         } catch (e) {
             return false
         }
@@ -248,6 +255,8 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
 
     useEffect(() => {
         const onMessage = event => {
+            // Only messages from our player iframe (other frames / tabs can post too).
+            if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) return
             if (!event?.data?.type) return
             if (event.data.type === 'scratch:ready') {
                 clearReadyTimer()

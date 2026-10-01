@@ -191,41 +191,59 @@ export const stripOidcErrorParams = search => {
   return query ? `?${query}` : ''
 }
 
-const allowlistedReturnTo = raw => {
-  const value = String(raw || '').trim()
-  if (!value || value.startsWith('//') || value.includes('\n') || value.includes('\r')) {
-    return HOME_PAGE_ROUTE
-  }
-  if (value.startsWith('/') && !value.startsWith('//')) {
-    return value
-  }
-  try {
-    const parsed = new URL(value)
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      return HOME_PAGE_ROUTE
+// Control characters and backslashes (raw or percent-encoded): browsers read "/\\evil.com"
+// as "//evil.com", turning a relative path into another origin.
+const isUnsafeReturnTo = value => {
+  for (const ch of value) {
+    const code = ch.charCodeAt(0)
+    if (code < 0x20 || code === 0x7f || ch === '\\') {
+      return true
     }
-    const allowed = new Set()
-    const add = origin => {
-      try {
-        allowed.add(new URL(origin).origin)
-      } catch {
-        // ignore
-      }
+  }
+  return /%5c|%0[9ad]/i.test(value)
+}
+
+const allowedReturnOrigins = () => {
+  const allowed = new Set()
+  const add = origin => {
+    try {
+      allowed.add(new URL(origin).origin)
+    } catch {
+      // ignore unset / invalid values
     }
-    add(window.location.origin)
-    add(LMS_URL)
+  }
+  add(window.location.origin)
+  add(LMS_URL)
+  add(config.scratchURL)
+  add(config.scratchPlayerURL)
+  if (process.env.NODE_ENV !== 'production') {
     add('http://localhost:8601')
     add('http://127.0.0.1:8601')
     add('http://localhost:5001')
     add('http://127.0.0.1:5001')
-    add('https://scratch.example.com')
-    if (allowed.has(parsed.origin)) {
-      return value
+  }
+  return allowed
+}
+
+export const allowlistedReturnTo = raw => {
+  const value = String(raw || '').trim()
+  if (!value || value.startsWith('//') || isUnsafeReturnTo(value)) {
+    return HOME_PAGE_ROUTE
+  }
+  try {
+    if (value.startsWith('/')) {
+      // Relative path must stay on this origin after URL parsing.
+      const resolved = new URL(value, window.location.origin)
+      return resolved.origin === window.location.origin ? value : HOME_PAGE_ROUTE
     }
+    const parsed = new URL(value)
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return HOME_PAGE_ROUTE
+    }
+    return allowedReturnOrigins().has(parsed.origin) ? value : HOME_PAGE_ROUTE
   } catch {
     return HOME_PAGE_ROUTE
   }
-  return HOME_PAGE_ROUTE
 }
 
 export const resolveLoginReturnTo = search => {

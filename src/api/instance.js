@@ -9,14 +9,10 @@ const instance = axios.create()
 const [backendURL] = config.backendURL
 instance.defaults.baseURL = backendURL
 instance.defaults.timeout = 30000
-instance.defaults.headers = {
-  'Access-Control-Allow-Credentials': true,
-  'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Z-Key, Authorization',
-  'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Origin': backendURL,
-  'Content-Type': 'application/json',
-  'X-Requested-With': 'XMLHttpRequest',
-}
+// Keep axios' per-method header defaults; Access-Control-* are response headers and were
+// being sent as request headers. X-Requested-With satisfies the backend cookie CSRF check.
+instance.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+instance.defaults.headers.common['Content-Type'] = 'application/json'
 instance.defaults.withCredentials = true
 
 instance.interceptors.request.use(config => {
