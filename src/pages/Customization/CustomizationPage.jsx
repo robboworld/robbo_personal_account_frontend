@@ -144,8 +144,18 @@ const Actions = styled.div`
   gap: 0.75rem;
 `
 
+// Catalog label for an avatar id ("ava1" -> "Avatar 1"); unknown ids fall back to the id.
+const useAvatarName = () => {
+  const intl = useIntl()
+  return id => {
+    const item = AVATAR_CATALOG.find(entry => entry.id === id)
+    return item ? intl.formatMessage({ id: item.labelKey }) : id
+  }
+}
+
 const CustomizationPage = () => {
   const intl = useIntl()
+  const avatarName = useAvatarName()
   const { data, loading, refetch } = useQuery(profileGQL.GET_USER, {
     fetchPolicy: 'cache-and-network',
   })
@@ -232,7 +242,10 @@ const CustomizationPage = () => {
                   <PreviewName>{displayName || '—'}</PreviewName>
                   <PreviewMeta>
                     {selectedId
-                      ? intl.formatMessage({ id: 'customization.selected' }, { id: selectedId })
+                      ? intl.formatMessage(
+                        { id: 'customization.selected' },
+                        { name: avatarName(selectedId) },
+                      )
                       : intl.formatMessage({ id: 'customization.using_initials' })}
                   </PreviewMeta>
                 </PreviewText>

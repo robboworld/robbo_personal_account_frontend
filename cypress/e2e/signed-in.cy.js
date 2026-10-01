@@ -1,4 +1,4 @@
-import { STUDENT, signInAs } from '../support/session'
+import { GRAPHQL_FIXTURES, STUDENT, signInAs } from '../support/session'
 
 describe('signed-in pages (stubbed session)', () => {
   beforeEach(() => {
@@ -49,6 +49,19 @@ describe('signed-in pages (stubbed session)', () => {
     signInAs()
     cy.visit('/licenses')
     cy.get('.ant-menu-item-selected').should('contain', 'Мои тарифы')
+  })
+
+  it('customization names the selected avatar, not its id', () => {
+    signInAs()
+    cy.intercept('POST', '**/query', req => {
+      if (req.body.operationName !== 'GetUser') return
+      const data = GRAPHQL_FIXTURES.GetUser()
+      data.GetUser.userHttp.avatarId = 'ava1'
+      req.reply({ data })
+    })
+    cy.visit('/customization')
+    cy.contains('Выбранный аватар: Аватар 1')
+    cy.get('body').should('not.contain', 'ava1')
   })
 
   it('sessions show readable sign-in methods', () => {

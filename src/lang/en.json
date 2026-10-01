@@ -171,7 +171,7 @@
     "customization.current": "Current avatar",
     "customization.current_hint": "How you appear on your profile and in the project catalog.",
     "customization.pick": "Choose an avatar",
-    "customization.selected": "Selected: {id}",
+    "customization.selected": "Selected avatar: {name}",
     "customization.using_initials": "Showing initials",
     "customization.reset": "Reset",
     "customization.saved": "Avatar saved",

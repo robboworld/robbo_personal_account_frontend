@@ -171,7 +171,7 @@
     "customization.current": "Текущий аватар",
     "customization.current_hint": "Так вас видят в профиле и в каталоге проектов.",
     "customization.pick": "Выберите аватар",
-    "customization.selected": "Выбран: {id}",
+    "customization.selected": "Выбранный аватар: {name}",
     "customization.using_initials": "Показываются инициалы",
     "customization.reset": "Сбросить",
     "customization.saved": "Аватар сохранён",
