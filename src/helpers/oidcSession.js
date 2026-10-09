@@ -212,6 +212,11 @@ const allowedReturnOrigins = () => {
   add(LMS_URL)
   add(config.scratchURL)
   add(config.scratchPlayerURL)
+  // Extra sites allowed as return_to (comma-separated), e.g. the legacy RS on scratch.ru;
+  // mirrors the backend's OIDC_RETURN_TO_ORIGINS.
+  for (const origin of (process.env.OIDC_RETURN_TO_ORIGINS || '').split(',')) {
+    add(origin.trim())
+  }
   if (process.env.NODE_ENV !== 'production') {
     add('http://localhost:8601')
     add('http://127.0.0.1:8601')

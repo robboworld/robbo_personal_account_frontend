@@ -26,6 +26,21 @@ describe('allowlistedReturnTo', () => {
   })
 })
 
+describe('OIDC_RETURN_TO_ORIGINS', () => {
+  const saved = process.env.OIDC_RETURN_TO_ORIGINS
+  afterEach(() => {
+    process.env.OIDC_RETURN_TO_ORIGINS = saved
+  })
+
+  it('allows the listed sites and nothing else', () => {
+    process.env.OIDC_RETURN_TO_ORIGINS = 'https://scratch.ru, https://other.example'
+    expect(allowlistedReturnTo('https://scratch.ru/projects/5')).toBe('https://scratch.ru/projects/5')
+    expect(allowlistedReturnTo('https://other.example/')).toBe('https://other.example/')
+    expect(allowlistedReturnTo('http://scratch.ru/')).toBe('/home')
+    expect(allowlistedReturnTo('https://evil.example/steal')).toBe('/home')
+  })
+})
+
 describe('resolveLoginReturnTo', () => {
   it('decodes and validates return_to', () => {
     expect(resolveLoginReturnTo('?return_to=%2Fprojects%2F2')).toBe('/projects/2')
