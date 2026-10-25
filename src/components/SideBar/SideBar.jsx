@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { useMutation } from '@apollo/client/react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
   CloseOutlined,
@@ -67,8 +67,16 @@ export default ({
   const isDrawer = variant === 'drawer'
   const menuCollapsed = isDrawer ? false : collapsed
 
+  // The project page mounts its own layout, so the sidebar remounts on the way there: a
+  // session this tab already verified needs no second check-auth round trip.
+  const sessionChecked = useSelector(({ login }) => Boolean(login.isAuth && login.userId))
   useEffect(() => {
+    if (sessionChecked) {
+      return
+    }
     dispatch(checkAuthRequest(getAccessToken() || null))
+    // Mount-time decision only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
 
   const roleSideBarData = useMemo(() => {
@@ -165,10 +173,7 @@ export default ({
             <SidebarBrand>
               <FormattedMessage id='footer.brand' />
             </SidebarBrand>
-            <SidebarTopActions $drawer>
-              <SelectLanguage variant='sidebar' />
-              <NotificationBell variant='sidebar' />
-            </SidebarTopActions>
+            {/* Language and notifications live in the mobile top bar: a second bell here would poll twice. */}
             <SidebarCollapseBtn
               type='button'
               $collapsed={false}

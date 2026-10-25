@@ -34,6 +34,9 @@ const resolvePageFromPath = pathname => (
 const parseLoginQueryError = (search, intl) => {
   const params = new URLSearchParams(search || '')
   const err = params.get('err')
+  if (!err && params.get('session_expired') === '1') {
+    return intl.formatMessage({ id: 'login.session_expired' })
+  }
   if (!err || err === 'user_inactive') {
     return null
   }

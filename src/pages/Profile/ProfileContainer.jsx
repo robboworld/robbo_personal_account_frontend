@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Alert, notification } from 'antd'
+import { Alert, message, notification } from 'antd'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useLocation } from 'react-router-dom'
 import { useIntl } from 'react-intl'
@@ -30,6 +30,7 @@ import {
 } from '@/constants'
 import { freeListenerMutationsGQL } from '@/graphQL/mutation/freeListener'
 import { checkAccess } from '@/helpers'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 // Per role: profile view, its update mutation and the prop name the view expects it under.
 const PROFILE_BY_ROLE = {
@@ -49,19 +50,6 @@ const PEEK_EDITORS = {
     [PARENT]: [SUPER_ADMIN],
 }
 
-const useErrorNotification = error => {
-    const intl = useIntl()
-    useEffect(() => {
-        if (error) {
-            notification.error({
-                title: intl.formatMessage({ id: 'notification.error_message' }),
-                description: error.message,
-            })
-        }
-        // Notify once per error, not when the locale object changes.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [error])
-}
 
 /** One profile (own or peeked): GetUser, children for parents, and the role's update mutation. */
 const RoleProfile = ({ role, peekUserId, peekUserRole, parentId, accessUpdate }) => {
@@ -72,13 +60,19 @@ const RoleProfile = ({ role, peekUserId, peekUserRole, parentId, accessUpdate })
     const user = useQuery(profileGQL.GET_USER, {
         variables: peek ? { peekUserId, peekUserRole } : undefined,
     })
-    useErrorNotification(user.error)
+    // user.error is shown inline by ProfilePageShell; one message is enough.
 
     const children = useQuery(studentQuerysGQL.GET_STUDENTS_BY_PARENT_ID, {
         variables: { parentId },
         skip: role !== PARENT || !parentId,
     })
-    useErrorNotification(children.error)
+    useEffect(() => {
+        if (children.error) {
+            message.error(apiErrorMessage(children.error, intl))
+        }
+        // Once per error, not when the locale object changes.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [children.error])
 
     const [update] = useMutation(mutation, {
         // Own profile: reload it so the header and form show the saved values.
@@ -89,7 +83,7 @@ const RoleProfile = ({ role, peekUserId, peekUserRole, parentId, accessUpdate })
         }),
         onError: error => notification.error({
             title: intl.formatMessage({ id: 'notification.error_message' }),
-            description: error?.message,
+            description: apiErrorMessage(error, intl),
         }),
     })
 

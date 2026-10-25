@@ -34,8 +34,9 @@ export function fetchLegacyAdminEnabled () {
   return legacyFlag
 }
 
-export function useLegacyAdminEnabled () {
-  const [enabled, setEnabled] = useState(false)
+/** null while the flag loads, then true/false. */
+export function useLegacyAdminState () {
+  const [enabled, setEnabled] = useState(null)
   useEffect(() => {
     let active = true
     fetchLegacyAdminEnabled().then(value => {
@@ -48,6 +49,11 @@ export function useLegacyAdminEnabled () {
     }
   }, [])
   return enabled
+}
+
+/** false until the flag loads (menus simply show less meanwhile). */
+export function useLegacyAdminEnabled () {
+  return useLegacyAdminState() === true
 }
 
 /** Drops legacy admin entries (also inside groups) unless the legacy database is on. */

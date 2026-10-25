@@ -1,17 +1,21 @@
 import { css } from 'styled-components'
 
+import robboGuestTokens from './theme/robboGuestTokens'
+
 const font = 'sans-serif'
 
-// Color palette
+// Color palette: one source with the landing (robboGuestTokens). The old purple
+// primary/secondary leaked into the loader, bell and catalog of a green product.
 const black = '#000000'
 const white = '#ffffff'
 const error = '#c86464'
-const primary = '#c06c84'
-const secondary = '#6c5b7b'
-const secondaryLight = '#6a6b7b'
+const primary = robboGuestTokens.green
+const secondary = robboGuestTokens.coal
+const secondaryLight = robboGuestTokens.bodyMuted
 
-/** Акцентный зелёный (scratch.example.com / ЛК) */
-const accentGreen = '#00AF41'
+/** Акцентный зелёный (ЛК, редактор) */
+const accentGreen = robboGuestTokens.green
+const accentGreenDark = robboGuestTokens.greenDark
 const accentGreenHover = '#009036'
 /** Светлый зелёный для контраста на тёмном фоне (Ant dark / лэндинг night) */
 const accentGreenOnDark = '#4ade80'
@@ -60,6 +64,7 @@ export default {
     white,
     error,
     accentGreen,
+    accentGreenDark,
     accentGreenHover,
     accentGreenOnDark,
   },

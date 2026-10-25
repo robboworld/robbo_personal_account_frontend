@@ -200,7 +200,7 @@ const SignInForm = memo(({ handleSubmit }) => {
       >
         <Input
           size='large'
-          autoComplete='on'
+          autoComplete='username'
         />
       </Form.Item>
       <Form.Item
@@ -215,7 +215,7 @@ const SignInForm = memo(({ handleSubmit }) => {
       >
         <Input.Password
           size='large'
-          autoComplete='off'
+          autoComplete='current-password'
         />
       </Form.Item>
 

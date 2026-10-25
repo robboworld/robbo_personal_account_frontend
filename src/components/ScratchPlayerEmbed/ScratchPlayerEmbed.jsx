@@ -8,6 +8,7 @@ import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
 import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 import './ScratchPlayerEmbed.css'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const READY_TIMEOUT_MS = 20000
 const GREEN_FLAG_RETRY_MS = 150
@@ -245,7 +246,7 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed({
                     setError(intl.formatMessage({ id: 'project_page.player_not_ready' }))
                     return
                 }
-                setError(e?.message || intl.formatMessage({ id: 'project_page.player_error' }))
+                setError(apiErrorMessage(e, intl, 'project_page.player_error'))
             })
             .finally(() => {
                 if (!cancelled) setLoading(false)

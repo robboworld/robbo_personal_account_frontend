@@ -135,7 +135,7 @@ const ProfileCard = ({
             variables: {
               input: {
                 id: profile.id,
-                email: formValues.email,
+                email: profile.email,
                 fullName: formValues.fullName,
                 nickname: profile.nickname,
                 firstname: '',
@@ -165,8 +165,11 @@ const ProfileCard = ({
           <Form.Item
             name='email'
             label={<FormattedMessage id='profile_card.email' />}
+            extra={<FormattedMessage id='profile_card.email_via_lms' />}
           >
-            <Input placeholder={profile.email} size='large' />
+            {/* Changed only in the LMS account settings, which confirm the new address. */}
+            <Input placeholder={profile.email} size='large'
+readOnly disabled />
           </Form.Item>
           <Form.Item label={<FormattedMessage id='profile_card.username' />}>
             <span className='profile-static-value'>{profile.nickname || '—'}</span>

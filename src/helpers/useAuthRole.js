@@ -5,24 +5,37 @@ import { useOidcSession } from './OidcSessionContext'
 import { isOidcSsoEnabled } from './oidcSession'
 import { getAccessToken } from './accessTokenMemory'
 
-/** Role for UI: OIDC BFF session when SSO on, else legacy JWT Role from localStorage. */
-export function useAuthRole() {
+const ANONYMOUS = Object.freeze({ id: '', role: null, email: '' })
+
+/** Current user for UI decisions: the BFF session when SSO is on, else the in-memory legacy JWT.
+ * Pages must use this (or useAuthRole) instead of parsing the JWT, which a BFF session never has. */
+export function useCurrentUser() {
   const oidcSession = useOidcSession()
 
   return useMemo(() => {
     if (isOidcSsoEnabled() && oidcSession?.authenticated) {
-      return oidcSession?.role ?? null
+      return {
+        id: String(oidcSession.edx_user_id || oidcSession.sub || ''),
+        role: oidcSession.role ?? null,
+        email: oidcSession.email || '',
+      }
     }
 
     const token = getAccessToken()
     if (!token) {
-      return null
+      return ANONYMOUS
     }
 
     try {
-      return parseJwt(token).Role ?? null
+      const { Id, Role, Email } = parseJwt(token)
+      return { id: Id ? String(Id) : '', role: Role ?? null, email: Email || '' }
     } catch {
-      return null
+      return ANONYMOUS
     }
   }, [oidcSession])
+}
+
+/** Role for UI: OIDC BFF session when SSO on, else legacy JWT Role. */
+export function useAuthRole() {
+  return useCurrentUser().role
 }

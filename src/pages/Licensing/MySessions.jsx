@@ -18,6 +18,8 @@ import { authAPI } from '@/api/auth'
 import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
 import { LANDING_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { clearAccessToken } from '@/helpers/accessTokenMemory'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+import { describeUserAgent } from '@/helpers/describeUserAgent'
 
 // Session auth modes from the backend (licensing AuthMode*) -> readable labels.
 const AUTH_MODE_LABELS = {
@@ -65,11 +67,11 @@ const MySessionsPage = () => {
         forceSessionExpiredLogout()
         return
       }
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [intl])
 
   useEffect(() => {
     load()
@@ -87,7 +89,7 @@ const MySessionsPage = () => {
       message.success(intl.formatMessage({ id: 'sessions.revoked' }))
       await load()
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setRevokingId(null)
     }
@@ -141,8 +143,8 @@ animate='show'>
                         ) : null}
                       </div>
                       <div>
-                        <Text type='secondary'>
-                          {session.userAgent || intl.formatMessage({ id: 'sessions.unknown_ua' })}
+                        <Text type='secondary' title={session.userAgent || undefined}>
+                          {describeUserAgent(session.userAgent) || intl.formatMessage({ id: 'sessions.unknown_ua' })}
                         </Text>
                       </div>
                       <div>

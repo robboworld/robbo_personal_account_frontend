@@ -60,6 +60,11 @@ import { listMyLicenses, revokeSeat, getEntitlements } from '@/api/licensing'
 import { listProducts } from '@/api/payments'
 import { authAPI } from '@/api/auth'
 import { MY_SESSIONS_ROUTE } from '@/constants/router'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+import { projectLimitLines } from '@/helpers/tariffs'
+import theme from '@/theme'
+
+const METER_COLOR = theme.colors.accentGreen
 
 const { Text } = Typography
 
@@ -89,7 +94,6 @@ const formatExpiresAt = (iso, locale) => {
   }
 }
 
-const bytesToMb = bytes => (Number(bytes) || 0) / (1024 * 1024)
 
 const meterPercent = (used, limit) => {
   if (!limit || limit <= 0) {
@@ -114,9 +118,11 @@ const isLicenseActive = lic => {
 }
 
 const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
-  const quotaMb = Number(entitlements.cloudQuotaMb) || 0
-  const usedMb = bytesToMb(entitlements.usedBytes)
-  const cloudPercent = meterPercent(usedMb, quotaMb)
+  // The size limit is per project; what fills up is the number of projects (Free only).
+  const sizeMb = Number(entitlements.maxProjectSizeMb ?? entitlements.cloudQuotaMb) || 0
+  const projectCount = Number(entitlements.projectCount) || 0
+  const maxProjects = Number(entitlements.maxProjects) || 0
+  const projectsPercent = meterPercent(projectCount, maxProjects)
 
   const seatLimit = Number(entitlements.seatLimit) || 0
   const seatsPercent = meterPercent(seatsUsed, seatLimit)
@@ -142,26 +148,28 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
         <UsageMeter>
           <UsageMeterTop>
             <UsageMeterLabel>
-              {intl.formatMessage({ id: 'licensing.cloud_quota' })}
+              {intl.formatMessage({ id: 'licensing.projects' })}
             </UsageMeterLabel>
             <UsageMeterValue>
-              {quotaMb <= 0
-                ? intl.formatMessage({ id: 'licensing.unlimited' })
+              {maxProjects <= 0
+                ? intl.formatMessage({ id: 'licensing.projects_unlimited_value' }, { count: projectCount })
                 : intl.formatMessage(
-                  { id: 'licensing.usage_cloud_value' },
-                  {
-                    used: usedMb < 10 ? usedMb.toFixed(1) : Math.round(usedMb),
-                    quota: quotaMb,
-                  },
+                  { id: 'licensing.usage_count_value' },
+                  { used: projectCount, limit: maxProjects },
                 )}
             </UsageMeterValue>
           </UsageMeterTop>
           <Progress
-            percent={quotaMb <= 0 ? 0 : cloudPercent}
-            status={quotaMb <= 0 ? 'normal' : meterStatus(cloudPercent)}
-            showInfo={quotaMb > 0}
-            strokeColor={quotaMb > 0 && cloudPercent >= 95 ? undefined : '#0f766e'}
+            percent={maxProjects <= 0 ? 0 : projectsPercent}
+            status={maxProjects <= 0 ? 'normal' : meterStatus(projectsPercent)}
+            showInfo={maxProjects > 0}
+            strokeColor={maxProjects > 0 && projectsPercent >= 95 ? undefined : METER_COLOR}
           />
+          {sizeMb > 0 ? (
+            <Text type='secondary' style={{ fontSize: 13 }}>
+              {intl.formatMessage({ id: 'tariff.project_size' }, { mb: sizeMb })}
+            </Text>
+          ) : null}
         </UsageMeter>
 
         <UsageMeter>
@@ -182,7 +190,7 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
             percent={sessionsUnlimited ? 0 : sessionsPercent}
             status={sessionsUnlimited ? 'normal' : meterStatus(sessionsPercent)}
             showInfo={!sessionsUnlimited}
-            strokeColor={!sessionsUnlimited && sessionsPercent >= 95 ? undefined : '#0f766e'}
+            strokeColor={!sessionsUnlimited && sessionsPercent >= 95 ? undefined : METER_COLOR}
           />
         </UsageMeter>
 
@@ -204,7 +212,7 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
             percent={seatLimit <= 0 ? 0 : seatsPercent}
             status={seatLimit <= 0 ? 'normal' : meterStatus(seatsPercent)}
             showInfo={seatLimit > 0}
-            strokeColor={seatLimit > 0 && seatsPercent >= 95 ? undefined : '#0f766e'}
+            strokeColor={seatLimit > 0 && seatsPercent >= 95 ? undefined : METER_COLOR}
           />
         </UsageMeter>
       </UsageStack>
@@ -227,11 +235,11 @@ const MyLicensesPage = () => {
       const list = await listMyLicenses()
       setLicenses(list)
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setLicensesLoading(false)
     }
-  }, [])
+  }, [intl])
 
   const loadProducts = useCallback(async () => {
     setProductsLoading(true)
@@ -239,11 +247,11 @@ const MyLicensesPage = () => {
       const list = await listProducts()
       setProducts(list)
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setProductsLoading(false)
     }
-  }, [])
+  }, [intl])
 
   const loadUsage = useCallback(async () => {
     try {
@@ -282,7 +290,7 @@ const MyLicensesPage = () => {
       loadLicenses()
       loadUsage()
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || 'Error')
+      message.error(apiErrorMessage(e, intl))
     }
   }
 
@@ -500,21 +508,16 @@ animate='show'>
                           </TariffBadge>
                         ) : null}
                       </ProductCardHeader>
-                      {product.description ? (
-                        <Text type='secondary' style={{ display: 'block', marginBottom: '0.65rem' }}>
-                          {product.description}
-                        </Text>
-                      ) : null}
                       <ProductPrice>
                         {formatPrice(product.amount, product.currency, intl.locale)}
                       </ProductPrice>
                       <ProductFeatures>
-                        <ProductFeature>
-                          {intl.formatMessage(
-                            { id: 'payments.feature_cloud' },
-                            { cloudMb: product.cloudQuotaMb ?? 10 },
-                          )}
-                        </ProductFeature>
+                        {projectLimitLines(intl, {
+                          maxProjectSizeMb: Number(product.cloudQuotaMb) || 10,
+                          maxProjects: 0,
+                        }).map(line => (
+                          <ProductFeature key={line}>{line}</ProductFeature>
+                        ))}
                         <ProductFeature>
                           {intl.formatMessage(
                             { id: 'payments.feature_devices' },

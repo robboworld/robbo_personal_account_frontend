@@ -25,6 +25,7 @@ import { AVATAR_CATALOG } from '@/constants/avatars'
 import { avatarMutationsGraphQL } from '@/graphQL/mutation/avatar'
 import { profileGQL } from '@/graphQL/query/profile'
 import theme from '@/theme'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const { colors } = theme
 
@@ -180,7 +181,7 @@ const CustomizationPage = () => {
       await refetch()
       message.success(intl.formatMessage({ id: 'customization.saved' }))
     } catch (err) {
-      message.error(err?.message || intl.formatMessage({ id: 'customization.save_error' }))
+      message.error(apiErrorMessage(err, intl, 'customization.save_error'))
     } finally {
       setSaving(false)
     }

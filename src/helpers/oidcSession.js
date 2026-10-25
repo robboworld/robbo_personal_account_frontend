@@ -54,7 +54,37 @@ export const buildOidcLogoutUrl = (returnTo = LK_LOGOUT_RETURN_TO, { skipIdp = f
   return logoutUrl.toString()
 }
 
+const AFTER_LOGOUT_KEY = 'lk_after_logout'
+
+/** The full logout always lands on LK_LOGOUT_RETURN_TO (the IdP drops our return_to), so a
+ * page that must open afterwards (ban details, "session expired") is kept for this tab. */
+export const rememberAfterLogout = returnTo => {
+  if (!returnTo || returnTo === LK_LOGOUT_RETURN_TO || !String(returnTo).startsWith('/') ||
+      String(returnTo).startsWith('//')) {
+    return
+  }
+  try {
+    window.sessionStorage.setItem(AFTER_LOGOUT_KEY, String(returnTo))
+  } catch {
+    // storage blocked: the user still ends up logged out on the landing
+  }
+}
+
+/** Page to open after the logout round trip, once. */
+export const takeAfterLogout = () => {
+  try {
+    const value = window.sessionStorage.getItem(AFTER_LOGOUT_KEY)
+    window.sessionStorage.removeItem(AFTER_LOGOUT_KEY)
+    return value && value.startsWith('/') && !value.startsWith('//') ? value : null
+  } catch {
+    return null
+  }
+}
+
 export const redirectToOidcLogout = (returnTo = LK_LOGOUT_RETURN_TO, options) => {
+  if (!options?.skipIdp) {
+    rememberAfterLogout(returnTo)
+  }
   window.location.assign(buildOidcLogoutUrl(returnTo, options))
 }
 

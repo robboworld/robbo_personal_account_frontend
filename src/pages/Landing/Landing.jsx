@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { createGlobalStyle } from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { message } from 'antd'
 
 import {
   AboutHighlight,
@@ -79,7 +80,9 @@ import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { getScratchEditorUrl } from '@/utils/scratchEditor'
 import { EXPLORE_ROUTE, MY_LICENSES_ROUTE, REGISTER_PAGE_ROUTE, LK_SSO_WITH_LMS_ENABLED } from '@/constants'
-import { lmsRegisterUrl } from '@/helpers/oidcSession'
+import { lmsRegisterUrl, takeAfterLogout } from '@/helpers/oidcSession'
+import { devicesSessionsLine, formatTariffPrice, projectLimitLines, useTariffs } from '@/helpers/tariffs'
+import { currentOlympiadStage } from '@/helpers/olympiad'
 import { clearAccessToken } from '@/helpers/accessTokenMemory'
 
 const LandingGlobal = createGlobalStyle`
@@ -111,37 +114,44 @@ const ROBOT_MEDIA = ['official_img2.jpg', 'official_img3.jpg', 'official_img4.jp
 
 const LANDING_PROJECTS_LIMIT = 5
 
+// Each stage ends on `end` (inclusive). The current stage is derived from today's date,
+// so the section never claims "now it is August" in October.
 const OLYMPIAD_TIMELINE = [
   {
     period: { id: 'landing.olympiad.stage1.period' },
     title: { id: 'landing.olympiad.stage1.title' },
     detail: { id: 'landing.olympiad.stage1.detail' },
+    end: '2026-02-28',
   },
   {
     period: { id: 'landing.olympiad.stage2.period' },
     title: { id: 'landing.olympiad.stage2.title' },
     detail: { id: 'landing.olympiad.stage2.detail' },
+    end: '2026-06-30',
   },
   {
     period: { id: 'landing.olympiad.stage3.period' },
     title: { id: 'landing.olympiad.stage3.title' },
     detail: { id: 'landing.olympiad.stage3.detail' },
+    end: '2026-06-30',
   },
   {
     period: { id: 'landing.olympiad.stage4.period' },
     title: { id: 'landing.olympiad.stage4.title' },
     detail: { id: 'landing.olympiad.stage4.detail' },
+    end: '2026-07-31',
   },
   {
     period: { id: 'landing.olympiad.stage5.period' },
     title: { id: 'landing.olympiad.stage5.title' },
     detail: { id: 'landing.olympiad.stage5.detail' },
+    end: '2026-08-31',
   },
   {
     period: { id: 'landing.olympiad.stage6.period' },
     title: { id: 'landing.olympiad.stage6.title' },
     detail: { id: 'landing.olympiad.stage6.detail' },
-    highlight: true,
+    end: '2026-09-30',
   },
 ]
 
@@ -152,14 +162,8 @@ const TARIFFS = [
   {
     id: 'free',
     name: 'Free',
-    price: { id: 'landing.tariffs.free.price' },
     featured: false,
-    items: [
-      { id: 'landing.tariffs.free.item1' },
-      { id: 'landing.tariffs.free.item2' },
-      { id: 'landing.tariffs.free.item3' },
-      { id: 'landing.tariffs.free.item4' },
-    ],
+    extra: [{ id: 'landing.tariffs.free.item4' }],
     cta: { id: 'landing.tariffs.free.cta' },
     to: FREE_REGISTER_TARGET,
     external: FREE_REGISTER_EXTERNAL,
@@ -168,14 +172,8 @@ const TARIFFS = [
   {
     id: 'individual',
     name: 'Individual',
-    price: { id: 'landing.tariffs.individual.price' },
     featured: true,
-    items: [
-      { id: 'landing.tariffs.individual.item1' },
-      { id: 'landing.tariffs.individual.item2' },
-      { id: 'landing.tariffs.auto_update' },
-      { id: 'landing.tariffs.individual.item4' },
-    ],
+    extra: [{ id: 'landing.tariffs.auto_update' }],
     cta: { id: 'landing.tariffs.buy' },
     to: `${MY_LICENSES_ROUTE}#buy`,
     ghost: false,
@@ -183,19 +181,27 @@ const TARIFFS = [
   {
     id: 'class',
     name: 'Class',
-    price: { id: 'landing.tariffs.class.price' },
     featured: false,
-    items: [
-      { id: 'landing.tariffs.class.item1' },
-      { id: 'landing.tariffs.class.item2' },
-      { id: 'landing.tariffs.auto_update' },
-      { id: 'landing.tariffs.class.item4' },
-    ],
+    extra: [{ id: 'landing.tariffs.auto_update' }, { id: 'landing.tariffs.class.item4' }],
     cta: { id: 'landing.tariffs.buy' },
     to: `${MY_LICENSES_ROUTE}#buy`,
     ghost: false,
   },
 ]
+
+// Card lines come from the limits the backend enforces, so the landing cannot promise more.
+const tariffLines = (intl, plan, limits) => [
+  ...projectLimitLines(intl, limits),
+  devicesSessionsLine(intl, limits),
+  ...(limits.durationDays
+    ? [intl.formatMessage({ id: 'tariff.duration_days' }, { days: limits.durationDays })]
+    : []),
+  ...plan.extra.map(item => intl.formatMessage(item)),
+]
+
+const tariffPrice = (intl, limits) => (limits.amount > 0
+  ? intl.formatMessage({ id: 'tariff.price_year' }, { price: formatTariffPrice(intl, limits.amount) })
+  : formatTariffPrice(intl, 0))
 
 const LandingProjectCard = ({ project, onOpen }) => {
   const intl = useIntl()
@@ -230,6 +236,8 @@ const Landing = () => {
   const t = descriptor => intl.formatMessage(descriptor)
   const navigate = useNavigate()
   const createHref = getScratchEditorUrl()
+  const tariffs = useTariffs()
+  const olympiadStage = currentOlympiadStage(OLYMPIAD_TIMELINE)
   const staticBase = '/static'
 
   useEffect(() => {
@@ -246,12 +254,21 @@ const Landing = () => {
     clearLocalAuthArtifacts()
     broadcastAuthLogout()
     clearAccessToken()
+    const afterLogout = loggedOut ? takeAfterLogout() : null
+    if (afterLogout) {
+      // e.g. /login with ban details, or /?session_expired=1
+      navigate(afterLogout, { replace: true })
+      return undefined
+    }
+    if (sessionExpired) {
+      message.info(intl.formatMessage({ id: 'login.session_expired' }))
+    }
     params.delete('logged_out')
     params.delete('session_expired')
     const next = params.toString()
     navigate({ pathname: '/', search: next ? `?${next}` : '' }, { replace: true })
     return undefined
-  }, [navigate])
+  }, [navigate, intl])
 
   useLayoutEffect(() => {
     document.documentElement.classList.add('landing-page-active')
@@ -416,10 +433,10 @@ const Landing = () => {
               {TARIFFS.map(plan => (
                 <TariffCard key={plan.id} $featured={plan.featured}>
                   <TariffName>{plan.name}</TariffName>
-                  <TariffPrice>{t(plan.price)}</TariffPrice>
+                  <TariffPrice>{tariffPrice(intl, tariffs[plan.id])}</TariffPrice>
                   <TariffList>
-                    {plan.items.map(item => (
-                      <li key={item.id}>{t(item)}</li>
+                    {tariffLines(intl, plan, tariffs[plan.id]).map(line => (
+                      <li key={line}>{line}</li>
                     ))}
                   </TariffList>
                   {plan.ghost ? (
@@ -442,10 +459,19 @@ const Landing = () => {
             <SectionTitle><FormattedMessage id='landing.olympiad.title' /></SectionTitle>
             <Lead>
               <FormattedMessage id='landing.olympiad.lead' />
+              {' '}
+              {olympiadStage >= 0
+                ? intl.formatMessage(
+                  { id: 'landing.olympiad.now_stage' },
+                  { stage: t(OLYMPIAD_TIMELINE[olympiadStage].title) },
+                )
+                : intl.formatMessage({ id: 'landing.olympiad.season_over' })}
             </Lead>
             <StageTrack>
-              {OLYMPIAD_TIMELINE.map(({ period, title, detail, highlight }, idx) => (
-                <Stage key={title.id}>
+              {OLYMPIAD_TIMELINE.map(({ period, title, detail }, idx) => {
+                const highlight = idx === olympiadStage
+                return (
+                <Stage key={title.id} aria-current={highlight ? 'step' : undefined}>
                   <StageIndex $highlight={highlight}>
                     {String(idx + 1).padStart(2, '0')}
                   </StageIndex>
@@ -455,7 +481,8 @@ const Landing = () => {
                     <StageDetail>{t(detail)}</StageDetail>
                   </StageCard>
                 </Stage>
-              ))}
+                )
+              })}
             </StageTrack>
             <OlympiadDests>
               <DestCard
@@ -464,7 +491,13 @@ const Landing = () => {
                 rel='noreferrer'
                 $primary
               >
-                <DestKicker><FormattedMessage id='landing.olympiad.dest_final.kicker' /></DestKicker>
+                <DestKicker>
+                  <FormattedMessage
+                    id={olympiadStage === OLYMPIAD_TIMELINE.length - 1
+                      ? 'landing.olympiad.dest_final.kicker'
+                      : olympiadStage < 0 ? 'landing.olympiad.dest_final.kicker_past' : 'landing.olympiad.dest_final.kicker_next'}
+                  />
+                </DestKicker>
                 <DestTitle><FormattedMessage id='landing.olympiad.dest_final.title' /></DestTitle>
                 <DestText>
                   <FormattedMessage id='landing.olympiad.dest_final.text' />

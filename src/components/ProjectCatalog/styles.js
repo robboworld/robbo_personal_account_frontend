@@ -297,7 +297,7 @@ export const AuthorAvatar = styled.span`
   font-weight: 700;
   letter-spacing: 0.02em;
   color: ${colors.white};
-  background: linear-gradient(145deg, ${colors.primary}, ${colors.secondary});
+  background: linear-gradient(145deg, ${colors.accentGreen}, ${colors.accentGreenDark});
   overflow: hidden;
 
   img {

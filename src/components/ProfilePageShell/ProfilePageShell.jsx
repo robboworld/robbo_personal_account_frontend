@@ -1,7 +1,7 @@
 import React from 'react'
 import { PropTypes } from 'prop-types'
 import { Alert, Skeleton } from 'antd'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
 import {
@@ -18,6 +18,7 @@ import {
 } from '@/components/AccountShell'
 import UserAvatar from '@/components/UserAvatar/UserAvatar'
 import UserBanPanel from '@/components/UserBanPanel'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const ProfilePageBody = ({
   profile,
@@ -27,7 +28,11 @@ const ProfilePageBody = ({
   peekUserId,
   peekUserRole,
   children,
-}) => (
+}) => {
+  const intl = useIntl()
+  // Without a profile there is nothing to show below the error: no endless "loading".
+  const failed = Boolean(error) && !profile
+  return (
   <React.Fragment>
     <ProfileHero variants={staggerItem}>
       <UserAvatar
@@ -41,7 +46,7 @@ const ProfilePageBody = ({
         </ProfileTitle>
         <ProfileSubtitle>
           {profile?.fullName || profile?.nickname || profile?.email || (
-            <FormattedMessage id='profile.loading' />
+            failed ? null : <FormattedMessage id='profile.loading' />
           )}
         </ProfileSubtitle>
         {profile && accessUpdate && (
@@ -59,11 +64,12 @@ const ProfilePageBody = ({
         <Alert
           type='error'
           showIcon
-          title={error.message || String(error)}
+          title={apiErrorMessage(error, intl, 'profile.load_error')}
         />
       </motion.div>
     )}
 
+    {failed ? null : (
     <ProfileFormCard variants={staggerItem}>
       <Skeleton
         active
@@ -76,8 +82,10 @@ const ProfilePageBody = ({
         ) : null}
       </Skeleton>
     </ProfileFormCard>
+    )}
   </React.Fragment>
-)
+  )
+}
 
 const ProfilePageShell = ({
   profile,

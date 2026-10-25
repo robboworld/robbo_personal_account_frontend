@@ -3,7 +3,8 @@ import { clearLmsIdentityLink } from '@/helpers/lmsSso'
 import { fetchOidcStatus } from '@/helpers/oidcSession'
 
 const AUTH_LOGOUT_BROADCAST_KEY = 'robbo_auth_logout_at'
-const DEFAULT_POLL_MS = 5000
+// Logout in another product shows up at once on tab focus; the timer is only a backstop.
+const DEFAULT_POLL_MS = 30000
 
 /** Same-origin tabs (e.g. several :3030 tabs) — instant logout signal. */
 export function broadcastAuthLogout () {
@@ -74,12 +75,14 @@ export function startBffSessionWatch ({
   }
 
   document.addEventListener('visibilitychange', onVisibility)
+  window.addEventListener('focus', onVisibility)
   const timer = window.setInterval(runCheck, pollIntervalMs)
   runCheck()
 
   return () => {
     stopped = true
     document.removeEventListener('visibilitychange', onVisibility)
+    window.removeEventListener('focus', onVisibility)
     window.clearInterval(timer)
   }
 }

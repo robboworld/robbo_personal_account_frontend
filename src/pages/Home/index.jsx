@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import { Empty } from 'antd'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
+import { useQuery } from '@apollo/client/react'
 import {
   ArrowRightOutlined,
   ProjectOutlined,
@@ -41,7 +42,9 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { parseJwt, openLms, getSelectedNavBarKeyFromPath, useAuthRole } from '@/helpers'
+import { openLms, getSelectedNavBarKeyFromPath, useAuthRole } from '@/helpers'
+import { LEGACY_ADMIN_ROUTES, useLegacyAdminEnabled } from '@/helpers/legacyAdminSection'
+import { profileGQL } from '@/graphQL/query/profile'
 import {
   PROFILE_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
@@ -60,7 +63,7 @@ import {
   STUDENT_CLASSES_ROUTE,
   SCRATCH_HUB_ROUTE,
 } from '@/constants'
-import { getAccessToken } from '@/helpers/accessTokenMemory'
+import { getScratchEditorLabel } from '@/utils/scratchEditor'
 
 const ACTION_ICONS = {
   profile: UserOutlined,
@@ -198,7 +201,9 @@ const Home = () => {
   const [searchParams] = useSearchParams()
   const intl = useIntl()
   const role = useAuthRole()
-  const token = getAccessToken()
+  const legacyEnabled = useLegacyAdminEnabled()
+  const editorLabel = getScratchEditorLabel()
+  const { data: profileData } = useQuery(profileGQL.GET_USER, { fetchPolicy: 'cache-first' })
 
   useEffect(() => {
     const join = searchParams.get('join')
@@ -206,25 +211,16 @@ const Home = () => {
     navigate(`/join?code=${encodeURIComponent(join)}`, { replace: true })
   }, [searchParams, navigate])
 
-  const parsedToken = useMemo(() => {
-    if (!token) {
-      return null
-    }
-
-    try {
-      return parseJwt(token)
-    } catch (error) {
-      return null
-    }
-  }, [token])
-
   const roleTitle = intl.formatMessage({
     id: USER_ROLE_MESSAGE_IDS[role] || 'user_role.fallback',
   })
-  const firstName = parsedToken?.FirstName || parsedToken?.Firstname || parsedToken?.Name || ''
+  const profile = profileData?.GetUser?.userHttp
+  const firstName = (profile?.firstname || profile?.fullName || '').trim().split(/\s+/)[0] || ''
 
+  // Legacy-database sections only open errors while that database is off.
   const quickActions = QUICK_ACTION_DEFS.filter(
-    ({ roles }) => !roles || roles.includes(role),
+    ({ roles, path }) => (!roles || roles.includes(role)) &&
+      (legacyEnabled || !LEGACY_ADMIN_ROUTES.has(path)),
   )
 
   const handleAction = action => {
@@ -294,7 +290,7 @@ animate='show'>
                           <FormattedMessage id={action.titleId} />
                         </ActionTitle>
                         <ActionDescription>
-                          <FormattedMessage id={action.descriptionId} />
+                          <FormattedMessage id={action.descriptionId} values={{ editor: editorLabel }} />
                         </ActionDescription>
                         <ActionCta>
                           <FormattedMessage id='home.go_to' />
@@ -325,7 +321,7 @@ animate='show'>
                   <StepItem key={stepId}>
                     <StepIndex>{index + 1}</StepIndex>
                     <StepText>
-                      <FormattedMessage id={stepId} />
+                      <FormattedMessage id={stepId} values={{ editor: editorLabel }} />
                     </StepText>
                   </StepItem>
                 ))}

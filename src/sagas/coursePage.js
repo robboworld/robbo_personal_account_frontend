@@ -25,6 +25,7 @@ import {
     deleteCourseAccessRelationStudentRequest,
     deleteCourseAccessRelationStudentSuccess,
 } from '@/actions'
+import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* createCourseAccessRelationStudentSaga({ payload }) {
     const language = yield select(state => state.app.language)
@@ -36,7 +37,7 @@ function* createCourseAccessRelationStudentSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
     } catch (e) {
         yield put(createCourseAccessRelationStudentFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -50,7 +51,7 @@ function* createCourseAccessRelationTeacherSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
     } catch (e) {
         yield put(createCourseAccessRelationTeacherFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -64,7 +65,7 @@ function* createCourseAccessRelationUnitAdminSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
     } catch (e) {
         yield put(createCourseAccessRelationUnitAdminFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -78,7 +79,7 @@ function* createCourseAccessRelationRobboUnitSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
     } catch (e) {
         yield put(createCourseAccessRelationRobboUnitFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -92,7 +93,7 @@ function* createCourseAccessRelationRobboGroupSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
     } catch (e) {
         yield put(createCourseAccessRelationRobboGroupFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -106,7 +107,7 @@ function* deleteCourseAccessRelationStudentSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.access_removed_success') })
     } catch (e) {
         yield put(deleteCourseAccessRelationStudentFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 

@@ -16,6 +16,7 @@ import {
   staggerItem,
 } from '@/components/AccountShell'
 import { confirmDeviceLink, listMyLicenses } from '@/api/licensing'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const { Paragraph } = Typography
 
@@ -55,12 +56,7 @@ const DeviceLinkPage = () => {
       })
       message.success(intl.formatMessage({ id: 'licensing.device_link_ok' }))
     } catch (e) {
-      message.error(
-        e?.response?.data?.error ||
-        e?.response?.data?.errorCode ||
-        e.message ||
-        intl.formatMessage({ id: 'notification.error_message' }),
-      )
+      message.error(apiErrorMessage(e, intl, 'notification.error_message'))
     } finally {
       setLoading(false)
     }

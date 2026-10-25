@@ -12,6 +12,7 @@ import {
 } from '@/actions'
 import { formatMessageId } from '@/helpers/intl'
 import { profileMutationsGraphQL } from '@/graphQL/mutation'
+import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* getProfileByAccessTokenSaga({ payload }) {
     try {
@@ -37,7 +38,7 @@ function* updateProfileSaga({ payload }) {
         yield put(updateProfileFailed(e))
         notification.error({
             title: formatMessageId(language, 'notification.error_message'),
-            description: e.message,
+            description: sagaErrorMessage(e, language),
         })
     }
 }

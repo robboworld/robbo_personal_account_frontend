@@ -57,7 +57,7 @@ export const ExploreNavItem = {
   icon: <CompassOutlined />,
 }
 
-/** External tools: Scratch.ru + LMS. */
+/** External tools: RobboScratch + LMS. */
 export const ToolNavItems = [
   {
     key: 'scratch',

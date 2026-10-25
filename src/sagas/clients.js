@@ -40,6 +40,7 @@ import {
     studentMutationsGraphQL,
     parentMutationsGraphQL,
 } from '@/graphQL'
+import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* getClientsSaga({ payload }) {
     const language = yield select(state => state.app.language)
@@ -49,7 +50,7 @@ function* getClientsSaga({ payload }) {
         yield put(getClientsSuccess(response.data.GetAllParents))
     } catch (e) {
         yield put(getClientsFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -61,7 +62,7 @@ function* getClientByIdSaga({ payload }) {
         yield put(getClientPageByIdSuccess(response.data.GetParentById))
     } catch (e) {
         yield put(getClientPageByIdFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -74,7 +75,7 @@ function* createParentSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.parent_create_success') })
     } catch (e) {
         yield put(createParentFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -88,7 +89,7 @@ function* deleteParentSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.parent_delete_success') })
     } catch (e) {
         yield put(deleteParentFailed)
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -102,7 +103,7 @@ function* createChildrenSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.student_create_success') })
     } catch (e) {
         yield put(createChildrenFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -116,7 +117,7 @@ function* deleteChildSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.student_delete_success') })
     } catch (e) {
         yield put(deleteChildFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -129,7 +130,7 @@ function* getChildrenByParentIdSaga({ payload }) {
         yield put(getChildrenByParentIdSuccess(response.data.GetStudentsByParentId.students))
     } catch (e) {
         yield put(getChildrenByParentIdFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -142,7 +143,7 @@ function* searchStudentSaga({ payload }) {
         yield put(searchStudentSuccess(response.data.SearchStudentsByEmail.students))
     } catch (e) {
         yield put(searchStudentFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -156,7 +157,7 @@ function* createStudentParentRelationSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.student_added_success') })
     } catch (e) {
         yield put(createRelationFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 

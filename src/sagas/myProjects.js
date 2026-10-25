@@ -55,7 +55,7 @@ function* getProjectPageByIdSaga(action) {
             playToken: response.data?.playToken || null,
         }))
     } catch (e) {
-        yield put(getProjectPageByIdFailed(e.message))
+        yield put(getProjectPageByIdFailed({ status: e?.response?.status || 0, message: e?.message || '' }))
     }
 }
 

@@ -22,7 +22,7 @@ module.exports = {
       systemvars: true,
     }),
     new HtmlWebpackPlugin({
-      title: 'React Project Template',
+      title: 'РОББО',
       template: './public/index.html',
     }),
   ],

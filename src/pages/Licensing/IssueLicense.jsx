@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Button, Form, Input, InputNumber, Typography, message } from 'antd'
+import { Button, DatePicker, Form, Input, InputNumber, Typography, message } from 'antd'
+import dayjs from 'dayjs'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
@@ -18,6 +19,8 @@ import {
 } from '@/components/AccountShell'
 import { issueLicense } from '@/api/licensing'
 import LmsUsernameSelect from '@/components/LmsUsernameSelect'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+import { formatDateTime } from '@/helpers/formatDateTime'
 
 const { Text } = Typography
 
@@ -37,19 +40,16 @@ const IssueLicensePage = () => {
         note: values.note?.trim() || '',
         capabilities: ['premium.auto_update'],
       }
-      if (values.expiresAt?.trim()) {
-        const d = new Date(values.expiresAt.trim())
-        if (Number.isNaN(d.getTime())) {
-          throw new Error(intl.formatMessage({ id: 'licensing.bad_expires' }))
-        }
-        payload.expiresAt = d.toISOString()
+      if (values.expiresAt) {
+        // End of the chosen day, so "until 31.12" includes the 31st.
+        payload.expiresAt = values.expiresAt.endOf('day').toISOString()
       }
       const lic = await issueLicense(payload)
       setIssued(lic)
       message.success(intl.formatMessage({ id: 'licensing.issue_ok' }))
       form.resetFields(['note'])
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message || intl.formatMessage({ id: 'notification.error_message' }))
+      message.error(apiErrorMessage(e, intl, 'notification.error_message'))
     } finally {
       setLoading(false)
     }
@@ -81,20 +81,28 @@ animate='show'>
               <Form.Item
                 name='lmsUsername'
                 label={intl.formatMessage({ id: 'licensing.lms_username' })}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: intl.formatMessage({ id: 'form.required' }) }]}
               >
                 <LmsUsernameSelect />
               </Form.Item>
               <Form.Item
                 name='seatLimit'
                 label={intl.formatMessage({ id: 'licensing.seat_limit' })}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: intl.formatMessage({ id: 'form.required' }) }]}
               >
                 <InputNumber min={1} max={100}
 style={{ width: '100%' }} />
               </Form.Item>
-              <Form.Item name='expiresAt' label={intl.formatMessage({ id: 'licensing.expires_at' })}>
-                <Input placeholder='2027-12-31T23:59:59Z' />
+              <Form.Item
+                name='expiresAt'
+                label={intl.formatMessage({ id: 'licensing.expires_at' })}
+                extra={intl.formatMessage({ id: 'licensing.expires_at_hint' })}
+              >
+                <DatePicker
+                  format='DD.MM.YYYY'
+                  style={{ width: '100%' }}
+                  disabledDate={current => current && current.isBefore(dayjs().startOf('day'))}
+                />
               </Form.Item>
               <Form.Item name='note' label={intl.formatMessage({ id: 'licensing.note' })}>
                 <Input.TextArea rows={2} />
@@ -118,7 +126,7 @@ loading={loading}>
                 </p>
                 <p>
                   <Text strong>{intl.formatMessage({ id: 'licensing.expires_at' })}: </Text>
-                  {issued.expiresAt}
+                  {issued.expiresAt ? formatDateTime(issued.expiresAt, intl.locale) : '—'}
                 </p>
               </ResultBlock>
             ) : null}

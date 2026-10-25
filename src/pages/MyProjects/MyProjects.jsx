@@ -54,7 +54,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { openScratchEditor } from '@/utils/scratchEditor'
+import { openScratchEditor , getScratchEditorLabel } from '@/utils/scratchEditor'
 
 
 const { confirm } = Modal
@@ -116,7 +116,7 @@ animate='show'>
                 <FormattedMessage id='my_projects.title' />
               </HeroTitle>
               <HeroLead>
-                <FormattedMessage id='home.action.projects.description' />
+                <FormattedMessage id='home.action.projects.description' values={{ editor: getScratchEditorLabel() }} />
               </HeroLead>
             </HeroInner>
             <CreateButton

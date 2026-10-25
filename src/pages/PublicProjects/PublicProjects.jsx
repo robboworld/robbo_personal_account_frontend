@@ -52,6 +52,7 @@ import {
   SkeletonGrid,
 } from '@/components/ProjectCatalog/styles'
 import UserAvatar from '@/components/UserAvatar/UserAvatar'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import {
   HeroInner,
   HeroLead,
@@ -320,7 +321,7 @@ export default function PublicProjects() {
       setDeleteTarget(null)
       setDeleteReason('')
     } catch (e) {
-      message.error(e.message || intl.formatMessage({ id: 'project_page.moderate_delete_error' }))
+      message.error(apiErrorMessage(e, intl, 'project_page.moderate_delete_error'))
     } finally {
       setDeleteBusy(false)
     }
@@ -362,7 +363,7 @@ export default function PublicProjects() {
       message.success(intl.formatMessage({ id: 'project_page.landing_add_ok' }))
       setFeatureTarget(null)
     } catch (e) {
-      message.error(e.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+      message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
     } finally {
       setFeatureBusy(false)
     }
@@ -388,7 +389,7 @@ export default function PublicProjects() {
       })
       message.success(intl.formatMessage({ id: 'project_page.landing_remove_ok' }))
     } catch (e) {
-      message.error(e.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+      message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
     } finally {
       setFeatureBusy(false)
     }
@@ -416,7 +417,7 @@ export default function PublicProjects() {
       }))
       message.success(intl.formatMessage({ id: 'project_page.landing_order_ok' }))
     } catch (e) {
-      message.error(e.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+      message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
     } finally {
       setOrderBusyId(null)
     }

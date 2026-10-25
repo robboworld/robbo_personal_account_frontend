@@ -13,6 +13,11 @@ import {
     markAllNotificationsRead,
 } from '@/api/notifications'
 import theme from '@/theme'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+
+// Every open tab polls: keep it cheap. Focus and visibility changes refresh at once.
+const UNREAD_POLL_MS = 30000
+const FEED_POLL_MS = 15000
 
 const { Text } = Typography
 
@@ -117,7 +122,7 @@ const NotificationBell = ({ variant = 'default' }) => {
             clearInterval(timer)
             if (document.visibilityState === 'visible') {
                 refreshCount()
-                timer = setInterval(refreshCount, 3000)
+                timer = setInterval(refreshCount, UNREAD_POLL_MS)
             }
         }
 
@@ -143,7 +148,7 @@ const NotificationBell = ({ variant = 'default' }) => {
         const startFeedPolling = () => {
             clearInterval(timer)
             if (document.visibilityState === 'visible') {
-                timer = setInterval(() => loadFeed({ silent: true }), 3000)
+                timer = setInterval(() => loadFeed({ silent: true }), FEED_POLL_MS)
             }
         }
         const onVisibilityChange = () => {
@@ -174,7 +179,7 @@ const NotificationBell = ({ variant = 'default' }) => {
             await loadFeed()
             await refreshCount()
         } catch (e) {
-            message.error(e.message)
+            message.error(apiErrorMessage(e, intl))
         }
     }
 
@@ -191,7 +196,7 @@ const NotificationBell = ({ variant = 'default' }) => {
             setOpen(false)
             navigate(row.actionUrl)
         } catch (e) {
-            message.error(e.message)
+            message.error(apiErrorMessage(e, intl))
         }
     }
 
@@ -202,7 +207,7 @@ const NotificationBell = ({ variant = 'default' }) => {
             await refreshCount()
             message.success(intl.formatMessage({ id: 'notifications.mark_all_ok' }))
         } catch (e) {
-            message.error(e.message)
+            message.error(apiErrorMessage(e, intl))
         }
     }
 
