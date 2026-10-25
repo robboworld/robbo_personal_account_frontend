@@ -23,11 +23,11 @@ export default ({
       onChange={e => {
         handleInput(e.target.value)
       }}
-      width={width}
-      height={height}
-      padding={padding}
-      margin={margin}
-      fontSize={fontSize}
+      $width={width}
+      $height={height}
+      $padding={padding}
+      $margin={margin}
+      $fontSize={fontSize}
       data-cy='input'
     />
   )

@@ -14,12 +14,12 @@ export default function Button({
   return (
     <StyledButton
       onClick={() => handleSubmit()}
-      background={background}
-      width={width}
-      height={height}
-      padding={padding}
-      margin={margin}
-      fontSize={fontSize}
+      $background={background}
+      $width={width}
+      $height={height}
+      $padding={padding}
+      $margin={margin}
+      $fontSize={fontSize}
       data-cy='button'>
       {content}
     </StyledButton>
@@ -27,14 +27,14 @@ export default function Button({
 }
 
 const StyledButton = styled.button`
-  background: ${({ background }) => background || 'linear-gradient(to right, #14163c 0%, #03217b 79%)'};
+  background: ${({ $background }) => $background || 'linear-gradient(to right, #14163c 0%, #03217b 79%)'};
   text-transform: uppercase;
   letter-spacing: 0.2rem;
-  padding: ${({ padding }) => padding || 'none'};
-  margin: ${({ margin }) => margin || 'none'};
-  width: ${({ width }) => width || 'auto'};
-  height: ${({ height }) => height || '3rem'};
-  font-size: ${({ fontSize }) => fontSize || 'auto'};
+  padding: ${({ $padding }) => $padding || 'none'};
+  margin: ${({ $margin }) => $margin || 'none'};
+  width: ${({ $width }) => $width || 'auto'};
+  height: ${({ $height }) => $height || '3rem'};
+  font-size: ${({ $fontSize }) => $fontSize || 'auto'};
   border: none;
   color: white;
   border-radius: 2rem;
