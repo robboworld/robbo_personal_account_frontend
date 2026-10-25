@@ -1,4 +1,5 @@
 import config from '@/config'
+import { readStoredLanguage } from '@/helpers/intl'
 
 function isLoopbackHost(hostname) {
   return hostname === 'localhost' || hostname === '127.0.0.1'
@@ -36,12 +37,24 @@ function alignLoopbackUrlHost(url) {
  */
 export function getScratchEditorUrl(projectPageId) {
   const base = alignLoopbackUrlHost((config.scratchURL || '').replace(/\/?$/, '/'))
-  if (!projectPageId) {
-    return base
-  }
   const params = new URLSearchParams()
-  params.set('projectPageId', projectPageId)
+  if (projectPageId) {
+    params.set('projectPageId', projectPageId)
+  }
+  // RobboScratch takes ?locale= before its own saved choice and the browser language,
+  // so the editor opens in the language of the LK rather than in English.
+  params.set('locale', readStoredLanguage())
   return `${base}?${params.toString()}`
+}
+
+/** Editor address as people type it, e.g. "lk.edu.robbo.ru/scratch" or "localhost:8601" (for texts). */
+export function getScratchEditorLabel() {
+  try {
+    const url = new URL(getScratchEditorUrl())
+    return `${url.host}${url.pathname}`.replace(/\/$/, '')
+  } catch {
+    return ''
+  }
 }
 
 /**

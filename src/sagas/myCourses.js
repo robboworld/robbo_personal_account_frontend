@@ -17,6 +17,7 @@ import {
     getCoursePagesByUserSuccess,
 } from '@/actions'
 import { coursePageQuerysGraphQL } from '@/graphQL'
+import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 
 function* getAllCoursePagesSaga(action) {
@@ -50,7 +51,7 @@ function* getCoursePagesByUserSaga(action) {
         yield put(getCoursePagesByUserSuccess(response.data?.GetCoursesByUser?.results))
     } catch (e) {
         yield put(getCoursePagesByUserFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 

@@ -69,6 +69,12 @@ import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { ProjectTag, ProjectTagList } from '@/components/ProjectCatalog/styles'
 import { getAccessToken } from '@/helpers/accessTokenMemory'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+
+// A project created in the LK has no .sb3 until it is saved once in the editor.
+const sb3DownloadError = (e, intl) => (e?.status === 404
+    ? intl.formatMessage({ id: 'project_page.download_sb3_empty' })
+    : apiErrorMessage(e, intl, 'project_page.download_sb3_error'))
 
 
 const { TextArea } = Input
@@ -101,7 +107,7 @@ function GuestProjectView({ projectPageId }) {
     const navigate = useNavigate()
     const playerRef = useRef(null)
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
+    const [error, setError] = useState(null)
     const [projectPage, setProjectPage] = useState(null)
     const [playToken, setPlayToken] = useState(null)
     const [isPlayerRunning, setIsPlayerRunning] = useState(false)
@@ -117,7 +123,7 @@ function GuestProjectView({ projectPageId }) {
     useEffect(() => {
         let cancelled = false
         setLoading(true)
-        setError('')
+        setError(null)
         projectPageAPI.fetchProjectPageById(projectPageId)
             .then(data => {
                 if (cancelled) return
@@ -126,7 +132,10 @@ function GuestProjectView({ projectPageId }) {
             })
             .catch(e => {
                 if (cancelled) return
-                setError(e?.message || intl.formatMessage({ id: 'project_page.player_error' }))
+                const status = e?.status ?? e?.response?.status
+                setError(status === 403 || status === 404
+                    ? { closed: true }
+                    : { text: apiErrorMessage(e, intl, 'project_page.player_error') })
                 setProjectPage(null)
                 setPlayToken(null)
             })
@@ -152,7 +161,7 @@ function GuestProjectView({ projectPageId }) {
             await downloadProjectSb3ByPlayToken(playToken, projectPageId, projectPage?.title)
             message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'project_page.download_sb3_error' }))
+            message.error(sb3DownloadError(e, intl))
         } finally {
             setDownloadBusy(false)
         }
@@ -186,8 +195,12 @@ function GuestProjectView({ projectPageId }) {
                         <LoadingWrap><Spin /></LoadingWrap>
                     ) : error ? (
                         <PlayerCard>
-                            <ProjectTitle>{intl.formatMessage({ id: 'project_page.player_error' })}</ProjectTitle>
-                            <ViewOnlyNote>{error}</ViewOnlyNote>
+                            <ProjectTitle>
+                                {intl.formatMessage({ id: error.closed ? 'project_page.unavailable_title' : 'project_page.player_error' })}
+                            </ProjectTitle>
+                            <ViewOnlyNote>
+                                {error.closed ? intl.formatMessage({ id: 'project_page.unavailable_hint' }) : error.text}
+                            </ViewOnlyNote>
                             <div style={{ marginTop: '1rem' }}>
                                 <Link to={LANDING_PAGE_ROUTE}><FormattedMessage id='project_page.back_to_landing' /></Link>
                             </div>
@@ -317,7 +330,9 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         }
     }, [actions, projectPageId, token])
 
-    const { projectPage, playToken, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
+    const { projectPage, playToken, loading, loadError } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
+    // Closed or deleted project: say so instead of an empty page with failing widgets.
+    const unavailable = !loading && (loadError?.status === 403 || loadError?.status === 404)
     const loginState = useSelector(({ login }) => login)
     const currentUserId = loginState?.userId || ''
     const isOwner = Boolean(projectPage?.isOwner)
@@ -413,8 +428,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             message.success(intl.formatMessage({ id: 'project_page.save_ok' }))
             actions.getProjectPageById(token, projectPageId)
         } catch (e) {
-            message.error(e?.response?.data?.error || e?.message ||
-                intl.formatMessage({ id: 'project_page.save_error' }))
+            message.error(apiErrorMessage(e, intl, 'project_page.save_error'))
         } finally {
             setSaveBusy(false)
         }
@@ -438,8 +452,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                 message.error(intl.formatMessage({ id: 'project_page.publish_invalid' }))
                 return
             }
-            message.error(e?.response?.data?.error || e?.message ||
-                intl.formatMessage({ id: 'project_page.publish_error' }))
+            message.error(apiErrorMessage(e, intl, 'project_page.publish_error'))
         } finally {
             setPublishBusy(false)
         }
@@ -452,7 +465,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             await downloadProjectSb3(token, projectPageId, projectPage?.title)
             message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'project_page.download_sb3_error' }))
+            message.error(sb3DownloadError(e, intl))
         } finally {
             setDownloadBusy(false)
         }
@@ -477,7 +490,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             if (code === 'INVALID_PROJECT_FILE') {
                 message.error(intl.formatMessage({ id: 'project_page.invalid_project_file' }))
             } else {
-                message.error(e?.message || intl.formatMessage({ id: 'project_page.upload_sb3_error' }))
+                message.error(apiErrorMessage(e, intl, 'project_page.upload_sb3_error'))
             }
         } finally {
             setUploadBusy(false)
@@ -497,7 +510,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             actions.getProjectPageById(token, projectPageId)
             setPlayerReloadKey(k => k + 1)
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'notification.error_message' }))
+            message.error(apiErrorMessage(e, intl, 'notification.error_message'))
         } finally {
             setPreviewBusy(false)
         }
@@ -517,7 +530,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                     message.success(intl.formatMessage({ id: 'notification.project_page_deleted_success' }))
                     navigate(MY_PROJECTS_ROUTE)
                 } catch (e) {
-                    message.error(e?.message || intl.formatMessage({ id: 'notification.error_message' }))
+                    message.error(apiErrorMessage(e, intl, 'notification.error_message'))
                 } finally {
                     setDeleteBusy(false)
                 }
@@ -539,7 +552,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             setModerateReason('')
             navigate(PUBLIC_PROJECTS_ROUTE)
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'project_page.moderate_delete_error' }))
+            message.error(apiErrorMessage(e, intl, 'project_page.moderate_delete_error'))
         } finally {
             setModerateBusy(false)
         }
@@ -557,7 +570,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             message.success(intl.formatMessage({ id: 'project_page.landing_add_ok' }))
             setFeatureOpen(false)
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+            message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
         } finally {
             setFeatureBusy(false)
         }
@@ -571,7 +584,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             setLandingSortOrderLocal(0)
             message.success(intl.formatMessage({ id: 'project_page.landing_remove_ok' }))
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+            message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
         } finally {
             setFeatureBusy(false)
         }
@@ -587,7 +600,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             setLandingSortOrderLocal(data?.projectPage?.landingSortOrder ?? (Number(landingSortOrder) || 0))
             message.success(intl.formatMessage({ id: 'project_page.landing_order_ok' }))
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'project_page.landing_error' }))
+            message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
         } finally {
             setFeatureBusy(false)
         }
@@ -617,6 +630,11 @@ function AuthenticatedProjectView({ projectPageId, token }) {
             </BackRow>
             {loading ? (
                 <LoadingWrap><Spin /></LoadingWrap>
+            ) : unavailable ? (
+                <PlayerCard>
+                    <ProjectTitle>{intl.formatMessage({ id: 'project_page.unavailable_title' })}</ProjectTitle>
+                    <ViewOnlyNote>{intl.formatMessage({ id: 'project_page.unavailable_hint' })}</ViewOnlyNote>
+                </PlayerCard>
             ) : (
                 <MainGrid>
                     <PlayerCard>

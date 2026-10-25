@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { message } from 'antd'
 
 import {
   Avatar,
@@ -70,16 +71,6 @@ viewBox='0 0 24 24' aria-hidden>
   </svg>
 )
 
-const StudioIcon = () => (
-  <svg width='24' height='24'
-viewBox='0 0 24 24' aria-hidden>
-    <path
-      fill='currentColor'
-      d='M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z'
-    />
-  </svg>
-)
-
 const ExploreCard = ({ project, onOpen }) => {
   const intl = useIntl()
   const title = project.title || intl.formatMessage({ id: 'project_card.untitled' })
@@ -126,6 +117,8 @@ const Explore = () => {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [loadError, setLoadError] = useState(false)
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     document.title = intl.formatMessage({ id: 'explore.document_title' })
@@ -141,6 +134,7 @@ const Explore = () => {
   useEffect(() => {
     let cancelled = false
     setLoading(true)
+    setLoadError(false)
     setPage(1)
     setProjects([])
     const options = { sort: 'popular' }
@@ -158,8 +152,10 @@ const Explore = () => {
       })
       .catch(() => {
         if (!cancelled) {
+          // An outage is not "no projects yet": say so and offer a retry.
           setProjects([])
           setCountRows(0)
+          setLoadError(true)
         }
       })
       .finally(() => {
@@ -170,7 +166,7 @@ const Explore = () => {
     return () => {
       cancelled = true
     }
-  }, [activeTag])
+  }, [activeTag, reloadKey])
 
   const hasMore = projects.length < countRows
 
@@ -191,6 +187,9 @@ const Explore = () => {
         setCountRows(Number(data?.countRows) || 0)
         setProjects(prev => [...prev, ...next])
         setPage(nextPage)
+      })
+      .catch(() => {
+        message.error(intl.formatMessage({ id: 'explore.load_error' }))
       })
       .finally(() => {
         setLoadingMore(false)
@@ -232,12 +231,6 @@ const Explore = () => {
               </TabIcon>
               <FormattedMessage id='explore.tab_projects' />
             </Tab>
-            <Tab aria-disabled='true'>
-              <TabIcon $muted>
-                <StudioIcon />
-              </TabIcon>
-              <FormattedMessage id='explore.tab_studios' />
-            </Tab>
           </Tabs>
         </TabBar>
         <Inner>
@@ -270,6 +263,15 @@ $mt='0.35rem' />
                 </SkeletonCard>
               ))}
             </Grid>
+          ) : loadError ? (
+            <Empty role='alert'>
+              <FormattedMessage id='explore.load_error' />
+              <div style={{ marginTop: '1rem' }}>
+                <LoadMore type='button' onClick={() => setReloadKey(k => k + 1)}>
+                  <FormattedMessage id='explore.retry' />
+                </LoadMore>
+              </div>
+            </Empty>
           ) : projects.length === 0 ? (
             <Empty><FormattedMessage id='explore.empty' /></Empty>
           ) : (

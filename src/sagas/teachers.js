@@ -20,6 +20,7 @@ import {
 } from '@/actions'
 import { formatMessageId } from '@/helpers/intl'
 import { teacherMutationsGraphQL, teacherQuerysGraphQL } from '@/graphQL'
+import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* getTeachersSaga(action) {
     const language = yield select(state => state.app.language)
@@ -32,7 +33,7 @@ function* getTeachersSaga(action) {
         yield put(getTeachersFailed(e.message))
         notification.error({
             title: formatMessageId(language, 'notification.error_message'),
-            description: e.message,
+            description: sagaErrorMessage(e, language),
         })
     }
 }
@@ -52,7 +53,7 @@ function* deleteTeacherSaga(action) {
         yield put(deleteTeacherFailed(e))
         notification.error({
             title: formatMessageId(language, 'notification.error_message'),
-            description: e.message,
+            description: sagaErrorMessage(e, language),
         })
     }
 }
@@ -72,7 +73,7 @@ function* createTeacherSaga(action) {
         yield put(createTeacherFailed(e))
         notification.error({
             title: formatMessageId(language, 'notification.error_message'),
-            description: e.message,
+            description: sagaErrorMessage(e, language),
         })
     }
 }
@@ -92,7 +93,7 @@ function* setTeacherForRobboGroupSaga(action) {
         yield put(setTeacherForRobboGroupFailed(e))
         notification.error({
             title: formatMessageId(language, 'notification.error_message'),
-            description: e.message,
+            description: sagaErrorMessage(e, language),
         })
     }
 }
@@ -112,7 +113,7 @@ function* deleteTeacherForRobboGroupSaga(action) {
         yield put(deleteTeacherForRobboGroupFailed(e))
         notification.error({
             title: formatMessageId(language, 'notification.error_message'),
-            description: e.message,
+            description: sagaErrorMessage(e, language),
         })
     }
 }

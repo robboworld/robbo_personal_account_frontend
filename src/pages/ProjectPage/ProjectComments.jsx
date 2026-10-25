@@ -12,6 +12,7 @@ import {
 } from '@/api/projectPage'
 import { formatDateTime } from '@/helpers/formatDateTime'
 import theme from '@/theme'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const Section = styled.section`
   margin-top: 1rem;
@@ -140,7 +141,6 @@ function CommentNode({
 
     const my = comment.reactions?.myReaction || null
     const likes = comment.reactions?.likes || 0
-    const dislikes = comment.reactions?.dislikes || 0
     const isAuthor = currentUserId && comment.author?.id === currentUserId
     const canDelete = interactive && (isAuthor || canModerate)
 
@@ -153,7 +153,7 @@ function CommentNode({
             await putCommentReaction(projectPageId, comment.id, code)
             await onReload()
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'comments.reaction_error' }))
+            message.error(apiErrorMessage(e, intl, 'comments.reaction_error'))
         } finally {
             setBusyId('')
         }
@@ -168,7 +168,7 @@ function CommentNode({
             await deleteProjectComment(projectPageId, comment.id)
             await onReload()
         } catch (e) {
-            message.error(e?.message || intl.formatMessage({ id: 'comments.delete_error' }))
+            message.error(apiErrorMessage(e, intl, 'comments.delete_error'))
         } finally {
             setBusyId('')
         }
@@ -189,7 +189,7 @@ function CommentNode({
             if (e?.code === 'profanity_detected' || String(e?.message).includes('profanity_detected')) {
                 message.error(intl.formatMessage({ id: 'comments.profanity_error' }))
             } else {
-                message.error(e?.message || intl.formatMessage({ id: 'comments.post_error' }))
+                message.error(apiErrorMessage(e, intl, 'comments.post_error'))
             }
         } finally {
             setPosting(false)
@@ -217,15 +217,6 @@ function CommentNode({
                         >
                             👍 {likes}
                         </VoteBtn>
-                        <VoteBtn
-                            type='button'
-                            $selected={my === 'dislike'}
-                            disabled={Boolean(busyId)}
-                            onClick={() => onVote('dislike')}
-                            aria-label={intl.formatMessage({ id: 'comments.dislike' })}
-                        >
-                            👎 {dislikes}
-                        </VoteBtn>
                         <Button type='link' size='small'
 onClick={() => setReplyOpen(v => !v)}>
                             {intl.formatMessage({ id: 'comments.reply' })}
@@ -233,7 +224,7 @@ onClick={() => setReplyOpen(v => !v)}>
                     </React.Fragment>
                 ) : (
                     <Meta>
-                        👍 {likes} · 👎 {dislikes}
+                        👍 {likes}
                     </Meta>
                 )}
                 {canDelete ? (
@@ -319,7 +310,7 @@ function ProjectComments({
         reload()
             .catch(e => {
                 if (!cancelled) {
-                    setError(e?.message || intl.formatMessage({ id: 'comments.load_error' }))
+                    setError(apiErrorMessage(e, intl, 'comments.load_error'))
                 }
             })
             .finally(() => {
@@ -346,7 +337,7 @@ function ProjectComments({
             if (e?.code === 'profanity_detected' || String(e?.message).includes('profanity_detected')) {
                 message.error(intl.formatMessage({ id: 'comments.profanity_error' }))
             } else {
-                message.error(e?.message || intl.formatMessage({ id: 'comments.post_error' }))
+                message.error(apiErrorMessage(e, intl, 'comments.post_error'))
             }
         } finally {
             setPosting(false)

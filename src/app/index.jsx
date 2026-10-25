@@ -11,7 +11,6 @@ import {
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
   OIDC_CALLBACK_ROUTE,
-  COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
   TEACHERS_PAGE_ROUTE,
   CLIENTS_ROUTE,
@@ -43,6 +42,8 @@ import {
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
+import LegacySection from '@/components/LegacySection'
+import ProdBuildWarning from '@/components/ProdBuildWarning'
 import { ProtectedRoute, PublicAuthGate } from '@/helpers'
 
 import HomePage from '@/pages/Home'
@@ -57,7 +58,6 @@ const PublicProjects = lazy(() => import('@/pages/PublicProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const LmsRedirect = lazy(() => import('@/pages/LmsRedirect'))
 const OidcCallback = lazy(() => import('@/pages/OidcCallback'))
-const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
 const ClientsPageContainer = lazy(() => import('@/containers/ClientsContainer'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
@@ -82,6 +82,9 @@ const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUP
 const wrapProtected = (allowedRoles, element) => (
   <ProtectedRoute allowedRoles={allowedRoles}>{element}</ProtectedRoute>
 )
+
+// Backed by the legacy Postgres: unavailable (with an explanation) while it is off.
+const wrapLegacy = (allowedRoles, element) => wrapProtected(allowedRoles, <LegacySection>{element}</LegacySection>)
 
 // Legacy /scratch links (editor used to live there): keep the query, e.g. ?projectPageId=.
 const LegacyScratchRedirect = () => {
@@ -120,14 +123,10 @@ const AppRoutes = () => (
         path={MY_COURSES_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <LmsRedirect />)}
       />
-      <Route
-        path={COURSE_PAGE_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <CoursePage />)}
-      />
-      <Route path={CLIENTS_ROUTE} element={wrapProtected([SUPER_ADMIN], <ClientsPageContainer />)} />
+      <Route path={CLIENTS_ROUTE} element={wrapLegacy([SUPER_ADMIN], <ClientsPageContainer />)} />
       <Route
         path={TEACHERS_PAGE_ROUTE}
-        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <TeachersPage />)}
+        element={wrapLegacy([SUPER_ADMIN, UNIT_ADMIN], <TeachersPage />)}
       />
       <Route
         path={PROFILE_PAGE_ROUTE}
@@ -137,18 +136,18 @@ const AppRoutes = () => (
         path={CUSTOMIZATION_PAGE_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <CustomizationPage />)}
       />
-      <Route path={UNIT_ADMINS_ROUTE} element={wrapProtected([SUPER_ADMIN], <UnitAdminsPage />)} />
+      <Route path={UNIT_ADMINS_ROUTE} element={wrapLegacy([SUPER_ADMIN], <UnitAdminsPage />)} />
       <Route
         path={ROBBO_UNITS_ROUTE}
-        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboUnitsPage />)}
+        element={wrapLegacy([SUPER_ADMIN, UNIT_ADMIN], <RobboUnitsPage />)}
       />
       <Route
         path={ROBBO_UNIT_STUDENT_GROUPS_PAGE}
-        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)}
+        element={wrapLegacy([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)}
       />
       <Route
         path={ROBBO_GROUPS_ROUTE}
-        element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)}
+        element={wrapLegacy([SUPER_ADMIN, UNIT_ADMIN], <RobboGroups />)}
       />
       <Route
         path={SEND_NOTIFICATION_ROUTE}
@@ -190,6 +189,7 @@ const AppRoutes = () => (
 
 const Application = () => (
   <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: '100dvh', width: '100%' }}>
+    <ProdBuildWarning />
     <Suspense fallback={<Loader />}>
       <AppRoutes />
     </Suspense>

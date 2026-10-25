@@ -25,11 +25,8 @@ import {
   unbanUser,
 } from '@/api/users'
 import { SUPER_ADMIN, TEACHER } from '@/constants'
-import { useAuthRole } from '@/helpers'
-import { parseJwt } from '@/helpers/jwtParser'
-import { useOidcSession } from '@/helpers/OidcSessionContext'
-import { isOidcSsoEnabled } from '@/helpers/oidcSession'
-import { getAccessToken } from '@/helpers/accessTokenMemory'
+import { useAuthRole, useCurrentUser } from '@/helpers'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 import './UserBanPanel.css'
 
@@ -48,19 +45,7 @@ const formatWhen = (iso, locale) => {
   }
 }
 
-const useSelfUserId = () => {
-  const oidcSession = useOidcSession()
-  if (isOidcSsoEnabled() && oidcSession?.authenticated) {
-    return oidcSession?.edx_user_id || oidcSession?.sub || ''
-  }
-  const token = getAccessToken()
-  if (!token) return ''
-  try {
-    return parseJwt(token).Id || ''
-  } catch {
-    return ''
-  }
-}
+const useSelfUserId = () => useCurrentUser().id
 
 /**
  * SuperAdmin-only ban / unban panel for peek profiles.
@@ -96,11 +81,11 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
       setActiveBan(status?.activeBan || null)
       setHistory(hist || [])
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message)
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setLoading(false)
     }
-  }, [canModerate, lmsUserId])
+  }, [canModerate, lmsUserId, intl])
 
   useEffect(() => {
     reload()
@@ -135,7 +120,7 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
         banForm.resetFields()
         await reload()
       } catch (e) {
-        message.error(e?.response?.data?.error || e.message)
+        message.error(apiErrorMessage(e, intl))
       } finally {
         setSaving(false)
       }
@@ -167,7 +152,7 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
       unbanForm.resetFields()
       await reload()
     } catch (e) {
-      message.error(e?.response?.data?.error || e.message)
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setSaving(false)
     }

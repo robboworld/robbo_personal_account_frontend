@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react'
 
 /**
- * Subscribe to a CSS media query. SSR-safe: returns `defaultMatches` until mount.
+ * Subscribe to a CSS media query. SSR-safe: `defaultMatches` only without window.matchMedia.
  * @param {string} query e.g. '(max-width: 991px)'
  * @param {boolean} [defaultMatches=false]
  */
 export function useMediaQuery(query, defaultMatches = false) {
-  const [matches, setMatches] = useState(defaultMatches)
+  // Read the media query on the first render: starting from the default made phones
+  // paint the desktop sider first and then jump to the drawer layout.
+  const [matches, setMatches] = useState(() => (
+    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia(query).matches
+      : defaultMatches
+  ))
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {

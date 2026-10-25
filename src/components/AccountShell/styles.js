@@ -647,7 +647,7 @@ export const AvatarMark = styled.div`
   font-weight: 700;
   letter-spacing: -0.03em;
   color: ${colors.white};
-  background: linear-gradient(145deg, ${colors.primary}, ${colors.secondary});
+  background: linear-gradient(145deg, ${colors.accentGreen}, ${colors.accentGreenDark});
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
   overflow: hidden;
   flex-shrink: 0;

@@ -53,3 +53,5 @@ export const listStudentClasses = () => instance.get('/api/student/classes')
 export const listStudentAssignments = classId => instance.get(`/api/student/classes/${classId}/assignments`)
 
 export const submitProject = projectId => instance.post(`/api/student/projects/${projectId}/submit`)
+
+export const listTeacherCourses = () => instance.get('/api/teacher/courses')

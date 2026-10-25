@@ -25,6 +25,7 @@ import {
     getRobboUnitByIdRequest,
     updateRobboUnitRequest,
 } from '@/actions'
+import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 
 function* getAllRobboUnitsSaga({ payload }) {
@@ -37,7 +38,7 @@ function* getAllRobboUnitsSaga({ payload }) {
         yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
     } catch (e) {
         yield put(getRobboUnitsFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -50,7 +51,7 @@ function* getRobboUnitsByUnitAdminIdSaga({ payload }) {
         yield put(getRobboUnitsByUnitAdminIdSuccess(response.data.GetRobboUnitsByAccessToken))
     } catch (e) {
         yield put(getRobboUnitsByUnitAdminIdFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -63,7 +64,7 @@ function* getRobboUnitByIdSaga(action) {
         yield put(getRobboUnitByIdSuccess(response.data))
     } catch (e) {
         yield put(getRobboUnitByIdFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -77,7 +78,7 @@ function* deleteRobboUnitSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.unit_delete_success') })
     } catch (e) {
         yield put(deleteRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -91,7 +92,7 @@ function* createRobboUnitSaga(action) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.robbo_unit_create_success') })
     } catch (e) {
         yield put(createRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -105,7 +106,7 @@ function* updateRobboUnitSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.unit_update_success') })
     } catch (e) {
         yield put(updateRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 

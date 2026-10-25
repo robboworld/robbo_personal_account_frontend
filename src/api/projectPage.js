@@ -110,7 +110,9 @@ export async function downloadProjectSb3(token, projectPageId, fallbackTitle) {
     const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/download`
     const res = await fetchWithAuthRetry(url, { method: 'GET' }, { fallbackToken: token })
     if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
+        const err = new Error(await readFetchErrorMessage(res))
+        err.status = res.status
+        throw err
     }
     await saveSb3Blob(res, fallbackTitle)
 }
@@ -127,7 +129,9 @@ export async function downloadProjectSb3ByPlayToken(playToken, projectPageId, fa
         credentials: 'include',
     })
     if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
+        const err = new Error(await readFetchErrorMessage(res))
+        err.status = res.status
+        throw err
     }
     await saveSb3Blob(res, fallbackTitle)
 }

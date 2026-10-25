@@ -20,3 +20,9 @@ export async function getOrder(orderNumber) {
   })
   return data
 }
+
+/** Products plus the Free limits (public; the landing uses it too). */
+export async function listCatalog() {
+  const { data } = await instance.get('payments/products', { withCredentials: true })
+  return { products: data?.products || [], free: data?.free || null }
+}

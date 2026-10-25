@@ -11,11 +11,12 @@ const INITIAL_STATE = {
     projectPage: {},
     playToken: null,
     loading: true,
+    loadError: null,
 }
 
 export default handleActions({
     [getProjectPageById](state, action) {
-        return { ...state, loading: true }
+        return { ...state, loading: true, loadError: null }
     },
     [getProjectPageByIdSuccess](state, action) {
         return {
@@ -26,7 +27,7 @@ export default handleActions({
         }
     },
     [getProjectPageByIdFailed](state, action) {
-        return { ...state, loading: false }
+        return { ...state, loading: false, loadError: action.payload?.err || { status: 0 } }
     },
     [updateProjectPage](state, action) {
         return { ...state, loading: true }

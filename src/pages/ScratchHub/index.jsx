@@ -12,7 +12,7 @@ import styled, { css, keyframes } from 'styled-components'
 import { PageContent } from '@/components/AccountShell'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import theme from '@/theme'
-import { getScratchEditorUrl } from '@/utils/scratchEditor'
+import { getScratchEditorLabel, getScratchEditorUrl } from '@/utils/scratchEditor'
 
 const RELEASE_BASE = 'http://files.robbo.ru/Software/RobboScratch3.0/release'
 
@@ -325,7 +325,7 @@ const ScratchHubPage = () => {
     <HubRoot>
       <HubInner>
         <Brand>
-          Scratch.ru
+          RobboScratch
         </Brand>
         <Lead>
           <FormattedMessage id='scratch_hub.lead' />
@@ -342,7 +342,7 @@ const ScratchHubPage = () => {
                 <FormattedMessage id='scratch_hub.web_title' />
               </WebTitle>
               <WebHint>
-                <FormattedMessage id='scratch_hub.web_hint' />
+                <FormattedMessage id='scratch_hub.web_hint' values={{ editor: getScratchEditorLabel() }} />
               </WebHint>
             </div>
             <WebCta>

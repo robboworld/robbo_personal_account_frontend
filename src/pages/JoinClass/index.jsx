@@ -5,9 +5,10 @@ import { FormattedMessage, useIntl } from 'react-intl'
 
 import * as api from '@/api/teacherClass'
 import { LOGIN_PAGE_ROUTE, STUDENT_CLASSES_ROUTE, HOME_PAGE_ROUTE } from '@/constants'
-import { fetchOidcStatus, isOidcSsoEnabled, lmsRegisterUrl } from '@/helpers/oidcSession'
+import { buildOidcStartUrl, fetchOidcStatus, isOidcSsoEnabled, lmsRegisterUrl } from '@/helpers/oidcSession'
 import { parseJwt } from '@/helpers'
 import { getAccessToken } from '@/helpers/accessTokenMemory'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const { Title, Paragraph, Text } = Typography
 
@@ -45,7 +46,9 @@ const JoinClassPage = () => {
   const claims = token ? parseJwt(token) : null
   const isLoggedIn = ssoAuthenticated || !!(claims?.Id || claims?.id || claims?.sub)
 
-  const key = slug || manualCode || codeFromQuery
+  // Only a submitted code (?code= or the slug) is looked up: typing must not refetch
+  // on every key and swap the whole page for a spinner.
+  const key = slug || codeFromQuery
 
   useEffect(() => {
     let cancelled = false
@@ -63,7 +66,7 @@ const JoinClassPage = () => {
         if (!cancelled) setPreview(data)
       } catch (e) {
         if (!cancelled) {
-          setError(e?.response?.data?.error || intl.formatMessage({ id: 'join_class.not_found' }))
+          setError(apiErrorMessage(e, intl, 'join_class.not_found'))
           setPreview(null)
         }
       } finally {
@@ -87,7 +90,7 @@ const JoinClassPage = () => {
       message.success(intl.formatMessage({ id: 'join_class.welcome' }))
       navigate(STUDENT_CLASSES_ROUTE)
     } catch (e) {
-      message.error(e?.response?.data?.error || intl.formatMessage({ id: 'join_class.join_failed' }))
+      message.error(apiErrorMessage(e, intl, 'join_class.join_failed'))
     } finally {
       setJoining(false)
     }
@@ -113,11 +116,14 @@ const JoinClassPage = () => {
               size='large'
               value={manualCode}
               onChange={e => setManualCode(e.target.value.toUpperCase())}
+              onPressEnter={() => manualCode.trim() && navigate(`/join?code=${encodeURIComponent(manualCode.trim())}`)}
               placeholder='7K2M-9Q'
+              aria-label={intl.formatMessage({ id: 'join_class.enter_code' })}
             />
             <Button
               size='large'
               type='primary'
+              disabled={!manualCode.trim()}
               onClick={() => navigate(`/join?code=${encodeURIComponent(manualCode.trim())}`)}
             >
               <FormattedMessage id='join_class.continue' />
@@ -190,6 +196,12 @@ const JoinClassPage = () => {
               block
               onClick={() => {
                 const join = slug || manualCode || codeFromQuery
+                const back = `/join?code=${encodeURIComponent(join)}`
+                if (isOidcSsoEnabled()) {
+                  // The IdP round trip keeps only return_to: come back to this invite.
+                  window.location.assign(buildOidcStartUrl(back, 'login'))
+                  return
+                }
                 navigate(`${LOGIN_PAGE_ROUTE}?join=${encodeURIComponent(join)}`)
               }}
             >

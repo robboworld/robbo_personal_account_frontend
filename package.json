@@ -17,7 +17,9 @@
     "e2e": "yarn build && PORT=3030 start-server-and-test start http://localhost:3030 cypress:run",
     "landing:restore": "sh scripts/restore-landing.sh",
     "landing:restore:legacy": "sh scripts/restore-landing-legacy.sh",
-    "docker:rebuild": "docker compose build web && docker compose up -d --force-recreate web"
+    "docker:rebuild": "docker compose build web && docker compose up -d --force-recreate web",
+    "docker:dev": "docker compose stop web; docker run --rm -it -u $(id -u):$(id -g) -e HOME=/tmp -v \"$PWD\":/app -w /app -p 3030:3030 node:22-alpine npx webpack serve --config webpack.dev.js",
+    "docker:check": "docker run --rm -u $(id -u):$(id -g) -e HOME=/tmp -v \"$PWD\":/app -w /app node:22-alpine sh -c 'yarn -s eslint:test && yarn -s i18n:check && yarn -s test --silent'"
   },
   "resolutions": {
     "@babel/runtime": "^7.26.10",
@@ -34,8 +36,18 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1",
       "^axios$": "axios/dist/node/axios.cjs",
-      "\\.css$": "<rootDir>/src/__mocks__/styleMock.js"
-    }
+      "\\.css$": "<rootDir>/src/__mocks__/styleMock.js",
+      "^@ant-design/colors(?:/es)?(/.*)?$": "<rootDir>/node_modules/@ant-design/colors/lib$1"
+    },
+    "testEnvironmentOptions": {
+      "customExportConditions": [
+        "require",
+        "default"
+      ]
+    },
+    "setupFiles": [
+      "<rootDir>/src/setupTests.js"
+    ]
   },
   "dependencies": {
     "@ant-design/icons": "^6",

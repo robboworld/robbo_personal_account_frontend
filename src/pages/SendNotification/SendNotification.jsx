@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import { Form, Input, Button, Tabs, message } from 'antd'
+import { Form, Input, Button, Tabs, Select, DatePicker, message } from 'antd'
+import dayjs from 'dayjs'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
 import { adminSendPersonalNotification, adminCreateAnnouncement } from '@/api/notifications'
 import { SUPER_ADMIN } from '@/constants'
-import { parseJwt } from '@/helpers'
+import { useAuthRole } from '@/helpers'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import LmsUsernameSelect from '@/components/LmsUsernameSelect'
 import {
   GlassPanel,
@@ -19,7 +21,6 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 const { TextArea } = Input
 
@@ -29,10 +30,12 @@ const SendNotification = () => {
   const [announceForm] = Form.useForm()
   const [loadingP, setLoadingP] = useState(false)
   const [loadingA, setLoadingA] = useState(false)
-  const token = getAccessToken()
-  const payload = token ? parseJwt(token) : {}
-  const roleNum = Number(payload.Role)
-  const isSuper = roleNum === SUPER_ADMIN
+  const isSuper = useAuthRole() === SUPER_ADMIN
+  const required = { required: true, message: intl.formatMessage({ id: 'form.required' }) }
+  const severityOptions = ['INFO', 'WARNING', 'CRITICAL'].map(value => ({
+    value,
+    label: intl.formatMessage({ id: `send_notification.severity_${value.toLowerCase()}` }),
+  }))
 
   const onPersonal = async values => {
     setLoadingP(true)
@@ -48,7 +51,7 @@ const SendNotification = () => {
       message.success(intl.formatMessage({ id: 'send_notification.personal_ok' }))
       personalForm.resetFields()
     } catch (e) {
-      message.error(e.message)
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setLoadingP(false)
     }
@@ -57,18 +60,17 @@ const SendNotification = () => {
   const onAnnouncement = async values => {
     setLoadingA(true)
     try {
-      const audienceJson = values.audienceJson?.trim() || '{"all":true}'
-      JSON.parse(audienceJson)
+      // The feed shows only {"all":true} announcements; role targeting is not implemented.
       await adminCreateAnnouncement({
         title: values.title.trim(),
         body: values.body.trim(),
-        audienceJson,
-        expiresAt: values.expiresAt?.trim() || undefined,
+        audienceJson: '{"all":true}',
+        expiresAt: values.expiresAt ? values.expiresAt.toISOString() : undefined,
       })
       message.success(intl.formatMessage({ id: 'send_notification.announcement_ok' }))
       announceForm.resetFields()
     } catch (e) {
-      message.error(e.message || intl.formatMessage({ id: 'send_notification.invalid_json' }))
+      message.error(apiErrorMessage(e, intl))
     } finally {
       setLoadingA(false)
     }
@@ -84,21 +86,21 @@ onFinish={onPersonal}>
         <Form.Item
           name='recipientUsername'
           label={intl.formatMessage({ id: 'send_notification.recipient_username' })}
-          rules={[{ required: true }]}
+          rules={[required]}
         >
           <LmsUsernameSelect />
         </Form.Item>
         <Form.Item
           name='title'
           label={intl.formatMessage({ id: 'send_notification.field_title' })}
-          rules={[{ required: true }]}
+          rules={[required]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name='body'
           label={intl.formatMessage({ id: 'send_notification.field_body' })}
-          rules={[{ required: true }]}
+          rules={[required]}
         >
           <TextArea rows={4} />
         </Form.Item>
@@ -110,7 +112,7 @@ onFinish={onPersonal}>
           label={intl.formatMessage({ id: 'send_notification.field_severity' })}
           initialValue='INFO'
         >
-          <Input placeholder='INFO' />
+          <Select options={severityOptions} />
         </Form.Item>
         <Form.Item
           name='actionUrl'
@@ -138,27 +140,26 @@ onFinish={onAnnouncement}>
         <Form.Item
           name='title'
           label={intl.formatMessage({ id: 'send_notification.field_title' })}
-          rules={[{ required: true }]}
+          rules={[required]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name='body'
           label={intl.formatMessage({ id: 'send_notification.field_body' })}
-          rules={[{ required: true }]}
+          rules={[required]}
         >
           <TextArea rows={4} />
         </Form.Item>
-        <Form.Item
-          name='audienceJson'
-          label={intl.formatMessage({ id: 'send_notification.audience_json' })}
-          initialValue='{"all":true}'
-          rules={[{ required: true }]}
-        >
-          <TextArea rows={3} placeholder='{"all":true}' />
-        </Form.Item>
+        <p style={{ marginTop: 0 }}>
+          {intl.formatMessage({ id: 'send_notification.audience_all' })}
+        </p>
         <Form.Item name='expiresAt' label={intl.formatMessage({ id: 'send_notification.expires_at' })}>
-          <Input placeholder='2026-12-31T23:59:59Z' />
+          <DatePicker
+            showTime={{ format: 'HH:mm' }}
+            format='DD.MM.YYYY HH:mm'
+            disabledDate={current => current && current.isBefore(dayjs().startOf('day'))}
+          />
         </Form.Item>
         <Form.Item>
           <Button type='primary' htmlType='submit'
@@ -180,7 +181,7 @@ animate='show'>
               {intl.formatMessage({ id: 'sidebar_data.send_notification' })}
             </HeroTitle>
             <HeroLead>
-              {intl.formatMessage({ id: 'send_notification.personal_title' })}
+              {intl.formatMessage({ id: 'send_notification.lead' })}
             </HeroLead>
           </HeroInner>
         </HeroPanel>

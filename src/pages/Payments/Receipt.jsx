@@ -16,6 +16,7 @@ import {
 } from '@/components/AccountShell'
 import { getOrder } from '@/api/payments'
 import { MY_LICENSES_ROUTE } from '@/constants'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const { Paragraph, Text } = Typography
 
@@ -48,11 +49,7 @@ const ReceiptPage = () => {
         timerRef.current = setTimeout(load, POLL_MS)
       }
     } catch (e) {
-      setError(
-        e?.response?.data?.error ||
-        e.message ||
-        intl.formatMessage({ id: 'notification.error_message' }),
-      )
+      setError(apiErrorMessage(e, intl, 'notification.error_message'))
       setLoading(false)
     }
   }, [orderNumber, intl])

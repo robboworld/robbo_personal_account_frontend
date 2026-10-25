@@ -19,6 +19,7 @@ import { SearchOutlined, UserOutlined } from '@ant-design/icons'
 
 import { searchLmsUsers } from '@/api/users'
 import { PROFILE_PAGE_ROUTE, STUDENT, TEACHER, SUPER_ADMIN, USER_ROLE_MESSAGE_IDS } from '@/constants'
+import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import {
   GlassPanel,
   HeroInner,
@@ -67,14 +68,14 @@ const UserModerationPage = () => {
     } catch (e) {
       if (reqId === reqRef.current) {
         setItems([])
-        message.error(e?.response?.data?.error || e.message)
+        message.error(apiErrorMessage(e, intl))
       }
     } finally {
       if (reqId === reqRef.current) {
         setLoading(false)
       }
     }
-  }, [])
+  }, [intl])
 
   useEffect(() => () => {
     if (timerRef.current) {

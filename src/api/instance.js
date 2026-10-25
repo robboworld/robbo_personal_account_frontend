@@ -1,10 +1,30 @@
 import axios from 'axios'
 
 import config from '@/config'
-import { redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
+import { buildOidcStartUrl, redirectToOidcLogout, isOidcSsoEnabled } from '@/helpers/oidcSession'
 import { buildInactiveLoginURL } from '@/helpers/inactiveLogin'
 import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
 import { refreshAccessToken } from '@/api/authRefresh'
+
+// Pages that work without a session: a 401 there is not a reason to leave.
+const PUBLIC_PATHS = [/^\/$/, /^\/explore/, /^\/projects\/(?!public)/, /^\/join/, /^\/login/, /^\/register/, /^\/auth\//]
+
+let sessionRedirectStarted = false
+
+/** Session is gone on an LK page: send the user to sign in and back here, once. */
+export function redirectToSignInAfterExpiry () {
+  const { pathname, search } = window.location
+  if (sessionRedirectStarted || PUBLIC_PATHS.some(re => re.test(pathname))) {
+    return
+  }
+  sessionRedirectStarted = true
+  const back = `${pathname}${search || ''}`
+  if (isOidcSsoEnabled()) {
+    window.location.assign(buildOidcStartUrl(back, 'login'))
+    return
+  }
+  window.location.assign(`/login?session_expired=1&return_to=${encodeURIComponent(back)}`)
+}
 
 const instance = axios.create()
 const [backendURL] = config.backendURL
@@ -56,6 +76,7 @@ instance.interceptors.response.use(
       try {
         await refreshAccessToken()
       } catch (_) {
+        redirectToSignInAfterExpiry()
         throw error
       }
       return instance.request(originalRequest)

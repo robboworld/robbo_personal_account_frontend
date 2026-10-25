@@ -12,7 +12,6 @@ export const MY_PROJECTS_ROUTE = '/myprojects'
 /** LK hub (online vs download). Editor lives at SCRATCH_EDITOR_URL (/scratch/ on prod). */
 export const SCRATCH_HUB_ROUTE = '/scratch-hub'
 export const MY_COURSES_ROUTE = '/mycourses'
-export const COURSE_PAGE_ROUTE = '/courses/:coursePageId'
 export const TEACHERS_PAGE_ROUTE = '/teachers'
 export const CLIENTS_ROUTE = '/clients'
 export const UNIT_ADMINS_ROUTE = '/unitAdmins'

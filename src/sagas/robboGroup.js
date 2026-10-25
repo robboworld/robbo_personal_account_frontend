@@ -42,6 +42,7 @@ import {
     robboGroupMutationsGraphQL,
     robboGroupsQuerysGraphQL,
 } from '@/graphQL'
+import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* getRobboGroupByIdSaga(action) {
     try {
@@ -64,7 +65,7 @@ function* deleteRobboGroupSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.group_delete_success') })
     } catch (e) {
         yield put(deleteRobboGroupFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -78,7 +79,7 @@ function* createRobboGroupSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.robbo_group_create_success') })
     } catch (e) {
         yield put(createRobboGroupFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -91,7 +92,7 @@ function* getRobboGroupsByRobboUnitIdSaga({ payload }) {
         yield put(getRobboGroupsByRobboUnitIdSuccess(response.data.GetRobboGroupsByRobboUnitId))
     } catch (e) {
         yield put(getRobboGroupsByRobboUnitIdFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -105,7 +106,7 @@ function* addStudentToRobboGroupSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.student_added_to_group_success') })
     } catch (e) {
         yield put(addStudentToRobboGroupFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -119,7 +120,7 @@ function* deleteStudentFromRobboGroupSaga({ payload }) {
         notification.success({ title: '', description: formatMessageId(language, 'notification.student_removed_from_group_success') })
     } catch (e) {
         yield put(deleteStudentFromRobboGroupFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -132,7 +133,7 @@ function* searchRobboGroupsByTitleSaga(action) {
         yield put(searchRobboGroupsByTitleSuccess(response.data.SearchGroupsByName.robboGroups))
     } catch (e) {
         yield put(searchRobboGroupsByTitleFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -145,7 +146,7 @@ function* getRobboGroupsByTeacherIdSaga(action) {
         yield put(getRobboGroupsByTeacherIdSuccess(response.data.GetRobboGroupsByTeacherId.robboGroups))
     } catch (e) {
         yield put(getRobboGroupsByTeacherIdFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -157,7 +158,7 @@ function* getRobboGroupsByAccessTokenSaga() {
         yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken.robboGroups))
     } catch (e) {
         yield put(getRobboGroupsByAccessTokenFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -170,7 +171,7 @@ function* getAllRobboGroupsSaga({ payload }) {
         yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups))
     } catch (e) {
         yield put(getAllRobboGroupsFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
@@ -183,7 +184,7 @@ function* getAllRobboGroupsForUnitAdminSaga({ payload }) {
         yield put(getAllRobboGroupsForUnitAdminSuccess(response.data.GetAllRobboGroupsForUnitAdmin.robboGroups))
     } catch (e) {
         yield put(getAllRobboGroupsForUnitAdminFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: e.message })
+        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
     }
 }
 
