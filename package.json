@@ -62,7 +62,7 @@
     "country-flag-icons": "^1.5.0",
     "express": "^4.21.2",
     "formik": "^2.4.9",
-    "framer-motion": "6.5.1",
+    "framer-motion": "^14",
     "graphql": "^16.14.2",
     "i18n-iso-countries": "4.3.1",
     "libphonenumber-js": "^1.11.0",
