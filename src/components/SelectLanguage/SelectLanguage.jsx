@@ -51,68 +51,69 @@ const ModalBody = styled.div`
 `
 
 const SelectLanguage = ({ variant = 'default' }) => {
-    const intl = useIntl()
-    const actions = useActions({ changeLanguage }, [])
-    const { language } = useSelector(({ app }) => getAppState(app))
-    const [open, setOpen] = useState(false)
-    const languages = useMemo(() => ([
-        { value: 'ru', label: intl.formatMessage({ id: 'header.lang_ru' }) },
-        { value: 'en', label: intl.formatMessage({ id: 'header.lang_en' }) },
-    ]), [intl])
+  const intl = useIntl()
+  const actions = useActions({ changeLanguage }, [])
+  const { language } = useSelector(({ app }) => getAppState(app))
+  const [open, setOpen] = useState(false)
+  const languages = useMemo(
+    () => [
+      { value: 'ru', label: intl.formatMessage({ id: 'header.lang_ru' }) },
+      { value: 'en', label: intl.formatMessage({ id: 'header.lang_en' }) },
+    ],
+    [intl],
+  )
 
-    if (variant === 'sidebar') {
-        return (
-            <React.Fragment>
-                <IconTrigger
-                    type='button'
-                    aria-label={intl.formatMessage({ id: 'header.select_language' })}
-                    onClick={() => setOpen(true)}
-                >
-                    <GlobalOutlined />
-                </IconTrigger>
-                <Modal
-                    title={intl.formatMessage({ id: 'header.select_language' })}
-                    open={open}
-                    onCancel={() => setOpen(false)}
-                    footer={null}
-                    centered
-                    destroyOnHidden
-                    width='min(360px, calc(100vw - 2rem))'
-                    mask={{ closable: true }}
-                    styles={{
-                        mask: { background: 'rgba(24, 28, 32, 0.55)' },
-                    }}
-                >
-                    <ModalBody>
-                        <Select
-                            style={{ width: '100%' }}
-                            value={language}
-                            options={languages}
-                            onChange={value => {
-                                actions.changeLanguage(value)
-                                setOpen(false)
-                            }}
-                            size='large'
-                        />
-                    </ModalBody>
-                </Modal>
-            </React.Fragment>
-        )
-    }
-
+  if (variant === 'sidebar') {
     return (
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, maxWidth: '100%' }}>
-            <span style={{ color: '#fff', whiteSpace: 'nowrap', fontWeight: 600, fontSize: 15 }}>
-                <FormattedMessage id='header.select_language' />
-            </span>
+      <React.Fragment>
+        <IconTrigger
+          type='button'
+          aria-label={intl.formatMessage({ id: 'header.select_language' })}
+          onClick={() => setOpen(true)}>
+          <GlobalOutlined />
+        </IconTrigger>
+        <Modal
+          title={intl.formatMessage({ id: 'header.select_language' })}
+          open={open}
+          onCancel={() => setOpen(false)}
+          footer={null}
+          centered
+          destroyOnHidden
+          width='min(360px, calc(100vw - 2rem))'
+          mask={{ closable: true }}
+          styles={{
+            mask: { background: 'rgba(24, 28, 32, 0.55)' },
+          }}>
+          <ModalBody>
             <Select
-                style={{ width: 120 }}
-                value={language}
-                options={languages}
-                onChange={value => actions.changeLanguage(value)}
+              style={{ width: '100%' }}
+              value={language}
+              options={languages}
+              onChange={value => {
+                actions.changeLanguage(value)
+                setOpen(false)
+              }}
+              size='large'
             />
-        </div>
+          </ModalBody>
+        </Modal>
+      </React.Fragment>
     )
+  }
+
+  return (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, maxWidth: '100%' }}>
+      <span style={{ color: '#fff', whiteSpace: 'nowrap', fontWeight: 600, fontSize: 15 }}>
+        <FormattedMessage id='header.select_language' />
+      </span>
+      <Select
+        style={{ width: 120 }}
+        value={language}
+        options={languages}
+        onChange={value => actions.changeLanguage(value)}
+      />
+    </div>
+  )
 }
 
 export default SelectLanguage

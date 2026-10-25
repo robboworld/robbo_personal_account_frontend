@@ -4,10 +4,10 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 
 import {
-    deleteProjectReaction,
-    fetchProjectReactions,
-    fetchReactionTypes,
-    putProjectReaction,
+  deleteProjectReaction,
+  fetchProjectReactions,
+  fetchReactionTypes,
+  putProjectReaction,
 } from '@/api/projectPage'
 import theme from '@/theme'
 
@@ -34,13 +34,11 @@ const ReactionButton = styled.button`
   min-width: 3.25rem;
   min-height: 2.75rem;
   padding: 0.4rem 0.65rem;
-  border: 1px solid ${props => (props.$selected
-        ? theme.colors.accentGreen
-        : 'rgba(87, 94, 117, 0.16)')};
+  border: 1px solid
+    ${props => (props.$selected ? theme.colors.accentGreen : 'rgba(87, 94, 117, 0.16)')};
   border-radius: 8px;
-  background: ${props => (props.$selected
-        ? 'rgba(0, 175, 65, 0.12)'
-        : 'rgba(255, 255, 255, 0.78)')};
+  background: ${props =>
+    props.$selected ? 'rgba(0, 175, 65, 0.12)' : 'rgba(255, 255, 255, 0.78)'};
   color: #383838;
   cursor: ${props => (props.disabled ? 'default' : 'pointer')};
   opacity: ${props => (props.$busy ? 0.6 : 1)};
@@ -85,104 +83,101 @@ const Status = styled.p`
 `
 
 function ProjectReactions({ projectPageId, interactive }) {
-    const intl = useIntl()
-    const [types, setTypes] = useState([])
-    const [summary, setSummary] = useState({ counts: [], myReaction: null })
-    const [loading, setLoading] = useState(true)
-    const [busyCode, setBusyCode] = useState('')
-    const [error, setError] = useState('')
+  const intl = useIntl()
+  const [types, setTypes] = useState([])
+  const [summary, setSummary] = useState({ counts: [], myReaction: null })
+  const [loading, setLoading] = useState(true)
+  const [busyCode, setBusyCode] = useState('')
+  const [error, setError] = useState('')
 
-    useEffect(() => {
-        let cancelled = false
-        setLoading(true)
-        setError('')
-        Promise.all([
-            fetchReactionTypes(),
-            fetchProjectReactions(projectPageId),
-        ])
-            .then(([typeData, summaryData]) => {
-                if (cancelled) return
-                setTypes(typeData.types || [])
-                setSummary(summaryData || { counts: [], myReaction: null })
-            })
-            .catch(() => {
-                if (!cancelled) {
-                    setError(intl.formatMessage({ id: 'reactions.load_error' }))
-                }
-            })
-            .finally(() => {
-                if (!cancelled) setLoading(false)
-            })
-        return () => {
-            cancelled = true
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError('')
+    Promise.all([fetchReactionTypes(), fetchProjectReactions(projectPageId)])
+      .then(([typeData, summaryData]) => {
+        if (cancelled) return
+        setTypes(typeData.types || [])
+        setSummary(summaryData || { counts: [], myReaction: null })
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError(intl.formatMessage({ id: 'reactions.load_error' }))
         }
-    }, [intl, projectPageId])
-
-    const countByCode = summary.counts.reduce((result, item) => {
-        result[item.code] = item.count
-        return result
-    }, {})
-
-    const handleReaction = async code => {
-        if (!interactive || busyCode) return
-        setBusyCode(code)
-        setError('')
-        try {
-            const nextSummary = summary.myReaction === code
-                ? await deleteProjectReaction(projectPageId)
-                : await putProjectReaction(projectPageId, code)
-            setSummary(nextSummary)
-        } catch (_) {
-            setError(intl.formatMessage({ id: 'reactions.update_error' }))
-        } finally {
-            setBusyCode('')
-        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
     }
+  }, [intl, projectPageId])
 
-    return (
-        <ReactionSection aria-labelledby={`project-reactions-${projectPageId}`}>
-            <ReactionHeading id={`project-reactions-${projectPageId}`}>
-                {intl.formatMessage({ id: 'reactions.title' })}
-            </ReactionHeading>
-            {loading && <Status>{intl.formatMessage({ id: 'reactions.loading' })}</Status>}
-            {!loading && error && <Status role='alert'>{error}</Status>}
-            {!loading && types.length > 0 && (
-                <ReactionList>
-                    {types.map(type => {
-                        const selected = summary.myReaction === type.code
-                        const count = countByCode[type.code] || 0
-                        return (
-                            <ReactionButton
-                                key={type.code}
-                                type='button'
-                                disabled={!interactive || Boolean(busyCode)}
-                                $selected={selected}
-                                $busy={busyCode === type.code}
-                                aria-pressed={interactive ? selected : undefined}
-                                aria-label={intl.formatMessage(
-                                    { id: interactive ? 'reactions.action_label' : 'reactions.count_label' },
-                                    { emoji: type.emoji, count },
-                                )}
-                                onClick={() => handleReaction(type.code)}
-                            >
-                                <Emoji aria-hidden='true'>{type.emoji}</Emoji>
-                                <Count>{count}</Count>
-                            </ReactionButton>
-                        )
-                    })}
-                </ReactionList>
-            )}
-        </ReactionSection>
-    )
+  const countByCode = summary.counts.reduce((result, item) => {
+    result[item.code] = item.count
+    return result
+  }, {})
+
+  const handleReaction = async code => {
+    if (!interactive || busyCode) return
+    setBusyCode(code)
+    setError('')
+    try {
+      const nextSummary =
+        summary.myReaction === code
+          ? await deleteProjectReaction(projectPageId)
+          : await putProjectReaction(projectPageId, code)
+      setSummary(nextSummary)
+    } catch (_) {
+      setError(intl.formatMessage({ id: 'reactions.update_error' }))
+    } finally {
+      setBusyCode('')
+    }
+  }
+
+  return (
+    <ReactionSection aria-labelledby={`project-reactions-${projectPageId}`}>
+      <ReactionHeading id={`project-reactions-${projectPageId}`}>
+        {intl.formatMessage({ id: 'reactions.title' })}
+      </ReactionHeading>
+      {loading && <Status>{intl.formatMessage({ id: 'reactions.loading' })}</Status>}
+      {!loading && error && <Status role='alert'>{error}</Status>}
+      {!loading && types.length > 0 && (
+        <ReactionList>
+          {types.map(type => {
+            const selected = summary.myReaction === type.code
+            const count = countByCode[type.code] || 0
+            return (
+              <ReactionButton
+                key={type.code}
+                type='button'
+                disabled={!interactive || Boolean(busyCode)}
+                $selected={selected}
+                $busy={busyCode === type.code}
+                aria-pressed={interactive ? selected : undefined}
+                aria-label={intl.formatMessage(
+                  { id: interactive ? 'reactions.action_label' : 'reactions.count_label' },
+                  { emoji: type.emoji, count },
+                )}
+                onClick={() => handleReaction(type.code)}>
+                <Emoji aria-hidden='true'>{type.emoji}</Emoji>
+                <Count>{count}</Count>
+              </ReactionButton>
+            )
+          })}
+        </ReactionList>
+      )}
+    </ReactionSection>
+  )
 }
 
 ProjectReactions.propTypes = {
-    projectPageId: PropTypes.string.isRequired,
-    interactive: PropTypes.bool,
+  projectPageId: PropTypes.string.isRequired,
+  interactive: PropTypes.bool,
 }
 
 ProjectReactions.defaultProps = {
-    interactive: false,
+  interactive: false,
 }
 
 export default ProjectReactions

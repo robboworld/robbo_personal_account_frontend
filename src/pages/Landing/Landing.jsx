@@ -79,9 +79,19 @@ import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { getScratchEditorUrl } from '@/utils/scratchEditor'
-import { EXPLORE_ROUTE, MY_LICENSES_ROUTE, REGISTER_PAGE_ROUTE, LK_SSO_WITH_LMS_ENABLED } from '@/constants'
+import {
+  EXPLORE_ROUTE,
+  MY_LICENSES_ROUTE,
+  REGISTER_PAGE_ROUTE,
+  LK_SSO_WITH_LMS_ENABLED,
+} from '@/constants'
 import { lmsRegisterUrl, takeAfterLogout } from '@/helpers/oidcSession'
-import { devicesSessionsLine, formatTariffPrice, projectLimitLines, useTariffs } from '@/helpers/tariffs'
+import {
+  devicesSessionsLine,
+  formatTariffPrice,
+  projectLimitLines,
+  useTariffs,
+} from '@/helpers/tariffs'
 import { currentOlympiadStage } from '@/helpers/olympiad'
 import { clearAccessToken } from '@/helpers/accessTokenMemory'
 
@@ -199,29 +209,27 @@ const tariffLines = (intl, plan, limits) => [
   ...plan.extra.map(item => intl.formatMessage(item)),
 ]
 
-const tariffPrice = (intl, limits) => (limits.amount > 0
-  ? intl.formatMessage({ id: 'tariff.price_year' }, { price: formatTariffPrice(intl, limits.amount) })
-  : formatTariffPrice(intl, 0))
+const tariffPrice = (intl, limits) =>
+  limits.amount > 0
+    ? intl.formatMessage(
+        { id: 'tariff.price_year' },
+        { price: formatTariffPrice(intl, limits.amount) },
+      )
+    : formatTariffPrice(intl, 0)
 
 const LandingProjectCard = ({ project, onOpen }) => {
   const intl = useIntl()
   const title = project.title || intl.formatMessage({ id: 'project_card.untitled' })
-  const authorName = project.authorName || project.authorUserId || intl.formatMessage({ id: 'project_card.author' })
+  const authorName =
+    project.authorName || project.authorUserId || intl.formatMessage({ id: 'project_card.author' })
   const previewUrl = resolveProjectPreviewUrl(project.preview, project.lastModified)
   return (
     <ProjectTile
       type='button'
       onClick={() => onOpen(project.projectPageId)}
-      aria-label={intl.formatMessage({ id: 'project_card.open_aria' }, { title })}
-    >
+      aria-label={intl.formatMessage({ id: 'project_card.open_aria' }, { title })}>
       <ProjectTileMedia>
-        {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt=''
-            loading='lazy'
-          />
-        ) : null}
+        {previewUrl ? <img src={previewUrl} alt='' loading='lazy' /> : null}
       </ProjectTileMedia>
       <ProjectTileBody>
         <ProjectTileTitle>{title}</ProjectTileTitle>
@@ -305,32 +313,43 @@ const Landing = () => {
     }
   }, [])
 
-  const openProject = useCallback(projectPageId => {
-    if (!projectPageId) {
-      return
-    }
-    navigate(`/projects/${projectPageId}`, {
-      state: { selectedNavBarKey: 'public_projects' },
-    })
-  }, [navigate])
+  const openProject = useCallback(
+    projectPageId => {
+      if (!projectPageId) {
+        return
+      }
+      navigate(`/projects/${projectPageId}`, {
+        state: { selectedNavBarKey: 'public_projects' },
+      })
+    },
+    [navigate],
+  )
 
   return (
     <PageRoot>
       <RobboGuestFonts />
       <LandingGlobal />
-      <SkipLink href='#content'><FormattedMessage id='landing.skip_to_content' /></SkipLink>
+      <SkipLink href='#content'>
+        <FormattedMessage id='landing.skip_to_content' />
+      </SkipLink>
       <RobboGuestHeader />
       <Main id='content'>
         <Intro>
           <IntroInner>
             <IntroCopy>
-              <IntroTitle><FormattedMessage id='landing.intro.title' /></IntroTitle>
+              <IntroTitle>
+                <FormattedMessage id='landing.intro.title' />
+              </IntroTitle>
               <IntroLede>
                 <FormattedMessage id='landing.intro.lede' />
               </IntroLede>
               <IntroActions>
-                <IntroBtnPrimary href={createHref}><FormattedMessage id='landing.intro.start' /></IntroBtnPrimary>
-                <IntroBtnGhost as={Link} to={EXPLORE_ROUTE}><FormattedMessage id='landing.intro.explore' /></IntroBtnGhost>
+                <IntroBtnPrimary href={createHref}>
+                  <FormattedMessage id='landing.intro.start' />
+                </IntroBtnPrimary>
+                <IntroBtnGhost as={Link} to={EXPLORE_ROUTE}>
+                  <FormattedMessage id='landing.intro.explore' />
+                </IntroBtnGhost>
               </IntroActions>
             </IntroCopy>
             <IntroVisual>
@@ -345,16 +364,26 @@ const Landing = () => {
         </Intro>
 
         <IntroLinks aria-label={intl.formatMessage({ id: 'landing.links.aria' })}>
-          <a href='#about'><FormattedMessage id='landing.links.about' /></a>
-          <a href='#educators'><FormattedMessage id='landing.links.educators' /></a>
-          <a href='#educators'><FormattedMessage id='landing.links.parents' /></a>
+          <a href='#about'>
+            <FormattedMessage id='landing.links.about' />
+          </a>
+          <a href='#educators'>
+            <FormattedMessage id='landing.links.educators' />
+          </a>
+          <a href='#educators'>
+            <FormattedMessage id='landing.links.parents' />
+          </a>
         </IntroLinks>
 
         <Band id='featured' {...sectionReveal}>
           <BandInner>
             <BandHead>
-              <SectionTitle><FormattedMessage id='landing.featured.title' /></SectionTitle>
-              <BandLink as={Link} to={EXPLORE_ROUTE}><FormattedMessage id='landing.featured.all' /></BandLink>
+              <SectionTitle>
+                <FormattedMessage id='landing.featured.title' />
+              </SectionTitle>
+              <BandLink as={Link} to={EXPLORE_ROUTE}>
+                <FormattedMessage id='landing.featured.all' />
+              </BandLink>
             </BandHead>
             <Lead>
               <FormattedMessage id='landing.featured.lead' />
@@ -390,31 +419,35 @@ const Landing = () => {
 
         <BandWhite id='create' {...sectionReveal}>
           <BandInner>
-            <SectionTitle><FormattedMessage id='landing.create.title' /></SectionTitle>
+            <SectionTitle>
+              <FormattedMessage id='landing.create.title' />
+            </SectionTitle>
             <Lead>
               <FormattedMessage id='landing.create.lead' />
             </Lead>
             <CreateGrid>
               <CreateCol>
-                <CreateKicker><FormattedMessage id='landing.create.stories_kicker' /></CreateKicker>
+                <CreateKicker>
+                  <FormattedMessage id='landing.create.stories_kicker' />
+                </CreateKicker>
                 <CreateText>
                   <FormattedMessage id='landing.create.stories_text' />
                 </CreateText>
-                <CtaBtn href={createHref}><FormattedMessage id='landing.create.stories_cta' /></CtaBtn>
+                <CtaBtn href={createHref}>
+                  <FormattedMessage id='landing.create.stories_cta' />
+                </CtaBtn>
               </CreateCol>
               <CreateCol>
-                <CreateKicker><FormattedMessage id='landing.create.robots_kicker' /></CreateKicker>
+                <CreateKicker>
+                  <FormattedMessage id='landing.create.robots_kicker' />
+                </CreateKicker>
                 <CreateText>
                   <FormattedMessage id='landing.create.robots_text' />
                 </CreateText>
                 <CreateMedia>
                   {ROBOT_MEDIA.map(file => (
                     <MediaThumb key={file}>
-                      <img
-                        src={`${staticBase}/${file}`}
-                        alt=''
-                        loading='lazy'
-                      />
+                      <img src={`${staticBase}/${file}`} alt='' loading='lazy' />
                     </MediaThumb>
                   ))}
                 </CreateMedia>
@@ -425,7 +458,9 @@ const Landing = () => {
 
         <Band id='tariffs' {...sectionReveal}>
           <BandInner>
-            <SectionTitle><FormattedMessage id='landing.tariffs.title' /></SectionTitle>
+            <SectionTitle>
+              <FormattedMessage id='landing.tariffs.title' />
+            </SectionTitle>
             <Lead>
               <FormattedMessage id='landing.tariffs.lead' />
             </Lead>
@@ -441,12 +476,18 @@ const Landing = () => {
                   </TariffList>
                   {plan.ghost ? (
                     plan.external ? (
-                      <CtaGhost as='a' href={plan.to}>{t(plan.cta)}</CtaGhost>
+                      <CtaGhost as='a' href={plan.to}>
+                        {t(plan.cta)}
+                      </CtaGhost>
                     ) : (
-                      <CtaGhost as={Link} to={plan.to}>{t(plan.cta)}</CtaGhost>
+                      <CtaGhost as={Link} to={plan.to}>
+                        {t(plan.cta)}
+                      </CtaGhost>
                     )
                   ) : (
-                    <CtaBtn as={Link} to={plan.to}>{t(plan.cta)}</CtaBtn>
+                    <CtaBtn as={Link} to={plan.to}>
+                      {t(plan.cta)}
+                    </CtaBtn>
                   )}
                 </TariffCard>
               ))}
@@ -456,31 +497,32 @@ const Landing = () => {
 
         <BandWhite id='olympiad' {...sectionReveal}>
           <BandInner>
-            <SectionTitle><FormattedMessage id='landing.olympiad.title' /></SectionTitle>
+            <SectionTitle>
+              <FormattedMessage id='landing.olympiad.title' />
+            </SectionTitle>
             <Lead>
-              <FormattedMessage id='landing.olympiad.lead' />
-              {' '}
+              <FormattedMessage id='landing.olympiad.lead' />{' '}
               {olympiadStage >= 0
                 ? intl.formatMessage(
-                  { id: 'landing.olympiad.now_stage' },
-                  { stage: t(OLYMPIAD_TIMELINE[olympiadStage].title) },
-                )
+                    { id: 'landing.olympiad.now_stage' },
+                    { stage: t(OLYMPIAD_TIMELINE[olympiadStage].title) },
+                  )
                 : intl.formatMessage({ id: 'landing.olympiad.season_over' })}
             </Lead>
             <StageTrack>
               {OLYMPIAD_TIMELINE.map(({ period, title, detail }, idx) => {
                 const highlight = idx === olympiadStage
                 return (
-                <Stage key={title.id} aria-current={highlight ? 'step' : undefined}>
-                  <StageIndex $highlight={highlight}>
-                    {String(idx + 1).padStart(2, '0')}
-                  </StageIndex>
-                  <StageCard $highlight={highlight}>
-                    <StageDate>{t(period)}</StageDate>
-                    <StageTitle>{t(title)}</StageTitle>
-                    <StageDetail>{t(detail)}</StageDetail>
-                  </StageCard>
-                </Stage>
+                  <Stage key={title.id} aria-current={highlight ? 'step' : undefined}>
+                    <StageIndex $highlight={highlight}>
+                      {String(idx + 1).padStart(2, '0')}
+                    </StageIndex>
+                    <StageCard $highlight={highlight}>
+                      <StageDate>{t(period)}</StageDate>
+                      <StageTitle>{t(title)}</StageTitle>
+                      <StageDetail>{t(detail)}</StageDetail>
+                    </StageCard>
+                  </Stage>
                 )
               })}
             </StageTrack>
@@ -489,27 +531,32 @@ const Landing = () => {
                 href='https://creativeprogramming.org/'
                 target='_blank'
                 rel='noreferrer'
-                $primary
-              >
+                $primary>
                 <DestKicker>
                   <FormattedMessage
-                    id={olympiadStage === OLYMPIAD_TIMELINE.length - 1
-                      ? 'landing.olympiad.dest_final.kicker'
-                      : olympiadStage < 0 ? 'landing.olympiad.dest_final.kicker_past' : 'landing.olympiad.dest_final.kicker_next'}
+                    id={
+                      olympiadStage === OLYMPIAD_TIMELINE.length - 1
+                        ? 'landing.olympiad.dest_final.kicker'
+                        : olympiadStage < 0
+                          ? 'landing.olympiad.dest_final.kicker_past'
+                          : 'landing.olympiad.dest_final.kicker_next'
+                    }
                   />
                 </DestKicker>
-                <DestTitle><FormattedMessage id='landing.olympiad.dest_final.title' /></DestTitle>
+                <DestTitle>
+                  <FormattedMessage id='landing.olympiad.dest_final.title' />
+                </DestTitle>
                 <DestText>
                   <FormattedMessage id='landing.olympiad.dest_final.text' />
                 </DestText>
               </DestCard>
-              <DestCard
-                href='https://robbo.ru/olymp/'
-                target='_blank'
-                rel='noreferrer'
-              >
-                <DestKicker><FormattedMessage id='landing.olympiad.dest_russia.kicker' /></DestKicker>
-                <DestTitle><FormattedMessage id='landing.olympiad.dest_russia.title' /></DestTitle>
+              <DestCard href='https://robbo.ru/olymp/' target='_blank' rel='noreferrer'>
+                <DestKicker>
+                  <FormattedMessage id='landing.olympiad.dest_russia.kicker' />
+                </DestKicker>
+                <DestTitle>
+                  <FormattedMessage id='landing.olympiad.dest_russia.title' />
+                </DestTitle>
                 <DestText>
                   <FormattedMessage id='landing.olympiad.dest_russia.text' />
                 </DestText>
@@ -522,32 +569,23 @@ const Landing = () => {
           <BandInner>
             <EducatorsGrid>
               <div>
-                <SectionTitle><FormattedMessage id='landing.educators.title' /></SectionTitle>
+                <SectionTitle>
+                  <FormattedMessage id='landing.educators.title' />
+                </SectionTitle>
                 <Lead>
                   <FormattedMessage id='landing.educators.lead' />
                 </Lead>
                 <CtaRow>
-                  <CtaGhost
-                    href='https://robbo.ru/olymp/expert/'
-                    target='_blank'
-                    rel='noreferrer'
-                  >
+                  <CtaGhost href='https://robbo.ru/olymp/expert/' target='_blank' rel='noreferrer'>
                     <FormattedMessage id='landing.educators.expert_scratch' />
                   </CtaGhost>
-                  <CtaGhost
-                    href='https://robbo.ru/olymp/expert/'
-                    target='_blank'
-                    rel='noreferrer'
-                  >
+                  <CtaGhost href='https://robbo.ru/olymp/expert/' target='_blank' rel='noreferrer'>
                     <FormattedMessage id='landing.educators.expert_robboscratch' />
                   </CtaGhost>
                 </CtaRow>
               </div>
               <EducatorsVisual>
-                <img
-                  src={`${staticBase}/official_img_1.png`}
-                  alt=''
-                />
+                <img src={`${staticBase}/official_img_1.png`} alt='' />
               </EducatorsVisual>
             </EducatorsGrid>
           </BandInner>
@@ -555,15 +593,21 @@ const Landing = () => {
 
         <BandWhite id='about' {...sectionReveal}>
           <BandInner>
-            <SectionTitle><FormattedMessage id='landing.about.title' /></SectionTitle>
+            <SectionTitle>
+              <FormattedMessage id='landing.about.title' />
+            </SectionTitle>
             <AboutStats role='list'>
               <AboutStat role='listitem'>
                 <StatValue>19</StatValue>
-                <StatLabel><FormattedMessage id='landing.about.years' /></StatLabel>
+                <StatLabel>
+                  <FormattedMessage id='landing.about.years' />
+                </StatLabel>
               </AboutStat>
               <AboutStat role='listitem'>
                 <StatValue>44</StatValue>
-                <StatLabel><FormattedMessage id='landing.about.countries' /></StatLabel>
+                <StatLabel>
+                  <FormattedMessage id='landing.about.countries' />
+                </StatLabel>
               </AboutStat>
             </AboutStats>
             <AboutIntro>

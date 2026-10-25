@@ -97,16 +97,11 @@ const MySessionsPage = () => {
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
-            <HeroTitle>
-              {intl.formatMessage({ id: 'sessions.title' })}
-            </HeroTitle>
-            <HeroLead>
-              {intl.formatMessage({ id: 'sessions.hint' })}
-            </HeroLead>
+            <HeroTitle>{intl.formatMessage({ id: 'sessions.title' })}</HeroTitle>
+            <HeroLead>{intl.formatMessage({ id: 'sessions.hint' })}</HeroLead>
           </HeroInner>
         </HeroPanel>
 
@@ -131,12 +126,19 @@ animate='show'>
                       flexWrap: 'wrap',
                       padding: '0.75rem 0',
                       borderBottom: '1px solid rgba(0,0,0,0.06)',
-                    }}
-                  >
+                    }}>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '0.5rem',
+                          alignItems: 'center',
+                          flexWrap: 'wrap',
+                        }}>
                         <Text strong>
-                          {intl.formatMessage({ id: AUTH_MODE_LABELS[session.authMode] || 'sessions.unknown_mode' })}
+                          {intl.formatMessage({
+                            id: AUTH_MODE_LABELS[session.authMode] || 'sessions.unknown_mode',
+                          })}
                         </Text>
                         {session.isCurrent ? (
                           <Tag color='green'>{intl.formatMessage({ id: 'sessions.current' })}</Tag>
@@ -144,7 +146,8 @@ animate='show'>
                       </div>
                       <div>
                         <Text type='secondary' title={session.userAgent || undefined}>
-                          {describeUserAgent(session.userAgent) || intl.formatMessage({ id: 'sessions.unknown_ua' })}
+                          {describeUserAgent(session.userAgent) ||
+                            intl.formatMessage({ id: 'sessions.unknown_ua' })}
                         </Text>
                       </div>
                       <div>
@@ -162,14 +165,12 @@ animate='show'>
                           ? intl.formatMessage({ id: 'sessions.revoke_current_confirm' })
                           : intl.formatMessage({ id: 'sessions.revoke_confirm' })
                       }
-                      onConfirm={() => onRevoke(session.id)}
-                    >
+                      onConfirm={() => onRevoke(session.id)}>
                       <Button
                         danger
                         size='small'
                         loading={revokingId === session.id}
-                        disabled={!!revokingId}
-                      >
+                        disabled={!!revokingId}>
                         {intl.formatMessage({ id: 'sessions.revoke' })}
                       </Button>
                     </Popconfirm>

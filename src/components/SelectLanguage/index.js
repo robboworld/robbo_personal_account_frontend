@@ -1,2 +1,2 @@
-import SelectLanguage from "./SelectLanguage"
+import SelectLanguage from './SelectLanguage'
 export default SelectLanguage

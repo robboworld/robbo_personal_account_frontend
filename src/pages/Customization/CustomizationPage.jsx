@@ -95,7 +95,10 @@ const AvatarCard = styled.button`
   border: 2px solid ${props => (props.$selected ? colors.accentGreen : surface.line)};
   background: ${surface.card};
   cursor: pointer;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
   position: relative;
 
   &:hover {
@@ -173,19 +176,22 @@ const CustomizationPage = () => {
 
   const displayName = profile?.fullName || profile?.nickname || profile?.email || ''
 
-  const persist = useCallback(async avatarId => {
-    setSaving(true)
-    try {
-      await avatarMutationsGraphQL.SetUserAvatar(avatarId)
-      setSelectedId(avatarId || null)
-      await refetch()
-      message.success(intl.formatMessage({ id: 'customization.saved' }))
-    } catch (err) {
-      message.error(apiErrorMessage(err, intl, 'customization.save_error'))
-    } finally {
-      setSaving(false)
-    }
-  }, [intl, refetch])
+  const persist = useCallback(
+    async avatarId => {
+      setSaving(true)
+      try {
+        await avatarMutationsGraphQL.SetUserAvatar(avatarId)
+        setSelectedId(avatarId || null)
+        await refetch()
+        message.success(intl.formatMessage({ id: 'customization.saved' }))
+      } catch (err) {
+        message.error(apiErrorMessage(err, intl, 'customization.save_error'))
+      } finally {
+        setSaving(false)
+      }
+    },
+    [intl, refetch],
+  )
 
   const onSelect = avatarId => {
     if (saving || avatarId === selectedId) {
@@ -203,11 +209,7 @@ const CustomizationPage = () => {
 
   return (
     <PageContent>
-      <Stagger
-        variants={staggerContainer}
-        initial='hidden'
-        animate='show'
-      >
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
             <HeroTitle>
@@ -221,82 +223,73 @@ const CustomizationPage = () => {
 
         <Panel as={motion.section} variants={staggerItem}>
           <PanelBody>
-          <Section aria-labelledby='customization-current'>
-            <SectionHeading>
-              <SectionTitle id='customization-current'>
-                <FormattedMessage id='customization.current' />
-              </SectionTitle>
-              <SectionHint>
-                <FormattedMessage id='customization.current_hint' />
-              </SectionHint>
-            </SectionHeading>
-            {loading && !profile ? (
-              <Spin />
-            ) : (
-              <PreviewRow>
-                <UserAvatar
-                  avatarId={selectedId}
-                  displayName={displayName}
-                  variant='hero'
-                />
-                <PreviewText>
-                  <PreviewName>{displayName || '—'}</PreviewName>
-                  <PreviewMeta>
-                    {selectedId
-                      ? intl.formatMessage(
-                        { id: 'customization.selected' },
-                        { name: avatarName(selectedId) },
-                      )
-                      : intl.formatMessage({ id: 'customization.using_initials' })}
-                  </PreviewMeta>
-                </PreviewText>
-              </PreviewRow>
-            )}
-          </Section>
+            <Section aria-labelledby='customization-current'>
+              <SectionHeading>
+                <SectionTitle id='customization-current'>
+                  <FormattedMessage id='customization.current' />
+                </SectionTitle>
+                <SectionHint>
+                  <FormattedMessage id='customization.current_hint' />
+                </SectionHint>
+              </SectionHeading>
+              {loading && !profile ? (
+                <Spin />
+              ) : (
+                <PreviewRow>
+                  <UserAvatar avatarId={selectedId} displayName={displayName} variant='hero' />
+                  <PreviewText>
+                    <PreviewName>{displayName || '—'}</PreviewName>
+                    <PreviewMeta>
+                      {selectedId
+                        ? intl.formatMessage(
+                            { id: 'customization.selected' },
+                            { name: avatarName(selectedId) },
+                          )
+                        : intl.formatMessage({ id: 'customization.using_initials' })}
+                    </PreviewMeta>
+                  </PreviewText>
+                </PreviewRow>
+              )}
+            </Section>
 
-          <Section aria-labelledby='customization-pick'>
-            <SectionHeading>
-              <SectionTitle id='customization-pick'>
-                <FormattedMessage id='customization.pick' />
-              </SectionTitle>
-            </SectionHeading>
-            <AvatarGrid>
-            {AVATAR_CATALOG.map(item => {
-              const selected = selectedId === item.id
-              return (
-                <AvatarCard
-                  key={item.id}
-                  type='button'
-                  $selected={selected}
-                  disabled={saving}
-                  onClick={() => onSelect(item.id)}
-                  aria-pressed={selected}
-                  aria-label={intl.formatMessage({ id: item.labelKey })}
-                >
-                  {selected ? (
-                    <SelectedBadge aria-hidden>
-                      <CheckOutlined />
-                    </SelectedBadge>
-                  ) : null}
-                  <img src={item.src} alt='' />
-                  <AvatarLabel>
-                    <FormattedMessage id={item.labelKey} />
-                  </AvatarLabel>
-                </AvatarCard>
-              )
-            })}
-            </AvatarGrid>
+            <Section aria-labelledby='customization-pick'>
+              <SectionHeading>
+                <SectionTitle id='customization-pick'>
+                  <FormattedMessage id='customization.pick' />
+                </SectionTitle>
+              </SectionHeading>
+              <AvatarGrid>
+                {AVATAR_CATALOG.map(item => {
+                  const selected = selectedId === item.id
+                  return (
+                    <AvatarCard
+                      key={item.id}
+                      type='button'
+                      $selected={selected}
+                      disabled={saving}
+                      onClick={() => onSelect(item.id)}
+                      aria-pressed={selected}
+                      aria-label={intl.formatMessage({ id: item.labelKey })}>
+                      {selected ? (
+                        <SelectedBadge aria-hidden>
+                          <CheckOutlined />
+                        </SelectedBadge>
+                      ) : null}
+                      <img src={item.src} alt='' />
+                      <AvatarLabel>
+                        <FormattedMessage id={item.labelKey} />
+                      </AvatarLabel>
+                    </AvatarCard>
+                  )
+                })}
+              </AvatarGrid>
 
-            <Actions>
-              <Button
-                onClick={onReset}
-                disabled={saving || !selectedId}
-                loading={saving}
-              >
-                <FormattedMessage id='customization.reset' />
-              </Button>
-            </Actions>
-          </Section>
+              <Actions>
+                <Button onClick={onReset} disabled={saving || !selectedId} loading={saving}>
+                  <FormattedMessage id='customization.reset' />
+                </Button>
+              </Actions>
+            </Section>
           </PanelBody>
         </Panel>
       </Stagger>

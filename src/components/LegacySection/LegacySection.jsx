@@ -24,11 +24,11 @@ const LegacySection = ({ children }) => {
       status='info'
       title={intl.formatMessage({ id: 'legacy_section.title' })}
       subTitle={intl.formatMessage({ id: 'legacy_section.subtitle' })}
-      extra={(
+      extra={
         <Button type='primary' onClick={() => navigate(HOME_PAGE_ROUTE)}>
           {intl.formatMessage({ id: 'legacy_section.home' })}
         </Button>
-      )}
+      }
     />
   )
 }

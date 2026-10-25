@@ -34,7 +34,9 @@ describe('OIDC_RETURN_TO_ORIGINS', () => {
 
   it('allows the listed sites and nothing else', () => {
     process.env.OIDC_RETURN_TO_ORIGINS = 'https://scratch.ru, https://other.example'
-    expect(allowlistedReturnTo('https://scratch.ru/projects/5')).toBe('https://scratch.ru/projects/5')
+    expect(allowlistedReturnTo('https://scratch.ru/projects/5')).toBe(
+      'https://scratch.ru/projects/5',
+    )
     expect(allowlistedReturnTo('https://other.example/')).toBe('https://other.example/')
     expect(allowlistedReturnTo('http://scratch.ru/')).toBe('/home')
     expect(allowlistedReturnTo('https://evil.example/steal')).toBe('/home')

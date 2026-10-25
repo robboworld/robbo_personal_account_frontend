@@ -81,27 +81,23 @@ const SendNotification = () => {
       <SectionTitle style={{ marginBottom: '1rem' }}>
         {intl.formatMessage({ id: 'send_notification.personal_title' })}
       </SectionTitle>
-      <Form form={personalForm} layout='vertical'
-onFinish={onPersonal}>
+      <Form form={personalForm} layout='vertical' onFinish={onPersonal}>
         <Form.Item
           name='recipientUsername'
           label={intl.formatMessage({ id: 'send_notification.recipient_username' })}
-          rules={[required]}
-        >
+          rules={[required]}>
           <LmsUsernameSelect />
         </Form.Item>
         <Form.Item
           name='title'
           label={intl.formatMessage({ id: 'send_notification.field_title' })}
-          rules={[required]}
-        >
+          rules={[required]}>
           <Input />
         </Form.Item>
         <Form.Item
           name='body'
           label={intl.formatMessage({ id: 'send_notification.field_body' })}
-          rules={[required]}
-        >
+          rules={[required]}>
           <TextArea rows={4} />
         </Form.Item>
         <Form.Item name='kind' label={intl.formatMessage({ id: 'send_notification.field_kind' })}>
@@ -110,19 +106,16 @@ onFinish={onPersonal}>
         <Form.Item
           name='severity'
           label={intl.formatMessage({ id: 'send_notification.field_severity' })}
-          initialValue='INFO'
-        >
+          initialValue='INFO'>
           <Select options={severityOptions} />
         </Form.Item>
         <Form.Item
           name='actionUrl'
-          label={intl.formatMessage({ id: 'send_notification.field_action_url' })}
-        >
+          label={intl.formatMessage({ id: 'send_notification.field_action_url' })}>
           <Input />
         </Form.Item>
         <Form.Item>
-          <Button type='primary' htmlType='submit'
-loading={loadingP}>
+          <Button type='primary' htmlType='submit' loading={loadingP}>
             {intl.formatMessage({ id: 'send_notification.submit_personal' })}
           </Button>
         </Form.Item>
@@ -135,26 +128,25 @@ loading={loadingP}>
       <SectionTitle style={{ marginBottom: '1rem' }}>
         {intl.formatMessage({ id: 'send_notification.announcement_title' })}
       </SectionTitle>
-      <Form form={announceForm} layout='vertical'
-onFinish={onAnnouncement}>
+      <Form form={announceForm} layout='vertical' onFinish={onAnnouncement}>
         <Form.Item
           name='title'
           label={intl.formatMessage({ id: 'send_notification.field_title' })}
-          rules={[required]}
-        >
+          rules={[required]}>
           <Input />
         </Form.Item>
         <Form.Item
           name='body'
           label={intl.formatMessage({ id: 'send_notification.field_body' })}
-          rules={[required]}
-        >
+          rules={[required]}>
           <TextArea rows={4} />
         </Form.Item>
         <p style={{ marginTop: 0 }}>
           {intl.formatMessage({ id: 'send_notification.audience_all' })}
         </p>
-        <Form.Item name='expiresAt' label={intl.formatMessage({ id: 'send_notification.expires_at' })}>
+        <Form.Item
+          name='expiresAt'
+          label={intl.formatMessage({ id: 'send_notification.expires_at' })}>
           <DatePicker
             showTime={{ format: 'HH:mm' }}
             format='DD.MM.YYYY HH:mm'
@@ -162,8 +154,7 @@ onFinish={onAnnouncement}>
           />
         </Form.Item>
         <Form.Item>
-          <Button type='primary' htmlType='submit'
-loading={loadingA}>
+          <Button type='primary' htmlType='submit' loading={loadingA}>
             {intl.formatMessage({ id: 'send_notification.submit_announcement' })}
           </Button>
         </Form.Item>
@@ -173,16 +164,11 @@ loading={loadingA}>
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
-            <HeroTitle>
-              {intl.formatMessage({ id: 'sidebar_data.send_notification' })}
-            </HeroTitle>
-            <HeroLead>
-              {intl.formatMessage({ id: 'send_notification.lead' })}
-            </HeroLead>
+            <HeroTitle>{intl.formatMessage({ id: 'sidebar_data.send_notification' })}</HeroTitle>
+            <HeroLead>{intl.formatMessage({ id: 'send_notification.lead' })}</HeroLead>
           </HeroInner>
         </HeroPanel>
 

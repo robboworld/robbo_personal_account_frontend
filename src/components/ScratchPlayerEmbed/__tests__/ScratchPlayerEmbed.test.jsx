@@ -6,24 +6,22 @@ import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
 
 const playToken = { jsonUrl: 'http://localhost:8080/projectPage/1/json?token=t' }
 
-const renderPlayer = props => render(
-  <IntlProvider
-    locale='ru'
-    messages={{}}
-    onError={() => {}}
-  >
-    <ScratchPlayerEmbed
-      projectPageId='1'
-      playToken={playToken}
-      {...props}
-    />
-  </IntlProvider>,
-)
+const renderPlayer = props =>
+  render(
+    <IntlProvider locale='ru' messages={{}} onError={() => {}}>
+      <ScratchPlayerEmbed projectPageId='1' playToken={playToken} {...props} />
+    </IntlProvider>,
+  )
 
 const sendReady = () => {
   const iframe = document.querySelector('iframe')
   act(() => {
-    window.dispatchEvent(new MessageEvent('message', { data: { type: 'scratch:ready' }, source: iframe.contentWindow }))
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: { type: 'scratch:ready' },
+        source: iframe.contentWindow,
+      }),
+    )
   })
 }
 

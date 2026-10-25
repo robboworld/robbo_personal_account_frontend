@@ -3,12 +3,7 @@ import { PropTypes } from 'prop-types'
 import { Button, Empty, Form, Input, Select } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import {
-  FormActions,
-  FormGrid,
-  FormSection,
-  FormSectionLegend,
-} from '@/components/AccountShell'
+import { FormActions, FormGrid, FormSection, FormSectionLegend } from '@/components/AccountShell'
 import { getLmsProfileOptions, withOrphanOption } from '@/helpers/lmsProfileOptions'
 
 const { TextArea } = Input
@@ -32,16 +27,16 @@ const normalizeYearValue = value => {
   return Number.isNaN(year) ? null : year
 }
 
-const profileFieldsUnchanged = (profile, formValues) => (
+const profileFieldsUnchanged = (profile, formValues) =>
   normalizeProfileField(formValues.email) === normalizeProfileField(profile.email) &&
   normalizeProfileField(formValues.fullName) === normalizeProfileField(profile.fullName) &&
   normalizeProfileField(formValues.bio) === normalizeProfileField(profile.bio) &&
-  normalizeSelectValue(formValues.levelOfEducation) === normalizeSelectValue(profile.levelOfEducation) &&
+  normalizeSelectValue(formValues.levelOfEducation) ===
+    normalizeSelectValue(profile.levelOfEducation) &&
   normalizeSelectValue(formValues.country) === normalizeSelectValue(profile.country) &&
   normalizeYearValue(formValues.yearOfBirth) === normalizeYearValue(profile.yearOfBirth) &&
   normalizeSelectValue(formValues.gender) === normalizeSelectValue(profile.gender) &&
   normalizeSelectValue(formValues.language) === normalizeSelectValue(profile.language)
-)
 
 const formatProfileDateTime = (value, locale) => {
   if (!value) {
@@ -77,11 +72,7 @@ const formLayout = {
   layout: 'vertical',
 }
 
-const ProfileCard = ({
-  updateHandle,
-  profile,
-  accessUpdate,
-}) => {
+const ProfileCard = ({ updateHandle, profile, accessUpdate }) => {
   const intl = useIntl()
   const [form] = Form.useForm()
   const isFormDisable = accessUpdate
@@ -94,15 +85,27 @@ const ProfileCard = ({
   } = useMemo(() => getLmsProfileOptions(intl), [intl])
 
   const countrySelectOptions = useMemo(
-    () => withOrphanOption(countryOptions.filter(o => o.value !== ''), profile?.country),
+    () =>
+      withOrphanOption(
+        countryOptions.filter(o => o.value !== ''),
+        profile?.country,
+      ),
     [countryOptions, profile?.country],
   )
   const genderSelectOptions = useMemo(
-    () => withOrphanOption(genderOptions.filter(o => o.value !== ''), profile?.gender),
+    () =>
+      withOrphanOption(
+        genderOptions.filter(o => o.value !== ''),
+        profile?.gender,
+      ),
     [genderOptions, profile?.gender],
   )
   const languageSelectOptions = useMemo(
-    () => withOrphanOption(spokenLanguageOptions.filter(o => o.value !== ''), profile?.language),
+    () =>
+      withOrphanOption(
+        spokenLanguageOptions.filter(o => o.value !== ''),
+        profile?.language,
+      ),
     [spokenLanguageOptions, profile?.language],
   )
 
@@ -114,11 +117,7 @@ const ProfileCard = ({
   }, [profile, form])
 
   if (!profile) {
-    return (
-      <Empty
-        description={<FormattedMessage id='profile.loading' />}
-      />
-    )
+    return <Empty description={<FormattedMessage id='profile.loading' />} />
   }
 
   return (
@@ -130,33 +129,31 @@ const ProfileCard = ({
           return
         }
         const yearOfBirth = normalizeYearValue(formValues.yearOfBirth)
-        updateHandle(
-          {
-            variables: {
-              input: {
-                id: profile.id,
-                email: profile.email,
-                fullName: formValues.fullName,
-                nickname: profile.nickname,
-                firstname: '',
-                lastname: '',
-                middlename: '',
-                bio: formValues.bio || null,
-                levelOfEducation: formValues.levelOfEducation || null,
-                country: formValues.country || null,
-                yearOfBirth,
-                gender: formValues.gender || null,
-                language: formValues.language || '',
-              },
+        updateHandle({
+          variables: {
+            input: {
+              id: profile.id,
+              email: profile.email,
+              fullName: formValues.fullName,
+              nickname: profile.nickname,
+              firstname: '',
+              lastname: '',
+              middlename: '',
+              bio: formValues.bio || null,
+              levelOfEducation: formValues.levelOfEducation || null,
+              country: formValues.country || null,
+              yearOfBirth,
+              gender: formValues.gender || null,
+              language: formValues.language || '',
             },
-          })
+          },
+        })
       }}
       {...formLayout}
       form={form}
       initialValues={profileToFormValues(profile)}
       disabled={isFormDisable}
-      requiredMark={false}
-    >
+      requiredMark={false}>
       <FormSection>
         <FormSectionLegend>
           <FormattedMessage id='profile.section.account' />
@@ -165,11 +162,9 @@ const ProfileCard = ({
           <Form.Item
             name='email'
             label={<FormattedMessage id='profile_card.email' />}
-            extra={<FormattedMessage id='profile_card.email_via_lms' />}
-          >
+            extra={<FormattedMessage id='profile_card.email_via_lms' />}>
             {/* Changed only in the LMS account settings, which confirm the new address. */}
-            <Input placeholder={profile.email} size='large'
-readOnly disabled />
+            <Input placeholder={profile.email} size='large' readOnly disabled />
           </Form.Item>
           <Form.Item label={<FormattedMessage id='profile_card.username' />}>
             <span className='profile-static-value'>{profile.nickname || '—'}</span>
@@ -177,8 +172,7 @@ readOnly disabled />
           <Form.Item
             className='profile-form-span-full'
             name='fullName'
-            label={<FormattedMessage id='profile_card.full_name' />}
-          >
+            label={<FormattedMessage id='profile_card.full_name' />}>
             <Input placeholder={profile.fullName || '—'} size='large' />
           </Form.Item>
         </FormGrid>
@@ -201,8 +195,7 @@ readOnly disabled />
                   { max: BIO_MAX_LENGTH },
                 ),
               },
-            ]}
-          >
+            ]}>
             <TextArea
               rows={4}
               maxLength={BIO_MAX_LENGTH}
@@ -218,10 +211,7 @@ readOnly disabled />
           <FormattedMessage id='profile.section.personal' />
         </FormSectionLegend>
         <FormGrid>
-          <Form.Item
-            name='country'
-            label={<FormattedMessage id='profile_card.country' />}
-          >
+          <Form.Item name='country' label={<FormattedMessage id='profile_card.country' />}>
             <Select
               size='large'
               allowClear
@@ -233,8 +223,7 @@ readOnly disabled />
           </Form.Item>
           <Form.Item
             name='yearOfBirth'
-            label={<FormattedMessage id='profile_card.year_of_birth' />}
-          >
+            label={<FormattedMessage id='profile_card.year_of_birth' />}>
             <Select
               size='large'
               allowClear
@@ -244,10 +233,7 @@ readOnly disabled />
               placeholder={intl.formatMessage({ id: 'profile_card.year_of_birth_placeholder' })}
             />
           </Form.Item>
-          <Form.Item
-            name='gender'
-            label={<FormattedMessage id='profile_card.gender' />}
-          >
+          <Form.Item name='gender' label={<FormattedMessage id='profile_card.gender' />}>
             <Select
               size='large'
               allowClear
@@ -257,10 +243,7 @@ readOnly disabled />
               placeholder={intl.formatMessage({ id: 'profile_card.gender_placeholder' })}
             />
           </Form.Item>
-          <Form.Item
-            name='language'
-            label={<FormattedMessage id='profile_card.language' />}
-          >
+          <Form.Item name='language' label={<FormattedMessage id='profile_card.language' />}>
             <Select
               size='large'
               allowClear
@@ -281,21 +264,21 @@ readOnly disabled />
           <Form.Item
             className='profile-form-span-full'
             name='levelOfEducation'
-            label={<FormattedMessage id='profile_card.level_of_education' />}
-          >
+            label={<FormattedMessage id='profile_card.level_of_education' />}>
             <Select
               size='large'
               allowClear
               showSearch
               optionFilterProp='label'
               options={educationLevelOptions.filter(o => o.value !== '')}
-              placeholder={intl.formatMessage({ id: 'profile_card.level_of_education_placeholder' })}
+              placeholder={intl.formatMessage({
+                id: 'profile_card.level_of_education_placeholder',
+              })}
             />
           </Form.Item>
           <Form.Item
             className='profile-form-span-full'
-            label={<FormattedMessage id='profile_card.created_at' />}
-          >
+            label={<FormattedMessage id='profile_card.created_at' />}>
             <span className='profile-static-value'>
               {formatProfileDateTime(profile.createdAt, intl.locale)}
             </span>
@@ -305,8 +288,7 @@ readOnly disabled />
 
       {!isFormDisable && (
         <FormActions>
-          <Button type='primary' htmlType='submit'
-className='login-form-button'>
+          <Button type='primary' htmlType='submit' className='login-form-button'>
             <FormattedMessage id='profile_card.save_button' />
           </Button>
         </FormActions>

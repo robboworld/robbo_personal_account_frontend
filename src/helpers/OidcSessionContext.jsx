@@ -152,9 +152,5 @@ export const OidcSessionProvider = ({ children }) => {
     return <Loader />
   }
 
-  return (
-    <OidcSessionContext.Provider value={session}>
-      {children}
-    </OidcSessionContext.Provider>
-  )
+  return <OidcSessionContext.Provider value={session}>{children}</OidcSessionContext.Provider>
 }

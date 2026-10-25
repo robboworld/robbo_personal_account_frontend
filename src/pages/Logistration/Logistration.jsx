@@ -9,27 +9,13 @@ import Loader from '@/components/Loader'
 import OidcAuthErrorFallback from '@/components/OidcAuthErrorFallback'
 import LoginContent from '@/components/PageLayoutLogin/PageLayoutLogin'
 import RegisterForm from '@/components/RegisterForm'
-import {
-  backupLoginForm,
-  backupRegistrationForm,
-} from '@/actions/authForms'
-import {
-  formatInactiveBanDescription,
-  parseInactiveLoginSearch,
-} from '@/helpers/inactiveLogin'
-import {
-  redirectToOidcLogin,
-  shouldBlockOpenEdxAuthRedirect,
-} from '@/helpers/oidcSession'
-import {
-  HOME_PAGE_ROUTE,
-  LOGIN_PAGE_ROUTE,
-  REGISTER_PAGE_ROUTE,
-} from '@/constants'
+import { backupLoginForm, backupRegistrationForm } from '@/actions/authForms'
+import { formatInactiveBanDescription, parseInactiveLoginSearch } from '@/helpers/inactiveLogin'
+import { redirectToOidcLogin, shouldBlockOpenEdxAuthRedirect } from '@/helpers/oidcSession'
+import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, REGISTER_PAGE_ROUTE } from '@/constants'
 
-const resolvePageFromPath = pathname => (
+const resolvePageFromPath = pathname =>
   pathname === LOGIN_PAGE_ROUTE ? LOGIN_PAGE_ROUTE : REGISTER_PAGE_ROUTE
-)
 
 const parseLoginQueryError = (search, intl) => {
   const params = new URLSearchParams(search || '')
@@ -62,11 +48,8 @@ const Logistration = () => {
   const openEdxAuthOnly = showOidcLogin && !hybridAuth
   const queryLoginError = parseLoginQueryError(location.search, intl)
   const blockOidcRedirect = shouldBlockOpenEdxAuthRedirect(location.search)
-  const redirectLoginToOidc = (
-    openEdxAuthOnly &&
-    activeTab === LOGIN_PAGE_ROUTE &&
-    !blockOidcRedirect
-  )
+  const redirectLoginToOidc =
+    openEdxAuthOnly && activeTab === LOGIN_PAGE_ROUTE && !blockOidcRedirect
 
   const isAuth = useSelector(state => state.login.isAuth)
 
@@ -119,12 +102,7 @@ const Logistration = () => {
           description={formatInactiveBanDescription(intl, inactiveBan)}
         />
       ) : null
-      return (
-        <OidcAuthErrorFallback
-          search={location.search}
-          inactiveAlert={inactiveAlert}
-        />
-      )
+      return <OidcAuthErrorFallback search={location.search} inactiveAlert={inactiveAlert} />
     }
     return <Loader />
   }
@@ -143,8 +121,7 @@ const Logistration = () => {
     <AuthLayout
       selectedPage={activeTab}
       onTabSelect={handleOnSelect}
-      openEdxAuthOnly={openEdxAuthOnly}
-    >
+      openEdxAuthOnly={openEdxAuthOnly}>
       {activeTab === LOGIN_PAGE_ROUTE ? (
         <React.Fragment>
           {inactiveAlert}

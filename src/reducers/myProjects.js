@@ -1,63 +1,73 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    clearMyProjectsState, createProjectPage,
-    createProjectPageFailed, createProjectPageSuccess,
-    deleteProjectPage, deleteProjectPageFailed,
-    deleteProjectPageSuccess, getAllProjectPages,
-    getAllProjectPagesFailed, getAllProjectPagesSuccess,
-    getProjectPageByAccessTokenFailed, getProjectPageByAccessTokenSuccess, getProjectPagesByAccessToken,
+  clearMyProjectsState,
+  createProjectPage,
+  createProjectPageFailed,
+  createProjectPageSuccess,
+  deleteProjectPage,
+  deleteProjectPageFailed,
+  deleteProjectPageSuccess,
+  getAllProjectPages,
+  getAllProjectPagesFailed,
+  getAllProjectPagesSuccess,
+  getProjectPageByAccessTokenFailed,
+  getProjectPageByAccessTokenSuccess,
+  getProjectPagesByAccessToken,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    newProjectId: '',
-    loading: true,
-    projectPages: [],
+  newProjectId: '',
+  loading: true,
+  projectPages: [],
 }
 
-export default handleActions({
+export default handleActions(
+  {
     [getAllProjectPages](state, action) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [getAllProjectPagesSuccess](state, action) {
-        return { ...state, loading: false, projectPages: action.payload.response.data.projectPages }
+      return { ...state, loading: false, projectPages: action.payload.response.data.projectPages }
     },
     [getAllProjectPagesFailed](state, action) {
-        return { ...state, loading: false }
+      return { ...state, loading: false }
     },
     [createProjectPage](state) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [createProjectPageSuccess](state, action) {
-        return { ...state, newProjectId: action.payload.response.data.projectId, loading: false }
+      return { ...state, newProjectId: action.payload.response.data.projectId, loading: false }
     },
     [createProjectPageFailed](state, action) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [deleteProjectPage](state, action) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [deleteProjectPageSuccess](state, action) {
-        const newProjectPages = [...state.projectPages]
-        newProjectPages.splice(action.payload.projectPageIndex, 1)
-        return { ...state, loading: false, projectPages: newProjectPages }
+      const newProjectPages = [...state.projectPages]
+      newProjectPages.splice(action.payload.projectPageIndex, 1)
+      return { ...state, loading: false, projectPages: newProjectPages }
     },
     [deleteProjectPageFailed](state, action) {
-        return { ...state, loading: false }
+      return { ...state, loading: false }
     },
     [clearMyProjectsState](state, action) {
-        return INITIAL_STATE
+      return INITIAL_STATE
     },
     [getProjectPagesByAccessToken](state) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [getProjectPageByAccessTokenSuccess](state, action) {
-        return { ...state, loading: false, projectPages: action.payload.response }
+      return { ...state, loading: false, projectPages: action.payload.response }
     },
     [getProjectPageByAccessTokenFailed](state, action) {
-        return { ...state, loading: false }
+      return { ...state, loading: false }
     },
-}, INITIAL_STATE)
+  },
+  INITIAL_STATE,
+)
 
 export const getProjectPagesState = state => state
 export const getNewProjectId = state => state.newProjectId

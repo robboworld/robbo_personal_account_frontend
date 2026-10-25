@@ -20,36 +20,36 @@ export const ModalWindow = styled.div`
 `
 
 export const ModalContent = styled.div`
-    padding: 1rem;
-    width: 100%;
-    height:  100%;
+  padding: 1rem;
+  width: 100%;
+  height: 100%;
 `
 export const Title = styled.h1`
-    display: flex;
-    align-items: center;
-    width: 100%;
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
 `
 
 export const CloseModalButton = styled.button`
-    font-size: 2rem;
-    padding: 0 1rem;
-    background: none;
-    border: none;
-    &:hover {
-        cursor: pointer;
-        color: #44A444;
-    }
+  font-size: 2rem;
+  padding: 0 1rem;
+  background: none;
+  border: none;
+  &:hover {
+    cursor: pointer;
+    color: #44a444;
+  }
 `
 
 export const SubTitle = styled.div`
-    display: flex;
-    align-items: center;
-    width: 100%;
-    font-size: 1.5rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    padding: 0 2rem 0 2rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 2rem 0 2rem;
 `

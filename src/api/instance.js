@@ -7,12 +7,20 @@ import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
 import { refreshAccessToken } from '@/api/authRefresh'
 
 // Pages that work without a session: a 401 there is not a reason to leave.
-const PUBLIC_PATHS = [/^\/$/, /^\/explore/, /^\/projects\/(?!public)/, /^\/join/, /^\/login/, /^\/register/, /^\/auth\//]
+const PUBLIC_PATHS = [
+  /^\/$/,
+  /^\/explore/,
+  /^\/projects\/(?!public)/,
+  /^\/join/,
+  /^\/login/,
+  /^\/register/,
+  /^\/auth\//,
+]
 
 let sessionRedirectStarted = false
 
 /** Session is gone on an LK page: send the user to sign in and back here, once. */
-export function redirectToSignInAfterExpiry () {
+export function redirectToSignInAfterExpiry() {
   const { pathname, search } = window.location
   if (sessionRedirectStarted || PUBLIC_PATHS.some(re => re.test(pathname))) {
     return
@@ -80,7 +88,6 @@ instance.interceptors.response.use(
         throw error
       }
       return instance.request(originalRequest)
-
     }
     throw error
   },

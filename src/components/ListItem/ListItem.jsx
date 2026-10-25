@@ -8,86 +8,62 @@ import { StyledListItem, DeleteButton, Title, IconsWrapper, IconDiv, IconSVG } f
 
 const { confirm } = Modal
 
-const ListItem = ({
-    itemIndex,
-    label,
-    handleClick,
-    handleDelete,
-    render,
-    additionalIcons,
-}) => {
-    const intl = useIntl()
-    const [contentOpen, setContentOpen] = useState(false)
-    const [additionalContentOpen, setAdditionalContentOpen] = useState(false)
+const ListItem = ({ itemIndex, label, handleClick, handleDelete, render, additionalIcons }) => {
+  const intl = useIntl()
+  const [contentOpen, setContentOpen] = useState(false)
+  const [additionalContentOpen, setAdditionalContentOpen] = useState(false)
 
-    const showDeleteConfirm = () => {
-        confirm({
-            title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
-            icon: <ExclamationCircleOutlined />,
-            okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
-            okType: 'danger',
-            cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
-            onOk() {
-                handleDelete(itemIndex)
-            },
-            onCancel() {
-            },
-        })
-    }
+  const showDeleteConfirm = () => {
+    confirm({
+      title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
+      icon: <ExclamationCircleOutlined />,
+      okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
+      okType: 'danger',
+      cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
+      onOk() {
+        handleDelete(itemIndex)
+      },
+      onCancel() {},
+    })
+  }
 
-    return (
-        <StyledListItem >
-            <Title onClick={handleClick || (() => setContentOpen(true))}> {label}</Title>
+  return (
+    <StyledListItem>
+      <Title onClick={handleClick || (() => setContentOpen(true))}> {label}</Title>
 
-            <IconsWrapper>
-                {
-                    additionalIcons?.map((additionalIcon, index) => (
-                        <IconDiv
-                            tabIndex={index} key={index}
-                            onClick={() => setAdditionalContentOpen(!additionalContentOpen)}
-                        >
-                            <IconSVG>
-                                {additionalIcon.icon}
-                            </IconSVG>
-                            {additionalIcon.iconLabel}
-                            {
-                                additionalIcon?.renderContent(additionalContentOpen, setAdditionalContentOpen)
-                            }
-                        </IconDiv>
-                    ))
-                }
+      <IconsWrapper>
+        {additionalIcons?.map((additionalIcon, index) => (
+          <IconDiv
+            tabIndex={index}
+            key={index}
+            onClick={() => setAdditionalContentOpen(!additionalContentOpen)}>
+            <IconSVG>{additionalIcon.icon}</IconSVG>
+            {additionalIcon.iconLabel}
+            {additionalIcon?.renderContent(additionalContentOpen, setAdditionalContentOpen)}
+          </IconDiv>
+        ))}
+      </IconsWrapper>
 
-            </IconsWrapper>
-
-            {
-                handleDelete &&
-                <DeleteButton onClick={showDeleteConfirm}>
-                    ×
-                </DeleteButton>
-            }
-            {
-                render(contentOpen, setContentOpen)
-            }
-        </StyledListItem>
-    )
+      {handleDelete && <DeleteButton onClick={showDeleteConfirm}>×</DeleteButton>}
+      {render(contentOpen, setContentOpen)}
+    </StyledListItem>
+  )
 }
 
 ListItem.propTypes = {
-    itemIndex: PropTypes.number.isRequired,
-    label: PropTypes.string.isRequired,
-    handleClick: PropTypes.func,
-    handleDelete: PropTypes.oneOfType([
-        PropTypes.func,
-        PropTypes.bool,
-    ]),
-    render: PropTypes.func,
-    additionalIcons: PropTypes.arrayOf(
-        PropTypes.PropTypes.shape({
-            iconLabel: PropTypes.string,
-            renderContent: PropTypes.func,
-            icon: PropTypes.element,
-            handler: PropTypes.func,
-        })),
+  itemIndex: PropTypes.number.isRequired,
+  label: PropTypes.string.isRequired,
+  handleClick: PropTypes.func,
+  handleDelete: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+  render: PropTypes.func,
+  additionalIcons: PropTypes.arrayOf(
+    PropTypes.PropTypes.shape({
+      iconLabel: PropTypes.string,
+      renderContent: PropTypes.func,
+      icon: PropTypes.element,
+      handler: PropTypes.func,
+    }),
+  ),
 }
 
 export default ListItem

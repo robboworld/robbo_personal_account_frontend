@@ -34,7 +34,7 @@ const STATUS_ERRORS = {
 const CYRILLIC = /[а-яё]/i
 
 /** Raw error text or code from an axios, Apollo or plain Error. */
-export function apiErrorRaw (error) {
+export function apiErrorRaw(error) {
   const data = error?.response?.data
   if (data && typeof data === 'object') {
     if (data.code) return String(data.code)
@@ -47,7 +47,7 @@ export function apiErrorRaw (error) {
   return error?.message ? String(error.message) : ''
 }
 
-function apiErrorStatus (error) {
+function apiErrorStatus(error) {
   const status = Number(error?.response?.status || error?.networkError?.statusCode || error?.status)
   if (status) return status
   const gqlCode = Number(error?.graphQLErrors?.[0]?.extensions?.code)
@@ -55,7 +55,7 @@ function apiErrorStatus (error) {
 }
 
 /** i18n id for an error, or null when the raw text is already a human message. */
-export function apiErrorMessageId (error) {
+export function apiErrorMessageId(error) {
   const raw = apiErrorRaw(error).trim()
   const key = raw.toLowerCase().replace(/^input:\s*/, '')
   if (KNOWN_ERRORS[key]) return KNOWN_ERRORS[key]
@@ -71,13 +71,13 @@ export function apiErrorMessageId (error) {
 }
 
 /** Text for a toast or an inline alert. */
-export function apiErrorMessage (error, intl, fallbackId = 'errors.generic') {
+export function apiErrorMessage(error, intl, fallbackId = 'errors.generic') {
   const id = apiErrorMessageId(error)
   if (id === null) return apiErrorRaw(error).trim()
   return intl.formatMessage({ id: id === 'errors.generic' ? fallbackId : id })
 }
 
 /** Same text outside React (sagas), where only the UI language is known. */
-export function sagaErrorMessage (error, language) {
+export function sagaErrorMessage(error, language) {
   return apiErrorMessage(error, { formatMessage: ({ id }) => formatMessageId(language, id) })
 }

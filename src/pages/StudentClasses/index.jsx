@@ -1,6 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import {
-  Alert, Button, Card, Empty, Input, List, Popconfirm, Space, Spin, Tag, Typography, message,
+  Alert,
+  Button,
+  Card,
+  Empty,
+  Input,
+  List,
+  Popconfirm,
+  Space,
+  Spin,
+  Tag,
+  Typography,
+  message,
 } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -12,7 +23,11 @@ import { JOIN_CLASS_CODE_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import { formatDateTime } from '@/helpers/formatDateTime'
 import { openScratchEditor } from '@/utils/scratchEditor'
-import { REVIEW_STATUS_COLOR, isHandedIn, reviewStatusLabel } from '@/pages/TeacherClassBoard/reviewStatus'
+import {
+  REVIEW_STATUS_COLOR,
+  isHandedIn,
+  reviewStatusLabel,
+} from '@/pages/TeacherClassBoard/reviewStatus'
 
 const { Paragraph, Text } = Typography
 
@@ -37,45 +52,54 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
     }
   }
 
-  const actions = assignment.myProjectId ? [
-    <Button key='edit' type='link'
-onClick={() => openScratchEditor(assignment.myProjectId)}>
-      <FormattedMessage id='student_class.open_editor' />
-    </Button>,
-    <Button
-      key='page'
-      type='link'
-      onClick={() => navigate(PROJECT_PAGE_ROUTE.replace(':projectPageId', assignment.myProjectId))}
-    >
-      <FormattedMessage id='student_class.open_page' />
-    </Button>,
-    <Popconfirm
-      key='submit'
-      title={intl.formatMessage({ id: 'student_class.submit_confirm' })}
-      okText={intl.formatMessage({ id: 'student_class.submit' })}
-      cancelText={intl.formatMessage({ id: 'common.cancel' })}
-      onConfirm={submit}
-      disabled={handedIn}
-    >
-      <Button type='primary' size='small'
-loading={submitting} disabled={handedIn}>
-        <FormattedMessage id={status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'} />
-      </Button>
-    </Popconfirm>,
-  ] : []
+  const actions = assignment.myProjectId
+    ? [
+        <Button key='edit' type='link' onClick={() => openScratchEditor(assignment.myProjectId)}>
+          <FormattedMessage id='student_class.open_editor' />
+        </Button>,
+        <Button
+          key='page'
+          type='link'
+          onClick={() =>
+            navigate(PROJECT_PAGE_ROUTE.replace(':projectPageId', assignment.myProjectId))
+          }>
+          <FormattedMessage id='student_class.open_page' />
+        </Button>,
+        <Popconfirm
+          key='submit'
+          title={intl.formatMessage({ id: 'student_class.submit_confirm' })}
+          okText={intl.formatMessage({ id: 'student_class.submit' })}
+          cancelText={intl.formatMessage({ id: 'common.cancel' })}
+          onConfirm={submit}
+          disabled={handedIn}>
+          <Button type='primary' size='small' loading={submitting} disabled={handedIn}>
+            <FormattedMessage
+              id={status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'}
+            />
+          </Button>
+        </Popconfirm>,
+      ]
+    : []
 
   return (
     <List.Item actions={actions}>
       <List.Item.Meta
         title={assignment.title}
-        description={(
-          <Space orientation='vertical' size={4}
-style={{ width: '100%' }}>
+        description={
+          <Space orientation='vertical' size={4} style={{ width: '100%' }}>
             <Space wrap size={6}>
-              {status
-                ? <Tag color={REVIEW_STATUS_COLOR[status]}>{reviewStatusLabel(intl, status)}</Tag>
-                : <Tag><FormattedMessage id='student_class.not_issued' /></Tag>}
-              {overdue ? <Tag color='error'><FormattedMessage id='student_class.overdue' /></Tag> : null}
+              {status ? (
+                <Tag color={REVIEW_STATUS_COLOR[status]}>{reviewStatusLabel(intl, status)}</Tag>
+              ) : (
+                <Tag>
+                  <FormattedMessage id='student_class.not_issued' />
+                </Tag>
+              )}
+              {overdue ? (
+                <Tag color='error'>
+                  <FormattedMessage id='student_class.overdue' />
+                </Tag>
+              ) : null}
               {assignment.dueAt ? (
                 <Text type='secondary'>
                   <FormattedMessage
@@ -87,7 +111,9 @@ style={{ width: '100%' }}>
             </Space>
             {assignment.instructions ? <Text>{assignment.instructions}</Text> : null}
             {!assignment.myProjectId ? (
-              <Text type='secondary'><FormattedMessage id='student_class.not_issued_hint' /></Text>
+              <Text type='secondary'>
+                <FormattedMessage id='student_class.not_issued_hint' />
+              </Text>
             ) : null}
             {assignment.myReviewComment ? (
               <Alert
@@ -98,7 +124,7 @@ style={{ width: '100%' }}>
               />
             ) : null}
           </Space>
-        )}
+        }
       />
     </List.Item>
   )
@@ -118,7 +144,9 @@ const ClassCard = ({ klass }) => {
     }
   }, [klass.id, intl])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   return (
     <Card title={klass.displayName}>
@@ -132,11 +160,14 @@ const ClassCard = ({ klass }) => {
       ) : (
         <List
           itemLayout='vertical'
-          header={<Text strong><FormattedMessage id='student_class.assignments' /></Text>}
+          header={
+            <Text strong>
+              <FormattedMessage id='student_class.assignments' />
+            </Text>
+          }
           dataSource={assignments}
           locale={{ emptyText: intl.formatMessage({ id: 'student_class.no_assignments' }) }}
-          renderItem={a => <AssignmentItem key={a.id} assignment={a}
-onSubmitted={load} />}
+          renderItem={a => <AssignmentItem key={a.id} assignment={a} onSubmitted={load} />}
         />
       )}
     </Card>
@@ -163,7 +194,9 @@ const StudentClassesPage = () => {
     }
   }, [intl])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   const join = async () => {
     if (!code.trim()) return
@@ -199,19 +232,21 @@ const StudentClassesPage = () => {
             onChange={e => setCode(e.target.value.toUpperCase())}
             onPressEnter={join}
           />
-          <Button type='primary' onClick={join}
-loading={joining} disabled={!code.trim()}>
+          <Button type='primary' onClick={join} loading={joining} disabled={!code.trim()}>
             <FormattedMessage id='student_class.join_button' />
           </Button>
         </Space.Compact>
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}><Spin /></div>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
+            <Spin />
+          </div>
         ) : items.length === 0 ? (
           <Empty description={<FormattedMessage id='student_class.empty' />} />
         ) : (
-          <Space orientation='vertical' size='large'
-style={{ width: '100%' }}>
-            {items.map(item => <ClassCard key={item.id} klass={item} />)}
+          <Space orientation='vertical' size='large' style={{ width: '100%' }}>
+            {items.map(item => (
+              <ClassCard key={item.id} klass={item} />
+            ))}
           </Space>
         )}
       </Panel>

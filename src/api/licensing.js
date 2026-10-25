@@ -11,7 +11,9 @@ export async function listMyLicenses() {
 }
 
 export async function revokeSeat(licenseId, seatId) {
-  const { data } = await instance.delete(`licensing/${licenseId}/seats/${seatId}`, { withCredentials: true })
+  const { data } = await instance.delete(`licensing/${licenseId}/seats/${seatId}`, {
+    withCredentials: true,
+  })
   return data
 }
 

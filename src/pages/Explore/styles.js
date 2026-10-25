@@ -117,7 +117,9 @@ export const Pill = styled.button`
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 
   &:hover {
     background: ${({ $active }) => ($active ? t.green : t.greenLight)};
@@ -168,10 +170,14 @@ export const Card = styled.button`
   box-shadow: 0 0 0 1px ${cardLine};
   text-align: left;
   cursor: pointer;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
-    box-shadow: 0 0 0 1px #d0d0d0, 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow:
+      0 0 0 1px #d0d0d0,
+      0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
   &:active {

@@ -57,16 +57,11 @@ const IssueLicensePage = () => {
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
-            <HeroTitle>
-              {intl.formatMessage({ id: 'licensing.issue_title' })}
-            </HeroTitle>
-            <HeroLead>
-              {intl.formatMessage({ id: 'licensing.issue_hint' })}
-            </HeroLead>
+            <HeroTitle>{intl.formatMessage({ id: 'licensing.issue_title' })}</HeroTitle>
+            <HeroLead>{intl.formatMessage({ id: 'licensing.issue_hint' })}</HeroLead>
           </HeroInner>
         </HeroPanel>
 
@@ -76,28 +71,23 @@ animate='show'>
               form={form}
               layout='vertical'
               onFinish={onFinish}
-              initialValues={{ seatLimit: 2 }}
-            >
+              initialValues={{ seatLimit: 2 }}>
               <Form.Item
                 name='lmsUsername'
                 label={intl.formatMessage({ id: 'licensing.lms_username' })}
-                rules={[{ required: true, message: intl.formatMessage({ id: 'form.required' }) }]}
-              >
+                rules={[{ required: true, message: intl.formatMessage({ id: 'form.required' }) }]}>
                 <LmsUsernameSelect />
               </Form.Item>
               <Form.Item
                 name='seatLimit'
                 label={intl.formatMessage({ id: 'licensing.seat_limit' })}
-                rules={[{ required: true, message: intl.formatMessage({ id: 'form.required' }) }]}
-              >
-                <InputNumber min={1} max={100}
-style={{ width: '100%' }} />
+                rules={[{ required: true, message: intl.formatMessage({ id: 'form.required' }) }]}>
+                <InputNumber min={1} max={100} style={{ width: '100%' }} />
               </Form.Item>
               <Form.Item
                 name='expiresAt'
                 label={intl.formatMessage({ id: 'licensing.expires_at' })}
-                extra={intl.formatMessage({ id: 'licensing.expires_at_hint' })}
-              >
+                extra={intl.formatMessage({ id: 'licensing.expires_at_hint' })}>
                 <DatePicker
                   format='DD.MM.YYYY'
                   style={{ width: '100%' }}
@@ -107,8 +97,7 @@ style={{ width: '100%' }} />
               <Form.Item name='note' label={intl.formatMessage({ id: 'licensing.note' })}>
                 <Input.TextArea rows={2} />
               </Form.Item>
-              <Button type='primary' htmlType='submit'
-loading={loading}>
+              <Button type='primary' htmlType='submit' loading={loading}>
                 {intl.formatMessage({ id: 'licensing.issue_submit' })}
               </Button>
             </Form>
@@ -118,7 +107,9 @@ loading={loading}>
                 <h3>{intl.formatMessage({ id: 'licensing.issued_result' })}</h3>
                 <p>
                   <Text strong>{intl.formatMessage({ id: 'licensing.license_key' })}: </Text>
-                  <Text code copyable>{issued.licenseKey}</Text>
+                  <Text code copyable>
+                    {issued.licenseKey}
+                  </Text>
                 </p>
                 <p>
                   <Text strong>{intl.formatMessage({ id: 'licensing.id_label' })}: </Text>

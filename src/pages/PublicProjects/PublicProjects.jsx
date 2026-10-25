@@ -10,11 +10,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
-import {
-  moderateDeleteProjectPage,
-  projectPageAPI,
-  setLandingFeatured,
-} from '@/api/projectPage'
+import { moderateDeleteProjectPage, projectPageAPI, setLandingFeatured } from '@/api/projectPage'
 import { SUPER_ADMIN } from '@/constants'
 import { useAuthRole } from '@/helpers'
 import { formatDateTime } from '@/helpers/formatDateTime'
@@ -88,13 +84,18 @@ const parsePageSize = value => {
 const parseQuery = value => String(value || '').trim()
 
 const parseTag = value => {
-  const raw = String(value || '').trim().toLowerCase()
+  const raw = String(value || '')
+    .trim()
+    .toLowerCase()
     .replace(/_/g, '-')
     .replace(/\s+/g, '-')
   if (!raw) {
     return ''
   }
-  const cleaned = raw.replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '')
+  const cleaned = raw
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
   if (!cleaned || cleaned.length > MAX_TAG_LEN) {
     return ''
   }
@@ -102,21 +103,20 @@ const parseTag = value => {
 }
 
 const parseTagsFromSearchParams = params => {
-  const rawParts = [
-    ...params.getAll('tag'),
-    ...(params.get('tags') ? [params.get('tags')] : []),
-  ]
+  const rawParts = [...params.getAll('tag'), ...(params.get('tags') ? [params.get('tags')] : [])]
   const seen = new Set()
   const out = []
   rawParts.forEach(raw => {
-    String(raw || '').split(',').forEach(part => {
-      const tag = parseTag(part)
-      if (!tag || seen.has(tag) || out.length >= MAX_FILTER_TAGS) {
-        return
-      }
-      seen.add(tag)
-      out.push(tag)
-    })
+    String(raw || '')
+      .split(',')
+      .forEach(part => {
+        const tag = parseTag(part)
+        if (!tag || seen.has(tag) || out.length >= MAX_FILTER_TAGS) {
+          return
+        }
+        seen.add(tag)
+        out.push(tag)
+      })
   })
   return out
 }
@@ -140,22 +140,10 @@ export default function PublicProjects() {
   const [orderDrafts, setOrderDrafts] = useState({})
   const [orderBusyId, setOrderBusyId] = useState(null)
 
-  const currentPage = useMemo(
-    () => parsePage(searchParams.get('page')),
-    [searchParams],
-  )
-  const pageSize = useMemo(
-    () => parsePageSize(searchParams.get('pageSize')),
-    [searchParams],
-  )
-  const searchQuery = useMemo(
-    () => parseQuery(searchParams.get('q')),
-    [searchParams],
-  )
-  const activeTags = useMemo(
-    () => parseTagsFromSearchParams(searchParams),
-    [searchParams],
-  )
+  const currentPage = useMemo(() => parsePage(searchParams.get('page')), [searchParams])
+  const pageSize = useMemo(() => parsePageSize(searchParams.get('pageSize')), [searchParams])
+  const searchQuery = useMemo(() => parseQuery(searchParams.get('q')), [searchParams])
+  const activeTags = useMemo(() => parseTagsFromSearchParams(searchParams), [searchParams])
   const [searchDraft, setSearchDraft] = useState(searchQuery)
   const hasActiveFilters = Boolean(searchQuery || activeTags.length)
 
@@ -163,66 +151,75 @@ export default function PublicProjects() {
     setSearchDraft(searchQuery)
   }, [searchQuery])
 
-  const writeCatalogParams = useCallback(({
-    page = currentPage,
-    size = pageSize,
-    q = searchQuery,
-    tags = activeTags,
-  } = {}) => {
-    const next = new URLSearchParams()
-    next.set('page', String(page))
-    next.set('pageSize', String(size))
-    const query = parseQuery(q)
-    if (query) {
-      next.set('q', query)
-    }
-    ;(tags || []).forEach(tag => {
-      const normalized = parseTag(tag)
-      if (normalized) {
-        next.append('tag', normalized)
+  const writeCatalogParams = useCallback(
+    ({ page = currentPage, size = pageSize, q = searchQuery, tags = activeTags } = {}) => {
+      const next = new URLSearchParams()
+      next.set('page', String(page))
+      next.set('pageSize', String(size))
+      const query = parseQuery(q)
+      if (query) {
+        next.set('q', query)
       }
-    })
-    setSearchParams(next, { replace: true })
-  }, [currentPage, pageSize, searchQuery, activeTags, setSearchParams])
+      ;(tags || []).forEach(tag => {
+        const normalized = parseTag(tag)
+        if (normalized) {
+          next.append('tag', normalized)
+        }
+      })
+      setSearchParams(next, { replace: true })
+    },
+    [currentPage, pageSize, searchQuery, activeTags, setSearchParams],
+  )
 
-  const updatePaging = useCallback((page, size) => {
-    writeCatalogParams({ page, size })
-  }, [writeCatalogParams])
+  const updatePaging = useCallback(
+    (page, size) => {
+      writeCatalogParams({ page, size })
+    },
+    [writeCatalogParams],
+  )
 
-  const onSearchSubmit = useCallback(value => {
-    writeCatalogParams({
-      page: 1,
-      q: parseQuery(value),
-    })
-  }, [writeCatalogParams])
+  const onSearchSubmit = useCallback(
+    value => {
+      writeCatalogParams({
+        page: 1,
+        q: parseQuery(value),
+      })
+    },
+    [writeCatalogParams],
+  )
 
-  const onTagFilter = useCallback(tag => {
-    const normalized = parseTag(tag)
-    if (!normalized) {
-      return
-    }
-    if (activeTags.includes(normalized)) {
-      return
-    }
-    if (activeTags.length >= MAX_FILTER_TAGS) {
-      message.warning(intl.formatMessage(
-        { id: 'project_page.tags_max_count' },
-        { max: MAX_FILTER_TAGS },
-      ))
-      return
-    }
-    writeCatalogParams({
-      page: 1,
-      tags: [...activeTags, normalized],
-    })
-  }, [activeTags, writeCatalogParams, intl])
+  const onTagFilter = useCallback(
+    tag => {
+      const normalized = parseTag(tag)
+      if (!normalized) {
+        return
+      }
+      if (activeTags.includes(normalized)) {
+        return
+      }
+      if (activeTags.length >= MAX_FILTER_TAGS) {
+        message.warning(
+          intl.formatMessage({ id: 'project_page.tags_max_count' }, { max: MAX_FILTER_TAGS }),
+        )
+        return
+      }
+      writeCatalogParams({
+        page: 1,
+        tags: [...activeTags, normalized],
+      })
+    },
+    [activeTags, writeCatalogParams, intl],
+  )
 
-  const removeTagFilter = useCallback(tag => {
-    writeCatalogParams({
-      page: 1,
-      tags: activeTags.filter(item => item !== tag),
-    })
-  }, [activeTags, writeCatalogParams])
+  const removeTagFilter = useCallback(
+    tag => {
+      writeCatalogParams({
+        page: 1,
+        tags: activeTags.filter(item => item !== tag),
+      })
+    },
+    [activeTags, writeCatalogParams],
+  )
 
   const clearAllFilters = useCallback(() => {
     writeCatalogParams({
@@ -244,10 +241,11 @@ export default function PublicProjects() {
     let cancelled = false
     setLoading(true)
 
-    projectPageAPI.fetchPublicProjectPages(String(currentPage), String(pageSize), {
-      q: searchQuery || undefined,
-      tags: activeTags,
-    })
+    projectPageAPI
+      .fetchPublicProjectPages(String(currentPage), String(pageSize), {
+        q: searchQuery || undefined,
+        tags: activeTags,
+      })
       .then(data => {
         if (cancelled) {
           return
@@ -279,11 +277,14 @@ export default function PublicProjects() {
     }
   }, [currentPage, pageSize, searchQuery, activeTags, writeCatalogParams])
 
-  const openProject = useCallback(projectPageId => {
-    navigate(`/projects/${projectPageId}`, {
-      state: { selectedNavBarKey: 'public_projects' },
-    })
-  }, [navigate])
+  const openProject = useCallback(
+    projectPageId => {
+      navigate(`/projects/${projectPageId}`, {
+        state: { selectedNavBarKey: 'public_projects' },
+      })
+    },
+    [navigate],
+  )
 
   const openDeleteModal = project => {
     setDeleteTarget(project)
@@ -311,7 +312,9 @@ export default function PublicProjects() {
     try {
       await moderateDeleteProjectPage(deleteTarget.projectPageId, reason)
       const nextTotal = Math.max(0, totalRows - 1)
-      const nextProjects = projects.filter(item => item.projectPageId !== deleteTarget.projectPageId)
+      const nextProjects = projects.filter(
+        item => item.projectPageId !== deleteTarget.projectPageId,
+      )
       setProjects(nextProjects)
       setTotalRows(nextTotal)
       if (nextProjects.length === 0 && currentPage > 1) {
@@ -350,16 +353,18 @@ export default function PublicProjects() {
         sortOrder: Number(featureOrder) || 1,
       })
       const updated = data?.projectPage
-      setProjects(prev => prev.map(item => {
-        if (item.projectPageId !== featureTarget.projectPageId) {
-          return item
-        }
-        return {
-          ...item,
-          landingFeatured: updated?.landingFeatured ?? true,
-          landingSortOrder: updated?.landingSortOrder ?? (Number(featureOrder) || 1),
-        }
-      }))
+      setProjects(prev =>
+        prev.map(item => {
+          if (item.projectPageId !== featureTarget.projectPageId) {
+            return item
+          }
+          return {
+            ...item,
+            landingFeatured: updated?.landingFeatured ?? true,
+            landingSortOrder: updated?.landingSortOrder ?? (Number(featureOrder) || 1),
+          }
+        }),
+      )
       message.success(intl.formatMessage({ id: 'project_page.landing_add_ok' }))
       setFeatureTarget(null)
     } catch (e) {
@@ -376,12 +381,14 @@ export default function PublicProjects() {
     setFeatureBusy(true)
     try {
       await setLandingFeatured(project.projectPageId, { featured: false, sortOrder: 0 })
-      setProjects(prev => prev.map(item => {
-        if (item.projectPageId !== project.projectPageId) {
-          return item
-        }
-        return { ...item, landingFeatured: false, landingSortOrder: 0 }
-      }))
+      setProjects(prev =>
+        prev.map(item => {
+          if (item.projectPageId !== project.projectPageId) {
+            return item
+          }
+          return { ...item, landingFeatured: false, landingSortOrder: 0 }
+        }),
+      )
       setOrderDrafts(prev => {
         const next = { ...prev }
         delete next[project.projectPageId]
@@ -405,16 +412,18 @@ export default function PublicProjects() {
         sortOrder,
       })
       const updated = data?.projectPage
-      setProjects(prev => prev.map(item => {
-        if (item.projectPageId !== project.projectPageId) {
-          return item
-        }
-        return {
-          ...item,
-          landingFeatured: true,
-          landingSortOrder: updated?.landingSortOrder ?? sortOrder,
-        }
-      }))
+      setProjects(prev =>
+        prev.map(item => {
+          if (item.projectPageId !== project.projectPageId) {
+            return item
+          }
+          return {
+            ...item,
+            landingFeatured: true,
+            landingSortOrder: updated?.landingSortOrder ?? sortOrder,
+          }
+        }),
+      )
       message.success(intl.formatMessage({ id: 'project_page.landing_order_ok' }))
     } catch (e) {
       message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
@@ -438,8 +447,7 @@ export default function PublicProjects() {
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
             <HeroTitle>
@@ -458,9 +466,7 @@ animate='show'>
                 <FormattedMessage id='project_page.public_catalog_list_title' />
               </SectionTitle>
               <CatalogToolbar>
-                {!loading && totalRows > 0 && (
-                  <CatalogCount>{projectCountLabel}</CatalogCount>
-                )}
+                {!loading && totalRows > 0 && <CatalogCount>{projectCountLabel}</CatalogCount>}
                 <PageSizeControl htmlFor='public-projects-page-size'>
                   <FormattedMessage id='project_page.public_catalog_page_size' />
                   <Select
@@ -491,37 +497,43 @@ animate='show'>
                 onChange={e => setSearchDraft(e.target.value)}
                 onSearch={onSearchSubmit}
                 enterButton
-                placeholder={intl.formatMessage({ id: 'project_page.public_catalog_search_placeholder' })}
-                aria-label={intl.formatMessage({ id: 'project_page.public_catalog_search_placeholder' })}
+                placeholder={intl.formatMessage({
+                  id: 'project_page.public_catalog_search_placeholder',
+                })}
+                aria-label={intl.formatMessage({
+                  id: 'project_page.public_catalog_search_placeholder',
+                })}
               />
-              {activeTags.length > 0 && activeTags.map(tag => (
-                <ActiveFilterChip key={tag}>
-                  <FormattedMessage
-                    id='project_page.public_catalog_tag_filter'
-                    values={{ tag }}
-                  />
-                  <Tag
-                    closable
-                    onClose={e => {
-                      if (e && typeof e.preventDefault === 'function') {
-                        e.preventDefault()
-                      }
-                      removeTagFilter(tag)
-                    }}
-                    style={{ margin: 0, border: 0, background: 'transparent' }}
-                  />
-                </ActiveFilterChip>
-              ))}
+              {activeTags.length > 0 &&
+                activeTags.map(tag => (
+                  <ActiveFilterChip key={tag}>
+                    <FormattedMessage
+                      id='project_page.public_catalog_tag_filter'
+                      values={{ tag }}
+                    />
+                    <Tag
+                      closable
+                      onClose={e => {
+                        if (e && typeof e.preventDefault === 'function') {
+                          e.preventDefault()
+                        }
+                        removeTagFilter(tag)
+                      }}
+                      style={{ margin: 0, border: 0, background: 'transparent' }}
+                    />
+                  </ActiveFilterChip>
+                ))}
               {hasActiveFilters && (
-                <Button type='link' size='small'
-onClick={clearAllFilters}>
+                <Button type='link' size='small' onClick={clearAllFilters}>
                   <FormattedMessage id='project_page.public_catalog_clear_filters' />
                 </Button>
               )}
             </SearchBar>
 
             {loading ? (
-              <SkeletonGrid aria-busy='true' aria-label={intl.formatMessage({ id: 'project_page.public_catalog_loading' })}>
+              <SkeletonGrid
+                aria-busy='true'
+                aria-label={intl.formatMessage({ id: 'project_page.public_catalog_loading' })}>
                 {Array.from({ length: SKELETON_COUNT }, (_, index) => (
                   <SkeletonCard key={index} />
                 ))}
@@ -533,9 +545,11 @@ onClick={clearAllFilters}>
                 </EmptyIcon>
                 <EmptyText>
                   <FormattedMessage
-                    id={hasActiveFilters
-                      ? 'project_page.public_catalog_search_empty'
-                      : 'project_page.public_catalog_empty'}
+                    id={
+                      hasActiveFilters
+                        ? 'project_page.public_catalog_search_empty'
+                        : 'project_page.public_catalog_empty'
+                    }
                   />
                 </EmptyText>
               </EmptyState>
@@ -544,27 +558,20 @@ onClick={clearAllFilters}>
                 <ProjectGrid>
                   {projects.map(item => {
                     const authorName = item.authorName || item.authorUserId || '?'
-                    const orderValue = orderDrafts[item.projectPageId] !== undefined
-                      ? orderDrafts[item.projectPageId]
-                      : (item.landingSortOrder ?? 0)
+                    const orderValue =
+                      orderDrafts[item.projectPageId] !== undefined
+                        ? orderDrafts[item.projectPageId]
+                        : (item.landingSortOrder ?? 0)
                     const previewUrl = resolveProjectPreviewUrl(item.preview, item.lastModified)
 
                     return (
-                      <ProjectCard
-                        key={item.projectPageId}
-                        whileTap={{ scale: 0.995 }}
-                      >
+                      <ProjectCard key={item.projectPageId} whileTap={{ scale: 0.995 }}>
                         <ProjectCardCover
                           type='button'
                           aria-label={displayProjectTitle(item.title, intl)}
-                          onClick={() => openProject(item.projectPageId)}
-                        >
+                          onClick={() => openProject(item.projectPageId)}>
                           {previewUrl ? (
-                            <img
-                              src={previewUrl}
-                              alt=''
-                              loading='lazy'
-                            />
+                            <img src={previewUrl} alt='' loading='lazy' />
                           ) : (
                             <ProjectCardCoverPlaceholder>
                               <GlobalOutlined />
@@ -579,8 +586,7 @@ onClick={clearAllFilters}>
                             <ProjectCardBody>
                               <ProjectTitleButton
                                 type='button'
-                                onClick={() => openProject(item.projectPageId)}
-                              >
+                                onClick={() => openProject(item.projectPageId)}>
                                 {displayProjectTitle(item.title, intl)}
                               </ProjectTitleButton>
                               <CardMeta>
@@ -590,8 +596,7 @@ onClick={clearAllFilters}>
                               </CardMeta>
                               <OpenButton
                                 type='button'
-                                onClick={() => openProject(item.projectPageId)}
-                              >
+                                onClick={() => openProject(item.projectPageId)}>
                                 <FormattedMessage id='project_page.open_project' />
                                 <ArrowRightOutlined style={{ fontSize: 12 }} />
                               </OpenButton>
@@ -616,8 +621,7 @@ onClick={clearAllFilters}>
                                 <ProjectTag
                                   key={tag}
                                   type='button'
-                                  onClick={() => onTagFilter(tag)}
-                                >
+                                  onClick={() => onTagFilter(tag)}>
                                   {tag}
                                 </ProjectTag>
                               ))}
@@ -641,24 +645,26 @@ onClick={clearAllFilters}>
                                       size='small'
                                       min={0}
                                       value={orderValue}
-                                      onChange={value => setOrderDrafts(prev => ({
-                                        ...prev,
-                                        [item.projectPageId]: value,
-                                      }))}
-                                      aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
+                                      onChange={value =>
+                                        setOrderDrafts(prev => ({
+                                          ...prev,
+                                          [item.projectPageId]: value,
+                                        }))
+                                      }
+                                      aria-label={intl.formatMessage({
+                                        id: 'project_page.landing_order_label',
+                                      })}
                                     />
                                     <Button
                                       size='small'
                                       loading={orderBusyId === item.projectPageId}
-                                      onClick={() => saveSortOrder(item)}
-                                    >
+                                      onClick={() => saveSortOrder(item)}>
                                       <FormattedMessage id='project_page.landing_order_save' />
                                     </Button>
                                     <Button
                                       size='small'
                                       disabled={featureBusy}
-                                      onClick={() => removeFromLanding(item)}
-                                    >
+                                      onClick={() => removeFromLanding(item)}>
                                       <FormattedMessage id='project_page.landing_remove' />
                                     </Button>
                                   </Space>
@@ -666,8 +672,7 @@ onClick={clearAllFilters}>
                                   <Button
                                     size='small'
                                     icon={<PushpinOutlined />}
-                                    onClick={() => openFeatureModal(item)}
-                                  >
+                                    onClick={() => openFeatureModal(item)}>
                                     <FormattedMessage id='project_page.landing_add' />
                                   </Button>
                                 )}
@@ -675,8 +680,7 @@ onClick={clearAllFilters}>
                                   size='small'
                                   danger
                                   icon={<DeleteOutlined />}
-                                  onClick={() => openDeleteModal(item)}
-                                >
+                                  onClick={() => openDeleteModal(item)}>
                                   <FormattedMessage id='project_page.moderate_delete' />
                                 </Button>
                               </ModerationActions>
@@ -711,11 +715,14 @@ onClick={clearAllFilters}>
         title={intl.formatMessage({ id: 'project_page.moderate_delete_title' })}
         okText={intl.formatMessage({ id: 'project_page.moderate_delete_confirm' })}
         cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
-        okButtonProps={{ danger: true, loading: deleteBusy, disabled: deleteReason.trim().length < 3 }}
+        okButtonProps={{
+          danger: true,
+          loading: deleteBusy,
+          disabled: deleteReason.trim().length < 3,
+        }}
         onOk={confirmDelete}
         onCancel={closeDeleteModal}
-        destroyOnHidden
-      >
+        destroyOnHidden>
         <p>
           <FormattedMessage
             id='project_page.moderate_delete_body'
@@ -738,8 +745,7 @@ onClick={clearAllFilters}>
         okButtonProps={{ loading: featureBusy }}
         onOk={confirmFeature}
         onCancel={closeFeatureModal}
-        destroyOnHidden
-      >
+        destroyOnHidden>
         <p>
           <FormattedMessage
             id='project_page.landing_add_body'

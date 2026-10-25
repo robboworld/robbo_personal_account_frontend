@@ -84,7 +84,8 @@ const wrapProtected = (allowedRoles, element) => (
 )
 
 // Backed by the legacy Postgres: unavailable (with an explanation) while it is off.
-const wrapLegacy = (allowedRoles, element) => wrapProtected(allowedRoles, <LegacySection>{element}</LegacySection>)
+const wrapLegacy = (allowedRoles, element) =>
+  wrapProtected(allowedRoles, <LegacySection>{element}</LegacySection>)
 
 // Legacy /scratch links (editor used to live there): keep the query, e.g. ?projectPageId=.
 const LegacyScratchRedirect = () => {
@@ -109,29 +110,35 @@ const AppRoutes = () => (
     <Route path={JOIN_CLASS_CODE_ROUTE} element={<JoinClassPage />} />
 
     <Route element={<AuthenticatedShell />}>
+      <Route path={HOME_PAGE_ROUTE} element={wrapProtected(STANDARD_ROLES, <HomePage />)} />
       <Route
-        path={HOME_PAGE_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <HomePage />)}
+        path={MY_PROJECTS_ROUTE}
+        element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <MyProjects />)}
       />
-      <Route path={MY_PROJECTS_ROUTE} element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <MyProjects />)} />
-      <Route path={TEACHER_CLASSES_ROUTE} element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassesPage />)} />
-      <Route path={TEACHER_CLASS_BOARD_ROUTE} element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassBoardPage />)} />
-      <Route path={STUDENT_CLASSES_ROUTE} element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <StudentClassesPage />)} />
-      <Route path={PUBLIC_PROJECTS_ROUTE} element={wrapProtected(STANDARD_ROLES, <PublicProjects />)} />
+      <Route
+        path={TEACHER_CLASSES_ROUTE}
+        element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassesPage />)}
+      />
+      <Route
+        path={TEACHER_CLASS_BOARD_ROUTE}
+        element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassBoardPage />)}
+      />
+      <Route
+        path={STUDENT_CLASSES_ROUTE}
+        element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <StudentClassesPage />)}
+      />
+      <Route
+        path={PUBLIC_PROJECTS_ROUTE}
+        element={wrapProtected(STANDARD_ROLES, <PublicProjects />)}
+      />
       <Route path={SCRATCH_HUB_ROUTE} element={wrapProtected(STANDARD_ROLES, <ScratchHubPage />)} />
-      <Route
-        path={MY_COURSES_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <LmsRedirect />)}
-      />
+      <Route path={MY_COURSES_ROUTE} element={wrapProtected(STANDARD_ROLES, <LmsRedirect />)} />
       <Route path={CLIENTS_ROUTE} element={wrapLegacy([SUPER_ADMIN], <ClientsPageContainer />)} />
       <Route
         path={TEACHERS_PAGE_ROUTE}
         element={wrapLegacy([SUPER_ADMIN, UNIT_ADMIN], <TeachersPage />)}
       />
-      <Route
-        path={PROFILE_PAGE_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <ProfilePage />)}
-      />
+      <Route path={PROFILE_PAGE_ROUTE} element={wrapProtected(STANDARD_ROLES, <ProfilePage />)} />
       <Route
         path={CUSTOMIZATION_PAGE_ROUTE}
         element={wrapProtected(STANDARD_ROLES, <CustomizationPage />)}
@@ -153,21 +160,15 @@ const AppRoutes = () => (
         path={SEND_NOTIFICATION_ROUTE}
         element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <SendNotificationPage />)}
       />
-      <Route
-        path={USERS_ROUTE}
-        element={wrapProtected([SUPER_ADMIN], <UserModerationPage />)}
-      />
-      <Route
-        path={MY_LICENSES_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)}
-      />
-      <Route
-        path={MY_SESSIONS_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <MySessionsPage />)}
-      />
+      <Route path={USERS_ROUTE} element={wrapProtected([SUPER_ADMIN], <UserModerationPage />)} />
+      <Route path={MY_LICENSES_ROUTE} element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)} />
+      <Route path={MY_SESSIONS_ROUTE} element={wrapProtected(STANDARD_ROLES, <MySessionsPage />)} />
       <Route
         path={LICENSES_CATALOG_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <Navigate to={`${MY_LICENSES_ROUTE}#buy`} replace />)}
+        element={wrapProtected(
+          STANDARD_ROLES,
+          <Navigate to={`${MY_LICENSES_ROUTE}#buy`} replace />,
+        )}
       />
       <Route
         path={PAYMENT_RECEIPT_ROUTE}
@@ -177,10 +178,7 @@ const AppRoutes = () => (
         path={ISSUE_LICENSE_ROUTE}
         element={wrapProtected([SUPER_ADMIN], <IssueLicensePage />)}
       />
-      <Route
-        path={DEVICE_LINK_ROUTE}
-        element={wrapProtected(STANDARD_ROLES, <DeviceLinkPage />)}
-      />
+      <Route path={DEVICE_LINK_ROUTE} element={wrapProtected(STANDARD_ROLES, <DeviceLinkPage />)} />
     </Route>
 
     <Route path='/*' element={<Navigate to={HOME_PAGE_ROUTE} replace />} />
@@ -188,7 +186,14 @@ const AppRoutes = () => (
 )
 
 const Application = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: '100dvh', width: '100%' }}>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      flex: 1,
+      minHeight: '100dvh',
+      width: '100%',
+    }}>
     <ProdBuildWarning />
     <Suspense fallback={<Loader />}>
       <AppRoutes />

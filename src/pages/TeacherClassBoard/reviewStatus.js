@@ -15,4 +15,5 @@ export const reviewStatusLabel = (intl, status) => {
 }
 
 /** Submitted or already reviewed: the student has handed the work in. */
-export const isHandedIn = status => ['submitted', 'accepted', 'returned', 'shown_in_class'].includes(status)
+export const isHandedIn = status =>
+  ['submitted', 'accepted', 'returned', 'shown_in_class'].includes(status)

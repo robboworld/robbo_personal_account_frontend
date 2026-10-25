@@ -62,8 +62,7 @@ const initials = name => {
 }
 
 const ProjectFlag = () => (
-  <svg width='24' height='24'
-viewBox='0 0 24 24' aria-hidden>
+  <svg width='24' height='24' viewBox='0 0 24 24' aria-hidden>
     <path
       fill='currentColor'
       d='M4.2 3h1.1v18H4.2zm2.4 0h8.2l.9 1.35L18.4 3H21.8v11.4h-4.7l-.9-1.35-2.8 1.35H6.6z'
@@ -74,7 +73,8 @@ viewBox='0 0 24 24' aria-hidden>
 const ExploreCard = ({ project, onOpen }) => {
   const intl = useIntl()
   const title = project.title || intl.formatMessage({ id: 'project_card.untitled' })
-  const authorName = project.authorName || project.authorUserId || intl.formatMessage({ id: 'project_card.author' })
+  const authorName =
+    project.authorName || project.authorUserId || intl.formatMessage({ id: 'project_card.author' })
   const previewUrl = resolveProjectPreviewUrl(project.preview)
   const avatarSrc = isValidAvatarId(project.authorAvatarId)
     ? getAvatarSrc(project.authorAvatarId)
@@ -83,17 +83,8 @@ const ExploreCard = ({ project, onOpen }) => {
     <Card
       type='button'
       onClick={() => onOpen(project.projectPageId)}
-      aria-label={intl.formatMessage({ id: 'project_card.open_aria' }, { title })}
-    >
-      <Thumb>
-        {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt=''
-            loading='lazy'
-          />
-        ) : null}
-      </Thumb>
+      aria-label={intl.formatMessage({ id: 'project_card.open_aria' }, { title })}>
+      <Thumb>{previewUrl ? <img src={previewUrl} alt='' loading='lazy' /> : null}</Thumb>
       <CardMeta>
         <Avatar aria-hidden>
           {avatarSrc ? <img src={avatarSrc} alt='' /> : initials(authorName)}
@@ -111,7 +102,9 @@ const Explore = () => {
   const intl = useIntl()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const activeTag = String(searchParams.get('tag') || '').trim().toLowerCase()
+  const activeTag = String(searchParams.get('tag') || '')
+    .trim()
+    .toLowerCase()
   const [projects, setProjects] = useState([])
   const [countRows, setCountRows] = useState(0)
   const [page, setPage] = useState(1)
@@ -205,12 +198,15 @@ const Explore = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const openProject = useCallback(projectPageId => {
-    if (!projectPageId) {
-      return
-    }
-    navigate(`/projects/${projectPageId}`)
-  }, [navigate])
+  const openProject = useCallback(
+    projectPageId => {
+      if (!projectPageId) {
+        return
+      }
+      navigate(`/projects/${projectPageId}`)
+    },
+    [navigate],
+  )
 
   return (
     <PageRoot>
@@ -220,7 +216,9 @@ const Explore = () => {
       <Main>
         <Banner>
           <BannerInner>
-            <BannerTitle><FormattedMessage id='explore.title' /></BannerTitle>
+            <BannerTitle>
+              <FormattedMessage id='explore.title' />
+            </BannerTitle>
           </BannerInner>
         </Banner>
         <TabBar>
@@ -240,12 +238,13 @@ const Explore = () => {
                 key={cat.key}
                 type='button'
                 $active={(cat.tag || '') === activeTag}
-                onClick={() => setTag(cat.tag)}
-              >
+                onClick={() => setTag(cat.tag)}>
                 {intl.formatMessage(cat.label)}
               </Pill>
             ))}
-            <SortHint><FormattedMessage id='explore.sort_popular' /></SortHint>
+            <SortHint>
+              <FormattedMessage id='explore.sort_popular' />
+            </SortHint>
           </Filters>
           {loading ? (
             <Grid aria-busy='true'>
@@ -256,8 +255,7 @@ const Explore = () => {
                     <Avatar />
                     <CardCopy>
                       <SkeletonBar $w='80%' />
-                      <SkeletonBar $w='45%' $h='0.55rem'
-$mt='0.35rem' />
+                      <SkeletonBar $w='45%' $h='0.55rem' $mt='0.35rem' />
                     </CardCopy>
                   </CardMeta>
                 </SkeletonCard>
@@ -273,7 +271,9 @@ $mt='0.35rem' />
               </div>
             </Empty>
           ) : projects.length === 0 ? (
-            <Empty><FormattedMessage id='explore.empty' /></Empty>
+            <Empty>
+              <FormattedMessage id='explore.empty' />
+            </Empty>
           ) : (
             <Grid>
               {projects.map((project, idx) => (
@@ -286,11 +286,7 @@ $mt='0.35rem' />
             </Grid>
           )}
           {!loading && hasMore ? (
-            <LoadMore
-              type='button'
-              disabled={loadingMore}
-              onClick={loadMore}
-            >
+            <LoadMore type='button' disabled={loadingMore} onClick={loadMore}>
               {intl.formatMessage({ id: loadingMore ? 'explore.loading' : 'explore.load_more' })}
             </LoadMore>
           ) : null}

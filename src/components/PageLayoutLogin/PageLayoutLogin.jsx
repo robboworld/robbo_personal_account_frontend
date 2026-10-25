@@ -8,10 +8,7 @@ import SignInForm from '@/components/SignInForm'
 import { AuthFormStyles, OidcBlock, OidcHint } from '@/components/AuthLayout'
 import { useActions } from '@/helpers'
 import { signInRequest, signUpRequest } from '@/actions'
-import {
-  redirectToOidcStart,
-  resolveLoginReturnTo,
-} from '@/helpers/oidcSession'
+import { redirectToOidcStart, resolveLoginReturnTo } from '@/helpers/oidcSession'
 
 const LoginContent = ({
   showOidcLogin = false,
@@ -49,7 +46,8 @@ const LoginContent = ({
 
   const showPasswordForm = !showOidcLogin || hybridAuth
   // While auto-redirecting to silent SSO, keep the button visible but avoid double-click noise.
-  const awaitingSilent = showOidcLogin && !ssoAttempted && !sessionLimitReached && !initialLoginError
+  const awaitingSilent =
+    showOidcLogin && !ssoAttempted && !sessionLimitReached && !initialLoginError
 
   return (
     <React.Fragment>
@@ -59,17 +57,18 @@ const LoginContent = ({
           showIcon
           style={{ marginBottom: 16 }}
           title={initialLoginError}
-          description={sessionLimitReached ? (
-            <Button
-              type='primary'
-              size='small'
-              htmlType='button'
-              className='session-limit-kick-btn'
-              onClick={() => startOidc(true)}
-            >
-              <FormattedMessage id='sessions.kick_others' />
-            </Button>
-          ) : null}
+          description={
+            sessionLimitReached ? (
+              <Button
+                type='primary'
+                size='small'
+                htmlType='button'
+                className='session-limit-kick-btn'
+                onClick={() => startOidc(true)}>
+                <FormattedMessage id='sessions.kick_others' />
+              </Button>
+            ) : null
+          }
         />
       ) : null}
 
@@ -80,8 +79,7 @@ const LoginContent = ({
             size='large'
             block
             disabled={awaitingSilent}
-            onClick={() => startOidc(false)}
-          >
+            onClick={() => startOidc(false)}>
             <FormattedMessage id='auth_login.oidc_button' />
           </Button>
           {hybridAuth ? (

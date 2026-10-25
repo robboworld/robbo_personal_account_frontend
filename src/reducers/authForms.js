@@ -35,25 +35,28 @@ const INITIAL_STATE = {
   shouldBackupRegister: false,
 }
 
-export default handleActions({
-  [BACKUP_LOGIN_FORM](state) {
-    return { ...state, shouldBackupLogin: true }
+export default handleActions(
+  {
+    [BACKUP_LOGIN_FORM](state) {
+      return { ...state, shouldBackupLogin: true }
+    },
+    [BACKUP_LOGIN_FORM_BEGIN](state, action) {
+      return {
+        ...state,
+        loginFormData: { ...action.payload },
+        shouldBackupLogin: false,
+      }
+    },
+    [BACKUP_REGISTRATION_FORM](state) {
+      return { ...state, shouldBackupRegister: true }
+    },
+    [BACKUP_REGISTRATION_FORM_BEGIN](state, action) {
+      return {
+        ...state,
+        registrationFormData: { ...action.payload },
+        shouldBackupRegister: false,
+      }
+    },
   },
-  [BACKUP_LOGIN_FORM_BEGIN](state, action) {
-    return {
-      ...state,
-      loginFormData: { ...action.payload },
-      shouldBackupLogin: false,
-    }
-  },
-  [BACKUP_REGISTRATION_FORM](state) {
-    return { ...state, shouldBackupRegister: true }
-  },
-  [BACKUP_REGISTRATION_FORM_BEGIN](state, action) {
-    return {
-      ...state,
-      registrationFormData: { ...action.payload },
-      shouldBackupRegister: false,
-    }
-  },
-}, INITIAL_STATE)
+  INITIAL_STATE,
+)

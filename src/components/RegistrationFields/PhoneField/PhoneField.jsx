@@ -15,16 +15,7 @@ function getPhoneInputLabels(locale) {
   return PHONE_LABELS[base] || en
 }
 
-const PhoneField = ({
-  name,
-  value,
-  label,
-  helpText,
-  errorMessage,
-  onChange,
-  onBlur,
-  onFocus,
-}) => {
+const PhoneField = ({ name, value, label, helpText, errorMessage, onChange, onBlur, onFocus }) => {
   const intl = useIntl()
   const [hasFocus, setHasFocus] = useState(false)
   const latestValueRef = useRef(value)
@@ -57,7 +48,9 @@ const PhoneField = ({
 
   return (
     <div className={`registration-field${errorMessage ? ' registration-field--invalid' : ''}`}>
-      <label className='registration-field__label' htmlFor={name}>{label}</label>
+      <label className='registration-field__label' htmlFor={name}>
+        {label}
+      </label>
       <PhoneInput
         className='robbo-phone-input form-group__form-field'
         name={name}
@@ -79,11 +72,11 @@ const PhoneField = ({
           'aria-invalid': Boolean(errorMessage),
         }}
       />
-      {hasFocus && helpText && (
-        <div className='registration-field__help'>{helpText}</div>
-      )}
+      {hasFocus && helpText && <div className='registration-field__help'>{helpText}</div>}
       {errorMessage && (
-        <div className='registration-field__error' id={`${name}-error`}>{errorMessage}</div>
+        <div className='registration-field__error' id={`${name}-error`}>
+          {errorMessage}
+        </div>
       )}
     </div>
   )

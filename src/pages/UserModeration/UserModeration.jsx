@@ -18,7 +18,13 @@ import { motion } from 'framer-motion'
 import { SearchOutlined, UserOutlined } from '@ant-design/icons'
 
 import { searchLmsUsers } from '@/api/users'
-import { PROFILE_PAGE_ROUTE, STUDENT, TEACHER, SUPER_ADMIN, USER_ROLE_MESSAGE_IDS } from '@/constants'
+import {
+  PROFILE_PAGE_ROUTE,
+  STUDENT,
+  TEACHER,
+  SUPER_ADMIN,
+  USER_ROLE_MESSAGE_IDS,
+} from '@/constants'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import {
   GlassPanel,
@@ -51,37 +57,43 @@ const UserModerationPage = () => {
   const timerRef = useRef(null)
   const reqRef = useRef(0)
 
-  const runSearch = useCallback(async (text, inactive) => {
-    const q = String(text || '').trim()
-    if (!q) {
-      setItems([])
-      setLoading(false)
-      return
-    }
-    setLoading(true)
-    const reqId = ++reqRef.current
-    try {
-      const results = await searchLmsUsers(q, 30, { includeInactive: inactive })
-      if (reqId === reqRef.current) {
-        setItems(results)
-      }
-    } catch (e) {
-      if (reqId === reqRef.current) {
+  const runSearch = useCallback(
+    async (text, inactive) => {
+      const q = String(text || '').trim()
+      if (!q) {
         setItems([])
-        message.error(apiErrorMessage(e, intl))
-      }
-    } finally {
-      if (reqId === reqRef.current) {
         setLoading(false)
+        return
       }
-    }
-  }, [intl])
+      setLoading(true)
+      const reqId = ++reqRef.current
+      try {
+        const results = await searchLmsUsers(q, 30, { includeInactive: inactive })
+        if (reqId === reqRef.current) {
+          setItems(results)
+        }
+      } catch (e) {
+        if (reqId === reqRef.current) {
+          setItems([])
+          message.error(apiErrorMessage(e, intl))
+        }
+      } finally {
+        if (reqId === reqRef.current) {
+          setLoading(false)
+        }
+      }
+    },
+    [intl],
+  )
 
-  useEffect(() => () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
-  }, [])
+  useEffect(
+    () => () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+    },
+    [],
+  )
 
   // Re-query when returning to the tab so ban badges stay in sync with LMS/ES.
   useEffect(() => {
@@ -120,8 +132,7 @@ const UserModerationPage = () => {
 
   return (
     <PageContent>
-      <motion.div variants={staggerContainer} initial='hidden'
-animate='show'>
+      <motion.div variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
             <HeroTitle>
@@ -135,8 +146,7 @@ animate='show'>
 
         <Stagger variants={staggerItem}>
           <GlassPanel>
-            <Space orientation='vertical' size='middle'
-style={{ width: '100%' }}>
+            <Space orientation='vertical' size='middle' style={{ width: '100%' }}>
               <Input
                 allowClear
                 size='large'
@@ -147,8 +157,7 @@ style={{ width: '100%' }}>
               />
               <Checkbox
                 checked={includeInactive}
-                onChange={e => onToggleInactive(e.target.checked)}
-              >
+                onChange={e => onToggleInactive(e.target.checked)}>
                 <FormattedMessage id='users_moderation.show_banned' />
               </Checkbox>
 
@@ -166,7 +175,8 @@ style={{ width: '100%' }}>
                 <List
                   dataSource={items}
                   renderItem={hit => {
-                    const roleId = USER_ROLE_MESSAGE_IDS[roleFromHit(hit)] || USER_ROLE_MESSAGE_IDS[STUDENT]
+                    const roleId =
+                      USER_ROLE_MESSAGE_IDS[roleFromHit(hit)] || USER_ROLE_MESSAGE_IDS[STUDENT]
                     const active = hit.isActive !== false
                     return (
                       <List.Item
@@ -175,14 +185,12 @@ style={{ width: '100%' }}>
                             key='open'
                             type='primary'
                             icon={<UserOutlined />}
-                            onClick={() => openProfile(hit)}
-                          >
+                            onClick={() => openProfile(hit)}>
                             <FormattedMessage id='users_moderation.open_profile' />
                           </Button>,
-                        ]}
-                      >
+                        ]}>
                         <List.Item.Meta
-                          title={(
+                          title={
                             <Space wrap>
                               <Text strong>{hit.username}</Text>
                               {active ? (
@@ -204,13 +212,13 @@ style={{ width: '100%' }}>
                                 </Tag>
                               )}
                             </Space>
-                          )}
-                          description={(
+                          }
+                          description={
                             <Space orientation='vertical' size={0}>
                               {hit.email ? <Text type='secondary'>{hit.email}</Text> : null}
                               {hit.fullName ? <Text type='secondary'>{hit.fullName}</Text> : null}
                             </Space>
-                          )}
+                          }
                         />
                       </List.Item>
                     )

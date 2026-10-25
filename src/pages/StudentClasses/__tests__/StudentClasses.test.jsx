@@ -30,7 +30,13 @@ describe('StudentClassesPage', () => {
     api.listStudentAssignments.mockResolvedValue({
       data: {
         items: [
-          { id: 'a1', title: 'Лабиринт', myProjectId: 'p1', myReviewStatus: 'returned', myReviewComment: 'Добавь счёт' },
+          {
+            id: 'a1',
+            title: 'Лабиринт',
+            myProjectId: 'p1',
+            myReviewStatus: 'returned',
+            myReviewComment: 'Добавь счёт',
+          },
           { id: 'a2', title: 'Кот', myProjectId: '' },
           { id: 'a3', title: 'Музыка', myProjectId: 'p3', myReviewStatus: 'accepted' },
         ],

@@ -21,7 +21,11 @@ describe('startBffSessionWatch', () => {
   })
 
   it('does not poll while the tab is hidden and checks once it is visible again', async () => {
-    const stop = startBffSessionWatch({ isAuthenticated: () => true, onSessionLost: jest.fn(), pollIntervalMs: 1000 })
+    const stop = startBffSessionWatch({
+      isAuthenticated: () => true,
+      onSessionLost: jest.fn(),
+      pollIntervalMs: 1000,
+    })
     expect(fetchOidcStatus).toHaveBeenCalledTimes(1)
 
     setVisibility('hidden')
@@ -35,7 +39,11 @@ describe('startBffSessionWatch', () => {
 
   it('reports a lost session', async () => {
     const onSessionLost = jest.fn()
-    const stop = startBffSessionWatch({ isAuthenticated: () => true, onSessionLost, pollIntervalMs: 1000 })
+    const stop = startBffSessionWatch({
+      isAuthenticated: () => true,
+      onSessionLost,
+      pollIntervalMs: 1000,
+    })
     fetchOidcStatus.mockResolvedValue({ authenticated: false })
     await jest.advanceTimersByTimeAsync(1000)
     expect(onSessionLost).toHaveBeenCalledTimes(1)

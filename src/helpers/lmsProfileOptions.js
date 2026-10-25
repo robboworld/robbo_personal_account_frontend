@@ -22,7 +22,9 @@ const PACKAGE_LOCALES = {
 }
 
 function resolvePackageLocale(intlLocale) {
-  const [base] = String(intlLocale || 'en').toLowerCase().split('-')
+  const [base] = String(intlLocale || 'en')
+    .toLowerCase()
+    .split('-')
   return PACKAGE_LOCALES[base] || 'en'
 }
 
@@ -41,7 +43,15 @@ function mapOptions(intl, values, labelPrefix, placeholderId) {
 const PRIORITY_COUNTRY_CODES = [
   'RU',
   // CIS (excluding RU)
-  'BY', 'KZ', 'AM', 'AZ', 'KG', 'MD', 'TJ', 'UZ', 'TM',
+  'BY',
+  'KZ',
+  'AM',
+  'AZ',
+  'KG',
+  'MD',
+  'TJ',
+  'UZ',
+  'TM',
   'CN',
 ]
 
@@ -49,14 +59,20 @@ const PRIORITY_COUNTRY_CODES = [
 const PRIORITY_LANGUAGE_CODES = [
   'ru',
   // CIS (excluding Russian): BY, KZ, AM, AZ, KG, MD, TJ, UZ, TM
-  'be', 'kk', 'hy', 'az', 'ky', 'ro', 'tg', 'uz', 'tk',
+  'be',
+  'kk',
+  'hy',
+  'az',
+  'ky',
+  'ro',
+  'tg',
+  'uz',
+  'tk',
   'zh',
 ]
 
 function mapNamesToOptionsWithPriority(names, placeholder, priorityCodes) {
-  const priorityRank = new Map(
-    priorityCodes.map((code, index) => [code, index]),
-  )
+  const priorityRank = new Map(priorityCodes.map((code, index) => [code, index]))
   const options = Object.entries(names).map(([code, name]) => ({
     value: code,
     label: name,
@@ -84,12 +100,7 @@ export function getEducationLevelOptions(intl) {
 }
 
 export function getGenderOptions(intl) {
-  return mapOptions(
-    intl,
-    GENDER_VALUES,
-    'lms_options.gender',
-    'profile_card.gender_placeholder',
-  )
+  return mapOptions(intl, GENDER_VALUES, 'lms_options.gender', 'profile_card.gender_placeholder')
 }
 
 export function getCountryOptions(intl) {

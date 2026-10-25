@@ -59,8 +59,12 @@ const AFTER_LOGOUT_KEY = 'lk_after_logout'
 /** The full logout always lands on LK_LOGOUT_RETURN_TO (the IdP drops our return_to), so a
  * page that must open afterwards (ban details, "session expired") is kept for this tab. */
 export const rememberAfterLogout = returnTo => {
-  if (!returnTo || returnTo === LK_LOGOUT_RETURN_TO || !String(returnTo).startsWith('/') ||
-      String(returnTo).startsWith('//')) {
+  if (
+    !returnTo ||
+    returnTo === LK_LOGOUT_RETURN_TO ||
+    !String(returnTo).startsWith('/') ||
+    String(returnTo).startsWith('//')
+  ) {
     return
   }
   try {
@@ -158,8 +162,7 @@ export const shouldShowLocalAuthForms = status =>
   !isOidcSsoEnabled() || hasLmsPasswordFallback(status)
 
 /** Scratch (and other API clients) may use password while LK UI uses OIDC. */
-export const isHybridAuthEnabled = status =>
-  isOidcSsoEnabled() && hasLmsPasswordFallback(status)
+export const isHybridAuthEnabled = status => isOidcSsoEnabled() && hasLmsPasswordFallback(status)
 
 export const redirectToLmsRegister = () => {
   window.location.replace(lmsRegisterUrl())

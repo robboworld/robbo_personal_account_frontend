@@ -1,2 +1,2 @@
-import TeachersContainer from "./TeachersContainer"
+import TeachersContainer from './TeachersContainer'
 export default TeachersContainer

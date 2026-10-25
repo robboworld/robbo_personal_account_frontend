@@ -2,35 +2,43 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { Input, Form, Spin, message, Modal, InputNumber, Space, Button, Select } from 'antd'
-import { ArrowLeftOutlined, CloudDownloadOutlined, CloudUploadOutlined, DeleteOutlined, ExclamationCircleOutlined, PictureOutlined, PushpinOutlined } from '@ant-design/icons'
+import {
+  ArrowLeftOutlined,
+  CloudDownloadOutlined,
+  CloudUploadOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  PictureOutlined,
+  PushpinOutlined,
+} from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { createGlobalStyle } from 'styled-components'
 
 import {
-    ActionButton,
-    ActionsGroup,
-    ActionsSection,
-    AuthorText,
-    BackButton,
-    BackRow,
-    GuestMainGrid,
-    GuestMetaBlock,
-    GuestMetaSection,
-    GuestMetaText,
-    LoadingWrap,
-    MainGrid,
-    MetaCard,
-    MetaLabel,
-    MetaRow,
-    MetaValue,
-    PageShell,
-    PlayerCard,
-    PrimaryAction,
-    ProjectForm,
-    ProjectTitle,
-    ScratchAction,
-    SectionTitle,
-    ViewOnlyNote,
+  ActionButton,
+  ActionsGroup,
+  ActionsSection,
+  AuthorText,
+  BackButton,
+  BackRow,
+  GuestMainGrid,
+  GuestMetaBlock,
+  GuestMetaSection,
+  GuestMetaText,
+  LoadingWrap,
+  MainGrid,
+  MetaCard,
+  MetaLabel,
+  MetaRow,
+  MetaValue,
+  PageShell,
+  PlayerCard,
+  PrimaryAction,
+  ProjectForm,
+  ProjectTitle,
+  ScratchAction,
+  SectionTitle,
+  ViewOnlyNote,
 } from './styles'
 
 import PlayerScratchControls from './PlayerScratchControls'
@@ -42,29 +50,37 @@ import PageLayout from '@/components/PageLayout'
 import RobboGuestHeader from '@/components/RobboGuestHeader/RobboGuestHeader'
 import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import {
-    downloadProjectSb3,
-    downloadProjectSb3ByPlayToken,
-    moderateDeleteProjectPage,
-    projectPageAPI,
-    setLandingFeatured,
-    uploadProjectPreview,
-    uploadProjectSb3,
+  downloadProjectSb3,
+  downloadProjectSb3ByPlayToken,
+  moderateDeleteProjectPage,
+  projectPageAPI,
+  setLandingFeatured,
+  uploadProjectPreview,
+  uploadProjectSb3,
 } from '@/api/projectPage'
 import { tryRefreshAccessToken } from '@/api/authRefresh'
-import { LANDING_PAGE_ROUTE, MY_PROJECTS_ROUTE, PUBLIC_PROJECTS_ROUTE, SUPER_ADMIN } from '@/constants'
+import {
+  LANDING_PAGE_ROUTE,
+  MY_PROJECTS_ROUTE,
+  PUBLIC_PROJECTS_ROUTE,
+  SUPER_ADMIN,
+} from '@/constants'
 import { openScratchEditor } from '@/utils/scratchEditor'
 import { projectPageMutationGraphQL } from '@/graphQL/mutation/projectPage'
 import { formatDateTime } from '@/helpers/formatDateTime'
-import { RequireAuth, fetchOidcStatus, isAccessTokenExpired, isOidcSsoEnabled, useAuthRole } from '@/helpers'
+import {
+  RequireAuth,
+  fetchOidcStatus,
+  isAccessTokenExpired,
+  isOidcSsoEnabled,
+  useAuthRole,
+} from '@/helpers'
 import { hasLmsPasswordFallback } from '@/helpers/oidcSession'
 import { useActions } from '@/helpers/useActions'
 import { displayProjectTitle } from '@/helpers/intl'
 import Loader from '@/components/Loader'
 import { getProjectPageState } from '@/reducers/projectPage'
-import {
-    getProjectPageById,
-    clearProjectPageState,
-} from '@/actions'
+import { getProjectPageById, clearProjectPageState } from '@/actions'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { ProjectTag, ProjectTagList } from '@/components/ProjectCatalog/styles'
@@ -72,10 +88,10 @@ import { getAccessToken } from '@/helpers/accessTokenMemory'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 // A project created in the LK has no .sb3 until it is saved once in the editor.
-const sb3DownloadError = (e, intl) => (e?.status === 404
+const sb3DownloadError = (e, intl) =>
+  e?.status === 404
     ? intl.formatMessage({ id: 'project_page.download_sb3_empty' })
-    : apiErrorMessage(e, intl, 'project_page.download_sb3_error'))
-
+    : apiErrorMessage(e, intl, 'project_page.download_sb3_error')
 
 const { TextArea } = Input
 const { confirm } = Modal
@@ -91,918 +107,926 @@ const GuestGlobal = createGlobalStyle`
 `
 
 function normalizeGuestProjectPage(raw) {
-    if (!raw) return {}
-    return {
-        ...raw,
-        projectPageId: raw.projectPageId || raw.projectPageID,
-        projectId: raw.projectId || raw.projectID,
-        authorUserId: raw.authorUserId || raw.authorUserID || '',
-        authorName: raw.authorName || raw.authorUserID || '',
-        isOwner: false,
-    }
+  if (!raw) return {}
+  return {
+    ...raw,
+    projectPageId: raw.projectPageId || raw.projectPageID,
+    projectId: raw.projectId || raw.projectID,
+    authorUserId: raw.authorUserId || raw.authorUserID || '',
+    authorName: raw.authorName || raw.authorUserID || '',
+    isOwner: false,
+  }
 }
 
 function GuestProjectView({ projectPageId }) {
-    const intl = useIntl()
-    const navigate = useNavigate()
-    const playerRef = useRef(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-    const [projectPage, setProjectPage] = useState(null)
-    const [playToken, setPlayToken] = useState(null)
-    const [isPlayerRunning, setIsPlayerRunning] = useState(false)
-    const [downloadBusy, setDownloadBusy] = useState(false)
+  const intl = useIntl()
+  const navigate = useNavigate()
+  const playerRef = useRef(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [projectPage, setProjectPage] = useState(null)
+  const [playToken, setPlayToken] = useState(null)
+  const [isPlayerRunning, setIsPlayerRunning] = useState(false)
+  const [downloadBusy, setDownloadBusy] = useState(false)
 
-    useEffect(() => {
-        document.documentElement.classList.add('guest-project-page-active')
-        return () => {
-            document.documentElement.classList.remove('guest-project-page-active')
-        }
-    }, [])
-
-    useEffect(() => {
-        let cancelled = false
-        setLoading(true)
-        setError(null)
-        projectPageAPI.fetchProjectPageById(projectPageId)
-            .then(data => {
-                if (cancelled) return
-                setProjectPage(normalizeGuestProjectPage(data?.projectPage))
-                setPlayToken(data?.playToken || null)
-            })
-            .catch(e => {
-                if (cancelled) return
-                const status = e?.status ?? e?.response?.status
-                setError(status === 403 || status === 404
-                    ? { closed: true }
-                    : { text: apiErrorMessage(e, intl, 'project_page.player_error') })
-                setProjectPage(null)
-                setPlayToken(null)
-            })
-            .finally(() => {
-                if (!cancelled) setLoading(false)
-            })
-        return () => {
-            cancelled = true
-        }
-    }, [projectPageId, intl])
-
-    const displayTitle = projectPage?.title || intl.formatMessage({ id: 'project_page.player_title' })
-    const instruction = (projectPage?.instruction || '').trim()
-    const notes = (projectPage?.notes || '').trim()
-
-    const handleDownloadSb3 = async () => {
-        if (!playToken) {
-            message.error(intl.formatMessage({ id: 'project_page.download_sb3_error' }))
-            return
-        }
-        setDownloadBusy(true)
-        try {
-            await downloadProjectSb3ByPlayToken(playToken, projectPageId, projectPage?.title)
-            message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
-        } catch (e) {
-            message.error(sb3DownloadError(e, intl))
-        } finally {
-            setDownloadBusy(false)
-        }
+  useEffect(() => {
+    document.documentElement.classList.add('guest-project-page-active')
+    return () => {
+      document.documentElement.classList.remove('guest-project-page-active')
     }
+  }, [])
 
-    return (
-        <React.Fragment>
-            <RobboGuestFonts />
-            <GuestGlobal />
-            <RobboGuestHeader />
-            <main id='content' style={{ flex: 1, width: '100%' }}>
-                <PageShell>
-                    <BackRow>
-                        <BackButton
-                            type='default'
-                            icon={<ArrowLeftOutlined />}
-                            onClick={() => navigate(LANDING_PAGE_ROUTE)}
-                        >
-                            <FormattedMessage id='project_page.back_to_home' />
-                        </BackButton>
-                        {projectPage?.authorName && (
-                            <AuthorText>
-                                <FormattedMessage
-                                    id='project_page.author_label'
-                                    values={{ name: projectPage.authorName }}
-                                />
-                            </AuthorText>
-                        )}
-                    </BackRow>
-                    {loading ? (
-                        <LoadingWrap><Spin /></LoadingWrap>
-                    ) : error ? (
-                        <PlayerCard>
-                            <ProjectTitle>
-                                {intl.formatMessage({ id: error.closed ? 'project_page.unavailable_title' : 'project_page.player_error' })}
-                            </ProjectTitle>
-                            <ViewOnlyNote>
-                                {error.closed ? intl.formatMessage({ id: 'project_page.unavailable_hint' }) : error.text}
-                            </ViewOnlyNote>
-                            <div style={{ marginTop: '1rem' }}>
-                                <Link to={LANDING_PAGE_ROUTE}><FormattedMessage id='project_page.back_to_landing' /></Link>
-                            </div>
-                        </PlayerCard>
-                    ) : (
-                        <GuestMainGrid>
-                            <PlayerCard>
-                                <ScratchPlayerEmbed
-                                    ref={playerRef}
-                                    projectPageId={projectPageId}
-                                    playToken={playToken}
-                                    preview={projectPage?.preview}
-                                    previewCacheKey={projectPage?.lastModified}
-                                    onRunningChange={setIsPlayerRunning}
-                                />
-                                <PlayerScratchControls
-                                    running={isPlayerRunning}
-                                    onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
-                                    onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
-                                />
-                                <ProjectReactions projectPageId={projectPageId} />
-                                <ProjectComments projectPageId={projectPageId} />
-                            </PlayerCard>
-                            <MetaCard>
-                                <ProjectTitle>{displayTitle}</ProjectTitle>
-                                {(instruction || notes) ? (
-                                    <GuestMetaBlock style={{ marginTop: 0 }}>
-                                        {instruction ? (
-                                            <GuestMetaSection>
-                                                <MetaLabel>
-                                                    <FormattedMessage id='project_page.instruction' />
-                                                </MetaLabel>
-                                                <GuestMetaText>{instruction}</GuestMetaText>
-                                            </GuestMetaSection>
-                                        ) : null}
-                                        {notes ? (
-                                            <GuestMetaSection>
-                                                <MetaLabel>
-                                                    <FormattedMessage id='project_page.description' />
-                                                </MetaLabel>
-                                                <GuestMetaText>{notes}</GuestMetaText>
-                                            </GuestMetaSection>
-                                        ) : null}
-                                        {Array.isArray(projectPage?.tags) && projectPage.tags.length > 0 ? (
-                                            <GuestMetaSection>
-                                                <MetaLabel>
-                                                    <FormattedMessage id='project_page.tags_label' />
-                                                </MetaLabel>
-                                                <ProjectTagList>
-                                                    {projectPage.tags.map(tag => (
-                                                        <ProjectTag
-                                                            key={tag}
-                                                            type='button'
-                                                            onClick={() => navigate(`${PUBLIC_PROJECTS_ROUTE}?tag=${encodeURIComponent(tag)}`)}
-                                                        >
-                                                            {tag}
-                                                        </ProjectTag>
-                                                    ))}
-                                                </ProjectTagList>
-                                            </GuestMetaSection>
-                                        ) : null}
-                                    </GuestMetaBlock>
-                                ) : null}
-                                <ActionsGroup style={{ marginTop: '1rem' }}>
-                                    <ActionButton
-                                        type='default'
-                                        htmlType='button'
-                                        icon={<CloudDownloadOutlined />}
-                                        loading={downloadBusy}
-                                        disabled={!playToken}
-                                        onClick={handleDownloadSb3}
-                                    >
-                                        <FormattedMessage id='project_page.download_sb3' />
-                                    </ActionButton>
-                                </ActionsGroup>
-                                <ViewOnlyNote>
-                                    <FormattedMessage id='project_page.view_only' />
-                                </ViewOnlyNote>
-                            </MetaCard>
-                        </GuestMainGrid>
-                    )}
-                </PageShell>
-            </main>
-            <RobboSiteFooter />
-        </React.Fragment>
-    )
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    projectPageAPI
+      .fetchProjectPageById(projectPageId)
+      .then(data => {
+        if (cancelled) return
+        setProjectPage(normalizeGuestProjectPage(data?.projectPage))
+        setPlayToken(data?.playToken || null)
+      })
+      .catch(e => {
+        if (cancelled) return
+        const status = e?.status ?? e?.response?.status
+        setError(
+          status === 403 || status === 404
+            ? { closed: true }
+            : { text: apiErrorMessage(e, intl, 'project_page.player_error') },
+        )
+        setProjectPage(null)
+        setPlayToken(null)
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [projectPageId, intl])
+
+  const displayTitle = projectPage?.title || intl.formatMessage({ id: 'project_page.player_title' })
+  const instruction = (projectPage?.instruction || '').trim()
+  const notes = (projectPage?.notes || '').trim()
+
+  const handleDownloadSb3 = async () => {
+    if (!playToken) {
+      message.error(intl.formatMessage({ id: 'project_page.download_sb3_error' }))
+      return
+    }
+    setDownloadBusy(true)
+    try {
+      await downloadProjectSb3ByPlayToken(playToken, projectPageId, projectPage?.title)
+      message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
+    } catch (e) {
+      message.error(sb3DownloadError(e, intl))
+    } finally {
+      setDownloadBusy(false)
+    }
+  }
+
+  return (
+    <React.Fragment>
+      <RobboGuestFonts />
+      <GuestGlobal />
+      <RobboGuestHeader />
+      <main id='content' style={{ flex: 1, width: '100%' }}>
+        <PageShell>
+          <BackRow>
+            <BackButton
+              type='default'
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate(LANDING_PAGE_ROUTE)}>
+              <FormattedMessage id='project_page.back_to_home' />
+            </BackButton>
+            {projectPage?.authorName && (
+              <AuthorText>
+                <FormattedMessage
+                  id='project_page.author_label'
+                  values={{ name: projectPage.authorName }}
+                />
+              </AuthorText>
+            )}
+          </BackRow>
+          {loading ? (
+            <LoadingWrap>
+              <Spin />
+            </LoadingWrap>
+          ) : error ? (
+            <PlayerCard>
+              <ProjectTitle>
+                {intl.formatMessage({
+                  id: error.closed ? 'project_page.unavailable_title' : 'project_page.player_error',
+                })}
+              </ProjectTitle>
+              <ViewOnlyNote>
+                {error.closed
+                  ? intl.formatMessage({ id: 'project_page.unavailable_hint' })
+                  : error.text}
+              </ViewOnlyNote>
+              <div style={{ marginTop: '1rem' }}>
+                <Link to={LANDING_PAGE_ROUTE}>
+                  <FormattedMessage id='project_page.back_to_landing' />
+                </Link>
+              </div>
+            </PlayerCard>
+          ) : (
+            <GuestMainGrid>
+              <PlayerCard>
+                <ScratchPlayerEmbed
+                  ref={playerRef}
+                  projectPageId={projectPageId}
+                  playToken={playToken}
+                  preview={projectPage?.preview}
+                  previewCacheKey={projectPage?.lastModified}
+                  onRunningChange={setIsPlayerRunning}
+                />
+                <PlayerScratchControls
+                  running={isPlayerRunning}
+                  onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
+                  onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
+                />
+                <ProjectReactions projectPageId={projectPageId} />
+                <ProjectComments projectPageId={projectPageId} />
+              </PlayerCard>
+              <MetaCard>
+                <ProjectTitle>{displayTitle}</ProjectTitle>
+                {instruction || notes ? (
+                  <GuestMetaBlock style={{ marginTop: 0 }}>
+                    {instruction ? (
+                      <GuestMetaSection>
+                        <MetaLabel>
+                          <FormattedMessage id='project_page.instruction' />
+                        </MetaLabel>
+                        <GuestMetaText>{instruction}</GuestMetaText>
+                      </GuestMetaSection>
+                    ) : null}
+                    {notes ? (
+                      <GuestMetaSection>
+                        <MetaLabel>
+                          <FormattedMessage id='project_page.description' />
+                        </MetaLabel>
+                        <GuestMetaText>{notes}</GuestMetaText>
+                      </GuestMetaSection>
+                    ) : null}
+                    {Array.isArray(projectPage?.tags) && projectPage.tags.length > 0 ? (
+                      <GuestMetaSection>
+                        <MetaLabel>
+                          <FormattedMessage id='project_page.tags_label' />
+                        </MetaLabel>
+                        <ProjectTagList>
+                          {projectPage.tags.map(tag => (
+                            <ProjectTag
+                              key={tag}
+                              type='button'
+                              onClick={() =>
+                                navigate(`${PUBLIC_PROJECTS_ROUTE}?tag=${encodeURIComponent(tag)}`)
+                              }>
+                              {tag}
+                            </ProjectTag>
+                          ))}
+                        </ProjectTagList>
+                      </GuestMetaSection>
+                    ) : null}
+                  </GuestMetaBlock>
+                ) : null}
+                <ActionsGroup style={{ marginTop: '1rem' }}>
+                  <ActionButton
+                    type='default'
+                    htmlType='button'
+                    icon={<CloudDownloadOutlined />}
+                    loading={downloadBusy}
+                    disabled={!playToken}
+                    onClick={handleDownloadSb3}>
+                    <FormattedMessage id='project_page.download_sb3' />
+                  </ActionButton>
+                </ActionsGroup>
+                <ViewOnlyNote>
+                  <FormattedMessage id='project_page.view_only' />
+                </ViewOnlyNote>
+              </MetaCard>
+            </GuestMainGrid>
+          )}
+        </PageShell>
+      </main>
+      <RobboSiteFooter />
+    </React.Fragment>
+  )
 }
 
 function AuthenticatedProjectView({ projectPageId, token }) {
-    const intl = useIntl()
-    const authRole = useAuthRole()
-    const isSuperAdmin = Number(authRole) === SUPER_ADMIN
-    const [downloadBusy, setDownloadBusy] = useState(false)
-    const [uploadBusy, setUploadBusy] = useState(false)
-    const [previewBusy, setPreviewBusy] = useState(false)
-    const [deleteBusy, setDeleteBusy] = useState(false)
-    const [saveBusy, setSaveBusy] = useState(false)
-    const [publishBusy, setPublishBusy] = useState(false)
-    const [openingEditor, setOpeningEditor] = useState(false)
-    const [playerReloadKey, setPlayerReloadKey] = useState(0)
-    const [isPlayerRunning, setIsPlayerRunning] = useState(false)
-    const [moderateOpen, setModerateOpen] = useState(false)
-    const [moderateReason, setModerateReason] = useState('')
-    const [moderateBusy, setModerateBusy] = useState(false)
-    const [featureOpen, setFeatureOpen] = useState(false)
-    const [featureOrder, setFeatureOrder] = useState(1)
-    const [featureBusy, setFeatureBusy] = useState(false)
-    const [landingFeatured, setLandingFeaturedLocal] = useState(false)
-    const [landingSortOrder, setLandingSortOrderLocal] = useState(0)
-    const uploadInputRef = useRef(null)
-    const previewInputRef = useRef(null)
-    const playerRef = useRef(null)
-    const navigate = useNavigate()
-    const location = useLocation()
-    const actions = useActions({
-        getProjectPageById,
-        clearProjectPageState,
-    }, [])
+  const intl = useIntl()
+  const authRole = useAuthRole()
+  const isSuperAdmin = Number(authRole) === SUPER_ADMIN
+  const [downloadBusy, setDownloadBusy] = useState(false)
+  const [uploadBusy, setUploadBusy] = useState(false)
+  const [previewBusy, setPreviewBusy] = useState(false)
+  const [deleteBusy, setDeleteBusy] = useState(false)
+  const [saveBusy, setSaveBusy] = useState(false)
+  const [publishBusy, setPublishBusy] = useState(false)
+  const [openingEditor, setOpeningEditor] = useState(false)
+  const [playerReloadKey, setPlayerReloadKey] = useState(0)
+  const [isPlayerRunning, setIsPlayerRunning] = useState(false)
+  const [moderateOpen, setModerateOpen] = useState(false)
+  const [moderateReason, setModerateReason] = useState('')
+  const [moderateBusy, setModerateBusy] = useState(false)
+  const [featureOpen, setFeatureOpen] = useState(false)
+  const [featureOrder, setFeatureOrder] = useState(1)
+  const [featureBusy, setFeatureBusy] = useState(false)
+  const [landingFeatured, setLandingFeaturedLocal] = useState(false)
+  const [landingSortOrder, setLandingSortOrderLocal] = useState(0)
+  const uploadInputRef = useRef(null)
+  const previewInputRef = useRef(null)
+  const playerRef = useRef(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const actions = useActions(
+    {
+      getProjectPageById,
+      clearProjectPageState,
+    },
+    [],
+  )
 
-    const [form] = Form.useForm()
-    const titleValue = Form.useWatch('title', form)
+  const [form] = Form.useForm()
+  const titleValue = Form.useWatch('title', form)
 
-    useEffect(() => {
-        actions.getProjectPageById(token, projectPageId)
-        return () => {
-            actions.clearProjectPageState()
-        }
-    }, [actions, projectPageId, token])
-
-    const { projectPage, playToken, loading, loadError } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
-    // Closed or deleted project: say so instead of an empty page with failing widgets.
-    const unavailable = !loading && (loadError?.status === 403 || loadError?.status === 404)
-    const loginState = useSelector(({ login }) => login)
-    const currentUserId = loginState?.userId || ''
-    const isOwner = Boolean(projectPage?.isOwner)
-    const canEditTags = isOwner || isSuperAdmin
-
-    const loadedPageId = projectPage?.projectPageId
-    const loadedLandingFeatured = projectPage?.landingFeatured
-    const loadedLandingSortOrder = projectPage?.landingSortOrder
-    useEffect(() => {
-        if (!loadedPageId) {
-            return
-        }
-        setLandingFeaturedLocal(Boolean(loadedLandingFeatured))
-        setLandingSortOrderLocal(Number(loadedLandingSortOrder) || 0)
-    }, [loadedPageId, loadedLandingFeatured, loadedLandingSortOrder])
-
-    useEffect(() => {
-        if (loading || !projectPage?.projectPageId) return
-
-        const selectedNavBarKey = isOwner ? '2' : 'public_projects'
-        if (location.state?.selectedNavBarKey === selectedNavBarKey) return
-
-        navigate(location.pathname, {
-            replace: true,
-            state: {
-                ...location.state,
-                selectedNavBarKey,
-            },
-        })
-    }, [
-        isOwner,
-        loading,
-        location.pathname,
-        location.state,
-        navigate,
-        projectPage?.projectPageId,
-    ])
-
-    useEffect(() => {
-        if (loading || !projectPage?.projectPageId) return
-        form.setFieldsValue({
-            title: projectPage.title,
-            instruction: projectPage.instruction,
-            notes: projectPage.notes,
-            isShared: projectPage.isShared,
-            tags: Array.isArray(projectPage.tags) ? projectPage.tags : [],
-        })
-    }, [
-        loading,
-        form,
-        projectPage?.projectPageId,
-        projectPage?.lastModified,
-        projectPage?.title,
-        projectPage?.instruction,
-        projectPage?.notes,
-        projectPage?.isShared,
-        projectPage?.tags,
-    ])
-
-    const seeInsideHandler = () => {
-        // Same-tab navigation to the editor: show progress until the page unloads.
-        setOpeningEditor(true)
-        message.loading(intl.formatMessage({ id: 'project_page.opening_editor' }), 0)
-        openScratchEditor(projectPageId)
+  useEffect(() => {
+    actions.getProjectPageById(token, projectPageId)
+    return () => {
+      actions.clearProjectPageState()
     }
+  }, [actions, projectPageId, token])
 
-    const buildProjectPayload = (overrides = {}) => {
-        const values = form.getFieldsValue()
-        return {
-            projectPageId,
-            projectId: projectPage.projectId,
-            title: values.title ?? projectPage.title,
-            instruction: values.instruction ?? projectPage.instruction,
-            notes: values.notes ?? projectPage.notes,
-            isShared: projectPage.isShared,
-            tags: Array.isArray(values.tags) ? values.tags : (projectPage.tags || []),
-            ...overrides,
-        }
+  const { projectPage, playToken, loading, loadError } = useSelector(({ projectPage }) =>
+    getProjectPageState(projectPage),
+  )
+  // Closed or deleted project: say so instead of an empty page with failing widgets.
+  const unavailable = !loading && (loadError?.status === 403 || loadError?.status === 404)
+  const loginState = useSelector(({ login }) => login)
+  const currentUserId = loginState?.userId || ''
+  const isOwner = Boolean(projectPage?.isOwner)
+  const canEditTags = isOwner || isSuperAdmin
+
+  const loadedPageId = projectPage?.projectPageId
+  const loadedLandingFeatured = projectPage?.landingFeatured
+  const loadedLandingSortOrder = projectPage?.landingSortOrder
+  useEffect(() => {
+    if (!loadedPageId) {
+      return
     }
+    setLandingFeaturedLocal(Boolean(loadedLandingFeatured))
+    setLandingSortOrderLocal(Number(loadedLandingSortOrder) || 0)
+  }, [loadedPageId, loadedLandingFeatured, loadedLandingSortOrder])
 
-    const handleSave = async ({ title, instruction, notes, tags }) => {
-        // No token check: SSO sessions have none (the BFF cookie authenticates), and the
-        // old `!token` guards made these buttons silently do nothing there.
-        if (!projectPageId || saveBusy) return
-        setSaveBusy(true)
+  useEffect(() => {
+    if (loading || !projectPage?.projectPageId) return
+
+    const selectedNavBarKey = isOwner ? '2' : 'public_projects'
+    if (location.state?.selectedNavBarKey === selectedNavBarKey) return
+
+    navigate(location.pathname, {
+      replace: true,
+      state: {
+        ...location.state,
+        selectedNavBarKey,
+      },
+    })
+  }, [isOwner, loading, location.pathname, location.state, navigate, projectPage?.projectPageId])
+
+  useEffect(() => {
+    if (loading || !projectPage?.projectPageId) return
+    form.setFieldsValue({
+      title: projectPage.title,
+      instruction: projectPage.instruction,
+      notes: projectPage.notes,
+      isShared: projectPage.isShared,
+      tags: Array.isArray(projectPage.tags) ? projectPage.tags : [],
+    })
+  }, [
+    loading,
+    form,
+    projectPage?.projectPageId,
+    projectPage?.lastModified,
+    projectPage?.title,
+    projectPage?.instruction,
+    projectPage?.notes,
+    projectPage?.isShared,
+    projectPage?.tags,
+  ])
+
+  const seeInsideHandler = () => {
+    // Same-tab navigation to the editor: show progress until the page unloads.
+    setOpeningEditor(true)
+    message.loading(intl.formatMessage({ id: 'project_page.opening_editor' }), 0)
+    openScratchEditor(projectPageId)
+  }
+
+  const buildProjectPayload = (overrides = {}) => {
+    const values = form.getFieldsValue()
+    return {
+      projectPageId,
+      projectId: projectPage.projectId,
+      title: values.title ?? projectPage.title,
+      instruction: values.instruction ?? projectPage.instruction,
+      notes: values.notes ?? projectPage.notes,
+      isShared: projectPage.isShared,
+      tags: Array.isArray(values.tags) ? values.tags : projectPage.tags || [],
+      ...overrides,
+    }
+  }
+
+  const handleSave = async ({ title, instruction, notes, tags }) => {
+    // No token check: SSO sessions have none (the BFF cookie authenticates), and the
+    // old `!token` guards made these buttons silently do nothing there.
+    if (!projectPageId || saveBusy) return
+    setSaveBusy(true)
+    try {
+      await projectPageAPI.updateProjectPage(
+        token,
+        buildProjectPayload({
+          title,
+          instruction,
+          notes,
+          tags: Array.isArray(tags) ? tags : [],
+        }),
+      )
+      message.success(intl.formatMessage({ id: 'project_page.save_ok' }))
+      actions.getProjectPageById(token, projectPageId)
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl, 'project_page.save_error'))
+    } finally {
+      setSaveBusy(false)
+    }
+  }
+
+  const handlePublishToggle = async () => {
+    if (!projectPageId || publishBusy) return
+    const nextShared = !projectPage.isShared
+    setPublishBusy(true)
+    try {
+      await projectPageAPI.updateProjectPage(
+        token,
+        buildProjectPayload({
+          isShared: nextShared,
+        }),
+      )
+      message.success(
+        intl.formatMessage({
+          id: nextShared ? 'project_page.publish_ok' : 'project_page.unpublish_ok',
+        }),
+      )
+      actions.getProjectPageById(token, projectPageId)
+    } catch (e) {
+      const code = e?.response?.data?.code
+      if (code === 'INVALID_PROJECT_FILE') {
+        message.error(intl.formatMessage({ id: 'project_page.publish_invalid' }))
+        return
+      }
+      message.error(apiErrorMessage(e, intl, 'project_page.publish_error'))
+    } finally {
+      setPublishBusy(false)
+    }
+  }
+
+  const handleDownloadSb3 = async () => {
+    if (!projectPageId) return
+    setDownloadBusy(true)
+    try {
+      await downloadProjectSb3(token, projectPageId, projectPage?.title)
+      message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
+    } catch (e) {
+      message.error(sb3DownloadError(e, intl))
+    } finally {
+      setDownloadBusy(false)
+    }
+  }
+
+  const handleUploadSb3 = async event => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file || !projectPageId) return
+    if (!file.name.toLowerCase().endsWith('.sb3')) {
+      message.error(intl.formatMessage({ id: 'project_page.upload_sb3_invalid' }))
+      return
+    }
+    setUploadBusy(true)
+    try {
+      await uploadProjectSb3(token, projectPageId, file)
+      message.success(intl.formatMessage({ id: 'project_page.upload_sb3_success' }))
+      actions.getProjectPageById(token, projectPageId)
+      setPlayerReloadKey(k => k + 1)
+    } catch (e) {
+      const code = e?.response?.data?.code
+      if (code === 'INVALID_PROJECT_FILE') {
+        message.error(intl.formatMessage({ id: 'project_page.invalid_project_file' }))
+      } else {
+        message.error(apiErrorMessage(e, intl, 'project_page.upload_sb3_error'))
+      }
+    } finally {
+      setUploadBusy(false)
+    }
+  }
+
+  const handleUploadPreview = async event => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file || !projectPageId) {
+      return
+    }
+    setPreviewBusy(true)
+    try {
+      await uploadProjectPreview(token, projectPageId, file)
+      message.success(intl.formatMessage({ id: 'project_page.preview_updated' }))
+      actions.getProjectPageById(token, projectPageId)
+      setPlayerReloadKey(k => k + 1)
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl, 'notification.error_message'))
+    } finally {
+      setPreviewBusy(false)
+    }
+  }
+
+  const handleDeleteProject = () => {
+    confirm({
+      title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
+      icon: <ExclamationCircleOutlined />,
+      okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
+      okType: 'danger',
+      cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
+      async onOk() {
+        setDeleteBusy(true)
         try {
-            await projectPageAPI.updateProjectPage(token, buildProjectPayload({
-                title,
-                instruction,
-                notes,
-                tags: Array.isArray(tags) ? tags : [],
-            }))
-            message.success(intl.formatMessage({ id: 'project_page.save_ok' }))
-            actions.getProjectPageById(token, projectPageId)
+          await projectPageMutationGraphQL.deleteProjectPage(projectPageId)
+          message.success(intl.formatMessage({ id: 'notification.project_page_deleted_success' }))
+          navigate(MY_PROJECTS_ROUTE)
         } catch (e) {
-            message.error(apiErrorMessage(e, intl, 'project_page.save_error'))
+          message.error(apiErrorMessage(e, intl, 'notification.error_message'))
         } finally {
-            setSaveBusy(false)
+          setDeleteBusy(false)
         }
+      },
+    })
+  }
+
+  const confirmModerateDelete = async () => {
+    const reason = moderateReason.trim()
+    if (reason.length < 3) {
+      message.warning(intl.formatMessage({ id: 'project_page.moderate_reason_required' }))
+      return
     }
-
-    const handlePublishToggle = async () => {
-        if (!projectPageId || publishBusy) return
-        const nextShared = !projectPage.isShared
-        setPublishBusy(true)
-        try {
-            await projectPageAPI.updateProjectPage(token, buildProjectPayload({
-                isShared: nextShared,
-            }))
-            message.success(intl.formatMessage({
-                id: nextShared ? 'project_page.publish_ok' : 'project_page.unpublish_ok',
-            }))
-            actions.getProjectPageById(token, projectPageId)
-        } catch (e) {
-            const code = e?.response?.data?.code
-            if (code === 'INVALID_PROJECT_FILE') {
-                message.error(intl.formatMessage({ id: 'project_page.publish_invalid' }))
-                return
-            }
-            message.error(apiErrorMessage(e, intl, 'project_page.publish_error'))
-        } finally {
-            setPublishBusy(false)
-        }
+    setModerateBusy(true)
+    try {
+      await moderateDeleteProjectPage(projectPageId, reason)
+      message.success(intl.formatMessage({ id: 'project_page.moderate_delete_ok' }))
+      setModerateOpen(false)
+      setModerateReason('')
+      navigate(PUBLIC_PROJECTS_ROUTE)
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl, 'project_page.moderate_delete_error'))
+    } finally {
+      setModerateBusy(false)
     }
+  }
 
-    const handleDownloadSb3 = async () => {
-        if (!projectPageId) return
-        setDownloadBusy(true)
-        try {
-            await downloadProjectSb3(token, projectPageId, projectPage?.title)
-            message.success(intl.formatMessage({ id: 'project_page.download_sb3_success' }))
-        } catch (e) {
-            message.error(sb3DownloadError(e, intl))
-        } finally {
-            setDownloadBusy(false)
-        }
+  const confirmAddToLanding = async () => {
+    setFeatureBusy(true)
+    try {
+      const data = await setLandingFeatured(projectPageId, {
+        featured: true,
+        sortOrder: Number(featureOrder) || 1,
+      })
+      setLandingFeaturedLocal(data?.projectPage?.landingFeatured ?? true)
+      setLandingSortOrderLocal(data?.projectPage?.landingSortOrder ?? (Number(featureOrder) || 1))
+      message.success(intl.formatMessage({ id: 'project_page.landing_add_ok' }))
+      setFeatureOpen(false)
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
+    } finally {
+      setFeatureBusy(false)
     }
+  }
 
-    const handleUploadSb3 = async event => {
-        const file = event.target.files?.[0]
-        event.target.value = ''
-        if (!file || !projectPageId) return
-        if (!file.name.toLowerCase().endsWith('.sb3')) {
-            message.error(intl.formatMessage({ id: 'project_page.upload_sb3_invalid' }))
-            return
-        }
-        setUploadBusy(true)
-        try {
-            await uploadProjectSb3(token, projectPageId, file)
-            message.success(intl.formatMessage({ id: 'project_page.upload_sb3_success' }))
-            actions.getProjectPageById(token, projectPageId)
-            setPlayerReloadKey(k => k + 1)
-        } catch (e) {
-            const code = e?.response?.data?.code
-            if (code === 'INVALID_PROJECT_FILE') {
-                message.error(intl.formatMessage({ id: 'project_page.invalid_project_file' }))
-            } else {
-                message.error(apiErrorMessage(e, intl, 'project_page.upload_sb3_error'))
-            }
-        } finally {
-            setUploadBusy(false)
-        }
+  const removeFromLanding = async () => {
+    setFeatureBusy(true)
+    try {
+      await setLandingFeatured(projectPageId, { featured: false, sortOrder: 0 })
+      setLandingFeaturedLocal(false)
+      setLandingSortOrderLocal(0)
+      message.success(intl.formatMessage({ id: 'project_page.landing_remove_ok' }))
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
+    } finally {
+      setFeatureBusy(false)
     }
+  }
 
-    const handleUploadPreview = async event => {
-        const file = event.target.files?.[0]
-        event.target.value = ''
-        if (!file || !projectPageId) {
-            return
-        }
-        setPreviewBusy(true)
-        try {
-            await uploadProjectPreview(token, projectPageId, file)
-            message.success(intl.formatMessage({ id: 'project_page.preview_updated' }))
-            actions.getProjectPageById(token, projectPageId)
-            setPlayerReloadKey(k => k + 1)
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl, 'notification.error_message'))
-        } finally {
-            setPreviewBusy(false)
-        }
+  const saveLandingOrder = async () => {
+    setFeatureBusy(true)
+    try {
+      const data = await setLandingFeatured(projectPageId, {
+        featured: true,
+        sortOrder: Number(landingSortOrder) || 0,
+      })
+      setLandingSortOrderLocal(
+        data?.projectPage?.landingSortOrder ?? (Number(landingSortOrder) || 0),
+      )
+      message.success(intl.formatMessage({ id: 'project_page.landing_order_ok' }))
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
+    } finally {
+      setFeatureBusy(false)
     }
+  }
 
-    const handleDeleteProject = () => {
-        confirm({
-            title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
-            icon: <ExclamationCircleOutlined />,
-            okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
-            okType: 'danger',
-            cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
-            async onOk() {
-                setDeleteBusy(true)
-                try {
-                    await projectPageMutationGraphQL.deleteProjectPage(projectPageId)
-                    message.success(intl.formatMessage({ id: 'notification.project_page_deleted_success' }))
-                    navigate(MY_PROJECTS_ROUTE)
-                } catch (e) {
-                    message.error(apiErrorMessage(e, intl, 'notification.error_message'))
-                } finally {
-                    setDeleteBusy(false)
-                }
-            },
-        })
-    }
+  const backTarget = isOwner ? MY_PROJECTS_ROUTE : PUBLIC_PROJECTS_ROUTE
+  const displayTitle =
+    titleValue || projectPage?.title || intl.formatMessage({ id: 'project_page.player_title' })
 
-    const confirmModerateDelete = async () => {
-        const reason = moderateReason.trim()
-        if (reason.length < 3) {
-            message.warning(intl.formatMessage({ id: 'project_page.moderate_reason_required' }))
-            return
-        }
-        setModerateBusy(true)
-        try {
-            await moderateDeleteProjectPage(projectPageId, reason)
-            message.success(intl.formatMessage({ id: 'project_page.moderate_delete_ok' }))
-            setModerateOpen(false)
-            setModerateReason('')
-            navigate(PUBLIC_PROJECTS_ROUTE)
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl, 'project_page.moderate_delete_error'))
-        } finally {
-            setModerateBusy(false)
-        }
-    }
-
-    const confirmAddToLanding = async () => {
-        setFeatureBusy(true)
-        try {
-            const data = await setLandingFeatured(projectPageId, {
-                featured: true,
-                sortOrder: Number(featureOrder) || 1,
-            })
-            setLandingFeaturedLocal(data?.projectPage?.landingFeatured ?? true)
-            setLandingSortOrderLocal(data?.projectPage?.landingSortOrder ?? (Number(featureOrder) || 1))
-            message.success(intl.formatMessage({ id: 'project_page.landing_add_ok' }))
-            setFeatureOpen(false)
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
-        } finally {
-            setFeatureBusy(false)
-        }
-    }
-
-    const removeFromLanding = async () => {
-        setFeatureBusy(true)
-        try {
-            await setLandingFeatured(projectPageId, { featured: false, sortOrder: 0 })
-            setLandingFeaturedLocal(false)
-            setLandingSortOrderLocal(0)
-            message.success(intl.formatMessage({ id: 'project_page.landing_remove_ok' }))
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
-        } finally {
-            setFeatureBusy(false)
-        }
-    }
-
-    const saveLandingOrder = async () => {
-        setFeatureBusy(true)
-        try {
-            const data = await setLandingFeatured(projectPageId, {
-                featured: true,
-                sortOrder: Number(landingSortOrder) || 0,
-            })
-            setLandingSortOrderLocal(data?.projectPage?.landingSortOrder ?? (Number(landingSortOrder) || 0))
-            message.success(intl.formatMessage({ id: 'project_page.landing_order_ok' }))
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl, 'project_page.landing_error'))
-        } finally {
-            setFeatureBusy(false)
-        }
-    }
-
-    const backTarget = isOwner ? MY_PROJECTS_ROUTE : PUBLIC_PROJECTS_ROUTE
-    const displayTitle = titleValue || projectPage?.title || intl.formatMessage({ id: 'project_page.player_title' })
-
-    return (
-        <PageShell>
-            <BackRow>
-                <BackButton
-                    type='default'
-                    icon={<ArrowLeftOutlined />}
-                    onClick={() => navigate(backTarget)}
-                >
-                    <FormattedMessage id={isOwner ? 'project_page.back_to_projects' : 'project_page.back_to_public'} />
-                </BackButton>
-                {projectPage?.authorName && (
-                    <AuthorText>
-                        <FormattedMessage
-                            id='project_page.author_label'
-                            values={{ name: projectPage.authorName }}
-                        />
-                    </AuthorText>
-                )}
-            </BackRow>
-            {loading ? (
-                <LoadingWrap><Spin /></LoadingWrap>
-            ) : unavailable ? (
-                <PlayerCard>
-                    <ProjectTitle>{intl.formatMessage({ id: 'project_page.unavailable_title' })}</ProjectTitle>
-                    <ViewOnlyNote>{intl.formatMessage({ id: 'project_page.unavailable_hint' })}</ViewOnlyNote>
-                </PlayerCard>
-            ) : (
-                <MainGrid>
-                    <PlayerCard>
-                        <ProjectTitle>{displayTitle}</ProjectTitle>
-                        <ScratchPlayerEmbed
-                            ref={playerRef}
-                            projectPageId={projectPageId}
-                            playToken={playToken}
-                            preview={projectPage?.preview}
-                            previewCacheKey={projectPage?.lastModified}
-                            reloadKey={playerReloadKey}
-                            onRunningChange={setIsPlayerRunning}
-                        />
-                        <PlayerScratchControls
-                            running={isPlayerRunning}
-                            onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
-                            onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
-                        />
-                        <ProjectReactions projectPageId={projectPageId} interactive />
-                        {Boolean(projectPage?.isShared) && (
-                            <ProjectComments
-                                projectPageId={projectPageId}
-                                interactive
-                                canModerate={isOwner || isSuperAdmin}
-                                currentUserId={String(currentUserId || '')}
-                            />
-                        )}
-                        {!isOwner && (
-                            <ViewOnlyNote>
-                                <FormattedMessage id='project_page.view_only' />
-                            </ViewOnlyNote>
-                        )}
-                    </PlayerCard>
-                    <MetaCard>
-                        <SectionTitle>
-                            <FormattedMessage id='project_page.meta_section' />
-                        </SectionTitle>
-                        <ProjectForm>
-                            <Form
-                                name='normal_project-page'
-                                className='project-page-form'
-                                layout='vertical'
-                                form={form}
-                                onFinish={handleSave}
-                            >
-                                <Form.Item
-                                    name='title'
-                                    label={<FormattedMessage id='project_page.title' />}
-                                >
-                                    <Input size='large' readOnly={!isOwner} />
-                                </Form.Item>
-                                <Form.Item
-                                    name='instruction'
-                                    label={<FormattedMessage id='project_page.instruction' />}
-                                >
-                                    <TextArea size='large' rows={4}
-readOnly={!isOwner} />
-                                </Form.Item>
-                                <Form.Item
-                                    name='notes'
-                                    label={<FormattedMessage id='project_page.description' />}
-                                >
-                                    <TextArea size='large' rows={4}
-readOnly={!isOwner} />
-                                </Form.Item>
-                                {canEditTags ? (
-                                    <Form.Item
-                                        name='tags'
-                                        label={<FormattedMessage id='project_page.tags_label' />}
-                                        extra={<FormattedMessage id='project_page.tags_hint' values={{ maxCount: 5 }} />}
-                                    >
-                                        <Select
-                                            mode='tags'
-                                            tokenSeparators={[',']}
-                                            placeholder={intl.formatMessage({ id: 'project_page.tags_placeholder' })}
-                                            maxTagCount={5}
-                                            open={false}
-                                            onChange={values => {
-                                                const MAX_COUNT = 5
-                                                const MAX_LEN = 25
-                                                const seen = new Set()
-                                                const next = []
-                                                let tooLong = false
-                                                let capped = false
-                                                ;(Array.isArray(values) ? values : []).forEach(raw => {
-                                                    const original = String(raw || '').trim()
-                                                    if (!original) {
-                                                        return
-                                                    }
-                                                    if (original.length > MAX_LEN) {
-                                                        tooLong = true
-                                                        return
-                                                    }
-                                                    const value = original.toLowerCase()
-                                                        .replace(/_/g, '-')
-                                                        .replace(/\s+/g, '-')
-                                                        .replace(/[^a-z0-9-]/g, '')
-                                                        .replace(/-+/g, '-')
-                                                        .replace(/^-|-$/g, '')
-                                                    if (!value || seen.has(value)) {
-                                                        return
-                                                    }
-                                                    if (value.length > MAX_LEN) {
-                                                        tooLong = true
-                                                        return
-                                                    }
-                                                    if (next.length >= MAX_COUNT) {
-                                                        capped = true
-                                                        return
-                                                    }
-                                                    seen.add(value)
-                                                    next.push(value)
-                                                })
-                                                if (tooLong) {
-                                                    message.error(intl.formatMessage(
-                                                        { id: 'project_page.tags_max_length' },
-                                                        { max: MAX_LEN },
-                                                    ))
-                                                }
-                                                if (capped) {
-                                                    message.warning(intl.formatMessage(
-                                                        { id: 'project_page.tags_max_count' },
-                                                        { max: MAX_COUNT },
-                                                    ))
-                                                }
-                                                form.setFieldsValue({ tags: next })
-                                            }}
-                                        />
-                                    </Form.Item>
-                                ) : (
-                                    Array.isArray(projectPage?.tags) && projectPage.tags.length > 0 && (
-                                        <MetaRow>
-                                            <MetaLabel>
-                                                <FormattedMessage id='project_page.tags_label' />
-                                            </MetaLabel>
-                                            <ProjectTagList>
-                                                {projectPage.tags.map(tag => (
-                                                    <ProjectTag
-                                                        key={tag}
-                                                        type='button'
-                                                        onClick={() => navigate(`${PUBLIC_PROJECTS_ROUTE}?tag=${encodeURIComponent(tag)}`)}
-                                                    >
-                                                        {tag}
-                                                    </ProjectTag>
-                                                ))}
-                                            </ProjectTagList>
-                                        </MetaRow>
-                                    )
-                                )}
-                                <MetaRow>
-                                    <MetaLabel>
-                                        <FormattedMessage id='project_page.last_change' />
-                                    </MetaLabel>
-                                    <MetaValue>
-                                        {formatDateTime(projectPage.lastModified, intl.locale)}
-                                    </MetaValue>
-                                </MetaRow>
-                                <ActionsSection>
-                                    <MetaLabel style={{ marginBottom: '0.65rem' }}>
-                                        <FormattedMessage id='project_page.actions_group' />
-                                    </MetaLabel>
-                                    <ActionsGroup>
-                                        {canEditTags && (
-                                            <PrimaryAction type='primary' htmlType='submit'
-loading={saveBusy}>
-                                                <FormattedMessage id='project_page.save' />
-                                            </PrimaryAction>
-                                        )}
-                                        {isOwner && (
-                                            <ActionButton
-                                                type={projectPage.isShared ? 'default' : 'primary'}
-                                                htmlType='button'
-                                                loading={publishBusy}
-                                                onClick={handlePublishToggle}
-                                            >
-                                                <FormattedMessage
-                                                    id={projectPage.isShared
-                                                        ? 'project_page.unpublish'
-                                                        : 'project_page.publish'}
-                                                />
-                                            </ActionButton>
-                                        )}
-                                        {isOwner && (
-                                            <React.Fragment>
-                                                <input
-                                                    ref={uploadInputRef}
-                                                    type='file'
-                                                    accept='.sb3,application/x.scratch.sb3'
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleUploadSb3}
-                                                />
-                                                <ActionButton
-                                                    type='default'
-                                                    icon={<CloudUploadOutlined />}
-                                                    loading={uploadBusy}
-                                                    onClick={() => uploadInputRef.current?.click()}
-                                                >
-                                                    <FormattedMessage id='project_page.upload_sb3' />
-                                                </ActionButton>
-                                            </React.Fragment>
-                                        )}
-                                        {isOwner && (
-                                            <React.Fragment>
-                                                <input
-                                                    ref={previewInputRef}
-                                                    type='file'
-                                                    accept='image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp'
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleUploadPreview}
-                                                />
-                                                <ActionButton
-                                                    type='default'
-                                                    icon={<PictureOutlined />}
-                                                    loading={previewBusy}
-                                                    onClick={() => previewInputRef.current?.click()}
-                                                >
-                                                    <FormattedMessage id='project_page.upload_preview' />
-                                                </ActionButton>
-                                            </React.Fragment>
-                                        )}
-                                        {isOwner && (
-                                            <ScratchAction
-                                                type='primary'
-                                                loading={openingEditor}
-                                                onClick={seeInsideHandler}
-                                            >
-                                                <FormattedMessage id='project_page.open_in_scratch' />
-                                            </ScratchAction>
-                                        )}
-                                        <ActionButton
-                                            type='default'
-                                            htmlType='button'
-                                            icon={<CloudDownloadOutlined />}
-                                            loading={downloadBusy}
-                                            onClick={handleDownloadSb3}
-                                        >
-                                            <FormattedMessage id='project_page.download_sb3' />
-                                        </ActionButton>
-                                        {isSuperAdmin && (
-                                            <React.Fragment>
-                                                {landingFeatured ? (
-                                                    <Space wrap size={8}
-style={{ width: '100%' }}>
-                                                        <InputNumber
-                                                            min={0}
-                                                            value={landingSortOrder}
-                                                            onChange={value => setLandingSortOrderLocal(value)}
-                                                            aria-label={intl.formatMessage({ id: 'project_page.landing_order_label' })}
-                                                        />
-                                                        <Button
-                                                            loading={featureBusy}
-                                                            onClick={saveLandingOrder}
-                                                        >
-                                                            <FormattedMessage id='project_page.landing_order_save' />
-                                                        </Button>
-                                                        <Button
-                                                            loading={featureBusy}
-                                                            onClick={removeFromLanding}
-                                                        >
-                                                            <FormattedMessage id='project_page.landing_remove' />
-                                                        </Button>
-                                                    </Space>
-                                                ) : (
-                                                    <ActionButton
-                                                        type='default'
-                                                        icon={<PushpinOutlined />}
-                                                        onClick={() => {
-                                                            setFeatureOrder((landingSortOrder || 0) + 1 || 1)
-                                                            setFeatureOpen(true)
-                                                        }}
-                                                    >
-                                                        <FormattedMessage id='project_page.landing_add' />
-                                                    </ActionButton>
-                                                )}
-                                                <ActionButton
-                                                    type='default'
-                                                    danger
-                                                    icon={<DeleteOutlined />}
-                                                    onClick={() => {
-                                                        setModerateReason('')
-                                                        setModerateOpen(true)
-                                                    }}
-                                                >
-                                                    <FormattedMessage id='project_page.moderate_delete' />
-                                                </ActionButton>
-                                            </React.Fragment>
-                                        )}
-                                        {isOwner && (
-                                            <ActionButton
-                                                type='default'
-                                                danger
-                                                htmlType='button'
-                                                loading={deleteBusy}
-                                                onClick={handleDeleteProject}
-                                            >
-                                                <FormattedMessage id='project_page.delete' />
-                                            </ActionButton>
-                                        )}
-                                    </ActionsGroup>
-                                </ActionsSection>
-                            </Form>
-                        </ProjectForm>
-                    </MetaCard>
-                </MainGrid>
+  return (
+    <PageShell>
+      <BackRow>
+        <BackButton
+          type='default'
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(backTarget)}>
+          <FormattedMessage
+            id={isOwner ? 'project_page.back_to_projects' : 'project_page.back_to_public'}
+          />
+        </BackButton>
+        {projectPage?.authorName && (
+          <AuthorText>
+            <FormattedMessage
+              id='project_page.author_label'
+              values={{ name: projectPage.authorName }}
+            />
+          </AuthorText>
+        )}
+      </BackRow>
+      {loading ? (
+        <LoadingWrap>
+          <Spin />
+        </LoadingWrap>
+      ) : unavailable ? (
+        <PlayerCard>
+          <ProjectTitle>
+            {intl.formatMessage({ id: 'project_page.unavailable_title' })}
+          </ProjectTitle>
+          <ViewOnlyNote>{intl.formatMessage({ id: 'project_page.unavailable_hint' })}</ViewOnlyNote>
+        </PlayerCard>
+      ) : (
+        <MainGrid>
+          <PlayerCard>
+            <ProjectTitle>{displayTitle}</ProjectTitle>
+            <ScratchPlayerEmbed
+              ref={playerRef}
+              projectPageId={projectPageId}
+              playToken={playToken}
+              preview={projectPage?.preview}
+              previewCacheKey={projectPage?.lastModified}
+              reloadKey={playerReloadKey}
+              onRunningChange={setIsPlayerRunning}
+            />
+            <PlayerScratchControls
+              running={isPlayerRunning}
+              onGreenFlag={() => playerRef.current?.sendCommand('scratch:greenFlag')}
+              onStopAll={() => playerRef.current?.sendCommand('scratch:stopAll')}
+            />
+            <ProjectReactions projectPageId={projectPageId} interactive />
+            {Boolean(projectPage?.isShared) && (
+              <ProjectComments
+                projectPageId={projectPageId}
+                interactive
+                canModerate={isOwner || isSuperAdmin}
+                currentUserId={String(currentUserId || '')}
+              />
             )}
-            <Modal
-                open={moderateOpen}
-                title={intl.formatMessage({ id: 'project_page.moderate_delete_title' })}
-                okText={intl.formatMessage({ id: 'project_page.moderate_delete_confirm' })}
-                cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
-                okButtonProps={{ danger: true, loading: moderateBusy, disabled: moderateReason.trim().length < 3 }}
-                onOk={confirmModerateDelete}
-                onCancel={() => !moderateBusy && setModerateOpen(false)}
-                destroyOnHidden
-            >
-                <p>
-                    <FormattedMessage
-                        id='project_page.moderate_delete_body'
-                        values={{ title: displayProjectTitle(projectPage?.title, intl) }}
+            {!isOwner && (
+              <ViewOnlyNote>
+                <FormattedMessage id='project_page.view_only' />
+              </ViewOnlyNote>
+            )}
+          </PlayerCard>
+          <MetaCard>
+            <SectionTitle>
+              <FormattedMessage id='project_page.meta_section' />
+            </SectionTitle>
+            <ProjectForm>
+              <Form
+                name='normal_project-page'
+                className='project-page-form'
+                layout='vertical'
+                form={form}
+                onFinish={handleSave}>
+                <Form.Item name='title' label={<FormattedMessage id='project_page.title' />}>
+                  <Input size='large' readOnly={!isOwner} />
+                </Form.Item>
+                <Form.Item
+                  name='instruction'
+                  label={<FormattedMessage id='project_page.instruction' />}>
+                  <TextArea size='large' rows={4} readOnly={!isOwner} />
+                </Form.Item>
+                <Form.Item name='notes' label={<FormattedMessage id='project_page.description' />}>
+                  <TextArea size='large' rows={4} readOnly={!isOwner} />
+                </Form.Item>
+                {canEditTags ? (
+                  <Form.Item
+                    name='tags'
+                    label={<FormattedMessage id='project_page.tags_label' />}
+                    extra={
+                      <FormattedMessage id='project_page.tags_hint' values={{ maxCount: 5 }} />
+                    }>
+                    <Select
+                      mode='tags'
+                      tokenSeparators={[',']}
+                      placeholder={intl.formatMessage({ id: 'project_page.tags_placeholder' })}
+                      maxTagCount={5}
+                      open={false}
+                      onChange={values => {
+                        const MAX_COUNT = 5
+                        const MAX_LEN = 25
+                        const seen = new Set()
+                        const next = []
+                        let tooLong = false
+                        let capped = false
+                        ;(Array.isArray(values) ? values : []).forEach(raw => {
+                          const original = String(raw || '').trim()
+                          if (!original) {
+                            return
+                          }
+                          if (original.length > MAX_LEN) {
+                            tooLong = true
+                            return
+                          }
+                          const value = original
+                            .toLowerCase()
+                            .replace(/_/g, '-')
+                            .replace(/\s+/g, '-')
+                            .replace(/[^a-z0-9-]/g, '')
+                            .replace(/-+/g, '-')
+                            .replace(/^-|-$/g, '')
+                          if (!value || seen.has(value)) {
+                            return
+                          }
+                          if (value.length > MAX_LEN) {
+                            tooLong = true
+                            return
+                          }
+                          if (next.length >= MAX_COUNT) {
+                            capped = true
+                            return
+                          }
+                          seen.add(value)
+                          next.push(value)
+                        })
+                        if (tooLong) {
+                          message.error(
+                            intl.formatMessage(
+                              { id: 'project_page.tags_max_length' },
+                              { max: MAX_LEN },
+                            ),
+                          )
+                        }
+                        if (capped) {
+                          message.warning(
+                            intl.formatMessage(
+                              { id: 'project_page.tags_max_count' },
+                              { max: MAX_COUNT },
+                            ),
+                          )
+                        }
+                        form.setFieldsValue({ tags: next })
+                      }}
                     />
-                </p>
-                <TextArea
-                    rows={4}
-                    value={moderateReason}
-                    onChange={e => setModerateReason(e.target.value)}
-                    placeholder={intl.formatMessage({ id: 'project_page.moderate_reason_placeholder' })}
-                />
-            </Modal>
-            <Modal
-                open={featureOpen}
-                title={intl.formatMessage({ id: 'project_page.landing_add_title' })}
-                okText={intl.formatMessage({ id: 'project_page.landing_add_confirm' })}
-                cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
-                okButtonProps={{ loading: featureBusy }}
-                onOk={confirmAddToLanding}
-                onCancel={() => !featureBusy && setFeatureOpen(false)}
-                destroyOnHidden
-            >
-                <p>
-                    <FormattedMessage
-                        id='project_page.landing_add_body'
-                        values={{ title: displayProjectTitle(projectPage?.title, intl) }}
-                    />
-                </p>
-                <label htmlFor='project-landing-sort-order'>
-                    <FormattedMessage id='project_page.landing_order_label' />
-                </label>
-                <InputNumber
-                    id='project-landing-sort-order'
-                    style={{ width: '100%', marginTop: 8 }}
-                    min={0}
-                    value={featureOrder}
-                    onChange={value => setFeatureOrder(value)}
-                />
-            </Modal>
-        </PageShell>
-    )
+                  </Form.Item>
+                ) : (
+                  Array.isArray(projectPage?.tags) &&
+                  projectPage.tags.length > 0 && (
+                    <MetaRow>
+                      <MetaLabel>
+                        <FormattedMessage id='project_page.tags_label' />
+                      </MetaLabel>
+                      <ProjectTagList>
+                        {projectPage.tags.map(tag => (
+                          <ProjectTag
+                            key={tag}
+                            type='button'
+                            onClick={() =>
+                              navigate(`${PUBLIC_PROJECTS_ROUTE}?tag=${encodeURIComponent(tag)}`)
+                            }>
+                            {tag}
+                          </ProjectTag>
+                        ))}
+                      </ProjectTagList>
+                    </MetaRow>
+                  )
+                )}
+                <MetaRow>
+                  <MetaLabel>
+                    <FormattedMessage id='project_page.last_change' />
+                  </MetaLabel>
+                  <MetaValue>{formatDateTime(projectPage.lastModified, intl.locale)}</MetaValue>
+                </MetaRow>
+                <ActionsSection>
+                  <MetaLabel style={{ marginBottom: '0.65rem' }}>
+                    <FormattedMessage id='project_page.actions_group' />
+                  </MetaLabel>
+                  <ActionsGroup>
+                    {canEditTags && (
+                      <PrimaryAction type='primary' htmlType='submit' loading={saveBusy}>
+                        <FormattedMessage id='project_page.save' />
+                      </PrimaryAction>
+                    )}
+                    {isOwner && (
+                      <ActionButton
+                        type={projectPage.isShared ? 'default' : 'primary'}
+                        htmlType='button'
+                        loading={publishBusy}
+                        onClick={handlePublishToggle}>
+                        <FormattedMessage
+                          id={
+                            projectPage.isShared ? 'project_page.unpublish' : 'project_page.publish'
+                          }
+                        />
+                      </ActionButton>
+                    )}
+                    {isOwner && (
+                      <React.Fragment>
+                        <input
+                          ref={uploadInputRef}
+                          type='file'
+                          accept='.sb3,application/x.scratch.sb3'
+                          style={{ display: 'none' }}
+                          onChange={handleUploadSb3}
+                        />
+                        <ActionButton
+                          type='default'
+                          icon={<CloudUploadOutlined />}
+                          loading={uploadBusy}
+                          onClick={() => uploadInputRef.current?.click()}>
+                          <FormattedMessage id='project_page.upload_sb3' />
+                        </ActionButton>
+                      </React.Fragment>
+                    )}
+                    {isOwner && (
+                      <React.Fragment>
+                        <input
+                          ref={previewInputRef}
+                          type='file'
+                          accept='image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp'
+                          style={{ display: 'none' }}
+                          onChange={handleUploadPreview}
+                        />
+                        <ActionButton
+                          type='default'
+                          icon={<PictureOutlined />}
+                          loading={previewBusy}
+                          onClick={() => previewInputRef.current?.click()}>
+                          <FormattedMessage id='project_page.upload_preview' />
+                        </ActionButton>
+                      </React.Fragment>
+                    )}
+                    {isOwner && (
+                      <ScratchAction
+                        type='primary'
+                        loading={openingEditor}
+                        onClick={seeInsideHandler}>
+                        <FormattedMessage id='project_page.open_in_scratch' />
+                      </ScratchAction>
+                    )}
+                    <ActionButton
+                      type='default'
+                      htmlType='button'
+                      icon={<CloudDownloadOutlined />}
+                      loading={downloadBusy}
+                      onClick={handleDownloadSb3}>
+                      <FormattedMessage id='project_page.download_sb3' />
+                    </ActionButton>
+                    {isSuperAdmin && (
+                      <React.Fragment>
+                        {landingFeatured ? (
+                          <Space wrap size={8} style={{ width: '100%' }}>
+                            <InputNumber
+                              min={0}
+                              value={landingSortOrder}
+                              onChange={value => setLandingSortOrderLocal(value)}
+                              aria-label={intl.formatMessage({
+                                id: 'project_page.landing_order_label',
+                              })}
+                            />
+                            <Button loading={featureBusy} onClick={saveLandingOrder}>
+                              <FormattedMessage id='project_page.landing_order_save' />
+                            </Button>
+                            <Button loading={featureBusy} onClick={removeFromLanding}>
+                              <FormattedMessage id='project_page.landing_remove' />
+                            </Button>
+                          </Space>
+                        ) : (
+                          <ActionButton
+                            type='default'
+                            icon={<PushpinOutlined />}
+                            onClick={() => {
+                              setFeatureOrder((landingSortOrder || 0) + 1 || 1)
+                              setFeatureOpen(true)
+                            }}>
+                            <FormattedMessage id='project_page.landing_add' />
+                          </ActionButton>
+                        )}
+                        <ActionButton
+                          type='default'
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={() => {
+                            setModerateReason('')
+                            setModerateOpen(true)
+                          }}>
+                          <FormattedMessage id='project_page.moderate_delete' />
+                        </ActionButton>
+                      </React.Fragment>
+                    )}
+                    {isOwner && (
+                      <ActionButton
+                        type='default'
+                        danger
+                        htmlType='button'
+                        loading={deleteBusy}
+                        onClick={handleDeleteProject}>
+                        <FormattedMessage id='project_page.delete' />
+                      </ActionButton>
+                    )}
+                  </ActionsGroup>
+                </ActionsSection>
+              </Form>
+            </ProjectForm>
+          </MetaCard>
+        </MainGrid>
+      )}
+      <Modal
+        open={moderateOpen}
+        title={intl.formatMessage({ id: 'project_page.moderate_delete_title' })}
+        okText={intl.formatMessage({ id: 'project_page.moderate_delete_confirm' })}
+        cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
+        okButtonProps={{
+          danger: true,
+          loading: moderateBusy,
+          disabled: moderateReason.trim().length < 3,
+        }}
+        onOk={confirmModerateDelete}
+        onCancel={() => !moderateBusy && setModerateOpen(false)}
+        destroyOnHidden>
+        <p>
+          <FormattedMessage
+            id='project_page.moderate_delete_body'
+            values={{ title: displayProjectTitle(projectPage?.title, intl) }}
+          />
+        </p>
+        <TextArea
+          rows={4}
+          value={moderateReason}
+          onChange={e => setModerateReason(e.target.value)}
+          placeholder={intl.formatMessage({ id: 'project_page.moderate_reason_placeholder' })}
+        />
+      </Modal>
+      <Modal
+        open={featureOpen}
+        title={intl.formatMessage({ id: 'project_page.landing_add_title' })}
+        okText={intl.formatMessage({ id: 'project_page.landing_add_confirm' })}
+        cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
+        okButtonProps={{ loading: featureBusy }}
+        onOk={confirmAddToLanding}
+        onCancel={() => !featureBusy && setFeatureOpen(false)}
+        destroyOnHidden>
+        <p>
+          <FormattedMessage
+            id='project_page.landing_add_body'
+            values={{ title: displayProjectTitle(projectPage?.title, intl) }}
+          />
+        </p>
+        <label htmlFor='project-landing-sort-order'>
+          <FormattedMessage id='project_page.landing_order_label' />
+        </label>
+        <InputNumber
+          id='project-landing-sort-order'
+          style={{ width: '100%', marginTop: 8 }}
+          min={0}
+          value={featureOrder}
+          onChange={value => setFeatureOrder(value)}
+        />
+      </Modal>
+    </PageShell>
+  )
 }
 
 function readStoredAccessToken() {
-    const token = getAccessToken()
-    if (!token || token === 'null') {
-        return null
-    }
-    if (isAccessTokenExpired(token)) {
-        return null
-    }
-    return token
+  const token = getAccessToken()
+  if (!token || token === 'null') {
+    return null
+  }
+  if (isAccessTokenExpired(token)) {
+    return null
+  }
+  return token
 }
 
 /**
@@ -1010,73 +1034,73 @@ function readStoredAccessToken() {
  * Does not use OidcSessionProvider (that redirects unauthenticated users to login).
  */
 export default () => {
-    const { projectPageId } = useParams()
-    const [probe, setProbe] = useState({ status: 'loading', token: null })
+  const { projectPageId } = useParams()
+  const [probe, setProbe] = useState({ status: 'loading', token: null })
 
-    useEffect(() => {
-        let cancelled = false
+  useEffect(() => {
+    let cancelled = false
 
-        const run = async () => {
-            const done = probeResult => {
-                if (!cancelled) {
-                    setProbe(probeResult)
-                }
-            }
-            const token = readStoredAccessToken()
-            if (token) {
-                done({ status: 'auth', token })
-                return
-            }
-
-            // SSO: ask for the session first. A BFF cookie session needs no access token, and
-            // /auth/refresh can only help after a password login (refresh_token cookie): calling
-            // it first meant two failed refresh requests on every project page.
-            let refreshUseful = true
-            if (isOidcSsoEnabled()) {
-                try {
-                    const status = await fetchOidcStatus()
-                    if (status?.authenticated) {
-                        done({ status: 'auth', token: '' })
-                        return
-                    }
-                    refreshUseful = hasLmsPasswordFallback(status)
-                } catch (_) {
-                    // status unavailable: still try a password session below
-                }
-            }
-
-            if (refreshUseful) {
-                const refreshed = await tryRefreshAccessToken()
-                if (refreshed) {
-                    done({ status: 'auth', token: refreshed })
-                    return
-                }
-            }
-
-            if (!cancelled) {
-                setProbe({ status: 'guest', token: null })
-            }
+    const run = async () => {
+      const done = probeResult => {
+        if (!cancelled) {
+          setProbe(probeResult)
         }
+      }
+      const token = readStoredAccessToken()
+      if (token) {
+        done({ status: 'auth', token })
+        return
+      }
 
-        run()
-        return () => {
-            cancelled = true
+      // SSO: ask for the session first. A BFF cookie session needs no access token, and
+      // /auth/refresh can only help after a password login (refresh_token cookie): calling
+      // it first meant two failed refresh requests on every project page.
+      let refreshUseful = true
+      if (isOidcSsoEnabled()) {
+        try {
+          const status = await fetchOidcStatus()
+          if (status?.authenticated) {
+            done({ status: 'auth', token: '' })
+            return
+          }
+          refreshUseful = hasLmsPasswordFallback(status)
+        } catch (_) {
+          // status unavailable: still try a password session below
         }
-    }, [projectPageId])
+      }
 
-    if (probe.status === 'loading') {
-        return <Loader />
+      if (refreshUseful) {
+        const refreshed = await tryRefreshAccessToken()
+        if (refreshed) {
+          done({ status: 'auth', token: refreshed })
+          return
+        }
+      }
+
+      if (!cancelled) {
+        setProbe({ status: 'guest', token: null })
+      }
     }
 
-    if (probe.status === 'guest') {
-        return <GuestProjectView projectPageId={projectPageId} />
+    run()
+    return () => {
+      cancelled = true
     }
+  }, [projectPageId])
 
-    return (
-        <RequireAuth>
-            <PageLayout>
-                <AuthenticatedProjectView projectPageId={projectPageId} token={probe.token} />
-            </PageLayout>
-        </RequireAuth>
-    )
+  if (probe.status === 'loading') {
+    return <Loader />
+  }
+
+  if (probe.status === 'guest') {
+    return <GuestProjectView projectPageId={projectPageId} />
+  }
+
+  return (
+    <RequireAuth>
+      <PageLayout>
+        <AuthenticatedProjectView projectPageId={projectPageId} token={probe.token} />
+      </PageLayout>
+    </RequireAuth>
+  )
 }

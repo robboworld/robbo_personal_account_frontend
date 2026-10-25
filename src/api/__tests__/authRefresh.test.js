@@ -15,7 +15,11 @@ describe('authRefresh', () => {
 
   it('shares one request between concurrent callers and stores the token', async () => {
     let release
-    global.fetch.mockReturnValue(new Promise(resolve => { release = resolve }))
+    global.fetch.mockReturnValue(
+      new Promise(resolve => {
+        release = resolve
+      }),
+    )
     const calls = [refreshAccessToken(), refreshAccessToken(), tryRefreshAccessToken()]
     release(okResponse('new-token'))
     await expect(Promise.all(calls)).resolves.toEqual(['new-token', 'new-token', 'new-token'])

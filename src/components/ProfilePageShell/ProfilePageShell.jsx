@@ -33,57 +33,50 @@ const ProfilePageBody = ({
   // Without a profile there is nothing to show below the error: no endless "loading".
   const failed = Boolean(error) && !profile
   return (
-  <React.Fragment>
-    <ProfileHero variants={staggerItem}>
-      <UserAvatar
-        avatarId={profile?.avatarId}
-        displayName={profile?.fullName || profile?.nickname || profile?.email || ''}
-        variant='hero'
-      />
-      <ProfileHeroCopy>
-        <ProfileTitle>
-          <FormattedMessage id='profile.title' />
-        </ProfileTitle>
-        <ProfileSubtitle>
-          {profile?.fullName || profile?.nickname || profile?.email || (
-            failed ? null : <FormattedMessage id='profile.loading' />
-          )}
-        </ProfileSubtitle>
-        {profile && accessUpdate && (
-          <ProfileMeta>
-            <MetaChip>
-              <FormattedMessage id='profile.read_only' />
-            </MetaChip>
-          </ProfileMeta>
-        )}
-      </ProfileHeroCopy>
-    </ProfileHero>
-
-    {error && (
-      <motion.div variants={staggerItem} style={{ marginBottom: 16 }}>
-        <Alert
-          type='error'
-          showIcon
-          title={apiErrorMessage(error, intl, 'profile.load_error')}
+    <React.Fragment>
+      <ProfileHero variants={staggerItem}>
+        <UserAvatar
+          avatarId={profile?.avatarId}
+          displayName={profile?.fullName || profile?.nickname || profile?.email || ''}
+          variant='hero'
         />
-      </motion.div>
-    )}
+        <ProfileHeroCopy>
+          <ProfileTitle>
+            <FormattedMessage id='profile.title' />
+          </ProfileTitle>
+          <ProfileSubtitle>
+            {profile?.fullName ||
+              profile?.nickname ||
+              profile?.email ||
+              (failed ? null : <FormattedMessage id='profile.loading' />)}
+          </ProfileSubtitle>
+          {profile && accessUpdate && (
+            <ProfileMeta>
+              <MetaChip>
+                <FormattedMessage id='profile.read_only' />
+              </MetaChip>
+            </ProfileMeta>
+          )}
+        </ProfileHeroCopy>
+      </ProfileHero>
 
-    {failed ? null : (
-    <ProfileFormCard variants={staggerItem}>
-      <Skeleton
-        active
-        loading={loading}
-        paragraph={{ rows: 8 }}
-      >
-        {children}
-        {peekUserId ? (
-          <UserBanPanel lmsUserId={peekUserId} peekUserRole={peekUserRole} />
-        ) : null}
-      </Skeleton>
-    </ProfileFormCard>
-    )}
-  </React.Fragment>
+      {error && (
+        <motion.div variants={staggerItem} style={{ marginBottom: 16 }}>
+          <Alert type='error' showIcon title={apiErrorMessage(error, intl, 'profile.load_error')} />
+        </motion.div>
+      )}
+
+      {failed ? null : (
+        <ProfileFormCard variants={staggerItem}>
+          <Skeleton active loading={loading} paragraph={{ rows: 8 }}>
+            {children}
+            {peekUserId ? (
+              <UserBanPanel lmsUserId={peekUserId} peekUserRole={peekUserRole} />
+            ) : null}
+          </Skeleton>
+        </ProfileFormCard>
+      )}
+    </React.Fragment>
   )
 }
 
@@ -98,19 +91,14 @@ const ProfilePageShell = ({
   children,
 }) => {
   const body = (
-    <motion.div
-      variants={staggerContainer}
-      initial='hidden'
-      animate='show'
-    >
+    <motion.div variants={staggerContainer} initial='hidden' animate='show'>
       <ProfilePageBody
         profile={profile}
         loading={loading}
         error={error}
         accessUpdate={accessUpdate}
         peekUserId={peekUserId}
-        peekUserRole={peekUserRole}
-      >
+        peekUserRole={peekUserRole}>
         {children}
       </ProfilePageBody>
     </motion.div>

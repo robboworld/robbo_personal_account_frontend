@@ -11,12 +11,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
-import {
-  CreateButton,
-  DeleteButton,
-  HeroRow,
-  PaginationWrap,
-} from './styles'
+import { CreateButton, DeleteButton, HeroRow, PaginationWrap } from './styles'
 
 import { formatDateTime } from '@/helpers/formatDateTime'
 import { displayProjectTitle } from '@/helpers/intl'
@@ -54,8 +49,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { openScratchEditor , getScratchEditorLabel } from '@/utils/scratchEditor'
-
+import { openScratchEditor, getScratchEditorLabel } from '@/utils/scratchEditor'
 
 const { confirm } = Modal
 const SKELETON_COUNT = 6
@@ -77,38 +71,40 @@ const MyProjects = ({
   const projects = projectData?.projectPages || []
   const totalRows = projectData?.countRows || 0
 
-  const openProject = useCallback(projectPageId => {
-    navigate(`/projects/${projectPageId}`, {
-      state: { selectedNavBarKey: '2' },
-    })
-  }, [navigate])
+  const openProject = useCallback(
+    projectPageId => {
+      navigate(`/projects/${projectPageId}`, {
+        state: { selectedNavBarKey: '2' },
+      })
+    },
+    [navigate],
+  )
 
   const editProject = useCallback(projectPageId => {
     openScratchEditor(projectPageId)
   }, [])
 
-  const confirmDelete = useCallback(projectPageId => {
-    confirm({
-      title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
-      icon: <ExclamationCircleOutlined />,
-      okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
-      okType: 'danger',
-      cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
-      onOk() {
-        DeleteProjectPage({ variables: { projectID: projectPageId } })
-      },
-    })
-  }, [DeleteProjectPage, intl])
-
-  const projectCountLabel = intl.formatMessage(
-    { id: 'my_projects.count' },
-    { count: totalRows },
+  const confirmDelete = useCallback(
+    projectPageId => {
+      confirm({
+        title: intl.formatMessage({ id: 'modal_window.delete_confirm' }),
+        icon: <ExclamationCircleOutlined />,
+        okText: intl.formatMessage({ id: 'modal_window.delete_confirm_ok' }),
+        okType: 'danger',
+        cancelText: intl.formatMessage({ id: 'modal_window.delete_confirm_cancel_text' }),
+        onOk() {
+          DeleteProjectPage({ variables: { projectID: projectPageId } })
+        },
+      })
+    },
+    [DeleteProjectPage, intl],
   )
+
+  const projectCountLabel = intl.formatMessage({ id: 'my_projects.count' }, { count: totalRows })
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroRow>
             <HeroInner>
@@ -116,14 +112,13 @@ animate='show'>
                 <FormattedMessage id='my_projects.title' />
               </HeroTitle>
               <HeroLead>
-                <FormattedMessage id='home.action.projects.description' values={{ editor: getScratchEditorLabel() }} />
+                <FormattedMessage
+                  id='home.action.projects.description'
+                  values={{ editor: getScratchEditorLabel() }}
+                />
               </HeroLead>
             </HeroInner>
-            <CreateButton
-              type='button'
-              disabled={creating}
-              onClick={() => CreateProjectPage()}
-            >
+            <CreateButton type='button' disabled={creating} onClick={() => CreateProjectPage()}>
               <PlusOutlined />
               <FormattedMessage id='my_projects.create_new' />
             </CreateButton>
@@ -136,9 +131,7 @@ animate='show'>
               <SectionTitle>
                 <FormattedMessage id='my_projects.list_title' />
               </SectionTitle>
-              {!loading && totalRows > 0 && (
-                <CatalogCount>{projectCountLabel}</CatalogCount>
-              )}
+              {!loading && totalRows > 0 && <CatalogCount>{projectCountLabel}</CatalogCount>}
               {!loading && totalRows === 0 && (
                 <SectionHint>
                   <FormattedMessage id='my_projects.empty_hint' />
@@ -147,7 +140,9 @@ animate='show'>
             </SectionHeader>
 
             {loading ? (
-              <SkeletonGrid aria-busy='true' aria-label={intl.formatMessage({ id: 'my_projects.loading' })}>
+              <SkeletonGrid
+                aria-busy='true'
+                aria-label={intl.formatMessage({ id: 'my_projects.loading' })}>
                 {Array.from({ length: SKELETON_COUNT }, (_, index) => (
                   <SkeletonCard key={index} />
                 ))}
@@ -160,11 +155,7 @@ animate='show'>
                 <EmptyText>
                   <FormattedMessage id='my_projects.empty' />
                 </EmptyText>
-                <CreateButton
-                  type='button'
-                  disabled={creating}
-                  onClick={() => CreateProjectPage()}
-                >
+                <CreateButton type='button' disabled={creating} onClick={() => CreateProjectPage()}>
                   <PlusOutlined />
                   <FormattedMessage id='my_projects.create_new' />
                 </CreateButton>
@@ -174,28 +165,25 @@ animate='show'>
                 <ProjectGrid>
                   {projects.map(projectPage => {
                     const lastModified = formatDateTime(projectPage.lastModified, intl.locale)
-                    const previewUrl = resolveProjectPreviewUrl(projectPage.preview, projectPage.lastModified)
+                    const previewUrl = resolveProjectPreviewUrl(
+                      projectPage.preview,
+                      projectPage.lastModified,
+                    )
 
                     return (
-                      <ProjectCard
-                        key={projectPage.projectPageId}
-                        whileTap={{ scale: 0.995 }}
-                      >
+                      <ProjectCard key={projectPage.projectPageId} whileTap={{ scale: 0.995 }}>
                         <DeleteButton
                           type='button'
                           aria-label={intl.formatMessage({ id: 'project_page.delete' })}
-                          onClick={() => confirmDelete(projectPage.projectPageId)}
-                        >
+                          onClick={() => confirmDelete(projectPage.projectPageId)}>
                           <DeleteOutlined />
                         </DeleteButton>
                         <ProjectCardCover
                           type='button'
                           aria-label={displayProjectTitle(projectPage.title, intl)}
-                          onClick={() => openProject(projectPage.projectPageId)}
-                        >
+                          onClick={() => openProject(projectPage.projectPageId)}>
                           {previewUrl ? (
-                            <img src={previewUrl} alt=''
-loading='lazy' />
+                            <img src={previewUrl} alt='' loading='lazy' />
                           ) : (
                             <ProjectCardCoverPlaceholder>
                               <ProjectOutlined />
@@ -210,8 +198,7 @@ loading='lazy' />
                             <ProjectCardBody>
                               <ProjectTitleButton
                                 type='button'
-                                onClick={() => openProject(projectPage.projectPageId)}
-                              >
+                                onClick={() => openProject(projectPage.projectPageId)}>
                                 {displayProjectTitle(projectPage.title, intl)}
                               </ProjectTitleButton>
                               {lastModified !== '—' && (
@@ -223,16 +210,14 @@ loading='lazy' />
                               )}
                               <OpenButton
                                 type='button'
-                                onClick={() => openProject(projectPage.projectPageId)}
-                              >
+                                onClick={() => openProject(projectPage.projectPageId)}>
                                 <FormattedMessage id='project_page.open_project' />
                                 <ArrowRightOutlined style={{ fontSize: 12 }} />
                               </OpenButton>
                               <OpenButton
                                 type='button'
                                 onClick={() => editProject(projectPage.projectPageId)}
-                                style={{ marginTop: 8 }}
-                              >
+                                style={{ marginTop: 8 }}>
                                 <FormattedMessage id='project_page.open_in_scratch' />
                                 <ArrowRightOutlined style={{ fontSize: 12 }} />
                               </OpenButton>

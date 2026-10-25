@@ -10,10 +10,10 @@ import { checkAuthRequest } from '@/actions'
 
 /** Loads auth identity + login streak (check-auth → RecordVisit). */
 export function useUserIdentity() {
-    const actions = useActions({ checkAuthRequest }, [])
-    useEffect(() => {
-        const accessToken = getAccessToken()
-        actions.checkAuthRequest(accessToken || null)
-    }, [actions])
-    return useSelector(({ login }) => getLoginState(login))
+  const actions = useActions({ checkAuthRequest }, [])
+  useEffect(() => {
+    const accessToken = getAccessToken()
+    actions.checkAuthRequest(accessToken || null)
+  }, [actions])
+  return useSelector(({ login }) => getLoginState(login))
 }

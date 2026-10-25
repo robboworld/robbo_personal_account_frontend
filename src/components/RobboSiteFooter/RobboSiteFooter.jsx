@@ -17,8 +17,16 @@ const SiteFooter = styled.footer`
   border-top: none;
   padding: clamp(28px, 4vw, 36px) 0;
   color: ${colors.secondary};
-  font-family: 'ProximaNova', 'Proxima Nova', system-ui, -apple-system, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    'ProximaNova',
+    'Proxima Nova',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
 
   &::before {
     content: '';
@@ -336,9 +344,7 @@ const ContactsLink = styled.a`
 `
 
 const MailIcon = () => (
-  <svg viewBox='0 0 24 24' width='18'
-height='18' focusable='false'
-aria-hidden>
+  <svg viewBox='0 0 24 24' width='18' height='18' focusable='false' aria-hidden>
     <rect
       x='3'
       y='5'
@@ -361,12 +367,8 @@ aria-hidden>
 )
 
 const GlobeIcon = () => (
-  <svg viewBox='0 0 24 24' width='18'
-height='18' focusable='false'
-aria-hidden>
-    <circle cx='12' cy='12'
-r='9' stroke='currentColor'
-strokeWidth='1.8' fill='none' />
+  <svg viewBox='0 0 24 24' width='18' height='18' focusable='false' aria-hidden>
+    <circle cx='12' cy='12' r='9' stroke='currentColor' strokeWidth='1.8' fill='none' />
     <path
       d='M3 12h18M12 3c2.5 2.8 2.5 14.2 0 18M12 3c-2.5 2.8-2.5 14.2 0 18'
       stroke='currentColor'
@@ -378,9 +380,7 @@ strokeWidth='1.8' fill='none' />
 )
 
 const SupportIcon = () => (
-  <svg viewBox='0 0 24 24' width='18'
-height='18' focusable='false'
-aria-hidden>
+  <svg viewBox='0 0 24 24' width='18' height='18' focusable='false' aria-hidden>
     <path
       d='M4 11v3a2 2 0 002 2h1v-7H6a2 2 0 00-2 2zM18 9h1a2 2 0 012 2v3a2 2 0 01-2 2h-1V9z'
       stroke='currentColor'
@@ -410,116 +410,116 @@ const RobboSiteFooter = () => {
   const [locale] = String(intl.locale || 'ru').split('-')
 
   return (
-  <React.Fragment>
-    <RobboGuestFonts />
-    <SiteFooter id='footer-guest' lang={locale}>
-    <FooterInner>
-      <FooterMain>
-        <BrandCol>
-          <FooterBrand>
-            <FooterLogo aria-label={intl.formatMessage({ id: 'footer.brand_aria' })}>
-              <FormattedMessage id='footer.brand' />
-              <FooterReg aria-hidden>®</FooterReg>
-            </FooterLogo>
-          </FooterBrand>
-          <FooterTagline>
-            <FormattedMessage id='footer.tagline' />
-          </FooterTagline>
-          <FooterCopyright>
-            <FormattedMessage id='footer.copyright' />
-          </FooterCopyright>
-        </BrandCol>
+    <React.Fragment>
+      <RobboGuestFonts />
+      <SiteFooter id='footer-guest' lang={locale}>
+        <FooterInner>
+          <FooterMain>
+            <BrandCol>
+              <FooterBrand>
+                <FooterLogo aria-label={intl.formatMessage({ id: 'footer.brand_aria' })}>
+                  <FormattedMessage id='footer.brand' />
+                  <FooterReg aria-hidden>®</FooterReg>
+                </FooterLogo>
+              </FooterBrand>
+              <FooterTagline>
+                <FormattedMessage id='footer.tagline' />
+              </FooterTagline>
+              <FooterCopyright>
+                <FormattedMessage id='footer.copyright' />
+              </FooterCopyright>
+            </BrandCol>
 
-        <PartnerCol>
-          <PartnerLink
-            href='https://fasie.ru'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <PartnerLogo
-              src={FASIE_LOGO_URL}
-              alt={intl.formatMessage({ id: 'footer.partner_fasie_alt' })}
-            />
-          </PartnerLink>
-          <PartnerCaption>
-            <FormattedMessage id='footer.partner_fasie_alt' />
-          </PartnerCaption>
-        </PartnerCol>
+            <PartnerCol>
+              <PartnerLink href='https://fasie.ru' target='_blank' rel='noopener noreferrer'>
+                <PartnerLogo
+                  src={FASIE_LOGO_URL}
+                  alt={intl.formatMessage({ id: 'footer.partner_fasie_alt' })}
+                />
+              </PartnerLink>
+              <PartnerCaption>
+                <FormattedMessage id='footer.partner_fasie_alt' />
+              </PartnerCaption>
+            </PartnerCol>
 
-        <FooterCol as='nav' aria-label={intl.formatMessage({ id: 'footer.docs_aria' })}>
-          <FooterHeading>
-            <FormattedMessage id='footer.docs_heading' />
-          </FooterHeading>
-          <FooterLinks>
-            <li>
-              <a
-                href='https://robbo.ru/wp-content/uploads/policy.pdf'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                <FormattedMessage id='footer.privacy_policy' />
-              </a>
-            </li>
-            <li>
-              <a
-                href='https://robbo.ru/wp-content/uploads/agree.pdf'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                <FormattedMessage id='footer.consent' />
-              </a>
-            </li>
-          </FooterLinks>
-        </FooterCol>
+            <FooterCol as='nav' aria-label={intl.formatMessage({ id: 'footer.docs_aria' })}>
+              <FooterHeading>
+                <FormattedMessage id='footer.docs_heading' />
+              </FooterHeading>
+              <FooterLinks>
+                <li>
+                  <a
+                    href='https://robbo.ru/wp-content/uploads/policy.pdf'
+                    target='_blank'
+                    rel='noopener noreferrer'>
+                    <FormattedMessage id='footer.privacy_policy' />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href='https://robbo.ru/wp-content/uploads/agree.pdf'
+                    target='_blank'
+                    rel='noopener noreferrer'>
+                    <FormattedMessage id='footer.consent' />
+                  </a>
+                </li>
+              </FooterLinks>
+            </FooterCol>
 
-        <ContactsCol>
-          <FooterHeading>
-            <FormattedMessage id='footer.contacts_heading' />
-          </FooterHeading>
-          <ContactsList>
-            <ContactsItem>
-              <ContactsIcon>
-                <MailIcon />
-              </ContactsIcon>
-              <ContactsLink
-                href='mailto:info@robbo.ru'
-                aria-label={intl.formatMessage({ id: 'footer.email_aria' }, { email: 'info@robbo.ru' })}
-              >
-                info@robbo.ru
-              </ContactsLink>
-            </ContactsItem>
-            <ContactsItem>
-              <ContactsIcon>
-                <GlobeIcon />
-              </ContactsIcon>
-              <ContactsLink
-                href='https://robbo.ru'
-                target='_blank'
-                rel='noopener noreferrer'
-                aria-label={intl.formatMessage({ id: 'footer.site_aria' }, { site: 'robbo.ru' })}
-              >
-                robbo.ru
-              </ContactsLink>
-            </ContactsItem>
-            <ContactsItem>
-              <ContactsIcon>
-                <SupportIcon />
-              </ContactsIcon>
-              <ContactsLink
-                href='https://support.robbo.world/'
-                target='_blank'
-                rel='noopener noreferrer'
-                aria-label={intl.formatMessage({ id: 'footer.support_aria' }, { site: 'support.robbo.world' })}
-              >
-                support.robbo.world
-              </ContactsLink>
-            </ContactsItem>
-          </ContactsList>
-        </ContactsCol>
-      </FooterMain>
-    </FooterInner>
-    </SiteFooter>
-  </React.Fragment>
+            <ContactsCol>
+              <FooterHeading>
+                <FormattedMessage id='footer.contacts_heading' />
+              </FooterHeading>
+              <ContactsList>
+                <ContactsItem>
+                  <ContactsIcon>
+                    <MailIcon />
+                  </ContactsIcon>
+                  <ContactsLink
+                    href='mailto:info@robbo.ru'
+                    aria-label={intl.formatMessage(
+                      { id: 'footer.email_aria' },
+                      { email: 'info@robbo.ru' },
+                    )}>
+                    info@robbo.ru
+                  </ContactsLink>
+                </ContactsItem>
+                <ContactsItem>
+                  <ContactsIcon>
+                    <GlobeIcon />
+                  </ContactsIcon>
+                  <ContactsLink
+                    href='https://robbo.ru'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label={intl.formatMessage(
+                      { id: 'footer.site_aria' },
+                      { site: 'robbo.ru' },
+                    )}>
+                    robbo.ru
+                  </ContactsLink>
+                </ContactsItem>
+                <ContactsItem>
+                  <ContactsIcon>
+                    <SupportIcon />
+                  </ContactsIcon>
+                  <ContactsLink
+                    href='https://support.robbo.world/'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label={intl.formatMessage(
+                      { id: 'footer.support_aria' },
+                      { site: 'support.robbo.world' },
+                    )}>
+                    support.robbo.world
+                  </ContactsLink>
+                </ContactsItem>
+              </ContactsList>
+            </ContactsCol>
+          </FooterMain>
+        </FooterInner>
+      </SiteFooter>
+    </React.Fragment>
   )
 }
 

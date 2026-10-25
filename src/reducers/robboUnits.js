@@ -1,77 +1,86 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    createRobboUnitFailed,
-    createRobboUnitSuccess,
-    deleteRobboUnitFailed,
-    deleteRobboUnitRequest,
-    deleteRobboUnitSuccess,
-    getRobboUnitsByUnitAdminIdFailed,
-    getRobboUnitsByUnitAdminIdRequest,
-    getRobboUnitsByUnitAdminIdSuccess,
-    getRobboUnitsFailed,
-    getRobboUnitsSuccess,
-    clearRobboUnitsPage,
-    getRobboUnitsRequest,
-    createRobboUnitRequest,
+  createRobboUnitFailed,
+  createRobboUnitSuccess,
+  deleteRobboUnitFailed,
+  deleteRobboUnitRequest,
+  deleteRobboUnitSuccess,
+  getRobboUnitsByUnitAdminIdFailed,
+  getRobboUnitsByUnitAdminIdRequest,
+  getRobboUnitsByUnitAdminIdSuccess,
+  getRobboUnitsFailed,
+  getRobboUnitsSuccess,
+  clearRobboUnitsPage,
+  getRobboUnitsRequest,
+  createRobboUnitRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
-    robboUnits: [],
-    loading: true,
-    countRows: 0,
+  robboUnits: [],
+  loading: true,
+  countRows: 0,
 }
 
-export default handleActions({
+export default handleActions(
+  {
     [getRobboUnitsRequest](state) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [getRobboUnitsSuccess](state, action) {
-        return { ...state, robboUnits: action.payload, loading: false }
+      return { ...state, robboUnits: action.payload, loading: false }
     },
     [getRobboUnitsFailed](state, action) {
-        return { ...state, loading: false }
+      return { ...state, loading: false }
     },
     [getRobboUnitsByUnitAdminIdRequest](state) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [getRobboUnitsByUnitAdminIdSuccess](state, { payload }) {
-        return { ...state, robboUnits: payload.response.robboUnits, loading: false, countRows: payload.response.countRows }
+      return {
+        ...state,
+        robboUnits: payload.response.robboUnits,
+        loading: false,
+        countRows: payload.response.countRows,
+      }
     },
     [getRobboUnitsByUnitAdminIdFailed](state, action) {
-        return { ...state, loading: false }
+      return { ...state, loading: false }
     },
     [deleteRobboUnitRequest](state) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [deleteRobboUnitSuccess](state, action) {
-        const { robboUnitIndex } = action.payload
-        const newRobboUnits = [...state.robboUnits]
-        newRobboUnits.splice(robboUnitIndex, 1)
-        return { ...state, loading: false, robboUnits: newRobboUnits }
+      const { robboUnitIndex } = action.payload
+      const newRobboUnits = [...state.robboUnits]
+      newRobboUnits.splice(robboUnitIndex, 1)
+      return { ...state, loading: false, robboUnits: newRobboUnits }
     },
     [deleteRobboUnitFailed](state, action) {
-        return { ...state, loading: false }
+      return { ...state, loading: false }
     },
     [createRobboUnitRequest](state) {
-        return { ...state, loading: true }
+      return { ...state, loading: true }
     },
     [createRobboUnitSuccess](state, { payload }) {
-        const { response } = payload
-        return {
-            ...state,
-            loading: false,
-            robboUnits: [...state.robboUnits, { ...response }],
-        }
+      const { response } = payload
+      return {
+        ...state,
+        loading: false,
+        robboUnits: [...state.robboUnits, { ...response }],
+      }
     },
     [createRobboUnitFailed](state, action) {
-        return {
-            ...state, loading: false,
-        }
+      return {
+        ...state,
+        loading: false,
+      }
     },
     [clearRobboUnitsPage](state) {
-        return INITIAL_STATE
+      return INITIAL_STATE
     },
-}, INITIAL_STATE)
+  },
+  INITIAL_STATE,
+)
 
 export const getRobboUnitsState = state => state

@@ -22,7 +22,7 @@ export const LEGACY_ADMIN_ROUTES = new Set([
 let legacyFlag = null
 
 /** Whether the backend runs with the legacy database (/auth/oidc/status legacy_auth). Cached. */
-export function fetchLegacyAdminEnabled () {
+export function fetchLegacyAdminEnabled() {
   if (!legacyFlag) {
     legacyFlag = fetchOidcStatus()
       .then(status => Boolean(status?.legacy_auth))
@@ -35,7 +35,7 @@ export function fetchLegacyAdminEnabled () {
 }
 
 /** null while the flag loads, then true/false. */
-export function useLegacyAdminState () {
+export function useLegacyAdminState() {
   const [enabled, setEnabled] = useState(null)
   useEffect(() => {
     let active = true
@@ -52,18 +52,20 @@ export function useLegacyAdminState () {
 }
 
 /** false until the flag loads (menus simply show less meanwhile). */
-export function useLegacyAdminEnabled () {
+export function useLegacyAdminEnabled() {
   return useLegacyAdminState() === true
 }
 
 /** Drops legacy admin entries (also inside groups) unless the legacy database is on. */
-export function withoutLegacyAdminItems (items, legacyEnabled) {
+export function withoutLegacyAdminItems(items, legacyEnabled) {
   if (legacyEnabled) {
     return items
   }
   return items
     .filter(item => !LEGACY_ADMIN_ROUTES.has(item.pathname))
-    .map(item => (item.children
-      ? { ...item, children: withoutLegacyAdminItems(item.children, legacyEnabled) }
-      : item))
+    .map(item =>
+      item.children
+        ? { ...item, children: withoutLegacyAdminItems(item.children, legacyEnabled) }
+        : item,
+    )
 }

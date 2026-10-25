@@ -5,7 +5,12 @@ import { FormattedMessage, useIntl } from 'react-intl'
 
 import * as api from '@/api/teacherClass'
 import { LOGIN_PAGE_ROUTE, STUDENT_CLASSES_ROUTE, HOME_PAGE_ROUTE } from '@/constants'
-import { buildOidcStartUrl, fetchOidcStatus, isOidcSsoEnabled, lmsRegisterUrl } from '@/helpers/oidcSession'
+import {
+  buildOidcStartUrl,
+  fetchOidcStatus,
+  isOidcSsoEnabled,
+  lmsRegisterUrl,
+} from '@/helpers/oidcSession'
 import { parseJwt } from '@/helpers'
 import { getAccessToken } from '@/helpers/accessTokenMemory'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
@@ -60,9 +65,7 @@ const JoinClassPage = () => {
       setLoading(true)
       setError(null)
       try {
-        const { data } = slug
-          ? await api.previewJoinBySlug(slug)
-          : await api.previewJoin(key)
+        const { data } = slug ? await api.previewJoinBySlug(slug) : await api.previewJoin(key)
         if (!cancelled) setPreview(data)
       } catch (e) {
         if (!cancelled) {
@@ -74,7 +77,9 @@ const JoinClassPage = () => {
       }
     }
     run()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [slug, key, intl])
 
   const doJoin = async () => {
@@ -116,7 +121,9 @@ const JoinClassPage = () => {
               size='large'
               value={manualCode}
               onChange={e => setManualCode(e.target.value.toUpperCase())}
-              onPressEnter={() => manualCode.trim() && navigate(`/join?code=${encodeURIComponent(manualCode.trim())}`)}
+              onPressEnter={() =>
+                manualCode.trim() && navigate(`/join?code=${encodeURIComponent(manualCode.trim())}`)
+              }
               placeholder='7K2M-9Q'
               aria-label={intl.formatMessage({ id: 'join_class.enter_code' })}
             />
@@ -124,8 +131,7 @@ const JoinClassPage = () => {
               size='large'
               type='primary'
               disabled={!manualCode.trim()}
-              onClick={() => navigate(`/join?code=${encodeURIComponent(manualCode.trim())}`)}
-            >
+              onClick={() => navigate(`/join?code=${encodeURIComponent(manualCode.trim())}`)}>
               <FormattedMessage id='join_class.continue' />
             </Button>
           </Space.Compact>
@@ -145,50 +151,48 @@ const JoinClassPage = () => {
         status='404'
         title={<FormattedMessage id='join_class.not_found' />}
         subTitle={error}
-        extra={(
+        extra={
           <Button type='primary' onClick={() => navigate('/join')}>
             <FormattedMessage id='join_class.try_another' />
           </Button>
-        )}
+        }
       />
     )
   }
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      display: 'grid',
-      placeItems: 'center',
-      padding: 24,
-      background: 'linear-gradient(160deg, #f7f4ef 0%, #e8f0f4 55%, #f0ebe3 100%)',
-    }}
-    >
-      <Card style={{ width: '100%', maxWidth: 440, borderRadius: 16 }} styles={{ body: { padding: 32 } }}>
+    <div
+      style={{
+        minHeight: '100dvh',
+        display: 'grid',
+        placeItems: 'center',
+        padding: 24,
+        background: 'linear-gradient(160deg, #f7f4ef 0%, #e8f0f4 55%, #f0ebe3 100%)',
+      }}>
+      <Card
+        style={{ width: '100%', maxWidth: 440, borderRadius: 16 }}
+        styles={{ body: { padding: 32 } }}>
         <Text type='secondary'>
           <FormattedMessage id='join_class.eyebrow' />
         </Text>
-        <Title level={2} style={{ marginTop: 8 }}>{preview.displayName}</Title>
+        <Title level={2} style={{ marginTop: 8 }}>
+          {preview.displayName}
+        </Title>
         {preview.ownerName && (
           <Paragraph type='secondary'>
             <FormattedMessage id='join_class.teacher' />: {preview.ownerName}
           </Paragraph>
         )}
-        <Paragraph type='secondary' style={{ fontSize: 12 }}>{preview.edxCourseId}</Paragraph>
-        <Space
-          orientation='vertical'
-          style={{ width: '100%', marginTop: 24 }}
-          size='middle'
-        >
-          <Button
-            type='primary'
-            size='large'
-            block
-            loading={joining}
-            onClick={doJoin}
-          >
-            {isLoggedIn
-              ? <FormattedMessage id='join_class.join' />
-              : <FormattedMessage id='join_class.register_join' />}
+        <Paragraph type='secondary' style={{ fontSize: 12 }}>
+          {preview.edxCourseId}
+        </Paragraph>
+        <Space orientation='vertical' style={{ width: '100%', marginTop: 24 }} size='middle'>
+          <Button type='primary' size='large' block loading={joining} onClick={doJoin}>
+            {isLoggedIn ? (
+              <FormattedMessage id='join_class.join' />
+            ) : (
+              <FormattedMessage id='join_class.register_join' />
+            )}
           </Button>
           {!isLoggedIn && (
             <Button
@@ -203,8 +207,7 @@ const JoinClassPage = () => {
                   return
                 }
                 navigate(`${LOGIN_PAGE_ROUTE}?join=${encodeURIComponent(join)}`)
-              }}
-            >
+              }}>
               <FormattedMessage id='join_class.login_join' />
             </Button>
           )}

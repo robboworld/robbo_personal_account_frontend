@@ -33,9 +33,11 @@ export function formatDateTime(value, locale) {
   const date = parseDateTime(value)
   if (!date) return '—'
   // Day-first (not US MM/DD) + 24-hour clock.
-  const resolved = String(locale || '').toLowerCase().startsWith('en')
+  const resolved = String(locale || '')
+    .toLowerCase()
+    .startsWith('en')
     ? 'en-GB'
-    : (locale || 'ru-RU')
+    : locale || 'ru-RU'
   return new Intl.DateTimeFormat(resolved, {
     day: '2-digit',
     month: '2-digit',

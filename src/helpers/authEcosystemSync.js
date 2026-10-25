@@ -7,7 +7,7 @@ const AUTH_LOGOUT_BROADCAST_KEY = 'robbo_auth_logout_at'
 const DEFAULT_POLL_MS = 30000
 
 /** Same-origin tabs (e.g. several :3030 tabs) — instant logout signal. */
-export function broadcastAuthLogout () {
+export function broadcastAuthLogout() {
   try {
     localStorage.setItem(AUTH_LOGOUT_BROADCAST_KEY, String(Date.now()))
   } catch {
@@ -15,7 +15,7 @@ export function broadcastAuthLogout () {
   }
 }
 
-export function subscribeAuthLogout (callback) {
+export function subscribeAuthLogout(callback) {
   if (typeof window === 'undefined') {
     return () => {}
   }
@@ -28,7 +28,7 @@ export function subscribeAuthLogout (callback) {
   return () => window.removeEventListener('storage', onStorage)
 }
 
-export function clearLocalAuthArtifacts () {
+export function clearLocalAuthArtifacts() {
   clearAccessToken()
   clearLmsIdentityLink()
 }
@@ -37,7 +37,7 @@ export function clearLocalAuthArtifacts () {
  * Poll BFF /auth/oidc/status while the tab is visible so logout in another product
  * (shared cookie on :8080) clears UI in this tab without manual refresh.
  */
-export function startBffSessionWatch ({
+export function startBffSessionWatch({
   isAuthenticated,
   onSessionLost,
   pollIntervalMs = DEFAULT_POLL_MS,

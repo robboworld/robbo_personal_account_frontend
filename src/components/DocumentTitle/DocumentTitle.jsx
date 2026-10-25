@@ -53,7 +53,7 @@ const PAGE_TITLES = [
   [ROBBO_GROUPS_ROUTE, 'sidebar_data.robbo_groups'],
 ]
 
-export function pageTitleId (pathname) {
+export function pageTitleId(pathname) {
   const hit = PAGE_TITLES.find(([pattern]) => matchPath({ path: pattern, end: true }, pathname))
   return hit ? hit[1] : null
 }

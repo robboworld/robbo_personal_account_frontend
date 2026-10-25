@@ -24,8 +24,8 @@ const panelStyle = {
 
 const OidcAuthErrorFallback = ({ search, inactiveAlert }) => {
   const intl = useIntl()
-  const message = parseOidcCallbackError(search, intl) ||
-    intl.formatMessage({ id: 'login.error.generic' })
+  const message =
+    parseOidcCallbackError(search, intl) || intl.formatMessage({ id: 'login.error.generic' })
 
   const handleRetry = () => {
     redirectToOidcLogin(stripOidcErrorParams(search), 'login')
@@ -36,17 +36,13 @@ const OidcAuthErrorFallback = ({ search, inactiveAlert }) => {
       <div style={panelStyle}>
         {inactiveAlert}
         {!inactiveAlert && (
-          <Alert type='error' showIcon
-title={message} style={{ marginBottom: 16 }} />
+          <Alert type='error' showIcon title={message} style={{ marginBottom: 16 }} />
         )}
-        <Space orientation='vertical' style={{ width: '100%' }}
-size='middle'>
-          <Button type='primary' size='large'
-block onClick={handleRetry}>
+        <Space orientation='vertical' style={{ width: '100%' }} size='middle'>
+          <Button type='primary' size='large' block onClick={handleRetry}>
             {intl.formatMessage({ id: 'login.oidc.retry_button' })}
           </Button>
-          <Button size='large' block
-href={lmsRegisterUrl()}>
+          <Button size='large' block href={lmsRegisterUrl()}>
             {intl.formatMessage({ id: 'login.oidc.register_on_lms' })}
           </Button>
         </Space>

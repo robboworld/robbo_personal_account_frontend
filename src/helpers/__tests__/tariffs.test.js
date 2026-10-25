@@ -11,7 +11,14 @@ describe('tariffsFromCatalog', () => {
     const tariffs = tariffsFromCatalog({
       free: { maxProjectSizeMb: 12, maxProjects: 30, sessionLimit: 3, seatLimit: 1 },
       products: [
-        { sku: 'rs3-class-1y', cloudQuotaMb: 500, sessionLimit: 20, seatLimit: 20, amount: 4990, durationDays: 365 },
+        {
+          sku: 'rs3-class-1y',
+          cloudQuotaMb: 500,
+          sessionLimit: 20,
+          seatLimit: 20,
+          amount: 4990,
+          durationDays: 365,
+        },
         { sku: 'unknown', cloudQuotaMb: 1 },
       ],
     })

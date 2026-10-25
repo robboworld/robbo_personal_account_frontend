@@ -2,14 +2,13 @@ const path = require('path')
 
 const express = require('express')
 
-
 const app = express()
 const port = process.env.PORT || 3000
 
 // Webpack output names carry a content hash, so those files never change: cache them for a
 // year. Everything else (index.html above all) is revalidated, so a deploy is picked up on
 // the next load and the new index.html points at the new hashes.
-const noCache = (res) => res.setHeader('Cache-Control', 'no-cache')
+const noCache = res => res.setHeader('Cache-Control', 'no-cache')
 const HASHED_ASSET = /\.[0-9a-f]{8}\.(js|css)$|^\/?assets\//
 const distHeaders = (res, filePath) => {
   const rel = path.relative(path.join(__dirname, 'dist'), filePath)
@@ -38,7 +37,8 @@ app.get(['/scratch', '/scratch/'], function (req, res) {
 
 // A missing asset must be a 404, not index.html: the HTML "chunk" fails to parse and
 // webpack reports a confusing ChunkLoadError instead of a missing file.
-const ASSET_PATH = /\.(js|mjs|css|map|json|txt|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|wasm|sb3)$/i
+const ASSET_PATH =
+  /\.(js|mjs|css|map|json|txt|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|wasm|sb3)$/i
 app.get(ASSET_PATH, function (req, res) {
   res.sendStatus(404)
 })

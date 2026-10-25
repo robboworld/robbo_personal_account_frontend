@@ -33,7 +33,12 @@ const projectPageNode = (id, title) => ({
 
 export const GRAPHQL_FIXTURES = {
   GetUser: () => ({
-    GetUser: { __typename: 'StudentHttp', userHttp: userHttp(STUDENT), robboGroupId: '', robboUnitId: '' },
+    GetUser: {
+      __typename: 'StudentHttp',
+      userHttp: userHttp(STUDENT),
+      robboGroupId: '',
+      robboUnitId: '',
+    },
   }),
   UpdateStudent: variables => ({
     UpdateStudent: {
@@ -44,10 +49,7 @@ export const GRAPHQL_FIXTURES = {
   GetAllProjectPagesByAccessToken: () => ({
     GetAllProjectPagesByAccessToken: {
       __typename: 'ProjectPageHttpList',
-      projectPages: [
-        projectPageNode('1', 'Robot dance'),
-        projectPageNode('2', 'Space quiz'),
-      ],
+      projectPages: [projectPageNode('1', 'Robot dance'), projectPageNode('2', 'Space quiz')],
       countRows: 2,
     },
   }),
@@ -63,7 +65,7 @@ const REST_FIXTURES = [
 ]
 
 /** Stubs the backend as a signed-in user; returns the GraphQL operation names seen. */
-export function signInAs (user = STUDENT) {
+export function signInAs(user = STUDENT) {
   const operations = []
   cy.intercept({ url: 'http://localhost:8080/**' }, req => {
     const op = req.body && req.body.operationName
@@ -77,7 +79,12 @@ export function signInAs (user = STUDENT) {
     req.reply(rest ? rest[1] : {})
   })
   cy.intercept('GET', '**/auth/oidc/status', {
-    authenticated: true, role: user.role, edx_user_id: user.id, sub: user.id, email: user.email, legacy_auth: false,
+    authenticated: true,
+    role: user.role,
+    edx_user_id: user.id,
+    sub: user.id,
+    email: user.email,
+    legacy_auth: false,
   })
   return operations
 }

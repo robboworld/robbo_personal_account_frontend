@@ -27,7 +27,7 @@ const formatLicenseStatus = (intl, status) => {
     revoked: 'licensing.status_revoked',
   }
   const id = statusIds[String(status || '').toLowerCase()]
-  return id ? intl.formatMessage({ id }) : (status || '')
+  return id ? intl.formatMessage({ id }) : status || ''
 }
 
 const DeviceLinkPage = () => {
@@ -64,32 +64,27 @@ const DeviceLinkPage = () => {
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
-            <HeroTitle>
-              {intl.formatMessage({ id: 'licensing.device_link_title' })}
-            </HeroTitle>
-            <HeroLead>
-              {intl.formatMessage({ id: 'licensing.device_link_hint' })}
-            </HeroLead>
+            <HeroTitle>{intl.formatMessage({ id: 'licensing.device_link_title' })}</HeroTitle>
+            <HeroLead>{intl.formatMessage({ id: 'licensing.device_link_hint' })}</HeroLead>
           </HeroInner>
         </HeroPanel>
 
         <motion.div variants={staggerItem}>
           <GlassPanel>
-            <Form form={form} layout='vertical'
-onFinish={onFinish}>
+            <Form form={form} layout='vertical' onFinish={onFinish}>
               <Form.Item
                 name='userCode'
                 label={intl.formatMessage({ id: 'licensing.user_code' })}
-                rules={[{ required: true }]}
-              >
+                rules={[{ required: true }]}>
                 <Input placeholder='ABCD-EFGH' style={{ textTransform: 'uppercase' }} />
               </Form.Item>
               {licenses.length > 1 ? (
-                <Form.Item name='licenseId' label={intl.formatMessage({ id: 'licensing.choose_license' })}>
+                <Form.Item
+                  name='licenseId'
+                  label={intl.formatMessage({ id: 'licensing.choose_license' })}>
                   <Select
                     allowClear
                     options={licenses.map(l => ({
@@ -99,8 +94,11 @@ onFinish={onFinish}>
                   />
                 </Form.Item>
               ) : null}
-              <Button type='primary' htmlType='submit'
-loading={loading} disabled={licenses.length === 0}>
+              <Button
+                type='primary'
+                htmlType='submit'
+                loading={loading}
+                disabled={licenses.length === 0}>
                 {intl.formatMessage({ id: 'licensing.device_link_confirm' })}
               </Button>
             </Form>

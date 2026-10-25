@@ -16,9 +16,11 @@ describe('signed-in pages (stubbed session)', () => {
     const operations = signInAs()
     cy.visit('/profile')
     cy.get(`input[value="${STUDENT.email}"]`).should('exist')
-    cy.contains('label', 'Полное имя').invoke('attr', 'for').then(id => {
-      cy.get(`[id="${id}"]`).clear().type('Alice Renamed')
-    })
+    cy.contains('label', 'Полное имя')
+      .invoke('attr', 'for')
+      .then(id => {
+        cy.get(`[id="${id}"]`).clear().type('Alice Renamed')
+      })
     cy.contains('button', 'Сохранить').click()
     cy.contains('Профиль успешно обновлен').should('exist')
     cy.wrap(operations).should(ops => {
@@ -68,23 +70,38 @@ describe('signed-in pages (stubbed session)', () => {
     signInAs()
     cy.visit('/licenses')
     cy.contains('Привязанные устройства').parent().contains('В разработке')
-    cy.contains('Привязанные устройства').closest('section, div').parent()
-      .find('[inert]').should('exist')
+    cy.contains('Привязанные устройства')
+      .closest('section, div')
+      .parent()
+      .find('[inert]')
+      .should('exist')
       .within(() => cy.contains('a', 'Мои сессии').should('exist'))
   })
 
   it('buying a plan explains that purchases are paused', () => {
     signInAs()
     cy.intercept('GET', '**/payments/products', {
-      products: [{
-        id: 'individual', title: 'Individual', description: '', amount: '1990.00', currency: 'RUB',
-        cloudQuotaMb: 100, seatLimit: 2, sessionLimit: 2, durationDays: 365,
-      }],
+      products: [
+        {
+          id: 'individual',
+          title: 'Individual',
+          description: '',
+          amount: '1990.00',
+          currency: 'RUB',
+          cloudQuotaMb: 100,
+          seatLimit: 2,
+          sessionLimit: 2,
+          durationDays: 365,
+        },
+      ],
     })
     cy.intercept('POST', '**/payments/checkout', cy.spy().as('checkout'))
     cy.visit('/licenses')
     cy.contains('button', 'Купить').click()
-    cy.get('.ant-modal').should('contain', 'Покупки временно приостановлены. Если вас заинтересовала подписка, обратитесь в поддержку.')
+    cy.get('.ant-modal').should(
+      'contain',
+      'Покупки временно приостановлены. Если вас заинтересовала подписка, обратитесь в поддержку.',
+    )
     cy.get('.ant-modal').contains('button', 'OK').click()
     cy.get('.ant-modal').should('not.be.visible')
     cy.get('@checkout').should('not.have.been.called')
@@ -145,7 +162,10 @@ describe('signed-in pages (stubbed session)', () => {
     })
 
     it('save reports a failure', () => {
-      cy.intercept('PUT', '**/projectPage/', { statusCode: 500, body: { error: 'storage unavailable' } })
+      cy.intercept('PUT', '**/projectPage/', {
+        statusCode: 500,
+        body: { error: 'storage unavailable' },
+      })
       cy.visit('/projects/p1')
       cy.contains('button', 'Сохранить').click()
       cy.contains('storage unavailable')

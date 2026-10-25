@@ -5,54 +5,53 @@ import { getAccessToken } from '@/helpers/accessTokenMemory'
 import { apiBase, refreshAccessToken } from '@/api/authRefresh'
 
 function parseContentDispositionFilename(cd) {
-    if (!cd)
-        return null
-    const star = cd.match(/filename\*=UTF-8''([^;\s]+)/i)
-    if (star) {
-        try {
-            return decodeURIComponent(star[1].replace(/\+/g, ' '))
-        } catch (_) { /* ignore */ }
+  if (!cd) return null
+  const star = cd.match(/filename\*=UTF-8''([^;\s]+)/i)
+  if (star) {
+    try {
+      return decodeURIComponent(star[1].replace(/\+/g, ' '))
+    } catch (_) {
+      /* ignore */
     }
-    const quoted = cd.match(/filename="([^"]+)"/i)
-    if (quoted)
-        return quoted[1]
-    const plain = cd.match(/filename=([^;\s]+)/i)
-    if (plain)
-        return plain[1]
-    return null
+  }
+  const quoted = cd.match(/filename="([^"]+)"/i)
+  if (quoted) return quoted[1]
+  const plain = cd.match(/filename=([^;\s]+)/i)
+  if (plain) return plain[1]
+  return null
 }
 
 function backendBase() {
-    return `${apiBase()}/`
+  return `${apiBase()}/`
 }
 
 function currentAccessToken(fallback) {
-    const token = getAccessToken()
-    if (token && token !== 'null') {
-        return token
-    }
-    return fallback || ''
+  const token = getAccessToken()
+  if (token && token !== 'null') {
+    return token
+  }
+  return fallback || ''
 }
 
 async function readFetchErrorMessage(res) {
-    const msg = res.statusText || 'Request failed'
-    try {
-        const t = await res.text()
-        if (!t) {
-            return msg
-        }
-        try {
-            const j = JSON.parse(t)
-            if (typeof j === 'string') {
-                return j
-            }
-            return j.message || j.error || String(j)
-        } catch (_) {
-            return t
-        }
-    } catch (_) {
-        return msg
+  const msg = res.statusText || 'Request failed'
+  try {
+    const t = await res.text()
+    if (!t) {
+      return msg
     }
+    try {
+      const j = JSON.parse(t)
+      if (typeof j === 'string') {
+        return j
+      }
+      return j.message || j.error || String(j)
+    } catch (_) {
+      return t
+    }
+  } catch (_) {
+    return msg
+  }
 }
 
 /**
@@ -62,443 +61,453 @@ async function readFetchErrorMessage(res) {
  * @param {{ fallbackToken?: string }} [options]
  */
 export async function fetchWithAuthRetry(url, init = {}, options = {}) {
-    const buildInit = token => {
-        const headers = new Headers(init.headers || {})
-        headers.set('X-Requested-With', 'XMLHttpRequest')
-        if (token) {
-            headers.set('Authorization', `Bearer ${token}`)
-        } else {
-            headers.delete('Authorization')
-        }
-        return {
-            ...init,
-            headers,
-            credentials: init.credentials ?? 'include',
-        }
+  const buildInit = token => {
+    const headers = new Headers(init.headers || {})
+    headers.set('X-Requested-With', 'XMLHttpRequest')
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`)
+    } else {
+      headers.delete('Authorization')
     }
+    return {
+      ...init,
+      headers,
+      credentials: init.credentials ?? 'include',
+    }
+  }
 
-    let token = currentAccessToken(options.fallbackToken)
-    const res = await fetch(url, buildInit(token))
-    if (res.status !== 401) {
-        return res
-    }
+  let token = currentAccessToken(options.fallbackToken)
+  const res = await fetch(url, buildInit(token))
+  if (res.status !== 401) {
+    return res
+  }
 
-    try {
-        token = await refreshAccessToken()
-    } catch (_) {
-        return res
-    }
-    return fetch(url, buildInit(token))
+  try {
+    token = await refreshAccessToken()
+  } catch (_) {
+    return res
+  }
+  return fetch(url, buildInit(token))
 }
 
 async function saveSb3Blob(res, fallbackTitle) {
-    const blob = await res.blob()
-    let filename = parseContentDispositionFilename(res.headers.get('Content-Disposition'))
-    if (!filename) {
-        const safe = (fallbackTitle || 'project').replace(/[\\/:*?"<>|]+/g, '_').trim() || 'project'
-        filename = `${safe}.sb3`
-    }
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(a.href)
+  const blob = await res.blob()
+  let filename = parseContentDispositionFilename(res.headers.get('Content-Disposition'))
+  if (!filename) {
+    const safe = (fallbackTitle || 'project').replace(/[\\/:*?"<>|]+/g, '_').trim() || 'project'
+    filename = `${safe}.sb3`
+  }
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(a.href)
 }
 
 /** GET /projectPage/:id/download — binary .sb3 (uses fetch to avoid JSON default + body size limits on axios). */
 export async function downloadProjectSb3(token, projectPageId, fallbackTitle) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/download`
-    const res = await fetchWithAuthRetry(url, { method: 'GET' }, { fallbackToken: token })
-    if (!res.ok) {
-        const err = new Error(await readFetchErrorMessage(res))
-        err.status = res.status
-        throw err
-    }
-    await saveSb3Blob(res, fallbackTitle)
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/download`
+  const res = await fetchWithAuthRetry(url, { method: 'GET' }, { fallbackToken: token })
+  if (!res.ok) {
+    const err = new Error(await readFetchErrorMessage(res))
+    err.status = res.status
+    throw err
+  }
+  await saveSb3Blob(res, fallbackTitle)
 }
 
 /** Guest download via play token: GET /projectPage/:id/download?token=... */
 export async function downloadProjectSb3ByPlayToken(playToken, projectPageId, fallbackTitle) {
-    const token = extractTokenFromPlayPayload(playToken)
-    if (!token) {
-        throw new Error('Play token is missing')
-    }
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/download?token=${encodeURIComponent(token)}`
-    const res = await fetch(url, {
-        method: 'GET',
-        credentials: 'include',
-    })
-    if (!res.ok) {
-        const err = new Error(await readFetchErrorMessage(res))
-        err.status = res.status
-        throw err
-    }
-    await saveSb3Blob(res, fallbackTitle)
+  const token = extractTokenFromPlayPayload(playToken)
+  if (!token) {
+    throw new Error('Play token is missing')
+  }
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/download?token=${encodeURIComponent(token)}`
+  const res = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const err = new Error(await readFetchErrorMessage(res))
+    err.status = res.status
+    throw err
+  }
+  await saveSb3Blob(res, fallbackTitle)
 }
 
 function extractTokenFromPlayPayload(playToken) {
-    if (!playToken) return ''
-    if (typeof playToken === 'string') return playToken.trim()
-    const src = playToken.playUrl || playToken.jsonUrl || ''
-    if (!src) return ''
-    try {
-        const u = new URL(src, typeof window !== 'undefined' ? window.location.origin : 'http://localhost')
-        return u.searchParams.get('token') || ''
-    } catch (_) {
-        const match = String(src).match(/[?&]token=([^&]+)/)
-        return match ? decodeURIComponent(match[1]) : ''
-    }
+  if (!playToken) return ''
+  if (typeof playToken === 'string') return playToken.trim()
+  const src = playToken.playUrl || playToken.jsonUrl || ''
+  if (!src) return ''
+  try {
+    const u = new URL(
+      src,
+      typeof window !== 'undefined' ? window.location.origin : 'http://localhost',
+    )
+    return u.searchParams.get('token') || ''
+  } catch (_) {
+    const match = String(src).match(/[?&]token=([^&]+)/)
+    return match ? decodeURIComponent(match[1]) : ''
+  }
 }
 
 export const projectPageAPI = {
-    createProjectPage(token) {
-        return instance.post('projectPage/',
-            {
-                projectPage: {},
-            },
-            {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept-Language': readStoredLanguage(),
-                },
-            })
-    },
+  createProjectPage(token) {
+    return instance.post(
+      'projectPage/',
+      {
+        projectPage: {},
+      },
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Accept-Language': readStoredLanguage(),
+        },
+      },
+    )
+  },
 
-    deleteProjectPage(token, projectPageId) {
-        return instance.delete(`projectPage/${projectPageId}`,
-            {
-                // withCredentials: true,
-                // headers: {
-                //     'Authorization': `Bearer ${token}`,
-                // },
-            })
-    },
+  deleteProjectPage(token, projectPageId) {
+    return instance.delete(`projectPage/${projectPageId}`, {
+      // withCredentials: true,
+      // headers: {
+      //     'Authorization': `Bearer ${token}`,
+      // },
+    })
+  },
 
-    updateProjectPage(token, projectPage) {
-        return instance.put('projectPage/',
-            {
-                projectPage,
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            })
-    },
+  updateProjectPage(token, projectPage) {
+    return instance.put(
+      'projectPage/',
+      {
+        projectPage,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+  },
 
-    getProjectPageById(token, id) {
-        return instance.get(`projectPage/${id}`,
-            {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            })
-    },
+  getProjectPageById(token, id) {
+    return instance.get(`projectPage/${id}`, {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  },
 
-    getAllProjectPages(token) {
-        return instance.get('projectPage/',
-            {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            },
-        )
-    },
+  getAllProjectPages(token) {
+    return instance.get('projectPage/', {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  },
 
-    getPublicProjectPages(token, page = '1', pageSize = '12') {
-        return instance.get(`projectPage/public?page=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(pageSize)}`,
-            {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            })
-    },
+  getPublicProjectPages(token, page = '1', pageSize = '12') {
+    return instance.get(
+      `projectPage/public?page=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(pageSize)}`,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+  },
 
-    /** Guest-safe public catalog (never sends Authorization). */
-    async fetchPublicProjectPages(page = '1', pageSize = '12', options = {}) {
-        const params = new URLSearchParams({
-            page: String(page),
-            pageSize: String(pageSize),
-        })
-        if (options.featured) {
-            params.set('featured', String(options.featured))
-        }
-        if (options.q) {
-            params.set('q', String(options.q))
-        }
-        if (options.sort) {
-            params.set('sort', String(options.sort))
-        }
-        const tags = Array.isArray(options.tags)
-            ? options.tags
-            : (options.tag ? [options.tag] : [])
-        tags
-            .map(t => String(t || '').trim())
-            .filter(Boolean)
-            .forEach(tag => params.append('tag', tag))
-        const url = `${backendBase()}projectPage/public?${params.toString()}`
-        const res = await fetch(url, {
-            method: 'GET',
-            headers: { Accept: 'application/json' },
-            credentials: 'include',
-        })
-        if (!res.ok) {
-            throw new Error(res.statusText || 'Failed to load public projects')
-        }
-        const data = await res.json()
-        return data
-    },
+  /** Guest-safe public catalog (never sends Authorization). */
+  async fetchPublicProjectPages(page = '1', pageSize = '12', options = {}) {
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: String(pageSize),
+    })
+    if (options.featured) {
+      params.set('featured', String(options.featured))
+    }
+    if (options.q) {
+      params.set('q', String(options.q))
+    }
+    if (options.sort) {
+      params.set('sort', String(options.sort))
+    }
+    const tags = Array.isArray(options.tags) ? options.tags : options.tag ? [options.tag] : []
+    tags
+      .map(t => String(t || '').trim())
+      .filter(Boolean)
+      .forEach(tag => params.append('tag', tag))
+    const url = `${backendBase()}projectPage/public?${params.toString()}`
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+    })
+    if (!res.ok) {
+      throw new Error(res.statusText || 'Failed to load public projects')
+    }
+    const data = await res.json()
+    return data
+  },
 
-    /** Guest-safe project page + playToken (never sends Authorization). */
-    async fetchProjectPageById(id) {
-        const url = `${backendBase()}projectPage/${encodeURIComponent(id)}`
-        const res = await fetch(url, {
-            method: 'GET',
-            headers: { Accept: 'application/json' },
-            credentials: 'include',
-        })
-        if (!res.ok) {
-            const err = new Error(await readFetchErrorMessage(res))
-            err.status = res.status
-            throw err
-        }
-        return res.json()
-    },
+  /** Guest-safe project page + playToken (never sends Authorization). */
+  async fetchProjectPageById(id) {
+    const url = `${backendBase()}projectPage/${encodeURIComponent(id)}`
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+    })
+    if (!res.ok) {
+      const err = new Error(await readFetchErrorMessage(res))
+      err.status = res.status
+      throw err
+    }
+    return res.json()
+  },
 
-    getProjectPlayToken(token, projectPageId) {
-        return instance.get(`projectPage/${encodeURIComponent(projectPageId)}/play-token`,
-            {
-                withCredentials: true,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            })
-    },
+  getProjectPlayToken(token, projectPageId) {
+    return instance.get(`projectPage/${encodeURIComponent(projectPageId)}/play-token`, {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  },
 }
 
 export async function fetchReactionTypes() {
-    const res = await fetch(`${backendBase()}projectPage/reaction-types`, {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
-        credentials: 'include',
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const res = await fetch(`${backendBase()}projectPage/reaction-types`, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 export async function fetchProjectReactions(projectPageId) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
-    const token = currentAccessToken()
-    const res = token
-        ? await fetchWithAuthRetry(url, { method: 'GET', headers: { Accept: 'application/json' } })
-        : await fetch(url, {
-            method: 'GET',
-            headers: { Accept: 'application/json' },
-            credentials: 'include',
-        })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
+  const token = currentAccessToken()
+  const res = token
+    ? await fetchWithAuthRetry(url, { method: 'GET', headers: { Accept: 'application/json' } })
+    : await fetch(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        credentials: 'include',
+      })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 export async function putProjectReaction(projectPageId, code) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'PUT',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code }),
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code }),
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 export async function deleteProjectReaction(projectPageId) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'DELETE',
-        headers: { Accept: 'application/json' },
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/reactions`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'DELETE',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 export async function fetchProjectComments(projectPageId) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments`
-    const token = currentAccessToken()
-    const res = token
-        ? await fetchWithAuthRetry(url, { method: 'GET', headers: { Accept: 'application/json' } })
-        : await fetch(url, {
-            method: 'GET',
-            headers: { Accept: 'application/json' },
-            credentials: 'include',
-        })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments`
+  const token = currentAccessToken()
+  const res = token
+    ? await fetchWithAuthRetry(url, { method: 'GET', headers: { Accept: 'application/json' } })
+    : await fetch(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        credentials: 'include',
+      })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 export async function postProjectComment(projectPageId, { body, parentId } = {}) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments`
-    const payload = { body }
-    if (parentId) {
-        payload.parentId = parentId
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments`
+  const payload = { body }
+  if (parentId) {
+    payload.parentId = parentId
+  }
+  const res = await fetchWithAuthRetry(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const msg = await readFetchErrorMessage(res)
+    const err = new Error(msg)
+    if (String(msg).includes('profanity_detected')) {
+      err.code = 'profanity_detected'
     }
-    const res = await fetchWithAuthRetry(url, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-    })
-    if (!res.ok) {
-        const msg = await readFetchErrorMessage(res)
-        const err = new Error(msg)
-        if (String(msg).includes('profanity_detected')) {
-            err.code = 'profanity_detected'
-        }
-        throw err
-    }
-    return res.json()
+    throw err
+  }
+  return res.json()
 }
 
 export async function deleteProjectComment(projectPageId, commentId) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'DELETE',
-        headers: { Accept: 'application/json' },
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return null
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'DELETE',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return null
 }
 
 export async function putCommentReaction(projectPageId, commentId, code) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}/reactions`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'PUT',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code }),
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}/reactions`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code }),
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 export async function deleteCommentReaction(projectPageId, commentId) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}/reactions`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'DELETE',
-        headers: { Accept: 'application/json' },
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/comments/${encodeURIComponent(commentId)}/reactions`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'DELETE',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 /** SuperAdmin: soft-delete any project with a moderation reason. */
 export async function moderateDeleteProjectPage(projectPageId, reason) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/moderate`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'DELETE',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ reason }),
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    if (res.status === 204 || res.headers.get('content-length') === '0') {
-        return null
-    }
-    const text = await res.text()
-    return text ? JSON.parse(text) : null
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/moderate`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ reason }),
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  if (res.status === 204 || res.headers.get('content-length') === '0') {
+    return null
+  }
+  const text = await res.text()
+  return text ? JSON.parse(text) : null
 }
 
 /** SuperAdmin: add/update/remove landing showcase flag + sort order. */
 export async function setLandingFeatured(projectPageId, { featured, sortOrder = 0 } = {}) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/landing-featured`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'PUT',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ featured: Boolean(featured), sortOrder: Number(sortOrder) || 0 }),
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/landing-featured`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ featured: Boolean(featured), sortOrder: Number(sortOrder) || 0 }),
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }
 
 /** SuperAdmin: batch reorder landing showcase. */
 export async function reorderLandingFeatured(items) {
-    const url = `${backendBase()}projectPage/landing-featured/reorder`
-    const res = await fetchWithAuthRetry(url, {
-        method: 'PUT',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items }),
-    })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return null
+  const url = `${backendBase()}projectPage/landing-featured/reorder`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ items }),
+  })
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return null
 }
 
 /** POST /projectPage/:id/preview — owner preview image upload. */
 export async function uploadProjectPreview(token, projectPageId, file) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/preview`
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await fetchWithAuthRetry(url, {
-        method: 'POST',
-        body: formData,
-    }, { fallbackToken: token })
-    if (!res.ok) {
-        const errText = await readFetchErrorMessage(res)
-        throw new Error(errText)
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/preview`
+  const formData = new FormData()
+  formData.append('file', file)
+  const res = await fetchWithAuthRetry(
+    url,
+    {
+      method: 'POST',
+      body: formData,
+    },
+    { fallbackToken: token },
+  )
+  if (!res.ok) {
+    const errText = await readFetchErrorMessage(res)
+    throw new Error(errText)
+  }
+  return res.json()
 }
 
 /** POST /projectPage/:id/upload — .sb3 file upload (multipart). */
 export async function uploadProjectSb3(token, projectPageId, file) {
-    const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/upload`
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await fetchWithAuthRetry(url, {
-        method: 'POST',
-        body: formData,
-    }, { fallbackToken: token })
-    if (!res.ok) {
-        throw new Error(await readFetchErrorMessage(res))
-    }
-    return res.json()
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/upload`
+  const formData = new FormData()
+  formData.append('file', file)
+  const res = await fetchWithAuthRetry(
+    url,
+    {
+      method: 'POST',
+      body: formData,
+    },
+    { fallbackToken: token },
+  )
+  if (!res.ok) {
+    throw new Error(await readFetchErrorMessage(res))
+  }
+  return res.json()
 }

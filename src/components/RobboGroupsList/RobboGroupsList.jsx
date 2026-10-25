@@ -1,62 +1,66 @@
-import React, { useEffect } from "react"
-import { useSelector } from "react-redux"
-import { List, Space } from "antd"
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { List, Space } from 'antd'
 
-import ListItem from "@/components/ListItem"
-import { DragResize } from "@/components/UI"
-import RobboGroup from "@/components/RobboGroup"
-import { useActions } from "@/helpers"
-import { getRobboGroupsState } from "@/reducers/robboGroups"
+import ListItem from '@/components/ListItem'
+import { DragResize } from '@/components/UI'
+import RobboGroup from '@/components/RobboGroup'
+import { useActions } from '@/helpers'
+import { getRobboGroupsState } from '@/reducers/robboGroups'
 import {
-    getRobboGroupsByAccessTokenRequest,
-    getRobboGroupsByTeacherId,
-    clearRobboGroupsPage,
+  getRobboGroupsByAccessTokenRequest,
+  getRobboGroupsByTeacherId,
+  clearRobboGroupsPage,
 } from '@/actions'
 
-
 export default ({ teacherId }) => {
-    const actions = useActions({ getRobboGroupsByAccessTokenRequest, getRobboGroupsByTeacherId, clearRobboGroupsPage }, [])
-    const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
-    useEffect(() => {
-        if (teacherId) {
-            actions.getRobboGroupsByTeacherId(teacherId)
-        } else {
-            actions.getRobboGroupsByAccessTokenRequest("1", "10")
-        }
-        return () => {
-            actions.clearRobboGroupsPage()
-        }
-    }, [actions, teacherId])
+  const actions = useActions(
+    { getRobboGroupsByAccessTokenRequest, getRobboGroupsByTeacherId, clearRobboGroupsPage },
+    [],
+  )
+  const { robboGroups, loading } = useSelector(({ robboGroups }) =>
+    getRobboGroupsState(robboGroups),
+  )
+  useEffect(() => {
+    if (teacherId) {
+      actions.getRobboGroupsByTeacherId(teacherId)
+    } else {
+      actions.getRobboGroupsByAccessTokenRequest('1', '10')
+    }
+    return () => {
+      actions.clearRobboGroupsPage()
+    }
+  }, [actions, teacherId])
 
-
-    return (
-        <Space orientation='vertical' style={{ margin: '0.5rem', width: '100%' }}>
-            <List
-                loading={loading}
-                bordered
-                dataSource={robboGroups}
-                renderItem={(robboGroup, index) => (
-                    <ListItem
-                        itemIndex={index}
-                        key={index}
-                        label={robboGroup.name}
-                        render={(open, setOpen) => (
-                            <DragResize
-                                open={open} setOpen={setOpen}
-                                content={() => (
-                                    <RobboGroup
-                                        robboUnitId={robboGroup.robboUnitId}
-                                        robboGroupId={robboGroup.id}
-                                        disableChanges
-                                    />
-                                )}
-                            />
-                        )}
-                    />
+  return (
+    <Space orientation='vertical' style={{ margin: '0.5rem', width: '100%' }}>
+      <List
+        loading={loading}
+        bordered
+        dataSource={robboGroups}
+        renderItem={(robboGroup, index) => (
+          <ListItem
+            itemIndex={index}
+            key={index}
+            label={robboGroup.name}
+            render={(open, setOpen) => (
+              <DragResize
+                open={open}
+                setOpen={setOpen}
+                content={() => (
+                  <RobboGroup
+                    robboUnitId={robboGroup.robboUnitId}
+                    robboGroupId={robboGroup.id}
+                    disableChanges
+                  />
                 )}
-            />
-        </Space>
-    )
+              />
+            )}
+          />
+        )}
+      />
+    </Space>
+  )
 }
 
 // TODO propTypes

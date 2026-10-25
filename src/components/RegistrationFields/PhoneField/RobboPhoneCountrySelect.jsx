@@ -1,6 +1,4 @@
-import React, {
-  useCallback, useEffect, useMemo, useRef, useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
@@ -8,7 +6,10 @@ import classNames from 'classnames'
 const TYPEAHEAD_RESET_MS = 800
 
 function normalizeCountrySearchLabel(label) {
-  return String(label ?? '').replace(/\s+\+\d[\d\s-]*$/, '').trim().toLocaleLowerCase()
+  return String(label ?? '')
+    .replace(/\s+\+\d[\d\s-]*$/, '')
+    .trim()
+    .toLocaleLowerCase()
 }
 
 function findOptionIndexByPrefix(options, prefix, startIndex = -1) {
@@ -51,18 +52,16 @@ const RobboPhoneCountrySelect = ({
     timer: null,
   })
 
-  const selectableOptions = useMemo(
-    () => options.filter(option => !option.divider),
-    [options],
-  )
+  const selectableOptions = useMemo(() => options.filter(option => !option.divider), [options])
 
   const selectedOption = useMemo(
-    () => selectableOptions.find(option => {
-      if (!value) {
-        return !option.value
-      }
-      return option.value === value
-    }),
+    () =>
+      selectableOptions.find(option => {
+        if (!value) {
+          return !option.value
+        }
+        return option.value === value
+      }),
     [selectableOptions, value],
   )
 
@@ -85,50 +84,57 @@ const RobboPhoneCountrySelect = ({
     }
   }, [onBlur, resetTypeahead])
 
-  const openMenu = useCallback(initialIndex => {
-    if (disabled || readOnly) {
-      return
-    }
-    if (typeof initialIndex === 'number') {
-      setHighlightedIndex(initialIndex)
-    } else {
-      const selectedIndex = selectableOptions.findIndex(option => {
-        if (!value) {
-          return !option.value
-        }
-        return option.value === value
-      })
-      setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0)
-    }
-    setOpen(true)
-  }, [disabled, readOnly, selectableOptions, value])
+  const openMenu = useCallback(
+    initialIndex => {
+      if (disabled || readOnly) {
+        return
+      }
+      if (typeof initialIndex === 'number') {
+        setHighlightedIndex(initialIndex)
+      } else {
+        const selectedIndex = selectableOptions.findIndex(option => {
+          if (!value) {
+            return !option.value
+          }
+          return option.value === value
+        })
+        setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0)
+      }
+      setOpen(true)
+    },
+    [disabled, readOnly, selectableOptions, value],
+  )
 
-  const applyTypeahead = useCallback(char => {
-    const state = typeaheadRef.current
-    if (state.timer) {
-      clearTimeout(state.timer)
-    }
-    state.timer = setTimeout(() => {
-      resetTypeahead()
-    }, TYPEAHEAD_RESET_MS)
+  const applyTypeahead = useCallback(
+    char => {
+      const state = typeaheadRef.current
+      if (state.timer) {
+        clearTimeout(state.timer)
+      }
+      state.timer = setTimeout(() => {
+        resetTypeahead()
+      }, TYPEAHEAD_RESET_MS)
 
-    const isSameCharRepeat = char.toLocaleLowerCase() === state.lastChar.toLocaleLowerCase() &&
-      state.prefix.length === 1 &&
-      state.prefix.toLocaleLowerCase() === char.toLocaleLowerCase()
+      const isSameCharRepeat =
+        char.toLocaleLowerCase() === state.lastChar.toLocaleLowerCase() &&
+        state.prefix.length === 1 &&
+        state.prefix.toLocaleLowerCase() === char.toLocaleLowerCase()
 
-    const nextPrefix = isSameCharRepeat ? state.prefix : `${state.prefix}${char}`
-    const startFrom = isSameCharRepeat ? state.lastMatchIndex : -1
-    const matchIndex = findOptionIndexByPrefix(selectableOptions, nextPrefix, startFrom)
+      const nextPrefix = isSameCharRepeat ? state.prefix : `${state.prefix}${char}`
+      const startFrom = isSameCharRepeat ? state.lastMatchIndex : -1
+      const matchIndex = findOptionIndexByPrefix(selectableOptions, nextPrefix, startFrom)
 
-    if (matchIndex < 0) {
-      return
-    }
+      if (matchIndex < 0) {
+        return
+      }
 
-    state.prefix = nextPrefix
-    state.lastChar = char
-    state.lastMatchIndex = matchIndex
-    setHighlightedIndex(matchIndex)
-  }, [resetTypeahead, selectableOptions])
+      state.prefix = nextPrefix
+      state.lastChar = char
+      state.lastMatchIndex = matchIndex
+      setHighlightedIndex(matchIndex)
+    },
+    [resetTypeahead, selectableOptions],
+  )
 
   useEffect(() => {
     if (!open) {
@@ -236,8 +242,7 @@ const RobboPhoneCountrySelect = ({
       ref={containerRef}
       className={classNames('robbo-phone-country', className, {
         'robbo-phone-country--open': open,
-      })}
-    >
+      })}>
       <button
         type='button'
         className='robbo-phone-country__trigger'
@@ -247,12 +252,13 @@ const RobboPhoneCountrySelect = ({
         disabled={disabled || readOnly}
         aria-haspopup='listbox'
         aria-expanded={open}
-        {...rest}
-      >
+        {...rest}>
         <span className='robbo-phone-country__flag' aria-hidden>
           {value ? getUnicodeFlagIcon(value) : '🌐'}
         </span>
-        <span className='robbo-phone-country__arrow' aria-hidden>▾</span>
+        <span className='robbo-phone-country__arrow' aria-hidden>
+          ▾
+        </span>
       </button>
       {open && (
         <ul className='robbo-phone-country__menu' role='listbox'>
@@ -271,14 +277,12 @@ const RobboPhoneCountrySelect = ({
                   'robbo-phone-country__option--highlighted': isHighlighted,
                 })}
                 role='option'
-                aria-selected={isSelected}
-              >
+                aria-selected={isSelected}>
                 <button
                   type='button'
                   className='robbo-phone-country__option-button'
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  onClick={() => handleSelect(option.value)}
-                >
+                  onClick={() => handleSelect(option.value)}>
                   {option.value && (
                     <span className='robbo-phone-country__option-flag' aria-hidden>
                       {getUnicodeFlagIcon(option.value)}
@@ -301,11 +305,13 @@ RobboPhoneCountrySelect.propTypes = {
   onChange: PropTypes.func.isRequired,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
-  options: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.string,
-    label: PropTypes.string,
-    divider: PropTypes.bool,
-  })).isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string,
+      label: PropTypes.string,
+      divider: PropTypes.bool,
+    }),
+  ).isRequired,
   disabled: PropTypes.bool,
   readOnly: PropTypes.bool,
   className: PropTypes.string,

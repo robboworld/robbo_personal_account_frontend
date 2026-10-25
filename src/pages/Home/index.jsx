@@ -219,8 +219,8 @@ const Home = () => {
 
   // Legacy-database sections only open errors while that database is off.
   const quickActions = QUICK_ACTION_DEFS.filter(
-    ({ roles, path }) => (!roles || roles.includes(role)) &&
-      (legacyEnabled || !LEGACY_ADMIN_ROUTES.has(path)),
+    ({ roles, path }) =>
+      (!roles || roles.includes(role)) && (legacyEnabled || !LEGACY_ADMIN_ROUTES.has(path)),
   )
 
   const handleAction = action => {
@@ -237,99 +237,92 @@ const Home = () => {
   }
 
   return (
-      <PageContent>
-        <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
-          <HeroPanel variants={staggerItem}>
-            <HeroInner>
-              <HeroTitle>
-                {firstName
-                  ? intl.formatMessage(
-                    { id: 'home.welcome_with_name' },
-                    { firstName },
+    <PageContent>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
+        <HeroPanel variants={staggerItem}>
+          <HeroInner>
+            <HeroTitle>
+              {firstName
+                ? intl.formatMessage({ id: 'home.welcome_with_name' }, { firstName })
+                : intl.formatMessage({ id: 'home.welcome' })}
+            </HeroTitle>
+            <HeroLead>{intl.formatMessage({ id: 'home.role_line' }, { role: roleTitle })}</HeroLead>
+          </HeroInner>
+        </HeroPanel>
+
+        <motion.div variants={staggerItem}>
+          <Panel>
+            <SectionHeader>
+              <SectionTitle>
+                <FormattedMessage id='home.quick_actions' />
+              </SectionTitle>
+              <SectionHint>
+                <FormattedMessage id='home.quick_actions_hint' />
+              </SectionHint>
+            </SectionHeader>
+
+            {quickActions.length ? (
+              <ActionGrid>
+                {quickActions.map(action => {
+                  const Icon = ACTION_ICONS[action.iconKey] || ArrowRightOutlined
+                  return (
+                    <ActionTile
+                      key={action.key}
+                      $featured={action.featured}
+                      $wide={action.wide}
+                      $gridSpan={action.gridSpan}
+                      whileTap={{ scale: 0.99 }}
+                      onClick={() => handleAction(action)}>
+                      <ActionIcon $accent={action.accent}>
+                        <Icon />
+                      </ActionIcon>
+                      <ActionTitle>
+                        <FormattedMessage id={action.titleId} />
+                      </ActionTitle>
+                      <ActionDescription>
+                        <FormattedMessage
+                          id={action.descriptionId}
+                          values={{ editor: editorLabel }}
+                        />
+                      </ActionDescription>
+                      <ActionCta>
+                        <FormattedMessage id='home.go_to' />
+                        <ArrowRightOutlined style={{ fontSize: 12 }} />
+                      </ActionCta>
+                    </ActionTile>
                   )
-                  : intl.formatMessage({ id: 'home.welcome' })}
-              </HeroTitle>
-              <HeroLead>
-                {intl.formatMessage(
-                  { id: 'home.role_line' },
-                  { role: roleTitle },
-                )}
-              </HeroLead>
-            </HeroInner>
-          </HeroPanel>
+                })}
+              </ActionGrid>
+            ) : (
+              <Empty description={intl.formatMessage({ id: 'home.no_actions' })} />
+            )}
+          </Panel>
+        </motion.div>
 
-          <motion.div variants={staggerItem}>
-            <Panel>
-              <SectionHeader>
-                <SectionTitle>
-                  <FormattedMessage id='home.quick_actions' />
-                </SectionTitle>
-                <SectionHint>
-                  <FormattedMessage id='home.quick_actions_hint' />
-                </SectionHint>
-              </SectionHeader>
-
-              {quickActions.length ? (
-                <ActionGrid>
-                  {quickActions.map(action => {
-                    const Icon = ACTION_ICONS[action.iconKey] || ArrowRightOutlined
-                    return (
-                      <ActionTile
-                        key={action.key}
-                        $featured={action.featured}
-                        $wide={action.wide}
-                        $gridSpan={action.gridSpan}
-                        whileTap={{ scale: 0.99 }}
-                        onClick={() => handleAction(action)}
-                      >
-                        <ActionIcon $accent={action.accent}>
-                          <Icon />
-                        </ActionIcon>
-                        <ActionTitle>
-                          <FormattedMessage id={action.titleId} />
-                        </ActionTitle>
-                        <ActionDescription>
-                          <FormattedMessage id={action.descriptionId} values={{ editor: editorLabel }} />
-                        </ActionDescription>
-                        <ActionCta>
-                          <FormattedMessage id='home.go_to' />
-                          <ArrowRightOutlined style={{ fontSize: 12 }} />
-                        </ActionCta>
-                      </ActionTile>
-                    )
-                  })}
-                </ActionGrid>
-              ) : (
-                <Empty description={intl.formatMessage({ id: 'home.no_actions' })} />
-              )}
-            </Panel>
-          </motion.div>
-
-          <motion.div variants={staggerItem}>
-            <Panel>
-              <SectionHeader>
-                <SectionTitle>
-                  <FormattedMessage id='home.next_steps' />
-                </SectionTitle>
-                <SectionHint>
-                  <FormattedMessage id='home.next_steps_hint' />
-                </SectionHint>
-              </SectionHeader>
-              <StepsList>
-                {NEXT_STEP_IDS.map((stepId, index) => (
-                  <StepItem key={stepId}>
-                    <StepIndex>{index + 1}</StepIndex>
-                    <StepText>
-                      <FormattedMessage id={stepId} values={{ editor: editorLabel }} />
-                    </StepText>
-                  </StepItem>
-                ))}
-              </StepsList>
-            </Panel>
-          </motion.div>
-        </Stagger>
-      </PageContent>
+        <motion.div variants={staggerItem}>
+          <Panel>
+            <SectionHeader>
+              <SectionTitle>
+                <FormattedMessage id='home.next_steps' />
+              </SectionTitle>
+              <SectionHint>
+                <FormattedMessage id='home.next_steps_hint' />
+              </SectionHint>
+            </SectionHeader>
+            <StepsList>
+              {NEXT_STEP_IDS.map((stepId, index) => (
+                <StepItem key={stepId}>
+                  <StepIndex>{index + 1}</StepIndex>
+                  <StepText>
+                    <FormattedMessage id={stepId} values={{ editor: editorLabel }} />
+                  </StepText>
+                </StepItem>
+              ))}
+            </StepsList>
+          </Panel>
+        </motion.div>
+      </Stagger>
+    </PageContent>
   )
 }
 

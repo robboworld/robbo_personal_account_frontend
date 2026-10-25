@@ -1,6 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  Button, Card, Empty, Form, Input, Modal, Select, Space, Spin, Typography, message, Tag,
+  Button,
+  Card,
+  Empty,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Spin,
+  Typography,
+  message,
+  Tag,
 } from 'antd'
 import { PlusOutlined, TeamOutlined, CopyOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
@@ -41,20 +52,27 @@ const TeacherClassesPage = () => {
     }
   }, [intl])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   // Courses for the picker load with the dialog; without them the field takes a typed id.
   useEffect(() => {
     if (!createOpen || courses !== null) return
-    api.listTeacherCourses()
+    api
+      .listTeacherCourses()
       .then(({ data }) => setCourses(data.items || []))
       .catch(() => setCourses([]))
   }, [createOpen, courses])
 
-  const courseOptions = useMemo(() => (courses || []).map(c => ({
-    value: c.id,
-    label: c.name ? `${c.name} · ${c.id}` : c.id,
-  })), [courses])
+  const courseOptions = useMemo(
+    () =>
+      (courses || []).map(c => ({
+        value: c.id,
+        label: c.name ? `${c.name} · ${c.id}` : c.id,
+      })),
+    [courses],
+  )
 
   const onCreate = async values => {
     setCreating(true)
@@ -82,8 +100,7 @@ const TeacherClassesPage = () => {
           <SectionTitle>
             <FormattedMessage id='teacher_class.title' />
           </SectionTitle>
-          <Button type='primary' icon={<PlusOutlined />}
-onClick={() => setCreateOpen(true)}>
+          <Button type='primary' icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
             <FormattedMessage id='teacher_class.create' />
           </Button>
         </SectionHeader>
@@ -91,7 +108,9 @@ onClick={() => setCreateOpen(true)}>
           <FormattedMessage id='teacher_class.hint' />
         </Paragraph>
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}><Spin /></div>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
+            <Spin />
+          </div>
         ) : items.length === 0 ? (
           <Empty description={<FormattedMessage id='teacher_class.empty' />}>
             <Button type='primary' onClick={() => setCreateOpen(true)}>
@@ -99,7 +118,12 @@ onClick={() => setCreateOpen(true)}>
             </Button>
           </Empty>
         ) : (
-          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+          <div
+            style={{
+              display: 'grid',
+              gap: 16,
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            }}>
             {items.map(item => (
               <Card
                 key={item.id}
@@ -110,28 +134,37 @@ onClick={() => setCreateOpen(true)}>
                     key='invite'
                     type='link'
                     icon={<CopyOutlined />}
-                    onClick={e => { e.stopPropagation(); setInviteOpen(item) }}
-                  >
+                    onClick={e => {
+                      e.stopPropagation()
+                      setInviteOpen(item)
+                    }}>
                     <FormattedMessage id='teacher_class.invite' />
                   </Button>,
                   <Button
                     key='open'
                     type='link'
                     icon={<TeamOutlined />}
-                    onClick={e => { e.stopPropagation(); navigate(boardPath(item.id)) }}
-                  >
+                    onClick={e => {
+                      e.stopPropagation()
+                      navigate(boardPath(item.id))
+                    }}>
                     <FormattedMessage id='teacher_class.open_board' />
                   </Button>,
-                ]}
-              >
-                <Title level={4} style={{ marginTop: 0 }}>{item.displayName}</Title>
-                <Text type='secondary' style={{ fontSize: 12 }}>{item.edxCourseId}</Text>
+                ]}>
+                <Title level={4} style={{ marginTop: 0 }}>
+                  {item.displayName}
+                </Title>
+                <Text type='secondary' style={{ fontSize: 12 }}>
+                  {item.edxCourseId}
+                </Text>
                 <div style={{ marginTop: 12 }}>
                   <Tag
                     color='blue'
-                    onClick={e => { e.stopPropagation(); copyText(item.inviteCode, intl) }}
-                    style={{ cursor: 'copy' }}
-                  >
+                    onClick={e => {
+                      e.stopPropagation()
+                      copyText(item.inviteCode, intl)
+                    }}
+                    style={{ cursor: 'copy' }}>
                     {item.inviteCode}
                   </Tag>
                 </div>
@@ -148,28 +181,29 @@ onClick={() => setCreateOpen(true)}>
         onOk={() => form.submit()}
         okText={<FormattedMessage id='teacher_class.create' />}
         cancelText={<FormattedMessage id='common.cancel' />}
-        confirmLoading={creating}
-      >
-        <Form form={form} layout='vertical'
-onFinish={onCreate}>
+        confirmLoading={creating}>
+        <Form form={form} layout='vertical' onFinish={onCreate}>
           <Form.Item
             name='displayName'
             label={<FormattedMessage id='teacher_class.name' />}
-            rules={[required]}
-          >
+            rules={[required]}>
             <Input placeholder={intl.formatMessage({ id: 'teacher_class.name_placeholder' })} />
           </Form.Item>
           <Form.Item
             name='courseId'
             label={<FormattedMessage id='teacher_class.course' />}
             rules={[required]}
-            extra={courses && courses.length === 0
-              ? <FormattedMessage id='teacher_class.course_manual_hint' />
-              : null}
-          >
+            extra={
+              courses && courses.length === 0 ? (
+                <FormattedMessage id='teacher_class.course_manual_hint' />
+              ) : null
+            }>
             {courses === null ? (
-              <Select loading disabled
-placeholder={intl.formatMessage({ id: 'teacher_class.course_loading' })} />
+              <Select
+                loading
+                disabled
+                placeholder={intl.formatMessage({ id: 'teacher_class.course_loading' })}
+              />
             ) : courses.length ? (
               <Select
                 showSearch
@@ -189,15 +223,12 @@ placeholder={intl.formatMessage({ id: 'teacher_class.course_loading' })} />
         title={<FormattedMessage id='teacher_class.invite_title' />}
         onCancel={() => setInviteOpen(null)}
         footer={[
-          <Button key='close' type='primary'
-onClick={() => setInviteOpen(null)}>
+          <Button key='close' type='primary' onClick={() => setInviteOpen(null)}>
             <FormattedMessage id='common.done' />
           </Button>,
-        ]}
-      >
+        ]}>
         {inviteOpen && (
-          <Space orientation='vertical' size='large'
-style={{ width: '100%' }}>
+          <Space orientation='vertical' size='large' style={{ width: '100%' }}>
             <InviteDetails klass={inviteOpen} />
           </Space>
         )}

@@ -5,13 +5,7 @@ import { getProfileFromQuery } from './profileQuery'
 import ProfilePageShell from '@/components/ProfilePageShell'
 import ProfileCard from '@/components/ProfileCard'
 
-const TeacherProfile = ({
-  data,
-  UpdateTeacher,
-  accessUpdate,
-  peekUserId,
-  peekUserRole,
-}) => {
+const TeacherProfile = ({ data, UpdateTeacher, accessUpdate, peekUserId, peekUserRole }) => {
   const { profile, loading, error } = getProfileFromQuery(data)
 
   return (
@@ -21,13 +15,8 @@ const TeacherProfile = ({
       error={error}
       accessUpdate={accessUpdate}
       peekUserId={peekUserId}
-      peekUserRole={peekUserRole}
-    >
-      <ProfileCard
-        profile={profile}
-        updateHandle={UpdateTeacher}
-        accessUpdate={accessUpdate}
-      />
+      peekUserRole={peekUserRole}>
+      <ProfileCard profile={profile} updateHandle={UpdateTeacher} accessUpdate={accessUpdate} />
     </ProfilePageShell>
   )
 }

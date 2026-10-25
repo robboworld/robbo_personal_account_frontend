@@ -8,81 +8,77 @@ import ListItem from '@/components/ListItem'
 import { coursePageQuerysGQL } from '@/graphQL'
 
 const CurrentCourseAccessRobboUnits = ({
-    courseId,
-    data: {
-        GetRobboUnitsAdmittedToTheCourse,
-        loading,
-    },
-    pageSize,
-    currentPage,
-    onChangePage,
+  courseId,
+  data: { GetRobboUnitsAdmittedToTheCourse, loading },
+  pageSize,
+  currentPage,
+  onChangePage,
 }) => {
-    return (
-        <Row gutter={[0, 8]}>
-            <Col span={24}>
-                <List
-                    bordered
-                    loading={loading}
-                    dataSource={GetRobboUnitsAdmittedToTheCourse?.robboUnits}
-                    pagination={{
-                        onChange: onChangePage,
-                        total: GetRobboUnitsAdmittedToTheCourse?.countRows,
-                        current: +currentPage,
-                        defaultCurrent: 1,
-                        defaultPageSize: pageSize,
-                        responsive: true,
-                    }}
-                    renderItem={(robboUnit, index) => (
-                        <ListItem
-                            itemIndex={index}
-                            key={index}
-                            render={() => { }}
-                            label={`${robboUnit.name} ${robboUnit.city}`}
-                        />
-                    )}
-                />
-            </Col>
-        </Row>
-    )
+  return (
+    <Row gutter={[0, 8]}>
+      <Col span={24}>
+        <List
+          bordered
+          loading={loading}
+          dataSource={GetRobboUnitsAdmittedToTheCourse?.robboUnits}
+          pagination={{
+            onChange: onChangePage,
+            total: GetRobboUnitsAdmittedToTheCourse?.countRows,
+            current: +currentPage,
+            defaultCurrent: 1,
+            defaultPageSize: pageSize,
+            responsive: true,
+          }}
+          renderItem={(robboUnit, index) => (
+            <ListItem
+              itemIndex={index}
+              key={index}
+              render={() => {}}
+              label={`${robboUnit.name} ${robboUnit.city}`}
+            />
+          )}
+        />
+      </Col>
+    </Row>
+  )
 }
 
 const CurrentCourseAccessRobboUnitsContainer = ({ courseId }) => {
-    const intl = useIntl()
-    const WithGraphQL = graphql(
-        coursePageQuerysGQL.GET_ROBBO_UNITS_ADMITTED_TO_THE_COURSE,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        courseId: props.courseId,
-                        page: props.currentPage,
-                        pageSize: props.pageSize,
-                    },
-                    onError: error => {
-                        notification.error({
-                            title: intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                }
-            },
+  const intl = useIntl()
+  const WithGraphQL = graphql(coursePageQuerysGQL.GET_ROBBO_UNITS_ADMITTED_TO_THE_COURSE, {
+    options: props => {
+      return {
+        variables: {
+          courseId: props.courseId,
+          page: props.currentPage,
+          pageSize: props.pageSize,
         },
-    )(CurrentCourseAccessRobboUnits)
+        onError: error => {
+          notification.error({
+            title: intl.formatMessage({ id: 'notification.error_message' }),
+            description: error?.message,
+          })
+        },
+      }
+    },
+  })(CurrentCourseAccessRobboUnits)
 
-    const [searchParams, setSearchParams] = useSearchParams()
-    const currentPage = searchParams.get('page') || '1'
-    const pageSize = '10'
+  const [searchParams, setSearchParams] = useSearchParams()
+  const currentPage = searchParams.get('page') || '1'
+  const pageSize = '10'
 
-    const onChangePage = page => {
-        setSearchParams({ page })
-    }
+  const onChangePage = page => {
+    setSearchParams({ page })
+  }
 
-    return <WithGraphQL
-        courseId={courseId}
-        pageSize={pageSize}
-        currentPage={currentPage}
-        onChangePage={onChangePage}
+  return (
+    <WithGraphQL
+      courseId={courseId}
+      pageSize={pageSize}
+      currentPage={currentPage}
+      onChangePage={onChangePage}
     />
+  )
 }
 
 export default CurrentCourseAccessRobboUnitsContainer

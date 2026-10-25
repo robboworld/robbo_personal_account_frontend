@@ -1,13 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 
-export default function Button(
-  {
-    content, handleSubmit,
-    background, width,
-    height, padding,
-    margin, fontSize,
-  }) {
+export default function Button({
+  content,
+  handleSubmit,
+  background,
+  width,
+  height,
+  padding,
+  margin,
+  fontSize,
+}) {
   return (
     <StyledButton
       onClick={() => handleSubmit()}
@@ -17,8 +20,7 @@ export default function Button(
       padding={padding}
       margin={margin}
       fontSize={fontSize}
-      data-cy='button'
-    >
+      data-cy='button'>
       {content}
     </StyledButton>
   )
@@ -37,8 +39,8 @@ const StyledButton = styled.button`
   color: white;
   border-radius: 2rem;
   cursor: pointer;
-  
-  &:hover{
+
+  &:hover {
     box-shadow: 0 0.5rem 0.5rem 0 rgba(31, 38, 135, 0.37);
   }
 `

@@ -11,87 +11,81 @@ import { robboGroupQuerysGQL } from '@/graphQL'
 import { SUPER_ADMIN, UNIT_ADMIN } from '@/constants'
 
 const RobboGroupsContainer = ({ userRole }) => {
-    const intl = useIntl()
-    const [searchParams, setSearchParams] = useSearchParams()
-    const currentPage = searchParams.get('page') || '1'
-    const pageSize = '10'
+  const intl = useIntl()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const currentPage = searchParams.get('page') || '1'
+  const pageSize = '10'
 
-    const onChangePage = page => {
-        setSearchParams({ page })
-    }
+  const onChangePage = page => {
+    setSearchParams({ page })
+  }
 
-    return (
-        <WithGraphQLComponent
-            intl={intl}
-            userRole={userRole}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            onChangePage={onChangePage}
-        />
-    )
+  return (
+    <WithGraphQLComponent
+      intl={intl}
+      userRole={userRole}
+      pageSize={pageSize}
+      currentPage={currentPage}
+      onChangePage={onChangePage}
+    />
+  )
 }
 
 const WithGraphQLComponent = compose(
-    graphql(
-        robboGroupQuerysGQL.GET_ALL_ROBBO_GROUPS,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        page: props.currentPage,
-                        pageSize: props.pageSize,
-                    },
-                    onError: error => {
-                        notification.error({
-                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                }
-            },
-            skip: props => props.userRole === UNIT_ADMIN,
-            name: 'GetRobboGroupsSuperAdmin',
-        }),
-    graphql(
-        robboGroupQuerysGQL.GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        page: props.currentPage,
-                        pageSize: props.pageSize,
-                    },
-                    onError: error => {
-                        notification.error({
-                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                }
-            },
-            skip: props => props.userRole === SUPER_ADMIN,
-            name: 'GetRobboGroupsUnitAdmin',
-        }),
-    graphql(
-        robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        page: props.currentPage,
-                        pageSize: props.pageSize,
-                    },
-                    onError: error => {
-                        notification.error({
-                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                }
-            },
-            skip: props => props.userRole === SUPER_ADMIN,
-            name: 'GetRobboGroupsByRobboUnitId',
-        }),
+  graphql(robboGroupQuerysGQL.GET_ALL_ROBBO_GROUPS, {
+    options: props => {
+      return {
+        variables: {
+          page: props.currentPage,
+          pageSize: props.pageSize,
+        },
+        onError: error => {
+          notification.error({
+            title: props.intl.formatMessage({ id: 'notification.error_message' }),
+            description: error?.message,
+          })
+        },
+      }
+    },
+    skip: props => props.userRole === UNIT_ADMIN,
+    name: 'GetRobboGroupsSuperAdmin',
+  }),
+  graphql(robboGroupQuerysGQL.GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN, {
+    options: props => {
+      return {
+        variables: {
+          page: props.currentPage,
+          pageSize: props.pageSize,
+        },
+        onError: error => {
+          notification.error({
+            title: props.intl.formatMessage({ id: 'notification.error_message' }),
+            description: error?.message,
+          })
+        },
+      }
+    },
+    skip: props => props.userRole === SUPER_ADMIN,
+    name: 'GetRobboGroupsUnitAdmin',
+  }),
+  graphql(robboGroupQuerysGQL.GET_ROBBO_GROUPS_BY_ROBBO_UNIT_ID, {
+    options: props => {
+      return {
+        variables: {
+          page: props.currentPage,
+          pageSize: props.pageSize,
+        },
+        onError: error => {
+          notification.error({
+            title: props.intl.formatMessage({ id: 'notification.error_message' }),
+            description: error?.message,
+          })
+        },
+      }
+    },
+    skip: props => props.userRole === SUPER_ADMIN,
+    name: 'GetRobboGroupsByRobboUnitId',
+  }),
 )(RobboGroups)
 
 export default RobboGroupsContainer

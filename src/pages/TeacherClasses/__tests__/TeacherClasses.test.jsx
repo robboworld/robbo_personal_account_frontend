@@ -22,7 +22,16 @@ describe('TeacherClassesPage', () => {
 
   it('shows class cards in Russian', async () => {
     api.listTeacherClasses.mockResolvedValue({
-      data: { items: [{ id: 'c1', displayName: 'Audit 5A', edxCourseId: 'course-v1:R+S+1', inviteCode: '86PR-GG' }] },
+      data: {
+        items: [
+          {
+            id: 'c1',
+            displayName: 'Audit 5A',
+            edxCourseId: 'course-v1:R+S+1',
+            inviteCode: '86PR-GG',
+          },
+        ],
+      },
     })
     renderPage(<TeacherClassesPage />)
     expect(await screen.findByText('Audit 5A')).toBeTruthy()

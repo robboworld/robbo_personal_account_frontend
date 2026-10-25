@@ -5,133 +5,175 @@ import { notification } from 'antd'
 import { formatMessageId } from '@/helpers/intl'
 
 import {
-    createUnitAdmin,
-    createUnitAdminFailed,
-    createUnitAdminSuccess,
-    deleteUnitAdmin,
-    deleteUnitAdminFailed,
-    deleteUnitAdminForRobboUnitFailed,
-    deleteUnitAdminForRobboUnitRequest,
-    deleteUnitAdminForRobboUnitSuccess,
-    deleteUnitAdminSuccess,
-    getUnitAdmins,
-    getUnitAdminsByRobboUnitIdFailed,
-    getUnitAdminsByRobboUnitIdRequest,
-    getUnitAdminsByRobboUnitIdSuccess,
-    getUnitAdminsFailed,
-    getUnitAdminsSuccess,
-    searchUnitAdminsByEmailFailed,
-    searchUnitAdminsByEmailRequest,
-    searchUnitAdminsByEmailSuccess,
-    setNewUnitAdminForRobboUnitFailed,
-    setNewUnitAdminForRobboUnitRequest,
-    setNewUnitAdminForRobboUnitSuccess,
+  createUnitAdmin,
+  createUnitAdminFailed,
+  createUnitAdminSuccess,
+  deleteUnitAdmin,
+  deleteUnitAdminFailed,
+  deleteUnitAdminForRobboUnitFailed,
+  deleteUnitAdminForRobboUnitRequest,
+  deleteUnitAdminForRobboUnitSuccess,
+  deleteUnitAdminSuccess,
+  getUnitAdmins,
+  getUnitAdminsByRobboUnitIdFailed,
+  getUnitAdminsByRobboUnitIdRequest,
+  getUnitAdminsByRobboUnitIdSuccess,
+  getUnitAdminsFailed,
+  getUnitAdminsSuccess,
+  searchUnitAdminsByEmailFailed,
+  searchUnitAdminsByEmailRequest,
+  searchUnitAdminsByEmailSuccess,
+  setNewUnitAdminForRobboUnitFailed,
+  setNewUnitAdminForRobboUnitRequest,
+  setNewUnitAdminForRobboUnitSuccess,
 } from '@/actions'
 import { unitAdminsAPI } from '@/api'
 import { unitAdminMutationsGraphQL, unitAdminQuerysGraphQL } from '@/graphQL'
 import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* getUnitAdminsSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { page, pageSize } = action.payload
-        const response = yield call(unitAdminQuerysGraphQL.GetAllUnitAdmins, page, pageSize)
+  const language = yield select(state => state.app.language)
+  try {
+    const { page, pageSize } = action.payload
+    const response = yield call(unitAdminQuerysGraphQL.GetAllUnitAdmins, page, pageSize)
 
-        yield put(getUnitAdminsSuccess(response.data.GetAllUnitAdmins.unitAdmins))
-    } catch (e) {
-        yield put(getUnitAdminsFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(getUnitAdminsSuccess(response.data.GetAllUnitAdmins.unitAdmins))
+  } catch (e) {
+    yield put(getUnitAdminsFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* createUnitAdminSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { unitAdmin } = action.payload
-        const response = yield call(unitAdminMutationsGraphQL.CreateUnitAdmin, { input: unitAdmin })
+  const language = yield select(state => state.app.language)
+  try {
+    const { unitAdmin } = action.payload
+    const response = yield call(unitAdminMutationsGraphQL.CreateUnitAdmin, { input: unitAdmin })
 
-        yield put(createUnitAdminSuccess(response.data.CreateUnitAdmin))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_create_success') })
-    } catch (e) {
-        yield put(createUnitAdminFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(createUnitAdminSuccess(response.data.CreateUnitAdmin))
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.unit_admin_create_success'),
+    })
+  } catch (e) {
+    yield put(createUnitAdminFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* deleteUnitAdminSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { unitAdminId, unitAdminIndex } = action.payload
-        const response = yield call(unitAdminMutationsGraphQL.DeleteUnitAdmin, unitAdminId)
+  const language = yield select(state => state.app.language)
+  try {
+    const { unitAdminId, unitAdminIndex } = action.payload
+    const response = yield call(unitAdminMutationsGraphQL.DeleteUnitAdmin, unitAdminId)
 
-        yield put(deleteUnitAdminSuccess(response.data.DeleteUnitAdmin, unitAdminIndex))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_delete_success') })
-    } catch (e) {
-        yield put(deleteUnitAdminFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(deleteUnitAdminSuccess(response.data.DeleteUnitAdmin, unitAdminIndex))
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.unit_admin_delete_success'),
+    })
+  } catch (e) {
+    yield put(deleteUnitAdminFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* searchUnitAdminsByEmailSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { token, email } = action.payload
-        const response = yield call(unitAdminsAPI.searchUnitAdminsByEmail, token, email)
+  const language = yield select(state => state.app.language)
+  try {
+    const { token, email } = action.payload
+    const response = yield call(unitAdminsAPI.searchUnitAdminsByEmail, token, email)
 
-        yield put(searchUnitAdminsByEmailSuccess(response.data))
-    } catch (e) {
-        yield put(searchUnitAdminsByEmailFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(searchUnitAdminsByEmailSuccess(response.data))
+  } catch (e) {
+    yield put(searchUnitAdminsByEmailFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* setNewUnitAdminForRobboUnitSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { unitAdminId, robboUnitId } = action.payload
-        const response = yield call(unitAdminMutationsGraphQL.SetNewUnitAdminForRobboUnit, unitAdminId, robboUnitId)
+  const language = yield select(state => state.app.language)
+  try {
+    const { unitAdminId, robboUnitId } = action.payload
+    const response = yield call(
+      unitAdminMutationsGraphQL.SetNewUnitAdminForRobboUnit,
+      unitAdminId,
+      robboUnitId,
+    )
 
-        yield put(setNewUnitAdminForRobboUnitSuccess(response.data.SetNewUnitAdminForRobboUnit))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_assigned_success') })
-    } catch (e) {
-        yield put(setNewUnitAdminForRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(setNewUnitAdminForRobboUnitSuccess(response.data.SetNewUnitAdminForRobboUnit))
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.unit_admin_assigned_success'),
+    })
+  } catch (e) {
+    yield put(setNewUnitAdminForRobboUnitFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* getUnitAdminsByRobboUnitIdSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { token, robboUnitId } = action.payload
-        const response = yield call(unitAdminsAPI.getUnitAdminsByRobboUnitId, token, robboUnitId)
+  const language = yield select(state => state.app.language)
+  try {
+    const { token, robboUnitId } = action.payload
+    const response = yield call(unitAdminsAPI.getUnitAdminsByRobboUnitId, token, robboUnitId)
 
-        yield put(getUnitAdminsByRobboUnitIdSuccess(response.data))
-    } catch (e) {
-        yield put(getUnitAdminsByRobboUnitIdFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(getUnitAdminsByRobboUnitIdSuccess(response.data))
+  } catch (e) {
+    yield put(getUnitAdminsByRobboUnitIdFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* deleteUnitAdminForRobboUnitSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { token, unitAdminId, robboUnitId } = action.payload
-        const response = yield call(unitAdminsAPI.deleteUnitAdminForRobboUnit, token, unitAdminId, robboUnitId)
+  const language = yield select(state => state.app.language)
+  try {
+    const { token, unitAdminId, robboUnitId } = action.payload
+    const response = yield call(
+      unitAdminsAPI.deleteUnitAdminForRobboUnit,
+      token,
+      unitAdminId,
+      robboUnitId,
+    )
 
-        yield put(deleteUnitAdminForRobboUnitSuccess(response))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_admin_unassigned_success') })
-    } catch (e) {
-        yield put(deleteUnitAdminForRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(deleteUnitAdminForRobboUnitSuccess(response))
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.unit_admin_unassigned_success'),
+    })
+  } catch (e) {
+    yield put(deleteUnitAdminForRobboUnitFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 export function* unitAdminsSaga() {
-    yield takeLatest(createUnitAdmin, createUnitAdminSaga)
-    yield takeLatest(getUnitAdmins, getUnitAdminsSaga)
-    yield takeLatest(deleteUnitAdmin, deleteUnitAdminSaga)
-    yield takeLatest(searchUnitAdminsByEmailRequest, searchUnitAdminsByEmailSaga)
-    yield takeLatest(setNewUnitAdminForRobboUnitRequest, setNewUnitAdminForRobboUnitSaga)
-    yield takeLatest(getUnitAdminsByRobboUnitIdRequest, getUnitAdminsByRobboUnitIdSaga)
-    yield takeLatest(deleteUnitAdminForRobboUnitRequest, deleteUnitAdminForRobboUnitSaga)
+  yield takeLatest(createUnitAdmin, createUnitAdminSaga)
+  yield takeLatest(getUnitAdmins, getUnitAdminsSaga)
+  yield takeLatest(deleteUnitAdmin, deleteUnitAdminSaga)
+  yield takeLatest(searchUnitAdminsByEmailRequest, searchUnitAdminsByEmailSaga)
+  yield takeLatest(setNewUnitAdminForRobboUnitRequest, setNewUnitAdminForRobboUnitSaga)
+  yield takeLatest(getUnitAdminsByRobboUnitIdRequest, getUnitAdminsByRobboUnitIdSaga)
+  yield takeLatest(deleteUnitAdminForRobboUnitRequest, deleteUnitAdminForRobboUnitSaga)
 }

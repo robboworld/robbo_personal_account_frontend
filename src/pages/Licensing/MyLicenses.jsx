@@ -94,7 +94,6 @@ const formatExpiresAt = (iso, locale) => {
   }
 }
 
-
 const meterPercent = (used, limit) => {
   if (!limit || limit <= 0) {
     return 0
@@ -147,16 +146,17 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
       <UsageStack>
         <UsageMeter>
           <UsageMeterTop>
-            <UsageMeterLabel>
-              {intl.formatMessage({ id: 'licensing.projects' })}
-            </UsageMeterLabel>
+            <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.projects' })}</UsageMeterLabel>
             <UsageMeterValue>
               {maxProjects <= 0
-                ? intl.formatMessage({ id: 'licensing.projects_unlimited_value' }, { count: projectCount })
+                ? intl.formatMessage(
+                    { id: 'licensing.projects_unlimited_value' },
+                    { count: projectCount },
+                  )
                 : intl.formatMessage(
-                  { id: 'licensing.usage_count_value' },
-                  { used: projectCount, limit: maxProjects },
-                )}
+                    { id: 'licensing.usage_count_value' },
+                    { used: projectCount, limit: maxProjects },
+                  )}
             </UsageMeterValue>
           </UsageMeterTop>
           <Progress
@@ -181,9 +181,9 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
               {sessionsUnlimited
                 ? intl.formatMessage({ id: 'licensing.unlimited' })
                 : intl.formatMessage(
-                  { id: 'licensing.usage_count_value' },
-                  { used: activeSessions, limit: sessionLimit },
-                )}
+                    { id: 'licensing.usage_count_value' },
+                    { used: activeSessions, limit: sessionLimit },
+                  )}
             </UsageMeterValue>
           </UsageMeterTop>
           <Progress
@@ -196,16 +196,14 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
 
         <UsageMeter>
           <UsageMeterTop>
-            <UsageMeterLabel>
-              {intl.formatMessage({ id: 'licensing.devices' })}
-            </UsageMeterLabel>
+            <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.devices' })}</UsageMeterLabel>
             <UsageMeterValue>
               {seatLimit <= 0
                 ? intl.formatMessage({ id: 'licensing.unlimited' })
                 : intl.formatMessage(
-                  { id: 'licensing.usage_count_value' },
-                  { used: seatsUsed, limit: seatLimit },
-                )}
+                    { id: 'licensing.usage_count_value' },
+                    { used: seatsUsed, limit: seatLimit },
+                  )}
             </UsageMeterValue>
           </UsageMeterTop>
           <Progress
@@ -299,10 +297,7 @@ const MyLicensesPage = () => {
   const [purchasePausedOpen, setPurchasePausedOpen] = useState(false)
   const onBuy = () => setPurchasePausedOpen(true)
 
-  const activeLicenses = useMemo(
-    () => (licenses || []).filter(isLicenseActive),
-    [licenses],
-  )
+  const activeLicenses = useMemo(() => (licenses || []).filter(isLicenseActive), [licenses])
 
   const primaryLicense = activeLicenses[0] || licenses[0] || null
 
@@ -333,16 +328,11 @@ const MyLicensesPage = () => {
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
-            <HeroTitle>
-              {intl.formatMessage({ id: 'licensing.my_title' })}
-            </HeroTitle>
-            <HeroLead>
-              {intl.formatMessage({ id: 'licensing.my_hint' })}
-            </HeroLead>
+            <HeroTitle>{intl.formatMessage({ id: 'licensing.my_title' })}</HeroTitle>
+            <HeroLead>{intl.formatMessage({ id: 'licensing.my_hint' })}</HeroLead>
           </HeroInner>
         </HeroPanel>
 
@@ -361,10 +351,7 @@ animate='show'>
                 </StatusTitle>
                 <StatusPills>
                   <TariffBadge>
-                    {intl.formatMessage(
-                      { id: 'licensing.usage_tariff' },
-                      { tariff: tariffName },
-                    )}
+                    {intl.formatMessage({ id: 'licensing.usage_tariff' }, { tariff: tariffName })}
                   </TariffBadge>
                   {hasActive && seatLimit > 0 ? (
                     <TariffBadge>
@@ -376,10 +363,7 @@ animate='show'>
                   ) : null}
                   {hasActive && expiresLabel ? (
                     <TariffBadge>
-                      {intl.formatMessage(
-                        { id: 'licensing.expires_pill' },
-                        { date: expiresLabel },
-                      )}
+                      {intl.formatMessage({ id: 'licensing.expires_pill' }, { date: expiresLabel })}
                     </TariffBadge>
                   ) : null}
                 </StatusPills>
@@ -399,7 +383,9 @@ animate='show'>
                           <LicenseLabel>
                             {intl.formatMessage({ id: 'licensing.license_key' })}
                           </LicenseLabel>
-                          <Text code copyable>{lic.licenseKey}</Text>
+                          <Text code copyable>
+                            {lic.licenseKey}
+                          </Text>
                         </LicenseKeyRow>
                       ))}
                     </LicenseStack>
@@ -421,49 +407,45 @@ animate='show'>
               </SoonHeader>
               {/* Device management is not finished: shown greyed out and inert (no mouse or keyboard). */}
               <SoonContent inert='' aria-disabled='true'>
-              {licensesLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
-                  <Spin />
-                </div>
-              ) : seatEntries.length === 0 ? (
-                <EmptyDevices>
-                  <EmptyDevicesTitle>
-                    {intl.formatMessage({ id: 'licensing.no_seats' })}
-                  </EmptyDevicesTitle>
-                  <EmptyDevicesText>
-                    {intl.formatMessage({ id: 'licensing.devices_empty_hint' })}
-                  </EmptyDevicesText>
-                  <EmptyDevicesActions>
-                    <SessionsLink to={MY_SESSIONS_ROUTE}>
-                      {intl.formatMessage({ id: 'licensing.devices_sessions_link' })}
-                    </SessionsLink>
-                  </EmptyDevicesActions>
-                </EmptyDevices>
-              ) : (
-                <SeatList>
-                  {seatEntries.map(({ licenseId, seat }) => (
-                    <SeatItem key={`${licenseId}-${seat.seatId}`}>
-                      <SeatInfo>
-                        <Text code>{seat.label || seat.seatId}</Text>
-                        {seat.deviceFingerprint ? (
-                          <Text type='secondary'>
-                            {seat.deviceFingerprint.slice(0, 12)}
-                            …
-                          </Text>
-                        ) : null}
-                      </SeatInfo>
-                      <Popconfirm
-                        title={intl.formatMessage({ id: 'licensing.revoke_confirm' })}
-                        onConfirm={() => onRevoke(licenseId, seat.seatId)}
-                      >
-                        <Button danger size='small'>
-                          {intl.formatMessage({ id: 'licensing.revoke_seat' })}
-                        </Button>
-                      </Popconfirm>
-                    </SeatItem>
-                  ))}
-                </SeatList>
-              )}
+                {licensesLoading ? (
+                  <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
+                    <Spin />
+                  </div>
+                ) : seatEntries.length === 0 ? (
+                  <EmptyDevices>
+                    <EmptyDevicesTitle>
+                      {intl.formatMessage({ id: 'licensing.no_seats' })}
+                    </EmptyDevicesTitle>
+                    <EmptyDevicesText>
+                      {intl.formatMessage({ id: 'licensing.devices_empty_hint' })}
+                    </EmptyDevicesText>
+                    <EmptyDevicesActions>
+                      <SessionsLink to={MY_SESSIONS_ROUTE}>
+                        {intl.formatMessage({ id: 'licensing.devices_sessions_link' })}
+                      </SessionsLink>
+                    </EmptyDevicesActions>
+                  </EmptyDevices>
+                ) : (
+                  <SeatList>
+                    {seatEntries.map(({ licenseId, seat }) => (
+                      <SeatItem key={`${licenseId}-${seat.seatId}`}>
+                        <SeatInfo>
+                          <Text code>{seat.label || seat.seatId}</Text>
+                          {seat.deviceFingerprint ? (
+                            <Text type='secondary'>{seat.deviceFingerprint.slice(0, 12)}…</Text>
+                          ) : null}
+                        </SeatInfo>
+                        <Popconfirm
+                          title={intl.formatMessage({ id: 'licensing.revoke_confirm' })}
+                          onConfirm={() => onRevoke(licenseId, seat.seatId)}>
+                          <Button danger size='small'>
+                            {intl.formatMessage({ id: 'licensing.revoke_seat' })}
+                          </Button>
+                        </Popconfirm>
+                      </SeatItem>
+                    ))}
+                  </SeatList>
+                )}
               </SoonContent>
             </GlassPanel>
 
@@ -481,12 +463,8 @@ animate='show'>
         <motion.div variants={staggerItem}>
           <GlassPanel id='buy'>
             <SectionHeader>
-              <SectionTitle>
-                {intl.formatMessage({ id: 'payments.catalog_title' })}
-              </SectionTitle>
-              <SectionHint>
-                {intl.formatMessage({ id: 'payments.catalog_hint' })}
-              </SectionHint>
+              <SectionTitle>{intl.formatMessage({ id: 'payments.catalog_title' })}</SectionTitle>
+              <SectionHint>{intl.formatMessage({ id: 'payments.catalog_hint' })}</SectionHint>
             </SectionHeader>
             {productsLoading ? (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
@@ -528,9 +506,9 @@ animate='show'>
                           {(product.sessionLimit ?? 0) <= 0
                             ? intl.formatMessage({ id: 'payments.feature_sessions_unlimited' })
                             : intl.formatMessage(
-                              { id: 'payments.feature_sessions' },
-                              { sessions: product.sessionLimit },
-                            )}
+                                { id: 'payments.feature_sessions' },
+                                { sessions: product.sessionLimit },
+                              )}
                         </ProductFeature>
                         <ProductFeature>
                           {intl.formatMessage(
@@ -543,8 +521,7 @@ animate='show'>
                         <Button
                           type={current ? 'default' : 'primary'}
                           disabled={current}
-                          onClick={onBuy}
-                        >
+                          onClick={onBuy}>
                           {current
                             ? intl.formatMessage({ id: 'payments.already_connected' })
                             : intl.formatMessage({ id: 'payments.buy' })}
@@ -562,13 +539,12 @@ animate='show'>
         open={purchasePausedOpen}
         title={intl.formatMessage({ id: 'payments.paused_title' })}
         onCancel={() => setPurchasePausedOpen(false)}
-        footer={(
+        footer={
           <Button type='primary' onClick={() => setPurchasePausedOpen(false)}>
             OK
           </Button>
-        )}
-        centered
-      >
+        }
+        centered>
         {intl.formatMessage({ id: 'payments.paused' })}
       </Modal>
     </PageContent>

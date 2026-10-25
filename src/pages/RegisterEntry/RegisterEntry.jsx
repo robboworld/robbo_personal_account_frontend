@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import Loader from '@/components/Loader'
-import {
-  fetchOidcStatus,
-  shouldUseOpenEdxAuthOnly,
-} from '@/helpers/oidcSession'
+import { fetchOidcStatus, shouldUseOpenEdxAuthOnly } from '@/helpers/oidcSession'
 import LmsRegisterRedirect from '@/pages/LmsRegisterRedirect'
 import Logistration from '@/pages/Logistration'
 

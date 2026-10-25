@@ -37,7 +37,9 @@ const RegistrationTextField = ({
   autoComplete,
 }) => (
   <div className={`registration-field${errorMessage ? ' registration-field--invalid' : ''}`}>
-    <label className='registration-field__label' htmlFor={name}>{label}</label>
+    <label className='registration-field__label' htmlFor={name}>
+      {label}
+    </label>
     {type === 'password' ? (
       <Input.Password
         id={name}
@@ -64,7 +66,9 @@ const RegistrationTextField = ({
       />
     )}
     {errorMessage && (
-      <div className='registration-field__error' id={`${name}-error`}>{errorMessage}</div>
+      <div className='registration-field__error' id={`${name}-error`}>
+        {errorMessage}
+      </div>
     )}
   </div>
 )
@@ -102,10 +106,12 @@ const RegisterForm = ({ showOidcAfterSignupHint = false }) => {
 
   useEffect(() => {
     if (shouldBackupRegister) {
-      dispatch(backupRegistrationFormBegin({
-        formFields: { ...formFields },
-        errors: { ...errors },
-      }))
+      dispatch(
+        backupRegistrationFormBegin({
+          formFields: { ...formFields },
+          errors: { ...errors },
+        }),
+      )
     }
   }, [shouldBackupRegister, formFields, errors, dispatch])
 
@@ -163,8 +169,7 @@ const RegisterForm = ({ showOidcAfterSignupHint = false }) => {
 
   return (
     <AuthFormStyles className='mw-xs'>
-      <form id='registration-form' name='registration-form'
-onSubmit={handleSubmit} noValidate>
+      <form id='registration-form' name='registration-form' onSubmit={handleSubmit} noValidate>
         <RegistrationTextField
           name='name'
           label={intl.formatMessage({ id: 'registration.fullname.label' })}
@@ -243,8 +248,7 @@ onSubmit={handleSubmit} noValidate>
           size='large'
           block
           className='register-button'
-          loading={signUpLoading}
-        >
+          loading={signUpLoading}>
           <FormattedMessage id='registration.create.account.for.free.button' />
         </Button>
       </form>

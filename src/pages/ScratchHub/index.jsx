@@ -1,12 +1,7 @@
 import React, { useMemo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
-import {
-  ExportOutlined,
-  WindowsOutlined,
-  AppleOutlined,
-  DownloadOutlined,
-} from '@ant-design/icons'
+import { ExportOutlined, WindowsOutlined, AppleOutlined, DownloadOutlined } from '@ant-design/icons'
 import styled, { css, keyframes } from 'styled-components'
 
 import { PageContent } from '@/components/AccountShell'
@@ -136,9 +131,15 @@ const WebPanel = styled(motion.a)`
   border-radius: 1.25rem;
   text-decoration: none;
   color: inherit;
-  background: linear-gradient(145deg, ${robboGuestTokens.green} 0%, ${robboGuestTokens.greenDark} 100%);
+  background: linear-gradient(
+    145deg,
+    ${robboGuestTokens.green} 0%,
+    ${robboGuestTokens.greenDark} 100%
+  );
   box-shadow: 0 18px 40px -24px rgba(0, 122, 46, 0.55);
-  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.28s ease;
+  transition:
+    transform 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+    box-shadow 0.28s ease;
   animation: ${fadeUp} 0.7s cubic-bezier(0.32, 0.72, 0, 1) 0.14s both;
 
   &:hover {
@@ -229,11 +230,13 @@ const DownloadItem = styled.a`
     border-color 0.22s ease,
     background 0.22s ease;
 
-  ${({ $recommended }) => $recommended && css`
-    border-color: rgba(0, 175, 65, 0.45);
-    background: rgba(0, 175, 65, 0.08);
-    box-shadow: 0 0 0 1px rgba(0, 175, 65, 0.12);
-  `}
+  ${({ $recommended }) =>
+    $recommended &&
+    css`
+      border-color: rgba(0, 175, 65, 0.45);
+      background: rgba(0, 175, 65, 0.08);
+      box-shadow: 0 0 0 1px rgba(0, 175, 65, 0.12);
+    `}
 
   &:hover {
     transform: translateX(3px);
@@ -324,9 +327,7 @@ const ScratchHubPage = () => {
   return (
     <HubRoot>
       <HubInner>
-        <Brand>
-          RobboScratch
-        </Brand>
+        <Brand>RobboScratch</Brand>
         <Lead>
           <FormattedMessage id='scratch_hub.lead' />
         </Lead>
@@ -335,14 +336,16 @@ const ScratchHubPage = () => {
           <WebPanel
             href={getScratchEditorUrl()}
             whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-          >
+            whileTap={{ scale: 0.99 }}>
             <div>
               <WebTitle>
                 <FormattedMessage id='scratch_hub.web_title' />
               </WebTitle>
               <WebHint>
-                <FormattedMessage id='scratch_hub.web_hint' values={{ editor: getScratchEditorLabel() }} />
+                <FormattedMessage
+                  id='scratch_hub.web_hint'
+                  values={{ editor: getScratchEditorLabel() }}
+                />
               </WebHint>
             </div>
             <WebCta>
@@ -368,8 +371,7 @@ const ScratchHubPage = () => {
                       href={item.href}
                       download
                       $recommended={recommended}
-                      aria-label={intl.formatMessage({ id: item.labelId })}
-                    >
+                      aria-label={intl.formatMessage({ id: item.labelId })}>
                       <OsIcon>
                         <Icon />
                       </OsIcon>
@@ -377,16 +379,16 @@ const ScratchHubPage = () => {
                         <OsName>
                           <FormattedMessage id={item.labelId} />
                         </OsName>
-                        <OsMeta>
-                          {item.file}
-                        </OsMeta>
+                        <OsMeta>{item.file}</OsMeta>
                       </OsCopy>
                       {recommended ? (
                         <RecBadge>
                           <FormattedMessage id='scratch_hub.recommended' />
                         </RecBadge>
                       ) : (
-                        <DownloadOutlined style={{ color: robboGuestTokens.greenDark, fontSize: 18 }} />
+                        <DownloadOutlined
+                          style={{ color: robboGuestTokens.greenDark, fontSize: 18 }}
+                        />
                       )}
                     </DownloadItem>
                   </li>

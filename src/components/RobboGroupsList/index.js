@@ -1,2 +1,2 @@
-import RobboGroupsList from "./RobboGroupsList"
+import RobboGroupsList from './RobboGroupsList'
 export default RobboGroupsList

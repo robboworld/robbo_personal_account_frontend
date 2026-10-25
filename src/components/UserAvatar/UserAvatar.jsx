@@ -33,11 +33,7 @@ const UserAvatar = ({
 
   return (
     <Wrapper className={className} aria-hidden={ariaHidden}>
-      {src ? (
-        <img src={src} alt='' />
-      ) : (
-        getInitials(displayName)
-      )}
+      {src ? <img src={src} alt='' /> : getInitials(displayName)}
     </Wrapper>
   )
 }
