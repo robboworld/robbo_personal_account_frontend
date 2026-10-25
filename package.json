@@ -84,7 +84,7 @@
     "redux-actions": "^2.6.5",
     "redux-saga": "^1.5.1",
     "rxjs": "^7",
-    "styled-components": "^5.3.11"
+    "styled-components": "^6"
   },
   "devDependencies": {
     "@babel/cli": "^7",
@@ -100,7 +100,7 @@
     "@testing-library/react": "^16",
     "babel-jest": "^29.7.0",
     "babel-loader": "^9",
-    "babel-plugin-styled-components": "^1.10.6",
+    "babel-plugin-styled-components": "^2",
     "css-loader": "^7",
     "cypress": "^16.1.1",
     "dotenv-webpack": "^8",
