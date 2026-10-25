@@ -3,47 +3,47 @@ import { notification } from 'antd'
 
 import { profileAPI } from '@/api'
 import {
-    getProfileById,
-    getProfileByIdFailed,
-    getProfileByIdSuccess,
-    updateProfile,
-    updateProfileFailed,
-    updateProfileSuccess,
+  getProfileById,
+  getProfileByIdFailed,
+  getProfileByIdSuccess,
+  updateProfile,
+  updateProfileFailed,
+  updateProfileSuccess,
 } from '@/actions'
 import { formatMessageId } from '@/helpers/intl'
 import { profileMutationsGraphQL } from '@/graphQL/mutation'
 import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* getProfileByAccessTokenSaga({ payload }) {
-    try {
-        const response = yield call(profileAPI.getProfileById)
+  try {
+    const response = yield call(profileAPI.getProfileById)
 
-        yield put(getProfileByIdSuccess(response.data.userHttp))
-    } catch (e) {
-        yield put(getProfileByIdFailed(e.message))
-    }
+    yield put(getProfileByIdSuccess(response.data.userHttp))
+  } catch (e) {
+    yield put(getProfileByIdFailed(e.message))
+  }
 }
 
 function* updateProfileSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { profile, role } = payload
-        const response = yield call(profileMutationsGraphQL.UpdateProfile, { input: profile }, role)
+  const language = yield select(state => state.app.language)
+  try {
+    const { profile, role } = payload
+    const response = yield call(profileMutationsGraphQL.UpdateProfile, { input: profile }, role)
 
-        yield put(updateProfileSuccess(response))
-        notification.success({
-            title: formatMessageId(language, 'notification.profile_update_short'),
-        })
-    } catch (e) {
-        yield put(updateProfileFailed(e))
-        notification.error({
-            title: formatMessageId(language, 'notification.error_message'),
-            description: sagaErrorMessage(e, language),
-        })
-    }
+    yield put(updateProfileSuccess(response))
+    notification.success({
+      title: formatMessageId(language, 'notification.profile_update_short'),
+    })
+  } catch (e) {
+    yield put(updateProfileFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 export function* profileSaga() {
-    yield takeLatest(getProfileById, getProfileByAccessTokenSaga)
-    yield takeLatest(updateProfile, updateProfileSaga)
+  yield takeLatest(getProfileById, getProfileByAccessTokenSaga)
+  yield takeLatest(updateProfile, updateProfileSaga)
 }

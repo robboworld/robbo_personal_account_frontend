@@ -10,9 +10,7 @@ export const AVATAR_CATALOG = [
 
 export const AVATAR_IDS = AVATAR_CATALOG.map(item => item.id)
 
-export const isValidAvatarId = id => (
-  typeof id === 'string' && AVATAR_IDS.includes(id)
-)
+export const isValidAvatarId = id => typeof id === 'string' && AVATAR_IDS.includes(id)
 
 export const getAvatarSrc = id => {
   if (!isValidAvatarId(id)) {

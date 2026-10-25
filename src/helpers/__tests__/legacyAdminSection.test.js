@@ -4,7 +4,13 @@ import { CLIENTS_ROUTE, MY_LICENSES_ROUTE, ROBBO_UNITS_ROUTE } from '@/constants
 const items = [
   { key: 'licenses', pathname: MY_LICENSES_ROUTE },
   { key: 'clients', pathname: CLIENTS_ROUTE },
-  { key: 'group', children: [{ key: 'units', pathname: ROBBO_UNITS_ROUTE }, { key: 'lic2', pathname: MY_LICENSES_ROUTE }] },
+  {
+    key: 'group',
+    children: [
+      { key: 'units', pathname: ROBBO_UNITS_ROUTE },
+      { key: 'lic2', pathname: MY_LICENSES_ROUTE },
+    ],
+  },
 ]
 
 describe('withoutLegacyAdminItems', () => {

@@ -23,11 +23,7 @@ import {
   AuthTextLink,
 } from './styles'
 
-import {
-  LANDING_PAGE_ROUTE,
-  LOGIN_PAGE_ROUTE,
-  REGISTER_PAGE_ROUTE,
-} from '@/constants'
+import { LANDING_PAGE_ROUTE, LOGIN_PAGE_ROUTE, REGISTER_PAGE_ROUTE } from '@/constants'
 import { lmsRegisterUrl } from '@/helpers/oidcSession'
 
 const AuthLayout = ({ selectedPage, onTabSelect, openEdxAuthOnly = false, children }) => {
@@ -48,8 +44,7 @@ const AuthLayout = ({ selectedPage, onTabSelect, openEdxAuthOnly = false, childr
           <HeroColumn className='w-50 d-flex'>
             <HeroLogoLink
               href={LANDING_PAGE_ROUTE}
-              aria-label={intl.formatMessage({ id: 'auth_layout.brand_aria' })}
-            >
+              aria-label={intl.formatMessage({ id: 'auth_layout.brand_aria' })}>
               <img
                 alt={intl.formatMessage({ id: 'auth_layout.brand_aria' })}
                 src='/static/logo.png'
@@ -71,17 +66,17 @@ const AuthLayout = ({ selectedPage, onTabSelect, openEdxAuthOnly = false, childr
                 <AuthFormInner className='authn-logistration__inner'>
                   <AuthTabs
                     role='tablist'
-                    aria-label={intl.formatMessage({ id: 'auth_layout.tabs_aria' })}
-                  >
+                    aria-label={intl.formatMessage({ id: 'auth_layout.tabs_aria' })}>
                     <AuthTabLink
                       role='tab'
                       $active={selectedPage === REGISTER_PAGE_ROUTE}
                       aria-selected={selectedPage === REGISTER_PAGE_ROUTE}
                       href={registerHref}
-                      onClick={openEdxAuthOnly
-                        ? undefined
-                        : event => handleTabClick(event, REGISTER_PAGE_ROUTE)}
-                    >
+                      onClick={
+                        openEdxAuthOnly
+                          ? undefined
+                          : event => handleTabClick(event, REGISTER_PAGE_ROUTE)
+                      }>
                       <FormattedMessage id='auth_layout.tab_register' />
                     </AuthTabLink>
                     <AuthTabLink
@@ -89,8 +84,7 @@ const AuthLayout = ({ selectedPage, onTabSelect, openEdxAuthOnly = false, childr
                       $active={selectedPage === LOGIN_PAGE_ROUTE}
                       aria-selected={selectedPage === LOGIN_PAGE_ROUTE}
                       href={LOGIN_PAGE_ROUTE}
-                      onClick={event => handleTabClick(event, LOGIN_PAGE_ROUTE)}
-                    >
+                      onClick={event => handleTabClick(event, LOGIN_PAGE_ROUTE)}>
                       <FormattedMessage id='auth_layout.tab_login' />
                     </AuthTabLink>
                   </AuthTabs>

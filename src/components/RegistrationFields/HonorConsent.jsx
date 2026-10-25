@@ -10,8 +10,7 @@ const HonorConsent = ({ checked, errorMessage, onChange, onBlur, onFocus }) => {
   return (
     <div
       className={`robbo-honor-consent registration-checkbox${errorMessage ? ' registration-checkbox--invalid' : ''}`}
-      id='honor-code'
-    >
+      id='honor-code'>
       <label className='registration-checkbox__label'>
         <input
           type='checkbox'
@@ -33,8 +32,7 @@ const HonorConsent = ({ checked, errorMessage, onChange, onBlur, onFocus }) => {
                   className='inline-link'
                   href={TOS_AND_HONOR_CODE_URL}
                   target='_blank'
-                  rel='noopener noreferrer'
-                >
+                  rel='noopener noreferrer'>
                   {intl.formatMessage({ id: 'registration.robbo.honor.personal_data' })}
                 </a>
               ),
@@ -43,8 +41,7 @@ const HonorConsent = ({ checked, errorMessage, onChange, onBlur, onFocus }) => {
                   className='inline-link'
                   href={PRIVACY_POLICY_URL}
                   target='_blank'
-                  rel='noopener noreferrer'
-                >
+                  rel='noopener noreferrer'>
                   {intl.formatMessage({ id: 'registration.robbo.honor.privacy' })}
                 </a>
               ),
@@ -52,9 +49,7 @@ const HonorConsent = ({ checked, errorMessage, onChange, onBlur, onFocus }) => {
           />
         </span>
       </label>
-      {errorMessage && (
-        <div className='registration-field__error'>{errorMessage}</div>
-      )}
+      {errorMessage && <div className='registration-field__error'>{errorMessage}</div>}
     </div>
   )
 }

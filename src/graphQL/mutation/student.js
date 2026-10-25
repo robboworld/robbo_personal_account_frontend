@@ -1,29 +1,29 @@
-import { gql } from "@apollo/client"
+import { gql } from '@apollo/client'
 
-import { graphQLClient } from "@/graphQL"
-import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
+import { graphQLClient } from '@/graphQL'
+import { USER_PROFILE_FIELDS } from '@/graphQL/fragments/userProfileFields'
 
 export const studentMutationsGQL = {
-    CREATE_STUDENT: gql`
+  CREATE_STUDENT: gql`
     mutation CreateStudent($input: NewStudent!) {
-        CreateStudent(input: $input) {
+      CreateStudent(input: $input) {
         __typename
-        ... on StudentHttp{
-            userHttp{
-                firstname
-                lastname
-                middlename
-                id
-            }
+        ... on StudentHttp {
+          userHttp {
+            firstname
+            lastname
+            middlename
+            id
+          }
         }
-        ... on Error{
-            message
+        ... on Error {
+          message
         }
+      }
     }
-    }
-    `,
+  `,
 
-    UPDATE_STUDENT: gql`
+  UPDATE_STUDENT: gql`
     mutation UpdateStudent($input: UpdateProfileInput!) {
         UpdateStudent(input: $input) {
             ... on StudentHttp {
@@ -39,71 +39,63 @@ export const studentMutationsGQL = {
     }
     `,
 
-    CREATE_STUDENT_PARENT_RELATION: gql`
+  CREATE_STUDENT_PARENT_RELATION: gql`
     mutation AddChildToParent($parentId: String!, $childId: String!) {
-        AddChildToParent(parentId: $parentId, childId: $childId) {
-            ... on StudentHttpList{
-                    students {
-                        userHttp{
-                            id
-                            lastname
-                            firstname
-                            middlename
-                        }
-                    }
-                }
-                ... on Error{
-                    message
-                }
+      AddChildToParent(parentId: $parentId, childId: $childId) {
+        ... on StudentHttpList {
+          students {
+            userHttp {
+              id
+              lastname
+              firstname
+              middlename
+            }
+          }
         }
+        ... on Error {
+          message
+        }
+      }
     }
-    `,
+  `,
 
-    DELETE_STUDENT: gql`
+  DELETE_STUDENT: gql`
     mutation DeleteStudent($studentId: String!) {
-        DeleteStudent(studentId: $studentId) {
-            ... on DeletedStudent{
-                    studentId
-                }
+      DeleteStudent(studentId: $studentId) {
+        ... on DeletedStudent {
+          studentId
         }
+      }
     }
-    `,
+  `,
 }
 
 export const studentMutationsGraphQL = {
-    CreateStudent(input) {
-        return graphQLClient.mutate(
-            {
-                mutation: studentMutationsGQL.CREATE_STUDENT,
-                variables: input,
-            },
-        )
-    },
+  CreateStudent(input) {
+    return graphQLClient.mutate({
+      mutation: studentMutationsGQL.CREATE_STUDENT,
+      variables: input,
+    })
+  },
 
-    UpdateStudent(input) {
-        return graphQLClient.mutate(
-            {
-                mutation: studentMutationsGQL.UPDATE_STUDENT,
-                variables: input,
-            },
-        )
-    },
+  UpdateStudent(input) {
+    return graphQLClient.mutate({
+      mutation: studentMutationsGQL.UPDATE_STUDENT,
+      variables: input,
+    })
+  },
 
-    CreateStudentParentRelation(input) {
-        return graphQLClient.mutate(
-            {
-                mutation: studentMutationsGQL.CREATE_STUDENT_PARENT_RELATION,
-                variables: input,
-            },
-        )
-    },
+  CreateStudentParentRelation(input) {
+    return graphQLClient.mutate({
+      mutation: studentMutationsGQL.CREATE_STUDENT_PARENT_RELATION,
+      variables: input,
+    })
+  },
 
-    DeleteStudent(studentId) {
-        return graphQLClient.mutate(
-            {
-                mutation: studentMutationsGQL.DELETE_STUDENT,
-                variables: studentId,
-            },
-        )
-    },
+  DeleteStudent(studentId) {
+    return graphQLClient.mutate({
+      mutation: studentMutationsGQL.DELETE_STUDENT,
+      variables: studentId,
+    })
+  },
 }

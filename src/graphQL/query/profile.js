@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client"
+import { gql } from '@apollo/client'
 
-import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
+import { USER_PROFILE_FIELDS } from '@/graphQL/fragments/userProfileFields'
 
 const userHttpFragment = `
     userHttp {
@@ -9,7 +9,7 @@ const userHttpFragment = `
 `
 
 export const profileGQL = {
-    GET_USER: gql`
+  GET_USER: gql`
         query GetUser($peekUserId: String, $peekUserRole: Int) {
             GetUser(peekUserId: $peekUserId, peekUserRole: $peekUserRole) {
                 __typename

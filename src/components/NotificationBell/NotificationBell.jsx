@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import {
-    fetchNotificationFeed,
-    fetchUnreadNotificationCount,
-    markPersonalNotificationRead,
-    markAnnouncementRead,
-    markAllNotificationsRead,
+  fetchNotificationFeed,
+  fetchUnreadNotificationCount,
+  markPersonalNotificationRead,
+  markAnnouncementRead,
+  markAllNotificationsRead,
 } from '@/api/notifications'
 import theme from '@/theme'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
@@ -72,268 +72,280 @@ const FeedPanel = styled.div`
 `
 
 const NotificationBell = ({ variant = 'default' }) => {
-    const intl = useIntl()
-    const navigate = useNavigate()
-    const isSidebar = variant === 'sidebar'
-    const [open, setOpen] = useState(false)
-    const [count, setCount] = useState(0)
-    const [items, setItems] = useState([])
-    const [loading, setLoading] = useState(false)
-    const feedRequestInFlightRef = useRef(false)
+  const intl = useIntl()
+  const navigate = useNavigate()
+  const isSidebar = variant === 'sidebar'
+  const [open, setOpen] = useState(false)
+  const [count, setCount] = useState(0)
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(false)
+  const feedRequestInFlightRef = useRef(false)
 
-    const refreshCount = useCallback(async () => {
-        try {
-            const { count: c } = await fetchUnreadNotificationCount()
-            setCount(typeof c === 'number' ? c : 0)
-        } catch {
-            /* ignore when logged out or network */
-        }
-    }, [])
+  const refreshCount = useCallback(async () => {
+    try {
+      const { count: c } = await fetchUnreadNotificationCount()
+      setCount(typeof c === 'number' ? c : 0)
+    } catch {
+      /* ignore when logged out or network */
+    }
+  }, [])
 
-    const loadFeed = useCallback(async ({ silent = false } = {}) => {
-        if (feedRequestInFlightRef.current) {
-            return
+  const loadFeed = useCallback(
+    async ({ silent = false } = {}) => {
+      if (feedRequestInFlightRef.current) {
+        return
+      }
+      feedRequestInFlightRef.current = true
+      if (!silent) {
+        setLoading(true)
+      }
+      try {
+        const data = await fetchNotificationFeed(40)
+        setItems(data.items || [])
+      } catch (e) {
+        const raw = e?.message || String(e)
+        const isAuthError = /token is expired|Session expired|unauthorized|401/i.test(raw)
+        if (!silent && !isAuthError) {
+          message.error(intl.formatMessage({ id: 'notifications.load_error' }))
         }
-        feedRequestInFlightRef.current = true
+      } finally {
+        feedRequestInFlightRef.current = false
         if (!silent) {
-            setLoading(true)
+          setLoading(false)
         }
-        try {
-            const data = await fetchNotificationFeed(40)
-            setItems(data.items || [])
-        } catch (e) {
-            const raw = e?.message || String(e)
-            const isAuthError = /token is expired|Session expired|unauthorized|401/i.test(raw)
-            if (!silent && !isAuthError) {
-                message.error(intl.formatMessage({ id: 'notifications.load_error' }))
-            }
-        } finally {
-            feedRequestInFlightRef.current = false
-            if (!silent) {
-                setLoading(false)
-            }
-        }
-    }, [intl])
+      }
+    },
+    [intl],
+  )
 
-    useEffect(() => {
-        let timer
+  useEffect(() => {
+    let timer
 
-        const startPolling = () => {
-            clearInterval(timer)
-            if (document.visibilityState === 'visible') {
-                refreshCount()
-                timer = setInterval(refreshCount, UNREAD_POLL_MS)
-            }
-        }
-
-        const onVisibilityChange = () => startPolling()
-        const onFocus = () => refreshCount()
-
-        startPolling()
-        document.addEventListener('visibilitychange', onVisibilityChange)
-        window.addEventListener('focus', onFocus)
-        return () => {
-            clearInterval(timer)
-            document.removeEventListener('visibilitychange', onVisibilityChange)
-            window.removeEventListener('focus', onFocus)
-        }
-    }, [refreshCount])
-
-    useEffect(() => {
-        if (!open) {
-            return undefined
-        }
-
-        let timer
-        const startFeedPolling = () => {
-            clearInterval(timer)
-            if (document.visibilityState === 'visible') {
-                timer = setInterval(() => loadFeed({ silent: true }), FEED_POLL_MS)
-            }
-        }
-        const onVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
-                loadFeed({ silent: true })
-            }
-            startFeedPolling()
-        }
-
-        loadFeed()
+    const startPolling = () => {
+      clearInterval(timer)
+      if (document.visibilityState === 'visible') {
         refreshCount()
-        startFeedPolling()
-        document.addEventListener('visibilitychange', onVisibilityChange)
-
-        return () => {
-            clearInterval(timer)
-            document.removeEventListener('visibilitychange', onVisibilityChange)
-        }
-    }, [open, loadFeed, refreshCount])
-
-    const handleMarkRead = async row => {
-        try {
-            if (row.feedKind === 'personal') {
-                await markPersonalNotificationRead(row.id)
-            } else {
-                await markAnnouncementRead(row.id)
-            }
-            await loadFeed()
-            await refreshCount()
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl))
-        }
+        timer = setInterval(refreshCount, UNREAD_POLL_MS)
+      }
     }
 
-    const handleNotificationClick = async row => {
-        if (!row.actionUrl) return
-        try {
-            if (!row.readAt) {
-                if (row.feedKind === 'personal') {
-                    await markPersonalNotificationRead(row.id)
-                } else {
-                    await markAnnouncementRead(row.id)
+    const onVisibilityChange = () => startPolling()
+    const onFocus = () => refreshCount()
+
+    startPolling()
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    window.addEventListener('focus', onFocus)
+    return () => {
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [refreshCount])
+
+  useEffect(() => {
+    if (!open) {
+      return undefined
+    }
+
+    let timer
+    const startFeedPolling = () => {
+      clearInterval(timer)
+      if (document.visibilityState === 'visible') {
+        timer = setInterval(() => loadFeed({ silent: true }), FEED_POLL_MS)
+      }
+    }
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadFeed({ silent: true })
+      }
+      startFeedPolling()
+    }
+
+    loadFeed()
+    refreshCount()
+    startFeedPolling()
+    document.addEventListener('visibilitychange', onVisibilityChange)
+
+    return () => {
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  }, [open, loadFeed, refreshCount])
+
+  const handleMarkRead = async row => {
+    try {
+      if (row.feedKind === 'personal') {
+        await markPersonalNotificationRead(row.id)
+      } else {
+        await markAnnouncementRead(row.id)
+      }
+      await loadFeed()
+      await refreshCount()
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl))
+    }
+  }
+
+  const handleNotificationClick = async row => {
+    if (!row.actionUrl) return
+    try {
+      if (!row.readAt) {
+        if (row.feedKind === 'personal') {
+          await markPersonalNotificationRead(row.id)
+        } else {
+          await markAnnouncementRead(row.id)
+        }
+      }
+      setOpen(false)
+      navigate(row.actionUrl)
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl))
+    }
+  }
+
+  const handleMarkAll = async () => {
+    try {
+      await markAllNotificationsRead()
+      await loadFeed()
+      await refreshCount()
+      message.success(intl.formatMessage({ id: 'notifications.mark_all_ok' }))
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl))
+    }
+  }
+
+  const feed = (
+    <FeedPanel>
+      <Space style={{ marginBottom: 8, width: '100%', justifyContent: 'flex-end' }}>
+        <Button size='small' type='link' onClick={handleMarkAll}>
+          {intl.formatMessage({ id: 'notifications.mark_all' })}
+        </Button>
+      </Space>
+      <List
+        loading={loading}
+        locale={{ emptyText: intl.formatMessage({ id: 'notifications.empty' }) }}
+        dataSource={items}
+        renderItem={row => {
+          const canMark = row.feedKind === 'announcement' || !row.readAt
+          const isClickable = Boolean(row.actionUrl)
+          return (
+            <List.Item
+              role={isClickable ? 'link' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
+              onClick={isClickable ? () => handleNotificationClick(row) : undefined}
+              onKeyDown={
+                isClickable
+                  ? event => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault()
+                        handleNotificationClick(row)
+                      }
+                    }
+                  : undefined
+              }
+              style={isClickable ? { cursor: 'pointer' } : undefined}
+              actions={
+                canMark
+                  ? [
+                      <Button
+                        type='link'
+                        size='small'
+                        key='read'
+                        onClick={event => {
+                          event.stopPropagation()
+                          handleMarkRead(row)
+                        }}>
+                        {intl.formatMessage({ id: 'notifications.mark_read' })}
+                      </Button>,
+                    ]
+                  : []
+              }>
+              <List.Item.Meta
+                title={
+                  <Space orientation='vertical' size={0}>
+                    <Text strong={!row.readAt && row.feedKind === 'personal'}>{row.title}</Text>
+                    <Text type='secondary' style={{ fontSize: 12 }}>
+                      {row.feedKind === 'announcement'
+                        ? intl.formatMessage({ id: 'notifications.kind_announcement' })
+                        : row.source === 'system'
+                          ? intl.formatMessage({ id: 'notifications.kind_system' })
+                          : row.source === 'lms'
+                            ? intl.formatMessage({ id: 'notifications.kind_lms' })
+                            : intl.formatMessage({ id: 'notifications.kind_admin' })}
+                    </Text>
+                  </Space>
                 }
+                description={<Text style={{ whiteSpace: 'pre-wrap' }}>{row.body}</Text>}
+              />
+            </List.Item>
+          )
+        }}
+      />
+    </FeedPanel>
+  )
+
+  const trigger = (
+    <IconTrigger
+      type='button'
+      aria-label={intl.formatMessage({ id: 'notifications.title' })}
+      onClick={() => setOpen(true)}
+      style={
+        isSidebar
+          ? undefined
+          : {
+              background: 'rgba(255,255,255,0.22)',
+              color: '#fff',
             }
-            setOpen(false)
-            navigate(row.actionUrl)
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl))
-        }
-    }
+      }>
+      <Badge count={count > 0 ? count : undefined} size='small' overflowCount={99}>
+        <BellOutlined
+          style={{
+            fontSize: 17,
+            color: isSidebar ? theme.colors.secondary : '#fff',
+          }}
+        />
+      </Badge>
+    </IconTrigger>
+  )
 
-    const handleMarkAll = async () => {
-        try {
-            await markAllNotificationsRead()
-            await loadFeed()
-            await refreshCount()
-            message.success(intl.formatMessage({ id: 'notifications.mark_all_ok' }))
-        } catch (e) {
-            message.error(apiErrorMessage(e, intl))
-        }
-    }
-
-    const feed = (
-        <FeedPanel>
-            <Space style={{ marginBottom: 8, width: '100%', justifyContent: 'flex-end' }}>
-                <Button size='small' type='link'
-onClick={handleMarkAll}>
-                    {intl.formatMessage({ id: 'notifications.mark_all' })}
-                </Button>
-            </Space>
-            <List
-                loading={loading}
-                locale={{ emptyText: intl.formatMessage({ id: 'notifications.empty' }) }}
-                dataSource={items}
-                renderItem={row => {
-                    const canMark = row.feedKind === 'announcement' || !row.readAt
-                    const isClickable = Boolean(row.actionUrl)
-                    return (
-                    <List.Item
-                        role={isClickable ? 'link' : undefined}
-                        tabIndex={isClickable ? 0 : undefined}
-                        onClick={isClickable ? () => handleNotificationClick(row) : undefined}
-                        onKeyDown={isClickable ? event => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                                event.preventDefault()
-                                handleNotificationClick(row)
-                            }
-                        } : undefined}
-                        style={isClickable ? { cursor: 'pointer' } : undefined}
-                        actions={canMark ? [
-                            <Button type='link' size='small'
-key='read' onClick={event => {
-                                event.stopPropagation()
-                                handleMarkRead(row)
-                            }}>
-                                {intl.formatMessage({ id: 'notifications.mark_read' })}
-                            </Button>,
-                        ] : []}
-                    >
-                        <List.Item.Meta
-                            title={
-                                <Space orientation='vertical' size={0}>
-                                    <Text strong={!row.readAt && row.feedKind === 'personal'}>{row.title}</Text>
-                                    <Text type='secondary' style={{ fontSize: 12 }}>
-                                        {row.feedKind === 'announcement'
-                                            ? intl.formatMessage({ id: 'notifications.kind_announcement' })
-                                            : row.source === 'system'
-                                                ? intl.formatMessage({ id: 'notifications.kind_system' })
-                                                : row.source === 'lms'
-                                                    ? intl.formatMessage({ id: 'notifications.kind_lms' })
-                                                    : intl.formatMessage({ id: 'notifications.kind_admin' })}
-                                    </Text>
-                                </Space>
-                            }
-                            description={<Text style={{ whiteSpace: 'pre-wrap' }}>{row.body}</Text>}
-                        />
-                    </List.Item>
-                    )
-                }}
-            />
-        </FeedPanel>
-    )
-
-    const trigger = (
-        <IconTrigger
-            type='button'
-            aria-label={intl.formatMessage({ id: 'notifications.title' })}
-            onClick={() => setOpen(true)}
-            style={isSidebar ? undefined : {
-                background: 'rgba(255,255,255,0.22)',
-                color: '#fff',
-            }}
-        >
-            <Badge count={count > 0 ? count : undefined} size='small'
-overflowCount={99}>
-                <BellOutlined
-                  style={{
-                    fontSize: 17,
-                    color: isSidebar ? theme.colors.secondary : '#fff',
-                  }}
-                />
-            </Badge>
-        </IconTrigger>
-    )
-
-    if (isSidebar) {
-        return (
-            <React.Fragment>
-                {trigger}
-                <Modal
-                    title={intl.formatMessage({ id: 'notifications.title' })}
-                    open={open}
-                    onCancel={() => setOpen(false)}
-                    footer={null}
-                    centered
-                    destroyOnHidden
-                    width='min(440px, calc(100vw - 2rem))'
-                    mask={{ closable: true }}
-                    styles={{
-                        mask: { background: 'rgba(24, 28, 32, 0.55)' },
-                    }}
-                >
-                    {feed}
-                </Modal>
-            </React.Fragment>
-        )
-    }
-
+  if (isSidebar) {
     return (
-        <React.Fragment>
-            {trigger}
-            <Modal
-                title={intl.formatMessage({ id: 'notifications.title' })}
-                open={open}
-                onCancel={() => setOpen(false)}
-                footer={null}
-                centered
-                destroyOnHidden
-                width='min(440px, calc(100vw - 2rem))'
-                mask={{ closable: true }}
-            >
-                {feed}
-            </Modal>
-        </React.Fragment>
+      <React.Fragment>
+        {trigger}
+        <Modal
+          title={intl.formatMessage({ id: 'notifications.title' })}
+          open={open}
+          onCancel={() => setOpen(false)}
+          footer={null}
+          centered
+          destroyOnHidden
+          width='min(440px, calc(100vw - 2rem))'
+          mask={{ closable: true }}
+          styles={{
+            mask: { background: 'rgba(24, 28, 32, 0.55)' },
+          }}>
+          {feed}
+        </Modal>
+      </React.Fragment>
     )
+  }
+
+  return (
+    <React.Fragment>
+      {trigger}
+      <Modal
+        title={intl.formatMessage({ id: 'notifications.title' })}
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={null}
+        centered
+        destroyOnHidden
+        width='min(440px, calc(100vw - 2rem))'
+        mask={{ closable: true }}>
+        {feed}
+      </Modal>
+    </React.Fragment>
+  )
 }
 
 export default NotificationBell

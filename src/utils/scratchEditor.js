@@ -18,7 +18,11 @@ function alignLoopbackUrlHost(url) {
   try {
     const parsed = new URL(url, window.location.origin)
     const pageHost = window.location.hostname
-    if (isLoopbackHost(pageHost) && isLoopbackHost(parsed.hostname) && parsed.hostname !== pageHost) {
+    if (
+      isLoopbackHost(pageHost) &&
+      isLoopbackHost(parsed.hostname) &&
+      parsed.hostname !== pageHost
+    ) {
       parsed.hostname = pageHost
       return parsed.toString()
     }

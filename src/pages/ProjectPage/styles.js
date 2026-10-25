@@ -247,7 +247,9 @@ export const GreenFlagControl = styled.button`
     background-color: rgba(0, 175, 65, 0.15);
   }
 
-  ${props => props.$active && `
+  ${props =>
+    props.$active &&
+    `
     background-color: rgba(0, 175, 65, 0.35);
   `}
 `

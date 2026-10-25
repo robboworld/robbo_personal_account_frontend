@@ -80,9 +80,7 @@ export const ProjectCardCover = styled.button`
   border: 0;
   cursor: pointer;
   overflow: hidden;
-  background:
-    linear-gradient(145deg, rgba(0, 175, 65, 0.18), rgba(108, 91, 123, 0.22)),
-    #e8f5ee;
+  background: linear-gradient(145deg, rgba(0, 175, 65, 0.18), rgba(108, 91, 123, 0.22)), #e8f5ee;
 
   &:focus-visible {
     outline: 2px solid ${colors.accentGreen};
@@ -188,7 +186,9 @@ export const OpenButton = styled.button`
   font-weight: 600;
   color: ${colors.accentGreen};
   cursor: pointer;
-  transition: color 0.2s ease, gap 0.2s ease;
+  transition:
+    color 0.2s ease,
+    gap 0.2s ease;
 
   &:hover {
     color: #009a47;
@@ -342,7 +342,10 @@ export const ProjectTag = styled.button`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     background: rgba(0, 175, 65, 0.16);

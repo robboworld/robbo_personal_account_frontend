@@ -1,2 +1,2 @@
-import UnitAdminContentContainer from "./UnitAdminContentContainer"
+import UnitAdminContentContainer from './UnitAdminContentContainer'
 export default UnitAdminContentContainer

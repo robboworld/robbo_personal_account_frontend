@@ -83,13 +83,10 @@ const ReceiptPage = () => {
 
   return (
     <PageContent>
-      <Stagger variants={staggerContainer} initial='hidden'
-animate='show'>
+      <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
-            <HeroTitle>
-              {intl.formatMessage({ id: 'payments.receipt_title' })}
-            </HeroTitle>
+            <HeroTitle>{intl.formatMessage({ id: 'payments.receipt_title' })}</HeroTitle>
           </HeroInner>
         </HeroPanel>
 
@@ -100,15 +97,20 @@ animate='show'>
                 <Spin />
               </div>
             ) : null}
-            {error ? <Alert type='error' showIcon
-title={error} /> : null}
+            {error ? <Alert type='error' showIcon title={error} /> : null}
             {order ? (
               <React.Fragment>
-                <Alert type={alertType} showIcon
-title={statusMessage} style={{ marginBottom: 16 }} />
+                <Alert
+                  type={alertType}
+                  showIcon
+                  title={statusMessage}
+                  style={{ marginBottom: 16 }}
+                />
                 <Paragraph>
                   <Text strong>{intl.formatMessage({ id: 'payments.order_number' })}: </Text>
-                  <Text code copyable>{order.orderNumber}</Text>
+                  <Text code copyable>
+                    {order.orderNumber}
+                  </Text>
                 </Paragraph>
                 <Paragraph>
                   <Text strong>{intl.formatMessage({ id: 'payments.price' })}: </Text>

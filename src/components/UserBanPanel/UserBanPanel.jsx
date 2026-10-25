@@ -18,12 +18,7 @@ import {
 import { FormattedMessage, useIntl } from 'react-intl'
 import dayjs from 'dayjs'
 
-import {
-  banUser,
-  getUserBanHistory,
-  getUserBanStatus,
-  unbanUser,
-} from '@/api/users'
+import { banUser, getUserBanHistory, getUserBanStatus, unbanUser } from '@/api/users'
 import { SUPER_ADMIN, TEACHER } from '@/constants'
 import { useAuthRole, useCurrentUser } from '@/helpers'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
@@ -62,9 +57,7 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
   const [banForm] = Form.useForm()
   const [unbanForm] = Form.useForm()
 
-  const canModerate = role === SUPER_ADMIN &&
-    lmsUserId &&
-    String(lmsUserId) !== String(selfId)
+  const canModerate = role === SUPER_ADMIN && lmsUserId && String(lmsUserId) !== String(selfId)
 
   const reload = useCallback(async () => {
     if (!canModerate) {
@@ -175,9 +168,10 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
       title: intl.formatMessage({ id: 'moderation.col_expires' }),
       dataIndex: 'expiresAt',
       key: 'expiresAt',
-      render: (v, row) => (row.isPermanent || !v
-        ? intl.formatMessage({ id: 'moderation.permanent' })
-        : formatWhen(v, intl.locale)),
+      render: (v, row) =>
+        row.isPermanent || !v
+          ? intl.formatMessage({ id: 'moderation.permanent' })
+          : formatWhen(v, intl.locale),
     },
     {
       title: intl.formatMessage({ id: 'moderation.col_status' }),
@@ -185,13 +179,25 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
       key: 'isActive',
       render: (active, row) => {
         if (active) {
-          return <Tag color='error'><FormattedMessage id='moderation.status_active' /></Tag>
+          return (
+            <Tag color='error'>
+              <FormattedMessage id='moderation.status_active' />
+            </Tag>
+          )
         }
         const expiredByTime = row.expiresAt && new Date(row.expiresAt).getTime() <= Date.now()
         if (row.unbanReason === 'expired' || expiredByTime) {
-          return <Tag><FormattedMessage id='moderation.status_expired' /></Tag>
+          return (
+            <Tag>
+              <FormattedMessage id='moderation.status_expired' />
+            </Tag>
+          )
         }
-        return <Tag color='success'><FormattedMessage id='moderation.status_lifted' /></Tag>
+        return (
+          <Tag color='success'>
+            <FormattedMessage id='moderation.status_lifted' />
+          </Tag>
+        )
       },
     },
   ]
@@ -211,17 +217,17 @@ const UserBanPanel = ({ lmsUserId, peekUserRole }) => {
       </Typography.Title>
 
       {isBanned && activeBan ? (
-        <Space orientation='vertical' size='middle'
-style={{ width: '100%' }}>
+        <Space orientation='vertical' size='middle' style={{ width: '100%' }}>
           <Alert
             type='error'
             showIcon
             title={<FormattedMessage id='moderation.banned_alert' />}
-            description={(
+            description={
               <Space orientation='vertical' size={4}>
                 <Paragraph style={{ marginBottom: 0 }}>
-                  <Text strong><FormattedMessage id='moderation.col_reason' />:</Text>
-                  {' '}
+                  <Text strong>
+                    <FormattedMessage id='moderation.col_reason' />:
+                  </Text>{' '}
                   {activeBan.reason}
                 </Paragraph>
                 <Text type='secondary'>
@@ -242,16 +248,13 @@ style={{ width: '100%' }}>
                   {activeBan.bannedByLmsUserId}
                 </Text>
               </Space>
-            )}
+            }
           />
-          <Form form={unbanForm} layout='vertical'
-onFinish={submitUnban}>
+          <Form form={unbanForm} layout='vertical' onFinish={submitUnban}>
             <Form.Item name='reason' label={<FormattedMessage id='moderation.unban_reason' />}>
-              <TextArea rows={2} maxLength={500}
-showCount />
+              <TextArea rows={2} maxLength={500} showCount />
             </Form.Item>
-            <Button type='primary' htmlType='submit'
-loading={saving}>
+            <Button type='primary' htmlType='submit' loading={saving}>
               <FormattedMessage id='moderation.unban_button' />
             </Button>
           </Form>
@@ -261,15 +264,14 @@ loading={saving}>
           form={banForm}
           layout='vertical'
           initialValues={{ banType: 'permanent' }}
-          onFinish={submitBan}
-        >
+          onFinish={submitBan}>
           <Form.Item
             name='reason'
             label={<FormattedMessage id='moderation.ban_reason' />}
-            rules={[{ required: true, message: intl.formatMessage({ id: 'moderation.reason_required' }) }]}
-          >
-            <TextArea rows={3} maxLength={1000}
-showCount />
+            rules={[
+              { required: true, message: intl.formatMessage({ id: 'moderation.reason_required' }) },
+            ]}>
+            <TextArea rows={3} maxLength={1000} showCount />
           </Form.Item>
           <Form.Item name='banType' label={<FormattedMessage id='moderation.ban_type' />}>
             <Radio.Group>
@@ -282,29 +284,34 @@ showCount />
             </Radio.Group>
           </Form.Item>
           <Form.Item noStyle shouldUpdate={(prev, cur) => prev.banType !== cur.banType}>
-            {({ getFieldValue }) => (getFieldValue('banType') === 'temporary' ? (
-              <Form.Item
-                name='expiresAt'
-                label={<FormattedMessage id='moderation.expires_at' />}
-                rules={[{ required: true, message: intl.formatMessage({ id: 'moderation.expires_required' }) }]}
-              >
-                <DatePicker
-                  showTime={{ format: 'HH:mm', showSecond: false }}
-                  format='DD.MM.YYYY HH:mm'
-                  placeholder={intl.formatMessage({ id: 'moderation.expires_placeholder' })}
-                  style={{ width: '100%' }}
-                  popupClassName='moderation-expires-picker'
-                  popupStyle={{
-                    '--moderation-hours-label': `"${intl.formatMessage({ id: 'moderation.time_hours' })}"`,
-                    '--moderation-minutes-label': `"${intl.formatMessage({ id: 'moderation.time_minutes' })}"`,
-                  }}
-                  disabledDate={current => current && current.isBefore(dayjs().startOf('day'))}
-                />
-              </Form.Item>
-            ) : null)}
+            {({ getFieldValue }) =>
+              getFieldValue('banType') === 'temporary' ? (
+                <Form.Item
+                  name='expiresAt'
+                  label={<FormattedMessage id='moderation.expires_at' />}
+                  rules={[
+                    {
+                      required: true,
+                      message: intl.formatMessage({ id: 'moderation.expires_required' }),
+                    },
+                  ]}>
+                  <DatePicker
+                    showTime={{ format: 'HH:mm', showSecond: false }}
+                    format='DD.MM.YYYY HH:mm'
+                    placeholder={intl.formatMessage({ id: 'moderation.expires_placeholder' })}
+                    style={{ width: '100%' }}
+                    popupClassName='moderation-expires-picker'
+                    popupStyle={{
+                      '--moderation-hours-label': `"${intl.formatMessage({ id: 'moderation.time_hours' })}"`,
+                      '--moderation-minutes-label': `"${intl.formatMessage({ id: 'moderation.time_minutes' })}"`,
+                    }}
+                    disabledDate={current => current && current.isBefore(dayjs().startOf('day'))}
+                  />
+                </Form.Item>
+              ) : null
+            }
           </Form.Item>
-          <Button type='primary' danger
-htmlType='submit' loading={saving}>
+          <Button type='primary' danger htmlType='submit' loading={saving}>
             <FormattedMessage id='moderation.ban_button' />
           </Button>
         </Form>

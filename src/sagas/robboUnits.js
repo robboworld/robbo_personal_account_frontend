@@ -6,115 +6,145 @@ import { formatMessageId } from '@/helpers/intl'
 
 import { robboUnitMutationsGraphQL, robboUnitQuerysGraphQL } from '@/graphQL'
 import {
-    getRobboUnitsFailed,
-    getRobboUnitsSuccess,
-    deleteRobboUnitSuccess,
-    deleteRobboUnitFailed,
-    createRobboUnitSuccess,
-    createRobboUnitFailed,
-    deleteRobboUnitRequest,
-    getRobboUnitByIdSuccess,
-    getRobboUnitByIdFailed,
-    updateRobboUnitSuccess,
-    updateRobboUnitFailed,
-    getRobboUnitsByUnitAdminIdSuccess,
-    getRobboUnitsByUnitAdminIdFailed,
-    getRobboUnitsByUnitAdminIdRequest,
-    getRobboUnitsRequest,
-    createRobboUnitRequest,
-    getRobboUnitByIdRequest,
-    updateRobboUnitRequest,
+  getRobboUnitsFailed,
+  getRobboUnitsSuccess,
+  deleteRobboUnitSuccess,
+  deleteRobboUnitFailed,
+  createRobboUnitSuccess,
+  createRobboUnitFailed,
+  deleteRobboUnitRequest,
+  getRobboUnitByIdSuccess,
+  getRobboUnitByIdFailed,
+  updateRobboUnitSuccess,
+  updateRobboUnitFailed,
+  getRobboUnitsByUnitAdminIdSuccess,
+  getRobboUnitsByUnitAdminIdFailed,
+  getRobboUnitsByUnitAdminIdRequest,
+  getRobboUnitsRequest,
+  createRobboUnitRequest,
+  getRobboUnitByIdRequest,
+  updateRobboUnitRequest,
 } from '@/actions'
 import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
-
 function* getAllRobboUnitsSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        // The request's page size was ignored (always 1/10), so the unit picker lost units past 10.
-        const { page = '1', pageSize = '10' } = payload || {}
-        const response = yield call(robboUnitQuerysGraphQL.GetAllRobboUnits, String(page), String(pageSize))
+  const language = yield select(state => state.app.language)
+  try {
+    // The request's page size was ignored (always 1/10), so the unit picker lost units past 10.
+    const { page = '1', pageSize = '10' } = payload || {}
+    const response = yield call(
+      robboUnitQuerysGraphQL.GetAllRobboUnits,
+      String(page),
+      String(pageSize),
+    )
 
-        yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
-    } catch (e) {
-        yield put(getRobboUnitsFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(getRobboUnitsSuccess(response.data.GetAllRobboUnits.robboUnits))
+  } catch (e) {
+    yield put(getRobboUnitsFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* getRobboUnitsByUnitAdminIdSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { page, pageSize } = payload
-        const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitsByAccessToken, page, pageSize)
+  const language = yield select(state => state.app.language)
+  try {
+    const { page, pageSize } = payload
+    const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitsByAccessToken, page, pageSize)
 
-        yield put(getRobboUnitsByUnitAdminIdSuccess(response.data.GetRobboUnitsByAccessToken))
-    } catch (e) {
-        yield put(getRobboUnitsByUnitAdminIdFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(getRobboUnitsByUnitAdminIdSuccess(response.data.GetRobboUnitsByAccessToken))
+  } catch (e) {
+    yield put(getRobboUnitsByUnitAdminIdFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* getRobboUnitByIdSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { robboUnitId } = action.payload
-        const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitById, { robboUnitId })
+  const language = yield select(state => state.app.language)
+  try {
+    const { robboUnitId } = action.payload
+    const response = yield call(robboUnitQuerysGraphQL.GetRobboUnitById, { robboUnitId })
 
-        yield put(getRobboUnitByIdSuccess(response.data))
-    } catch (e) {
-        yield put(getRobboUnitByIdFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(getRobboUnitByIdSuccess(response.data))
+  } catch (e) {
+    yield put(getRobboUnitByIdFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* deleteRobboUnitSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { robboUnitId, robboUnitIndex } = payload
-        const response = yield call(robboUnitMutationsGraphQL.DeleteRobboUnit, { robboUnitId })
+  const language = yield select(state => state.app.language)
+  try {
+    const { robboUnitId, robboUnitIndex } = payload
+    const response = yield call(robboUnitMutationsGraphQL.DeleteRobboUnit, { robboUnitId })
 
-        yield put(deleteRobboUnitSuccess(response.data.DeleteRobboUnit, robboUnitIndex))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_delete_success') })
-    } catch (e) {
-        yield put(deleteRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(deleteRobboUnitSuccess(response.data.DeleteRobboUnit, robboUnitIndex))
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.unit_delete_success'),
+    })
+  } catch (e) {
+    yield put(deleteRobboUnitFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* createRobboUnitSaga(action) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { robboUnit } = action.payload
-        const response = yield call(robboUnitMutationsGraphQL.CreateRobboUnit, { input: robboUnit })
+  const language = yield select(state => state.app.language)
+  try {
+    const { robboUnit } = action.payload
+    const response = yield call(robboUnitMutationsGraphQL.CreateRobboUnit, { input: robboUnit })
 
-        yield put(createRobboUnitSuccess(response.data.CreateRobboUnit))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.robbo_unit_create_success') })
-    } catch (e) {
-        yield put(createRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(createRobboUnitSuccess(response.data.CreateRobboUnit))
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.robbo_unit_create_success'),
+    })
+  } catch (e) {
+    yield put(createRobboUnitFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* updateRobboUnitSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { robboUnit } = payload
-        const response = yield call(robboUnitMutationsGraphQL.UpdateRobboUnit, { input: robboUnit })
+  const language = yield select(state => state.app.language)
+  try {
+    const { robboUnit } = payload
+    const response = yield call(robboUnitMutationsGraphQL.UpdateRobboUnit, { input: robboUnit })
 
-        yield put(updateRobboUnitSuccess(response.data.UpdateRobboUnit))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.unit_update_success') })
-    } catch (e) {
-        yield put(updateRobboUnitFailed(e))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(updateRobboUnitSuccess(response.data.UpdateRobboUnit))
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.unit_update_success'),
+    })
+  } catch (e) {
+    yield put(updateRobboUnitFailed(e))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 export function* robboUnitsSaga() {
-    yield takeLatest(getRobboUnitsRequest, getAllRobboUnitsSaga)
-    yield takeLatest(deleteRobboUnitRequest, deleteRobboUnitSaga)
-    yield takeLatest(createRobboUnitRequest, createRobboUnitSaga)
-    yield takeLatest(getRobboUnitByIdRequest, getRobboUnitByIdSaga)
-    yield takeLatest(updateRobboUnitRequest, updateRobboUnitSaga)
-    yield takeLatest(getRobboUnitsByUnitAdminIdRequest, getRobboUnitsByUnitAdminIdSaga)
+  yield takeLatest(getRobboUnitsRequest, getAllRobboUnitsSaga)
+  yield takeLatest(deleteRobboUnitRequest, deleteRobboUnitSaga)
+  yield takeLatest(createRobboUnitRequest, createRobboUnitSaga)
+  yield takeLatest(getRobboUnitByIdRequest, getRobboUnitByIdSaga)
+  yield takeLatest(updateRobboUnitRequest, updateRobboUnitSaga)
+  yield takeLatest(getRobboUnitsByUnitAdminIdRequest, getRobboUnitsByUnitAdminIdSaga)
 }

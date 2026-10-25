@@ -2,7 +2,8 @@ import { courseDescriptionParser } from '../courseDescriptionParser'
 
 describe('courseDescriptionParser', () => {
   it('returns paragraph text from the .about section', () => {
-    const overview = '<section class="about"><p>First <b>bold</b></p><p> Second </p><p></p></section>'
+    const overview =
+      '<section class="about"><p>First <b>bold</b></p><p> Second </p><p></p></section>'
     expect(courseDescriptionParser({ overview })).toBe('First bold\nSecond')
   })
 

@@ -1,2 +1,2 @@
-import AddUnitAdmin from "./AddUnitAdmin"
+import AddUnitAdmin from './AddUnitAdmin'
 export default AddUnitAdmin

@@ -336,9 +336,7 @@ export const ProjectTile = styled.button`
 export const ProjectTileMedia = styled.div`
   width: 100%;
   aspect-ratio: 16 / 10;
-  background:
-    linear-gradient(145deg, rgba(0, 175, 65, 0.18), rgba(0, 122, 46, 0.35)),
-    ${t.pageBg};
+  background: linear-gradient(145deg, rgba(0, 175, 65, 0.18), rgba(0, 122, 46, 0.35)), ${t.pageBg};
   overflow: hidden;
 
   img {
@@ -521,13 +519,11 @@ export const TariffCard = styled.article`
   min-height: 100%;
   padding: 1.25rem 1.2rem 1.3rem;
   border-radius: 14px;
-  border: 1px solid ${({ $featured }) =>
-    $featured ? 'rgba(0, 175, 65, 0.45)' : 'rgba(0, 80, 32, 0.08)'};
+  border: 1px solid
+    ${({ $featured }) => ($featured ? 'rgba(0, 175, 65, 0.45)' : 'rgba(0, 80, 32, 0.08)')};
   background: ${t.white};
   box-shadow: ${({ $featured }) =>
-    $featured
-      ? '0 10px 28px rgba(0, 122, 46, 0.12)'
-      : t.cardShadow};
+    $featured ? '0 10px 28px rgba(0, 122, 46, 0.12)' : t.cardShadow};
 `
 
 export const TariffName = styled.h3`
@@ -588,11 +584,7 @@ export const StageTrack = styled.ol`
     top: 12px;
     bottom: 12px;
     width: 2px;
-    background: linear-gradient(
-      180deg,
-      ${t.green} 0%,
-      rgba(0, 175, 65, 0.18) 100%
-    );
+    background: linear-gradient(180deg, ${t.green} 0%, rgba(0, 175, 65, 0.18) 100%);
   }
 `
 
@@ -631,10 +623,8 @@ export const StageCard = styled.div`
   min-width: 0;
   padding: 0.7rem 0.95rem 0.85rem;
   border-radius: 12px;
-  background: ${({ $highlight }) =>
-    $highlight ? 'rgba(0, 175, 65, 0.09)' : t.pageBg};
-  border: 1px solid ${({ $highlight }) =>
-    $highlight ? 'rgba(0, 175, 65, 0.28)' : 'transparent'};
+  background: ${({ $highlight }) => ($highlight ? 'rgba(0, 175, 65, 0.09)' : t.pageBg)};
+  border: 1px solid ${({ $highlight }) => ($highlight ? 'rgba(0, 175, 65, 0.28)' : 'transparent')};
 `
 
 export const StageDate = styled.span`
@@ -682,10 +672,8 @@ export const DestCard = styled.a`
   text-decoration: none !important;
   background: ${({ $primary }) => ($primary ? t.green : t.pageBg)};
   color: ${({ $primary }) => ($primary ? t.white : t.coal)} !important;
-  border: 1px solid ${({ $primary }) =>
-    $primary ? t.green : 'rgba(0, 80, 32, 0.08)'};
-  box-shadow: ${({ $primary }) =>
-    $primary ? '0 10px 24px rgba(0, 122, 46, 0.18)' : t.cardShadow};
+  border: 1px solid ${({ $primary }) => ($primary ? t.green : 'rgba(0, 80, 32, 0.08)')};
+  box-shadow: ${({ $primary }) => ($primary ? '0 10px 24px rgba(0, 122, 46, 0.18)' : t.cardShadow)};
   transition:
     transform 0.22s cubic-bezier(0.32, 0.72, 0, 1),
     box-shadow 0.22s ease;

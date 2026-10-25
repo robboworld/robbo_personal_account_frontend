@@ -1,9 +1,9 @@
-import { gql } from "@apollo/client"
+import { gql } from '@apollo/client'
 
-import { USER_PROFILE_FIELDS } from "@/graphQL/fragments/userProfileFields"
+import { USER_PROFILE_FIELDS } from '@/graphQL/fragments/userProfileFields'
 
 export const superAdminMutationsGQL = {
-    UPDATE_SUPER_ADMIN: gql`
+  UPDATE_SUPER_ADMIN: gql`
     mutation UpdateSuperAdmin($input: UpdateProfileInput!) {
         UpdateSuperAdmin(input: $input) {
             ... on SuperAdminHttp {
@@ -20,6 +20,4 @@ export const superAdminMutationsGQL = {
     `,
 }
 
-export const superAdminMutationsGraphQL = {
-
-}
+export const superAdminMutationsGraphQL = {}

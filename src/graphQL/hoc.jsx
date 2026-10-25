@@ -10,7 +10,7 @@ import { useMutation, useQuery } from '@apollo/client/react'
  * props[name || 'mutate'] and its state as props[`${name}Result`] (or `result`).
  * New code should call useQuery/useMutation directly.
  */
-export function graphql (document, config = {}) {
+export function graphql(document, config = {}) {
   const definition = document.definitions.find(d => d.kind === 'OperationDefinition')
   const isMutation = definition?.operation === 'mutation'
   const resolve = (value, props) => (typeof value === 'function' ? value(props) : value)

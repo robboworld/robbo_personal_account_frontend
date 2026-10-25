@@ -8,11 +8,11 @@ import { useEffect, useState } from 'react'
 export function useMediaQuery(query, defaultMatches = false) {
   // Read the media query on the first render: starting from the default made phones
   // paint the desktop sider first and then jump to the drawer layout.
-  const [matches, setMatches] = useState(() => (
+  const [matches, setMatches] = useState(() =>
     typeof window !== 'undefined' && typeof window.matchMedia === 'function'
       ? window.matchMedia(query).matches
-      : defaultMatches
-  ))
+      : defaultMatches,
+  )
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {

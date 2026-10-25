@@ -14,7 +14,8 @@ export const AuthShell = styled.div`
   --authn-bg-glow-blur: 32px;
 
   color: ${text};
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100dvh;
   width: 100%;
@@ -35,10 +36,28 @@ export const AuthLayoutGrid = styled.div`
   min-height: 100dvh;
   background-color: var(--authn-bg-fallback);
   background-image:
-    radial-gradient(ellipse 95% 72% at 92% 8%, rgba(133, 217, 164, 0.55) 0%, rgba(184, 233, 202, 0.28) 38%, transparent 68%),
-    radial-gradient(ellipse 80% 65% at 6% 92%, rgba(0, 175, 65, 0.2) 0%, rgba(184, 233, 202, 0.14) 42%, transparent 70%),
+    radial-gradient(
+      ellipse 95% 72% at 92% 8%,
+      rgba(133, 217, 164, 0.55) 0%,
+      rgba(184, 233, 202, 0.28) 38%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 80% 65% at 6% 92%,
+      rgba(0, 175, 65, 0.2) 0%,
+      rgba(184, 233, 202, 0.14) 42%,
+      transparent 70%
+    ),
     radial-gradient(ellipse 55% 45% at 50% 38%, rgba(219, 244, 228, 0.35) 0%, transparent 72%),
-    linear-gradient(152deg, #b8e9ca 0%, #dbf4e4 18%, #ecfdf5 42%, #edf9f2 68%, #fafefa 90%, #fff 100%);
+    linear-gradient(
+      152deg,
+      #b8e9ca 0%,
+      #dbf4e4 18%,
+      #ecfdf5 42%,
+      #edf9f2 68%,
+      #fafefa 90%,
+      #fff 100%
+    );
   padding: max(1rem, env(safe-area-inset-top)) 1rem max(1.5rem, env(safe-area-inset-bottom));
 
   &::before,
@@ -261,7 +280,9 @@ const tabLinkStyles = css`
   border: 1px solid transparent;
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     color: ${accentDark};
@@ -277,11 +298,13 @@ const tabLinkStyles = css`
 export const AuthTabLink = styled.a`
   ${tabLinkStyles}
 
-  ${({ $active }) => $active && css`
-    color: ${accentDark};
-    border-color: #dee2e6 #dee2e6 #fff;
-    background: #fff;
-  `}
+  ${({ $active }) =>
+    $active &&
+    css`
+      color: ${accentDark};
+      border-color: #dee2e6 #dee2e6 #fff;
+      background: #fff;
+    `}
 `
 
 export const MainContent = styled.div`
@@ -318,7 +341,9 @@ export const AuthFormStyles = styled.div`
     line-height: 1.5;
     color: ${text};
     background: #fff;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
 
     &:hover {
       border-color: #9ca3af;
@@ -348,7 +373,10 @@ export const AuthFormStyles = styled.div`
     min-width: 6rem;
     font-weight: 500;
     border-radius: 0;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.15s ease;
 
     &:hover:not(:disabled) {
       background: ${accentDark};

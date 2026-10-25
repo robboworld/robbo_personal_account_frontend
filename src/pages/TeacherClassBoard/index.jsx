@@ -1,10 +1,32 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  Button, Card, Col, DatePicker, Dropdown, Empty, Form, Input, List, Modal, Popconfirm, Row, Select, Space,
-  Table, Tabs, Tag, Typography, message,
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Dropdown,
+  Empty,
+  Form,
+  Input,
+  List,
+  Modal,
+  Popconfirm,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tabs,
+  Tag,
+  Typography,
+  message,
 } from 'antd'
 import {
-  CheckOutlined, CopyOutlined, MoreOutlined, ProjectOutlined, ReloadOutlined, UserAddOutlined,
+  CheckOutlined,
+  CopyOutlined,
+  MoreOutlined,
+  ProjectOutlined,
+  ReloadOutlined,
+  UserAddOutlined,
 } from '@ant-design/icons'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -48,7 +70,8 @@ const TeacherClassBoardPage = () => {
   const [membersForm] = Form.useForm()
   const [renameForm] = Form.useForm()
   const required = { required: true, message: intl.formatMessage({ id: 'form.required' }) }
-  const fail = (e, fallbackId = 'errors.generic') => message.error(apiErrorMessage(e, intl, fallbackId))
+  const fail = (e, fallbackId = 'errors.generic') =>
+    message.error(apiErrorMessage(e, intl, fallbackId))
 
   // Templates are the teacher's own projects; GraphQL works with the BFF session (no JWT needed).
   const { data: templatesData } = useQuery(projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN, {
@@ -75,7 +98,10 @@ const TeacherClassBoardPage = () => {
       ])
       setKlass(classRes.data)
       setMembers(membersRes.data.items || [])
-      setProgress({ assignments: progressRes.data.assignments || [], rows: progressRes.data.rows || [] })
+      setProgress({
+        assignments: progressRes.data.assignments || [],
+        rows: progressRes.data.rows || [],
+      })
     } catch (e) {
       fail(e, 'teacher_board.load_error')
     } finally {
@@ -103,8 +129,12 @@ const TeacherClassBoardPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId, activeAssignmentId, intl])
 
-  useEffect(() => { refreshBoard() }, [refreshBoard])
-  useEffect(() => { refreshAssignment() }, [refreshAssignment])
+  useEffect(() => {
+    refreshBoard()
+  }, [refreshBoard])
+  useEffect(() => {
+    refreshAssignment()
+  }, [refreshAssignment])
 
   const refreshAll = () => Promise.all([refreshBoard(), refreshAssignment()])
 
@@ -142,12 +172,19 @@ const TeacherClassBoardPage = () => {
     try {
       const { data } = await api.addMembers(classId, { text: values.text })
       const missing = data.missing || []
-      message.success(intl.formatMessage(
-        { id: 'teacher_board.members_added' },
-        { added: (data.added || []).length },
-      ))
+      message.success(
+        intl.formatMessage(
+          { id: 'teacher_board.members_added' },
+          { added: (data.added || []).length },
+        ),
+      )
       if (missing.length) {
-        message.warning(intl.formatMessage({ id: 'teacher_board.members_missing' }, { emails: missing.join(', ') }))
+        message.warning(
+          intl.formatMessage(
+            { id: 'teacher_board.members_missing' },
+            { emails: missing.join(', ') },
+          ),
+        )
       }
       membersForm.resetFields()
       refreshAll()
@@ -170,7 +207,9 @@ const TeacherClassBoardPage = () => {
     if (!activeAssignmentId) return
     try {
       const { data } = await api.issueLate(classId, activeAssignmentId)
-      message.success(intl.formatMessage({ id: 'teacher_board.issued_late' }, { count: data.issued || 0 }))
+      message.success(
+        intl.formatMessage({ id: 'teacher_board.issued_late' }, { count: data.issued || 0 }),
+      )
       refreshAll()
     } catch (e) {
       fail(e)
@@ -221,13 +260,14 @@ const TeacherClassBoardPage = () => {
     }
   }
 
-  const statusTag = status => (status
-    ? <Tag color={REVIEW_STATUS_COLOR[status] || 'default'}>{reviewStatusLabel(intl, status)}</Tag>
-    : null)
+  const statusTag = status =>
+    status ? (
+      <Tag color={REVIEW_STATUS_COLOR[status] || 'default'}>{reviewStatusLabel(intl, status)}</Tag>
+    ) : null
 
   const memberName = userId => {
     const m = members.find(x => x.userId === userId)
-    return m ? (m.name || m.username) : userId
+    return m ? m.name || m.username : userId
   }
 
   const progressColumns = [
@@ -240,7 +280,8 @@ const TeacherClassBoardPage = () => {
     ...progress.assignments.map(a => ({
       title: a.title,
       key: a.id,
-      render: (_, row) => statusTag((row.cells || []).find(c => c.assignmentId === a.id)?.status || 'missing'),
+      render: (_, row) =>
+        statusTag((row.cells || []).find(c => c.assignmentId === a.id)?.status || 'missing'),
     })),
   ]
 
@@ -274,17 +315,24 @@ const TeacherClassBoardPage = () => {
     },
   }
 
-  const lessonCards = live.length ? live : members.map(m => ({
-    userId: m.userId, username: m.username, name: m.name, email: m.email,
-  }))
+  const lessonCards = live.length
+    ? live
+    : members.map(m => ({
+        userId: m.userId,
+        username: m.username,
+        name: m.name,
+        email: m.email,
+      }))
 
   return (
     <PageContent>
       <Panel>
         <SectionHeader>
           <div style={{ minWidth: 0 }}>
-            <Button type='link' style={{ paddingLeft: 0 }}
-onClick={() => navigate(TEACHER_CLASSES_ROUTE)}>
+            <Button
+              type='link'
+              style={{ paddingLeft: 0 }}
+              onClick={() => navigate(TEACHER_CLASSES_ROUTE)}>
               ← <FormattedMessage id='teacher_class.title' />
             </Button>
             <SectionTitle>{klass?.displayName || '…'}</SectionTitle>
@@ -294,9 +342,13 @@ onClick={() => navigate(TEACHER_CLASSES_ROUTE)}>
             <Tag color='processing'>
               <FormattedMessage id='teacher_board.on_review' />: {counts.onReview}
             </Tag>
-            <Tag><FormattedMessage id='teacher_board.missing' />: {counts.notHandedIn}</Tag>
+            <Tag>
+              <FormattedMessage id='teacher_board.missing' />: {counts.notHandedIn}
+            </Tag>
             {counts.overdue > 0 ? (
-              <Tag color='error'><FormattedMessage id='teacher_board.overdue' />: {counts.overdue}</Tag>
+              <Tag color='error'>
+                <FormattedMessage id='teacher_board.overdue' />: {counts.overdue}
+              </Tag>
             ) : null}
             <Button icon={<UserAddOutlined />} onClick={() => setMembersOpen(true)}>
               <FormattedMessage id='teacher_board.students' />
@@ -305,12 +357,10 @@ onClick={() => navigate(TEACHER_CLASSES_ROUTE)}>
               icon={<CopyOutlined />}
               disabled={!klass}
               onClick={() => klass && copyText(klass.inviteCode, intl)}
-              title={intl.formatMessage({ id: 'teacher_class.copy_code' })}
-            >
+              title={intl.formatMessage({ id: 'teacher_class.copy_code' })}>
               {klass?.inviteCode}
             </Button>
-            <Button type='primary' icon={<ProjectOutlined />}
-onClick={() => setAssignOpen(true)}>
+            <Button type='primary' icon={<ProjectOutlined />} onClick={() => setAssignOpen(true)}>
               <FormattedMessage id='teacher_board.assign' />
             </Button>
             <Button
@@ -319,13 +369,18 @@ onClick={() => setAssignOpen(true)}>
               aria-label={intl.formatMessage({ id: 'teacher_board.refresh' })}
             />
             <Dropdown menu={classMenu} trigger={['click']}>
-              <Button icon={<MoreOutlined />} aria-label={intl.formatMessage({ id: 'teacher_board.class_actions' })} />
+              <Button
+                icon={<MoreOutlined />}
+                aria-label={intl.formatMessage({ id: 'teacher_board.class_actions' })}
+              />
             </Dropdown>
           </Space>
         </SectionHeader>
 
         <Space style={{ marginBottom: 16 }} wrap>
-          <Text><FormattedMessage id='teacher_board.assignment' />:</Text>
+          <Text>
+            <FormattedMessage id='teacher_board.assignment' />:
+          </Text>
           <Select
             style={{ minWidth: 240 }}
             value={activeAssignmentId}
@@ -351,48 +406,55 @@ onClick={() => setAssignOpen(true)}>
             {
               key: 'lesson',
               label: <FormattedMessage id='teacher_board.tab_lesson' />,
-              children: !loading && members.length === 0 ? (
-                <Empty description={<FormattedMessage id='teacher_board.no_students' />} />
-              ) : (
-                <Row gutter={[16, 16]}>
-                  {lessonCards.map(s => (
-                    <Col xs={24} sm={12}
-md={8} lg={6}
-key={s.userId || s.username}>
-                      <Card
-                        size='small'
-                        title={s.name || s.username}
-                        extra={s.savedToday
-                          ? <Tag color='green'><FormattedMessage id='teacher_board.saved_today' /></Tag>
-                          : null}
-                        actions={s.projectId ? [
-                          <Button
-                            key='open'
-                            type='link'
-                            onClick={() => setReviewProject({
-                              projectId: s.projectId,
-                              title: s.projectTitle,
-                              reviewStatus: s.reviewStatus,
-                            })}
-                          >
-                            <FormattedMessage id='teacher_board.preview' />
-                          </Button>,
-                        ] : []}
-                      >
-                        <Text type='secondary'>{s.projectTitle || '—'}</Text>
-                        {s.updatedAt ? (
-                          <div>
-                            <Text type='secondary' style={{ fontSize: 12 }}>
-                              {formatDateTime(s.updatedAt, intl.locale)}
-                            </Text>
-                          </div>
-                        ) : null}
-                        {statusTag(s.reviewStatus)}
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              ),
+              children:
+                !loading && members.length === 0 ? (
+                  <Empty description={<FormattedMessage id='teacher_board.no_students' />} />
+                ) : (
+                  <Row gutter={[16, 16]}>
+                    {lessonCards.map(s => (
+                      <Col xs={24} sm={12} md={8} lg={6} key={s.userId || s.username}>
+                        <Card
+                          size='small'
+                          title={s.name || s.username}
+                          extra={
+                            s.savedToday ? (
+                              <Tag color='green'>
+                                <FormattedMessage id='teacher_board.saved_today' />
+                              </Tag>
+                            ) : null
+                          }
+                          actions={
+                            s.projectId
+                              ? [
+                                  <Button
+                                    key='open'
+                                    type='link'
+                                    onClick={() =>
+                                      setReviewProject({
+                                        projectId: s.projectId,
+                                        title: s.projectTitle,
+                                        reviewStatus: s.reviewStatus,
+                                      })
+                                    }>
+                                    <FormattedMessage id='teacher_board.preview' />
+                                  </Button>,
+                                ]
+                              : []
+                          }>
+                          <Text type='secondary'>{s.projectTitle || '—'}</Text>
+                          {s.updatedAt ? (
+                            <div>
+                              <Text type='secondary' style={{ fontSize: 12 }}>
+                                {formatDateTime(s.updatedAt, intl.locale)}
+                              </Text>
+                            </div>
+                          ) : null}
+                          {statusTag(s.reviewStatus)}
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                ),
             },
             {
               key: 'hw',
@@ -411,20 +473,18 @@ key={s.userId || s.username}>
                           onClick={() => {
                             setReviewProject(item)
                             setReviewComment(item.reviewComment || '')
-                          }}
-                        >
+                          }}>
                           <FormattedMessage id='teacher_board.review' />
                         </Button>,
-                      ]}
-                    >
+                      ]}>
                       <List.Item.Meta
                         title={item.title}
-                        description={(
+                        description={
                           <Space wrap>
                             <Text type='secondary'>{memberName(item.ownerUserId)}</Text>
                             {statusTag(item.reviewStatus)}
                           </Space>
-                        )}
+                        }
                       />
                     </List.Item>
                   )}
@@ -457,23 +517,24 @@ key={s.userId || s.username}>
         onOk={() => form.submit()}
         okText={<FormattedMessage id='teacher_board.assign_submit' />}
         cancelText={<FormattedMessage id='common.cancel' />}
-        confirmLoading={assigning}
-      >
-        <Form form={form} layout='vertical'
-onFinish={onCreateAssignment}>
-          <Form.Item name='title' label={<FormattedMessage id='teacher_board.field_title' />}
-rules={[required]}>
+        confirmLoading={assigning}>
+        <Form form={form} layout='vertical' onFinish={onCreateAssignment}>
+          <Form.Item
+            name='title'
+            label={<FormattedMessage id='teacher_board.field_title' />}
+            rules={[required]}>
             <Input />
           </Form.Item>
-          <Form.Item name='instructions' label={<FormattedMessage id='teacher_board.field_instructions' />}>
+          <Form.Item
+            name='instructions'
+            label={<FormattedMessage id='teacher_board.field_instructions' />}>
             <TextArea rows={3} />
           </Form.Item>
           <Form.Item
             name='templateProjectId'
             label={<FormattedMessage id='teacher_board.field_template' />}
             rules={[required]}
-            extra={templates.length ? null : <FormattedMessage id='teacher_board.template_hint' />}
-          >
+            extra={templates.length ? null : <FormattedMessage id='teacher_board.template_hint' />}>
             <Select
               showSearch
               optionFilterProp='label'
@@ -500,32 +561,30 @@ rules={[required]}>
         title={<FormattedMessage id='teacher_board.students' />}
         onCancel={() => setMembersOpen(false)}
         footer={null}
-        width={640}
-      >
+        width={640}>
         {klass ? (
-          <Space orientation='vertical' size='middle'
-style={{ width: '100%', marginBottom: 16 }}>
+          <Space orientation='vertical' size='middle' style={{ width: '100%', marginBottom: 16 }}>
             <InviteDetails klass={klass} />
           </Space>
         ) : null}
-        <Form form={membersForm} layout='vertical'
-onFinish={onAddMembers}>
+        <Form form={membersForm} layout='vertical' onFinish={onAddMembers}>
           <Form.Item
             name='text'
             label={<FormattedMessage id='teacher_board.add_by_email' />}
-            rules={[required]}
-          >
+            rules={[required]}>
             <TextArea rows={4} placeholder='student@school.ru' />
           </Form.Item>
-          <Button type='primary' htmlType='submit'
-icon={<UserAddOutlined />}>
+          <Button type='primary' htmlType='submit' icon={<UserAddOutlined />}>
             <FormattedMessage id='teacher_board.add' />
           </Button>
         </Form>
         <List
           style={{ marginTop: 16 }}
           size='small'
-          header={intl.formatMessage({ id: 'teacher_board.members_count' }, { count: members.length })}
+          header={intl.formatMessage(
+            { id: 'teacher_board.members_count' },
+            { count: members.length },
+          )}
           dataSource={members}
           locale={{ emptyText: intl.formatMessage({ id: 'teacher_board.no_students' }) }}
           renderItem={m => (
@@ -533,29 +592,33 @@ icon={<UserAddOutlined />}>
               actions={[
                 <Popconfirm
                   key='rm'
-                  title={intl.formatMessage({ id: 'teacher_board.remove_confirm' }, { name: m.name || m.username })}
+                  title={intl.formatMessage(
+                    { id: 'teacher_board.remove_confirm' },
+                    { name: m.name || m.username },
+                  )}
                   okText={intl.formatMessage({ id: 'teacher_board.remove' })}
                   okButtonProps={{ danger: true }}
                   cancelText={intl.formatMessage({ id: 'common.cancel' })}
-                  onConfirm={() => onRemoveMember(m)}
-                >
+                  onConfirm={() => onRemoveMember(m)}>
                   <Button type='link' danger>
                     <FormattedMessage id='teacher_board.remove' />
                   </Button>
                 </Popconfirm>,
-              ]}
-            >
-              {m.name || m.username}{m.email ? ` · ${m.email}` : ''}
+              ]}>
+              {m.name || m.username}
+              {m.email ? ` · ${m.email}` : ''}
             </List.Item>
           )}
         />
         {activeAssignment ? (
           <Popconfirm
-            title={intl.formatMessage({ id: 'teacher_board.issue_late_confirm' }, { title: activeAssignment.title })}
+            title={intl.formatMessage(
+              { id: 'teacher_board.issue_late_confirm' },
+              { title: activeAssignment.title },
+            )}
             okText={intl.formatMessage({ id: 'teacher_board.issue_late' })}
             cancelText={intl.formatMessage({ id: 'common.cancel' })}
-            onConfirm={onIssueLate}
-          >
+            onConfirm={onIssueLate}>
             <Button style={{ marginTop: 8 }}>
               <FormattedMessage id='teacher_board.issue_late' />
             </Button>
@@ -569,12 +632,12 @@ icon={<UserAddOutlined />}>
         onCancel={() => setRenameOpen(false)}
         onOk={() => renameForm.submit()}
         okText={<FormattedMessage id='common.save' />}
-        cancelText={<FormattedMessage id='common.cancel' />}
-      >
-        <Form form={renameForm} layout='vertical'
-onFinish={onRename}>
-          <Form.Item name='displayName' label={<FormattedMessage id='teacher_class.name' />}
-rules={[required]}>
+        cancelText={<FormattedMessage id='common.cancel' />}>
+        <Form form={renameForm} layout='vertical' onFinish={onRename}>
+          <Form.Item
+            name='displayName'
+            label={<FormattedMessage id='teacher_class.name' />}
+            rules={[required]}>
             <Input />
           </Form.Item>
         </Form>
@@ -585,7 +648,7 @@ rules={[required]}>
         title={reviewProject?.title || intl.formatMessage({ id: 'teacher_board.review' })}
         onCancel={() => setReviewProject(null)}
         width={900}
-        footer={(
+        footer={
           <Space wrap>
             <Button onClick={() => doReview('returned')}>
               <FormattedMessage id='teacher_board.review_return' />
@@ -593,21 +656,18 @@ rules={[required]}>
             <Button onClick={() => doReview('shown_in_class')}>
               <FormattedMessage id='teacher_board.review_shown' />
             </Button>
-            <Button type='primary' icon={<CheckOutlined />}
-onClick={() => doReview('accepted')}>
+            <Button type='primary' icon={<CheckOutlined />} onClick={() => doReview('accepted')}>
               <FormattedMessage id='teacher_board.review_accept' />
             </Button>
           </Space>
-        )}
-      >
+        }>
         {reviewProject?.projectId ? (
           <div style={{ marginBottom: 16 }}>
             <ScratchPlayerEmbed projectPageId={reviewProject.projectId} />
             <Button
               type='link'
               href={PROJECT_PAGE_ROUTE.replace(':projectPageId', reviewProject.projectId)}
-              target='_blank'
-            >
+              target='_blank'>
               <FormattedMessage id='teacher_board.open_project' />
             </Button>
           </div>

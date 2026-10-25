@@ -5,20 +5,11 @@ import { getProfileFromQuery } from './profileQuery'
 import ProfilePageShell from '@/components/ProfilePageShell'
 import ProfileCard from '@/components/ProfileCard'
 
-const FreeListenerProfile = ({
-  data,
-  UpdateFreeListener,
-  accessUpdate,
-}) => {
+const FreeListenerProfile = ({ data, UpdateFreeListener, accessUpdate }) => {
   const { profile, loading, error } = getProfileFromQuery(data)
 
   return (
-    <ProfilePageShell
-      profile={profile}
-      loading={loading}
-      error={error}
-      accessUpdate={accessUpdate}
-    >
+    <ProfilePageShell profile={profile} loading={loading} error={error} accessUpdate={accessUpdate}>
       <ProfileCard
         profile={profile}
         updateHandle={UpdateFreeListener}

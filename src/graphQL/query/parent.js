@@ -1,69 +1,65 @@
-import { gql } from "@apollo/client"
+import { gql } from '@apollo/client'
 
-import { graphQLClient } from "@/graphQL"
+import { graphQLClient } from '@/graphQL'
 
 export const parentQuerysGQL = {
-    GET_ALL_PARENTS: gql`
-        query GetAllParent($page: String!, $pageSize: String!){ 
-            GetAllParents(page: $page, pageSize: $pageSize){
-                __typename
-                ... on ParentHttpList{
-                    parents{
-                        userHttp{
-                            id
-                            lastname
-                            firstname
-                            middlename
-                        }
-                    }
-                    countRows
-                }
-                ... on Error{
-                    message
-                }
+  GET_ALL_PARENTS: gql`
+    query GetAllParent($page: String!, $pageSize: String!) {
+      GetAllParents(page: $page, pageSize: $pageSize) {
+        __typename
+        ... on ParentHttpList {
+          parents {
+            userHttp {
+              id
+              lastname
+              firstname
+              middlename
             }
+          }
+          countRows
         }
-    `,
-
-    GET_PARENT_BY_ID: gql`
-    query GetParentById($parentId: String!){
-        GetParentById(parentId: $parentId) {
-            ... on ParentHttp{
-                userHttp{
-                    id
-                    lastname
-                    firstname
-                    middlename
-                    nickname
-                    email
-                    createdAt
-                    role
-                }
-            }
-            ... on Error{
-                message
-            }
+        ... on Error {
+          message
         }
+      }
     }
-    `,
+  `,
+
+  GET_PARENT_BY_ID: gql`
+    query GetParentById($parentId: String!) {
+      GetParentById(parentId: $parentId) {
+        ... on ParentHttp {
+          userHttp {
+            id
+            lastname
+            firstname
+            middlename
+            nickname
+            email
+            createdAt
+            role
+          }
+        }
+        ... on Error {
+          message
+        }
+      }
+    }
+  `,
 }
 
 export const parentQuerysGraphQL = {
-    GetAllParents(page, pageSize) {
-        return graphQLClient.query(
-            {
-                query: parentQuerysGQL.GET_ALL_PARENTS,
-                variables: { page, pageSize: "10" },
-            },
-        )
-    },
+  GetAllParents(page, pageSize) {
+    return graphQLClient.query({
+      query: parentQuerysGQL.GET_ALL_PARENTS,
+      variables: { page, pageSize: '10' },
+    })
+  },
 
-    GetParentById(parentId) {
-        return graphQLClient.query(
-            {
-                query: parentQuerysGQL.GET_PARENT_BY_ID,
-                variables: parentId,
-            },
-        )
-    },
+  GetParentById(parentId) {
+    return graphQLClient.query({
+      query: parentQuerysGQL.GET_PARENT_BY_ID,
+      variables: parentId,
+    })
+  },
 }

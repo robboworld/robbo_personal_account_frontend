@@ -11,11 +11,7 @@ import {
   UNIT_ADMIN,
 } from '@/constants'
 import { parseJwt, isAccessTokenExpired } from '@/helpers/jwtParser'
-import {
-  fetchOidcStatus,
-  isHybridAuthEnabled,
-  isOidcSsoEnabled,
-} from '@/helpers/oidcSession'
+import { fetchOidcStatus, isHybridAuthEnabled, isOidcSsoEnabled } from '@/helpers/oidcSession'
 import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
 import { tryRefreshAccessToken } from '@/api/authRefresh'
 

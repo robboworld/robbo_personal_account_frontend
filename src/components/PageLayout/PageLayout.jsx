@@ -92,8 +92,7 @@ const PageLayout = ({ children }) => {
         width: '100%',
         maxWidth: '100%',
         overflowX: 'clip',
-      }}
-    >
+      }}>
       {isMobile && (
         <MobileTopBar>
           <MobileTopBarBrand>
@@ -101,8 +100,7 @@ const PageLayout = ({ children }) => {
               type='button'
               aria-label={intl.formatMessage({ id: 'sidebar.open_menu' })}
               aria-expanded={mobileNavOpen}
-              onClick={() => setMobileNavOpen(true)}
-            >
+              onClick={() => setMobileNavOpen(true)}>
               <MenuOutlined />
             </MobileMenuBtn>
             <MobileBrandLabel>
@@ -148,8 +146,7 @@ const PageLayout = ({ children }) => {
                 display: 'flex',
                 flexDirection: 'column',
               },
-            }}
-          >
+            }}>
             <SideBar
               selectedNavBarKey={selectedNavBarKey}
               collapsed={collapsed}
@@ -159,9 +156,7 @@ const PageLayout = ({ children }) => {
         )}
 
         <Layout style={innerLayoutStyle}>
-          <Content style={contentStyle}>
-            {children}
-          </Content>
+          <Content style={contentStyle}>{children}</Content>
         </Layout>
       </Layout>
 
@@ -191,8 +186,7 @@ const PageLayout = ({ children }) => {
           wrapper: {
             maxWidth: '100vw',
           },
-        }}
-      >
+        }}>
         <SideBar
           variant='drawer'
           selectedNavBarKey={selectedNavBarKey}

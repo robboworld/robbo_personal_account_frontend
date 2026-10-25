@@ -75,4 +75,3 @@ export function displayProjectTitle(title, intl) {
   }
   return trimmed
 }
-

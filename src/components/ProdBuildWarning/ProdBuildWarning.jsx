@@ -7,7 +7,7 @@ import config from '@/config'
 const LOOPBACK = new Set(['localhost', '127.0.0.1', '[::1]', '::1'])
 
 /** Backend host the bundle talks to, when it differs in kind from the page host. */
-export function prodApiOnLocalhost (pageHost, backendUrl) {
+export function prodApiOnLocalhost(pageHost, backendUrl) {
   if (!LOOPBACK.has(pageHost)) return null
   try {
     const apiHost = new URL(backendUrl).hostname
@@ -21,9 +21,10 @@ export function prodApiOnLocalhost (pageHost, backendUrl) {
 // a local stand while every click writes to production; make that impossible to miss.
 const ProdBuildWarning = () => {
   const intl = useIntl()
-  const host = typeof window === 'undefined'
-    ? null
-    : prodApiOnLocalhost(window.location.hostname, (config.backendURL || [])[0])
+  const host =
+    typeof window === 'undefined'
+      ? null
+      : prodApiOnLocalhost(window.location.hostname, (config.backendURL || [])[0])
   if (!host) return null
   return (
     <Alert

@@ -7,8 +7,22 @@ import { listCatalog } from '@/api/payments'
 // paid tariffs do not cap the number of projects.
 export const DEFAULT_TARIFFS = Object.freeze({
   free: { maxProjectSizeMb: 10, maxProjects: 20, sessionLimit: 2, seatLimit: 1, amount: 0 },
-  individual: { maxProjectSizeMb: 100, maxProjects: 0, sessionLimit: 2, seatLimit: 2, amount: 1990, durationDays: 365 },
-  class: { maxProjectSizeMb: 500, maxProjects: 0, sessionLimit: 20, seatLimit: 20, amount: 4990, durationDays: 365 },
+  individual: {
+    maxProjectSizeMb: 100,
+    maxProjects: 0,
+    sessionLimit: 2,
+    seatLimit: 2,
+    amount: 1990,
+    durationDays: 365,
+  },
+  class: {
+    maxProjectSizeMb: 500,
+    maxProjects: 0,
+    sessionLimit: 20,
+    seatLimit: 20,
+    amount: 4990,
+    durationDays: 365,
+  },
 })
 
 const SKU_TO_TARIFF = { 'rs3-premium-1y': 'individual', 'rs3-class-1y': 'class' }
@@ -23,7 +37,7 @@ const productLimits = product => ({
 })
 
 /** Merges /payments/products ({products, free}) over the defaults. */
-export function tariffsFromCatalog (catalog) {
+export function tariffsFromCatalog(catalog) {
   const tariffs = { ...DEFAULT_TARIFFS }
   const free = catalog?.free
   if (free) {
@@ -44,7 +58,7 @@ export function tariffsFromCatalog (catalog) {
   return tariffs
 }
 
-export function useTariffs () {
+export function useTariffs() {
   const [tariffs, setTariffs] = useState(DEFAULT_TARIFFS)
   useEffect(() => {
     let active = true
@@ -61,7 +75,7 @@ export function useTariffs () {
 }
 
 /** "Project up to N MB" + project count line. */
-export function projectLimitLines (intl, { maxProjectSizeMb, maxProjects }) {
+export function projectLimitLines(intl, { maxProjectSizeMb, maxProjects }) {
   return [
     intl.formatMessage({ id: 'tariff.project_size' }, { mb: maxProjectSizeMb }),
     maxProjects > 0
@@ -70,10 +84,13 @@ export function projectLimitLines (intl, { maxProjectSizeMb, maxProjects }) {
   ]
 }
 
-export function devicesSessionsLine (intl, { seatLimit, sessionLimit }) {
-  return intl.formatMessage({ id: 'tariff.devices_sessions' }, { devices: seatLimit, sessions: sessionLimit })
+export function devicesSessionsLine(intl, { seatLimit, sessionLimit }) {
+  return intl.formatMessage(
+    { id: 'tariff.devices_sessions' },
+    { devices: seatLimit, sessions: sessionLimit },
+  )
 }
 
-export function formatTariffPrice (intl, amount) {
+export function formatTariffPrice(intl, amount) {
   return intl.formatNumber(amount, { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 })
 }

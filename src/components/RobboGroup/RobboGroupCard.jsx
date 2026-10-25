@@ -4,128 +4,105 @@ import { PropTypes } from 'prop-types'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, Form, Input, notification, Spin } from 'antd'
 
-import { robboGroupQuerysGQL, robboGroupMutationsGQL } from "@/graphQL"
+import { robboGroupQuerysGQL, robboGroupMutationsGQL } from '@/graphQL'
 
 import { graphql } from '@/graphQL/hoc'
 
 const RobboGroupCard = ({
-    robboGroupId,
-    disableChanges,
-    data: {
-        GetRobboGroupById,
-        loading,
-    },
-    UpdateRobboGroup,
+  robboGroupId,
+  disableChanges,
+  data: { GetRobboGroupById, loading },
+  UpdateRobboGroup,
 }) => {
-    const layout = {
-        labelCol: {
-            span: 8,
-        },
-        wrapperCol: {
-            span: 16,
-        },
-    }
-    const [form] = Form.useForm()
+  const layout = {
+    labelCol: {
+      span: 8,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  }
+  const [form] = Form.useForm()
 
-    return (
-        loading ? <Spin />
-            : (
-                <Form
-                    name='normal_robbo_group_card'
-                    className='robbo-group-form'
-                    labelWrap
-                    disabled={disableChanges}
-                    {...layout}
-                    form={form}
-                    initialValues={{
-                        name: GetRobboGroupById?.name,
-                    }}
-                    onFinish={({ name }) => {
-                        UpdateRobboGroup({
-                            variables: {
-                                input: {
-                                    id: GetRobboGroupById?.id,
-                                    robboUnitId: GetRobboGroupById?.robboUnitId,
-                                    name,
-                                },
-                            },
-                        })
-                    }}
-                >
-                    <Form.Item
-                        name='name' label={<FormattedMessage id='robbo_group_card.name' />}
-                    >
-                        <Input placeholder={GetRobboGroupById?.name} size='large' />
-                    </Form.Item>
-                    <Form.Item label={<FormattedMessage id='robbo_group_card.last_change' />}>
-                        {
-                            GetRobboGroupById?.lastModified
-                        }
-                    </Form.Item>
-                    <Form.Item >
-                        <Button
-                            type='primary' htmlType='submit'
-                            className='login-form-button'
-                        >
-                            <FormattedMessage id='robbo_group_card.save' />
-                        </Button>
-                    </Form.Item>
-                </Form>
-            )
-    )
+  return loading ? (
+    <Spin />
+  ) : (
+    <Form
+      name='normal_robbo_group_card'
+      className='robbo-group-form'
+      labelWrap
+      disabled={disableChanges}
+      {...layout}
+      form={form}
+      initialValues={{
+        name: GetRobboGroupById?.name,
+      }}
+      onFinish={({ name }) => {
+        UpdateRobboGroup({
+          variables: {
+            input: {
+              id: GetRobboGroupById?.id,
+              robboUnitId: GetRobboGroupById?.robboUnitId,
+              name,
+            },
+          },
+        })
+      }}>
+      <Form.Item name='name' label={<FormattedMessage id='robbo_group_card.name' />}>
+        <Input placeholder={GetRobboGroupById?.name} size='large' />
+      </Form.Item>
+      <Form.Item label={<FormattedMessage id='robbo_group_card.last_change' />}>
+        {GetRobboGroupById?.lastModified}
+      </Form.Item>
+      <Form.Item>
+        <Button type='primary' htmlType='submit' className='login-form-button'>
+          <FormattedMessage id='robbo_group_card.save' />
+        </Button>
+      </Form.Item>
+    </Form>
+  )
 }
 
-const RobboGroupCardContainer = ({
-    robboGroupId,
-    disableChanges,
-
-}) => {
-    const intl = useIntl()
-    return (
-        <WithGraphQLComponent
-            intl={intl}
-            robboGroupId={robboGroupId}
-            disableChanges={disableChanges}
-        />
-    )
+const RobboGroupCardContainer = ({ robboGroupId, disableChanges }) => {
+  const intl = useIntl()
+  return (
+    <WithGraphQLComponent intl={intl} robboGroupId={robboGroupId} disableChanges={disableChanges} />
+  )
 }
 
 const WithGraphQLComponent = compose(
-    graphql(
-        robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        id: props.robboGroupId,
-                    },
-                }
-            },
-        }),
-    graphql(
-        robboGroupMutationsGQL.UPDATE_ROBBO_GROUP,
-        {
-            name: 'UpdateRobboGroup',
-            options: props => {
-                return {
-                    onCompleted: () => {
-                        notification.success({ description: props.intl.formatMessage({ id: 'notification.update_profile_success' }) })
-                    },
-                    onError: error => {
-                        notification.error({
-                            title: props.intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                }
-            },
+  graphql(robboGroupQuerysGQL.GET_ROBBO_GROUP_BY_ID, {
+    options: props => {
+      return {
+        variables: {
+          id: props.robboGroupId,
         },
-    ))
-    (RobboGroupCard)
+      }
+    },
+  }),
+  graphql(robboGroupMutationsGQL.UPDATE_ROBBO_GROUP, {
+    name: 'UpdateRobboGroup',
+    options: props => {
+      return {
+        onCompleted: () => {
+          notification.success({
+            description: props.intl.formatMessage({ id: 'notification.update_profile_success' }),
+          })
+        },
+        onError: error => {
+          notification.error({
+            title: props.intl.formatMessage({ id: 'notification.error_message' }),
+            description: error?.message,
+          })
+        },
+      }
+    },
+  }),
+)(RobboGroupCard)
 
 RobboGroupCard.propTypes = {
-    robboGroupId: PropTypes.string.isRequired,
-    disableChanges: PropTypes.bool,
+  robboGroupId: PropTypes.string.isRequired,
+  disableChanges: PropTypes.bool,
 }
 
 export default RobboGroupCardContainer

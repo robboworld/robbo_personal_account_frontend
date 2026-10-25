@@ -6,117 +6,187 @@ import { formatMessageId } from '@/helpers/intl'
 
 import { coursePageMutationsGraphQL } from '@/graphQL'
 import {
-    createCourseAccessRelationRobboGroupFailed,
-    createCourseAccessRelationRobboGroupRequest,
-    createCourseAccessRelationRobboGroupSuccess,
-    createCourseAccessRelationRobboUnitFailed,
-    createCourseAccessRelationRobboUnitRequest,
-    createCourseAccessRelationRobboUnitSuccess,
-    createCourseAccessRelationStudentFailed,
-    createCourseAccessRelationStudentRequest,
-    createCourseAccessRelationStudentSuccess,
-    createCourseAccessRelationTeacherFailed,
-    createCourseAccessRelationTeacherRequest,
-    createCourseAccessRelationTeacherSuccess,
-    createCourseAccessRelationUnitAdminFailed,
-    createCourseAccessRelationUnitAdminRequest,
-    createCourseAccessRelationUnitAdminSuccess,
-    deleteCourseAccessRelationStudentFailed,
-    deleteCourseAccessRelationStudentRequest,
-    deleteCourseAccessRelationStudentSuccess,
+  createCourseAccessRelationRobboGroupFailed,
+  createCourseAccessRelationRobboGroupRequest,
+  createCourseAccessRelationRobboGroupSuccess,
+  createCourseAccessRelationRobboUnitFailed,
+  createCourseAccessRelationRobboUnitRequest,
+  createCourseAccessRelationRobboUnitSuccess,
+  createCourseAccessRelationStudentFailed,
+  createCourseAccessRelationStudentRequest,
+  createCourseAccessRelationStudentSuccess,
+  createCourseAccessRelationTeacherFailed,
+  createCourseAccessRelationTeacherRequest,
+  createCourseAccessRelationTeacherSuccess,
+  createCourseAccessRelationUnitAdminFailed,
+  createCourseAccessRelationUnitAdminRequest,
+  createCourseAccessRelationUnitAdminSuccess,
+  deleteCourseAccessRelationStudentFailed,
+  deleteCourseAccessRelationStudentRequest,
+  deleteCourseAccessRelationStudentSuccess,
 } from '@/actions'
 import { sagaErrorMessage } from '@/helpers/apiErrorMessage'
 
 function* createCourseAccessRelationStudentSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { courseId, studentId } = payload
-        const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationStudent, { input: { courseId, studentId } })
+  const language = yield select(state => state.app.language)
+  try {
+    const { courseId, studentId } = payload
+    const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationStudent, {
+      input: { courseId, studentId },
+    })
 
-        yield put(createCourseAccessRelationStudentSuccess(response.data.CreateAccessCourseRelationStudent))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
-    } catch (e) {
-        yield put(createCourseAccessRelationStudentFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(
+      createCourseAccessRelationStudentSuccess(response.data.CreateAccessCourseRelationStudent),
+    )
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.access_added_success'),
+    })
+  } catch (e) {
+    yield put(createCourseAccessRelationStudentFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* createCourseAccessRelationTeacherSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { courseId, teacherId } = payload
-        const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationTeacher, { input: { courseId, teacherId } })
+  const language = yield select(state => state.app.language)
+  try {
+    const { courseId, teacherId } = payload
+    const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationTeacher, {
+      input: { courseId, teacherId },
+    })
 
-        yield put(createCourseAccessRelationTeacherSuccess(response.data.CreateAccessCourseRelationTeacher))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
-    } catch (e) {
-        yield put(createCourseAccessRelationTeacherFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(
+      createCourseAccessRelationTeacherSuccess(response.data.CreateAccessCourseRelationTeacher),
+    )
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.access_added_success'),
+    })
+  } catch (e) {
+    yield put(createCourseAccessRelationTeacherFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* createCourseAccessRelationUnitAdminSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { courseId, unitAdminId } = payload
-        const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationUnitAdmin, { input: { courseId, unitAdminId } })
+  const language = yield select(state => state.app.language)
+  try {
+    const { courseId, unitAdminId } = payload
+    const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationUnitAdmin, {
+      input: { courseId, unitAdminId },
+    })
 
-        yield put(createCourseAccessRelationUnitAdminSuccess(response.data.CreateAccessCourseRelationUnitAdmin))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
-    } catch (e) {
-        yield put(createCourseAccessRelationUnitAdminFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(
+      createCourseAccessRelationUnitAdminSuccess(response.data.CreateAccessCourseRelationUnitAdmin),
+    )
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.access_added_success'),
+    })
+  } catch (e) {
+    yield put(createCourseAccessRelationUnitAdminFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* createCourseAccessRelationRobboUnitSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { courseId, robboUnitId } = payload
-        const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationRobboUnit, { input: { courseId, robboUnitId } })
+  const language = yield select(state => state.app.language)
+  try {
+    const { courseId, robboUnitId } = payload
+    const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationRobboUnit, {
+      input: { courseId, robboUnitId },
+    })
 
-        yield put(createCourseAccessRelationRobboUnitSuccess(response.data.CreateAccessCourseRelationRobboUnit))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
-    } catch (e) {
-        yield put(createCourseAccessRelationRobboUnitFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(
+      createCourseAccessRelationRobboUnitSuccess(response.data.CreateAccessCourseRelationRobboUnit),
+    )
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.access_added_success'),
+    })
+  } catch (e) {
+    yield put(createCourseAccessRelationRobboUnitFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* createCourseAccessRelationRobboGroupSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { courseId, robboGroupId } = payload
-        const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationRobboGroup, { input: { courseId, robboGroupId } })
+  const language = yield select(state => state.app.language)
+  try {
+    const { courseId, robboGroupId } = payload
+    const response = yield call(coursePageMutationsGraphQL.CreateAccessCourseRelationRobboGroup, {
+      input: { courseId, robboGroupId },
+    })
 
-        yield put(createCourseAccessRelationRobboGroupSuccess(response.data.CreateAccessCourseRelationStudent))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.access_added_success') })
-    } catch (e) {
-        yield put(createCourseAccessRelationRobboGroupFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(
+      createCourseAccessRelationRobboGroupSuccess(response.data.CreateAccessCourseRelationStudent),
+    )
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.access_added_success'),
+    })
+  } catch (e) {
+    yield put(createCourseAccessRelationRobboGroupFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 function* deleteCourseAccessRelationStudentSaga({ payload }) {
-    const language = yield select(state => state.app.language)
-    try {
-        const { courseId, studentId } = payload
-        const response = yield call(coursePageMutationsGraphQL.DeleteAccessCourseRelationStudent, { courseId, studentId })
+  const language = yield select(state => state.app.language)
+  try {
+    const { courseId, studentId } = payload
+    const response = yield call(coursePageMutationsGraphQL.DeleteAccessCourseRelationStudent, {
+      courseId,
+      studentId,
+    })
 
-        yield put(deleteCourseAccessRelationStudentSuccess(response.data.DeleteAccessCourseRelationStudent))
-        notification.success({ title: '', description: formatMessageId(language, 'notification.access_removed_success') })
-    } catch (e) {
-        yield put(deleteCourseAccessRelationStudentFailed(e.message))
-        notification.error({ title: formatMessageId(language, 'notification.error_message'), description: sagaErrorMessage(e, language) })
-    }
+    yield put(
+      deleteCourseAccessRelationStudentSuccess(response.data.DeleteAccessCourseRelationStudent),
+    )
+    notification.success({
+      title: '',
+      description: formatMessageId(language, 'notification.access_removed_success'),
+    })
+  } catch (e) {
+    yield put(deleteCourseAccessRelationStudentFailed(e.message))
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description: sagaErrorMessage(e, language),
+    })
+  }
 }
 
 export function* coursePageSaga() {
-    yield takeLatest(createCourseAccessRelationStudentRequest, createCourseAccessRelationStudentSaga)
-    yield takeLatest(createCourseAccessRelationTeacherRequest, createCourseAccessRelationTeacherSaga)
-    yield takeLatest(createCourseAccessRelationUnitAdminRequest, createCourseAccessRelationUnitAdminSaga)
-    yield takeLatest(createCourseAccessRelationRobboUnitRequest, createCourseAccessRelationRobboUnitSaga)
-    yield takeLatest(createCourseAccessRelationRobboGroupRequest, createCourseAccessRelationRobboGroupSaga)
+  yield takeLatest(createCourseAccessRelationStudentRequest, createCourseAccessRelationStudentSaga)
+  yield takeLatest(createCourseAccessRelationTeacherRequest, createCourseAccessRelationTeacherSaga)
+  yield takeLatest(
+    createCourseAccessRelationUnitAdminRequest,
+    createCourseAccessRelationUnitAdminSaga,
+  )
+  yield takeLatest(
+    createCourseAccessRelationRobboUnitRequest,
+    createCourseAccessRelationRobboUnitSaga,
+  )
+  yield takeLatest(
+    createCourseAccessRelationRobboGroupRequest,
+    createCourseAccessRelationRobboGroupSaga,
+  )
 
-    yield takeLatest(deleteCourseAccessRelationStudentRequest, deleteCourseAccessRelationStudentSaga)
+  yield takeLatest(deleteCourseAccessRelationStudentRequest, deleteCourseAccessRelationStudentSaga)
 }

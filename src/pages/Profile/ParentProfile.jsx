@@ -43,50 +43,44 @@ const ParentProfile = ({
   }
 
   return (
-      <PageContent>
-        <ParentLayout
-          as={motion.div}
-          variants={staggerContainer}
-          initial='hidden'
-          animate='show'
-        >
-          <motion.div variants={staggerItem}>
-            <ProfilePageShell
+    <PageContent>
+      <ParentLayout as={motion.div} variants={staggerContainer} initial='hidden' animate='show'>
+        <motion.div variants={staggerItem}>
+          <ProfilePageShell
+            profile={profile}
+            loading={profileLoading}
+            accessUpdate={accessUpdate}
+            peekUserId={peekUserId}
+            peekUserRole={peekUserRole}
+            embedded>
+            <ProfileCard
               profile={profile}
-              loading={profileLoading}
+              updateHandle={UpdateParent}
               accessUpdate={accessUpdate}
-              peekUserId={peekUserId}
-              peekUserRole={peekUserRole}
-              embedded
-            >
-              <ProfileCard
-                profile={profile}
-                updateHandle={UpdateParent}
-                accessUpdate={accessUpdate}
-              />
-            </ProfilePageShell>
-          </motion.div>
-
-          <ChildrenPanel as={motion.section} variants={staggerItem}>
-            <ChildrenListHeader>
-              <FormattedMessage id='parent_profile.header_children_list' />
-            </ChildrenListHeader>
-            <List
-              loading={GetStudents?.loading}
-              dataSource={GetStudents?.GetStudentsByParentId?.students ?? []}
-              locale={{ emptyText: intl.formatMessage({ id: 'parent_profile.children_empty' }) }}
-              renderItem={({ userHttp }) => (
-                <ListItem
-                  key={userHttp.email}
-                  handleClick={() => openProfileStudent(userHttp.id)}
-                  render={() => { }}
-                  label={formatUserDisplayName(userHttp)}
-                />
-              )}
             />
-          </ChildrenPanel>
-        </ParentLayout>
-      </PageContent>
+          </ProfilePageShell>
+        </motion.div>
+
+        <ChildrenPanel as={motion.section} variants={staggerItem}>
+          <ChildrenListHeader>
+            <FormattedMessage id='parent_profile.header_children_list' />
+          </ChildrenListHeader>
+          <List
+            loading={GetStudents?.loading}
+            dataSource={GetStudents?.GetStudentsByParentId?.students ?? []}
+            locale={{ emptyText: intl.formatMessage({ id: 'parent_profile.children_empty' }) }}
+            renderItem={({ userHttp }) => (
+              <ListItem
+                key={userHttp.email}
+                handleClick={() => openProfileStudent(userHttp.id)}
+                render={() => {}}
+                label={formatUserDisplayName(userHttp)}
+              />
+            )}
+          />
+        </ChildrenPanel>
+      </ParentLayout>
+    </PageContent>
   )
 }
 

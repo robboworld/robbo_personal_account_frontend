@@ -78,12 +78,11 @@ export const ToolNavItems = [
 
 const TARIFF_KEYS = new Set(['my_licenses', 'buy_license', 'issue_license'])
 
-const isPrimaryItem = item => (
+const isPrimaryItem = item =>
   item.key === 'home' ||
   item.pathname === PROFILE_PAGE_ROUTE ||
   item.pathname === CUSTOMIZATION_PAGE_ROUTE ||
   item.pathname === MY_PROJECTS_ROUTE
-)
 
 const makeDivider = key => ({
   type: 'divider',
@@ -143,9 +142,8 @@ export const buildSidebarItems = roleItems => {
 }
 
 /** Flat list of clickable nav entries (skips dividers). */
-export const flattenSidebarItems = items => (
+export const flattenSidebarItems = items =>
   (items || []).filter(item => item && item.type !== 'divider')
-)
 
 export const SidebarDataStudent = [
   {
@@ -264,7 +262,8 @@ export const SidebarDataSuperAdmin = [
     label: <FormattedMessage id='sidebar_data.robbo_units' />,
     pathname: ROBBO_UNITS_ROUTE,
     icon: <BankOutlined />,
-  }, {
+  },
+  {
     key: '7',
     label: <FormattedMessage id='sidebar_data.robbo_groups' />,
     pathname: ROBBO_GROUPS_ROUTE,

@@ -20,7 +20,7 @@ const SYSTEMS = [
 
 const pick = (table, ua) => (table.find(([re]) => re.test(ua)) || [])[1] || ''
 
-export function describeUserAgent (userAgent) {
+export function describeUserAgent(userAgent) {
   const ua = String(userAgent || '')
   if (!ua) return ''
   // RobboScratch desktop (NW.js) reports Chrome too: check it first.

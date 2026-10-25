@@ -60,7 +60,10 @@ const SignInForm = memo(({ handleSubmit }) => {
       // Apollo 4: GraphQL errors arrive as CombinedGraphQLErrors (.errors), not .graphQLErrors.
       const graphQLError = CombinedGraphQLErrors.is(error) ? error.errors[0] : undefined
       const code = graphQLError?.extensions?.code
-      if (code === 'SESSION_LIMIT_REACHED' || String(error?.message || '').includes('SESSION_LIMIT_REACHED')) {
+      if (
+        code === 'SESSION_LIMIT_REACHED' ||
+        String(error?.message || '').includes('SESSION_LIMIT_REACHED')
+      ) {
         setSessionLimitReached(true)
         return
       }
@@ -105,10 +108,12 @@ const SignInForm = memo(({ handleSubmit }) => {
 
   useEffect(() => {
     if (shouldBackupLogin) {
-      dispatch(backupLoginFormBegin({
-        formFields: form.getFieldsValue(),
-        errors: collectFieldErrors(form),
-      }))
+      dispatch(
+        backupLoginFormBegin({
+          formFields: form.getFieldsValue(),
+          errors: collectFieldErrors(form),
+        }),
+      )
     }
   }, [shouldBackupLogin, form, dispatch])
 
@@ -162,26 +167,24 @@ const SignInForm = memo(({ handleSubmit }) => {
           },
         })
       }}
-      form={form}
-    >
+      form={form}>
       {sessionLimitReached ? (
         <Alert
           type='error'
           showIcon
           style={{ marginBottom: 16 }}
           title={intl.formatMessage({ id: 'sessions.limit_reached' })}
-          description={(
+          description={
             <Button
               type='primary'
               size='small'
               htmlType='button'
               className='session-limit-kick-btn'
               loading={kicking}
-              onClick={handleKickOthers}
-            >
+              onClick={handleKickOthers}>
               <FormattedMessage id='sessions.kick_others' />
             </Button>
-          )}
+          }
         />
       ) : null}
       <Form.Item
@@ -194,14 +197,12 @@ const SignInForm = memo(({ handleSubmit }) => {
           },
           {
             min: 2,
-            message: intl.formatMessage({ id: 'login.username.or.email.format.validation.less.chars.message' }),
+            message: intl.formatMessage({
+              id: 'login.username.or.email.format.validation.less.chars.message',
+            }),
           },
-        ]}
-      >
-        <Input
-          size='large'
-          autoComplete='username'
-        />
+        ]}>
+        <Input size='large' autoComplete='username' />
       </Form.Item>
       <Form.Item
         name='password'
@@ -211,12 +212,8 @@ const SignInForm = memo(({ handleSubmit }) => {
             required: true,
             message: intl.formatMessage({ id: 'login.password.validation.message' }),
           },
-        ]}
-      >
-        <Input.Password
-          size='large'
-          autoComplete='current-password'
-        />
+        ]}>
+        <Input.Password size='large' autoComplete='current-password' />
       </Form.Item>
 
       <div className='authn-sign-in-actions'>
@@ -225,8 +222,7 @@ const SignInForm = memo(({ handleSubmit }) => {
           htmlType='submit'
           size='large'
           className='login-form-button'
-          loading={signingIn || kicking}
-        >
+          loading={signingIn || kicking}>
           <FormattedMessage id='sign_in_form.sign_in' />
         </Button>
         <a
@@ -234,8 +230,7 @@ const SignInForm = memo(({ handleSubmit }) => {
           className='authn-forgot-password-link'
           href={LMS_RESET_PASSWORD_URL}
           target='_blank'
-          rel='noopener noreferrer'
-        >
+          rel='noopener noreferrer'>
           <FormattedMessage id='forgot.password' />
         </a>
       </div>

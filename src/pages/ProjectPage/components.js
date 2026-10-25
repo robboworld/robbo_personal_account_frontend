@@ -11,7 +11,7 @@ export const UnsharedMessage = styled.div`
   margin: 1rem 0;
   width: 100%;
   height: 10%;
-  background: rgba(244,157,37,.25);
+  background: rgba(244, 157, 37, 0.25);
   color: #ff8c1a;
 `
 export const Title = styled.div`
@@ -40,13 +40,13 @@ export const Instructions = styled.div`
   font-size: 1vw;
 `
 export const Notes = styled.div`
-min-height: 20%;
-border: 1px dashed grey;
-border-radius: 0.5rem;
-width: 100%;
-height: 15vh;
-margin: 1rem 0;
-padding: 1rem;
-overflow: auto;
-font-size: 1vw;
+  min-height: 20%;
+  border: 1px dashed grey;
+  border-radius: 0.5rem;
+  width: 100%;
+  height: 15vh;
+  margin: 1rem 0;
+  padding: 1rem;
+  overflow: auto;
+  font-size: 1vw;
 `

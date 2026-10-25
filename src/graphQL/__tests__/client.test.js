@@ -4,11 +4,18 @@ import { gql } from '@apollo/client'
 import { graphQLClient } from '@/graphQL/client'
 import { getAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 
-const QUERY = gql`query Ping { Ping { ok } }`
-const json = (status, body) => new Response(JSON.stringify(body), {
-  status,
-  headers: { 'Content-Type': 'application/json' },
-})
+const QUERY = gql`
+  query Ping {
+    Ping {
+      ok
+    }
+  }
+`
+const json = (status, body) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
 
 describe('graphQLClient token refresh', () => {
   afterEach(() => {
@@ -38,8 +45,12 @@ describe('graphQLClient token refresh', () => {
 
   it('does not retry other 401s (no token: BFF cookie session)', async () => {
     setAccessToken('')
-    global.fetch = jest.fn(async () => json(401, { error: 'SESSION_NOT_FOUND', code: 'SESSION_NOT_FOUND' }))
-    await expect(graphQLClient.query({ query: QUERY, fetchPolicy: 'network-only' })).rejects.toBeTruthy()
+    global.fetch = jest.fn(async () =>
+      json(401, { error: 'SESSION_NOT_FOUND', code: 'SESSION_NOT_FOUND' }),
+    )
+    await expect(
+      graphQLClient.query({ query: QUERY, fetchPolicy: 'network-only' }),
+    ).rejects.toBeTruthy()
     expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 })

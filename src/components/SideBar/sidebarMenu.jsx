@@ -39,6 +39,5 @@ export const withSidebarIcon = (item, collapsed = false) => {
   }
 }
 
-export const mapSidebarMenuItems = (items, collapsed = false) => (
+export const mapSidebarMenuItems = (items, collapsed = false) =>
   (items || []).map(item => withSidebarIcon(item, collapsed))
-)

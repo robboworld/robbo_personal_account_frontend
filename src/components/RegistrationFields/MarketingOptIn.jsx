@@ -4,8 +4,7 @@ import PropTypes from 'prop-types'
 
 const MarketingOptIn = ({ checked, errorMessage, onChange, onBlur, onFocus }) => (
   <div
-    className={`registration-checkbox form-field--checkbox${errorMessage ? ' registration-checkbox--invalid' : ''}`}
-  >
+    className={`registration-checkbox form-field--checkbox${errorMessage ? ' registration-checkbox--invalid' : ''}`}>
     <label className='registration-checkbox__label'>
       <input
         type='checkbox'
@@ -22,9 +21,7 @@ const MarketingOptIn = ({ checked, errorMessage, onChange, onBlur, onFocus }) =>
         <FormattedMessage id='registration.opt.in.label' />
       </span>
     </label>
-    {errorMessage && (
-      <div className='registration-field__error'>{errorMessage}</div>
-    )}
+    {errorMessage && <div className='registration-field__error'>{errorMessage}</div>}
   </div>
 )
 

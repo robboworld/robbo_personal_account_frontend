@@ -119,7 +119,9 @@ const TopbarBtn = styled.a`
   border-radius: 18px;
   white-space: nowrap;
   text-decoration: none !important;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 
   &:hover,
   &:focus {
@@ -193,12 +195,15 @@ const RobboGuestHeader = () => {
               type='button'
               lang={nextLanguage}
               aria-label={intl.formatMessage({ id: 'guest_header.switch_language' })}
-              onClick={() => actions.changeLanguage(nextLanguage)}
-            >
+              onClick={() => actions.changeLanguage(nextLanguage)}>
               <FormattedMessage id='guest_header.switch_language_short' />
             </LangToggle>
-            <BtnSolid href={loginHref}><FormattedMessage id='guest_header.sign_in' /></BtnSolid>
-            <BtnOutline href={registerHref}><FormattedMessage id='guest_header.sign_up' /></BtnOutline>
+            <BtnSolid href={loginHref}>
+              <FormattedMessage id='guest_header.sign_in' />
+            </BtnSolid>
+            <BtnOutline href={registerHref}>
+              <FormattedMessage id='guest_header.sign_up' />
+            </BtnOutline>
           </Actions>
         </Trailing>
       </Main>

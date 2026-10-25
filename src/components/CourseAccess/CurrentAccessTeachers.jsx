@@ -6,96 +6,92 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { graphql } from '@/graphQL/hoc'
 import ListItem from '@/components/ListItem'
 import { coursePageQuerysGQL } from '@/graphQL'
-import { PROFILE_PAGE_ROUTE, TEACHER } from "@/constants"
+import { PROFILE_PAGE_ROUTE, TEACHER } from '@/constants'
 import { formatUserDisplayName } from '@/helpers'
 
 const CurrentCourseAccessTeachers = ({
-    courseId,
-    data: {
-        GetTeachersAdmittedToTheCourse,
-        loading,
-    },
-    pageSize,
-    currentPage,
-    onChangePage,
+  courseId,
+  data: { GetTeachersAdmittedToTheCourse, loading },
+  pageSize,
+  currentPage,
+  onChangePage,
 }) => {
-    const navigate = useNavigate()
-    const openProfileTeacher = userId => {
-        navigate(PROFILE_PAGE_ROUTE, {
-            state: {
-                userId,
-                userRole: TEACHER,
-            },
-        })
-    }
+  const navigate = useNavigate()
+  const openProfileTeacher = userId => {
+    navigate(PROFILE_PAGE_ROUTE, {
+      state: {
+        userId,
+        userRole: TEACHER,
+      },
+    })
+  }
 
-    return (
-        <Row gutter={[0, 8]}>
-            <Col span={24}>
-                <List
-                    bordered
-                    loading={loading}
-                    dataSource={GetTeachersAdmittedToTheCourse?.teachers}
-                    pagination={{
-                        onChange: onChangePage,
-                        total: GetTeachersAdmittedToTheCourse?.countRows,
-                        current: +currentPage,
-                        defaultCurrent: 1,
-                        defaultPageSize: pageSize,
-                        responsive: true,
-                    }}
-                    renderItem={({ userHttp }, index) => (
-                        <ListItem
-                            itemIndex={index}
-                            key={index}
-                            render={() => { }}
-                            label={formatUserDisplayName(userHttp)}
-                            handleClick={() => openProfileTeacher(userHttp.id)}
-                        />
-                    )}
-                />
-            </Col>
-        </Row>
-    )
+  return (
+    <Row gutter={[0, 8]}>
+      <Col span={24}>
+        <List
+          bordered
+          loading={loading}
+          dataSource={GetTeachersAdmittedToTheCourse?.teachers}
+          pagination={{
+            onChange: onChangePage,
+            total: GetTeachersAdmittedToTheCourse?.countRows,
+            current: +currentPage,
+            defaultCurrent: 1,
+            defaultPageSize: pageSize,
+            responsive: true,
+          }}
+          renderItem={({ userHttp }, index) => (
+            <ListItem
+              itemIndex={index}
+              key={index}
+              render={() => {}}
+              label={formatUserDisplayName(userHttp)}
+              handleClick={() => openProfileTeacher(userHttp.id)}
+            />
+          )}
+        />
+      </Col>
+    </Row>
+  )
 }
 
 const CurrentCourseAccessTeachersContainer = ({ courseId }) => {
-    const intl = useIntl()
-    const WithGraphQL = graphql(
-        coursePageQuerysGQL.GET_TEACHERS_ADMITTED_TO_THE_COURSE,
-        {
-            options: props => {
-                return {
-                    variables: {
-                        courseId: props.courseId,
-                        page: props.currentPage,
-                        pageSize: props.pageSize,
-                    },
-                    onError: error => {
-                        notification.error({
-                            title: intl.formatMessage({ id: 'notification.error_message' }),
-                            description: error?.message,
-                        })
-                    },
-                }
-            },
+  const intl = useIntl()
+  const WithGraphQL = graphql(coursePageQuerysGQL.GET_TEACHERS_ADMITTED_TO_THE_COURSE, {
+    options: props => {
+      return {
+        variables: {
+          courseId: props.courseId,
+          page: props.currentPage,
+          pageSize: props.pageSize,
         },
-    )(CurrentCourseAccessTeachers)
+        onError: error => {
+          notification.error({
+            title: intl.formatMessage({ id: 'notification.error_message' }),
+            description: error?.message,
+          })
+        },
+      }
+    },
+  })(CurrentCourseAccessTeachers)
 
-    const [searchParams, setSearchParams] = useSearchParams()
-    const currentPage = searchParams.get('page') || '1'
-    const pageSize = '10'
+  const [searchParams, setSearchParams] = useSearchParams()
+  const currentPage = searchParams.get('page') || '1'
+  const pageSize = '10'
 
-    const onChangePage = page => {
-        setSearchParams({ page })
-    }
+  const onChangePage = page => {
+    setSearchParams({ page })
+  }
 
-    return <WithGraphQL
-        courseId={courseId}
-        pageSize={pageSize}
-        currentPage={currentPage}
-        onChangePage={onChangePage}
+  return (
+    <WithGraphQL
+      courseId={courseId}
+      pageSize={pageSize}
+      currentPage={currentPage}
+      onChangePage={onChangePage}
     />
+  )
 }
 
 export default CurrentCourseAccessTeachersContainer

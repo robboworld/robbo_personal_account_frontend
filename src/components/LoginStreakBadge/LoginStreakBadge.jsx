@@ -33,14 +33,10 @@ function LoginStreakBadge({ current = 0, longest = 0, className }) {
     { current: Number(current) || 0, longest: Number(longest) || 0 },
   )
   return (
-    <Badge
-      className={className}
-      $active={active}
-      title={label}
-      aria-label={label}
-      role='img'
-    >
-      <Flame $active={active} aria-hidden>🔥</Flame>
+    <Badge className={className} $active={active} title={label} aria-label={label} role='img'>
+      <Flame $active={active} aria-hidden>
+        🔥
+      </Flame>
       <span>{Number(current) || 0}</span>
     </Badge>
   )

@@ -104,10 +104,7 @@ export default ({
     [roleSideBarData, legacyAdminEnabled],
   )
 
-  const flatSideBarData = useMemo(
-    () => flattenSidebarItems(SideBarData),
-    [SideBarData],
-  )
+  const flatSideBarData = useMemo(() => flattenSidebarItems(SideBarData), [SideBarData])
 
   const menuItems = useMemo(
     () => mapSidebarMenuItems(SideBarData, menuCollapsed),
@@ -179,8 +176,7 @@ export default ({
               $collapsed={false}
               $drawer
               aria-label={intl.formatMessage({ id: 'sidebar.close_menu' })}
-              onClick={onCloseDrawer}
-            >
+              onClick={onCloseDrawer}>
               <CloseOutlined />
             </SidebarCollapseBtn>
           </React.Fragment>
@@ -189,11 +185,12 @@ export default ({
             <SidebarCollapseBtn
               type='button'
               $collapsed={collapsed}
-              aria-label={collapsed
-                ? intl.formatMessage({ id: 'sidebar.expand' })
-                : intl.formatMessage({ id: 'sidebar.collapse' })}
-              onClick={onToggleCollapsed}
-            >
+              aria-label={
+                collapsed
+                  ? intl.formatMessage({ id: 'sidebar.expand' })
+                  : intl.formatMessage({ id: 'sidebar.collapse' })
+              }
+              onClick={onToggleCollapsed}>
               {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </SidebarCollapseBtn>
             <SidebarTopActions $collapsed={collapsed}>
@@ -215,13 +212,11 @@ export default ({
         items={menuItems}
       />
       <SidebarFooter $collapsed={menuCollapsed}>
-        <SidebarLogoutBtn
-          type='button'
-          $collapsed={menuCollapsed}
-          onClick={() => handleLogout()}
-        >
+        <SidebarLogoutBtn type='button' $collapsed={menuCollapsed} onClick={() => handleLogout()}>
           <LogoutOutlined />
-          <span><FormattedMessage id='sidebar_data.logout' /></span>
+          <span>
+            <FormattedMessage id='sidebar_data.logout' />
+          </span>
         </SidebarLogoutBtn>
       </SidebarFooter>
     </SidebarShell>

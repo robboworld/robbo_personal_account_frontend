@@ -3,112 +3,123 @@ import { notification } from 'antd'
 
 import { authAPI } from '@/api'
 import {
-    signInSucces, signInFailed, signUpSuccess,
-    signUpFailed, signInRequest, signUpRequest,
-    signOutRequest, signOutSuccess, signOutFailed,
-    checkAuthRequest, checkAuthSuccess, checkAuthFailed,
+  signInSucces,
+  signInFailed,
+  signUpSuccess,
+  signUpFailed,
+  signInRequest,
+  signUpRequest,
+  signOutRequest,
+  signOutSuccess,
+  signOutFailed,
+  checkAuthRequest,
+  checkAuthSuccess,
+  checkAuthFailed,
 } from '@/actions'
 import { authMutationsGraphQL, graphQLClient } from '@/graphQL'
 import { formatMessageId } from '@/helpers/intl'
-import { redirectToOidcStart, fetchOidcStatus, hasLmsPasswordFallback, isOidcSsoEnabled } from '@/helpers/oidcSession'
+import {
+  redirectToOidcStart,
+  fetchOidcStatus,
+  hasLmsPasswordFallback,
+  isOidcSsoEnabled,
+} from '@/helpers/oidcSession'
 import { clearAccessToken, setAccessToken } from '@/helpers/accessTokenMemory'
 
 function* signInSaga(action) {
-    try {
-        const { email, password, role } = action.payload
-        const response = yield call(authMutationsGraphQL.SingIn, email, password, role)
-        setAccessToken(response.data.SingIn.accessToken)
-        yield put(signInSucces(response.data.SingIn))
-    } catch (e) {
-        const errText = String(e?.response?.data?.error || e?.response?.data || '')
-        if (errText.includes('legacy sign-in disabled') && !errText.includes('sign-up disabled')) {
-            redirectToOidcStart('/home', 'login')
-            return
-        }
-        // Apollo errors have no .response: reading e.response.data threw inside the catch
-        // and aborted the root saga (all sagas stopped).
-        yield put(signInFailed(e?.response?.data ?? e?.message))
+  try {
+    const { email, password, role } = action.payload
+    const response = yield call(authMutationsGraphQL.SingIn, email, password, role)
+    setAccessToken(response.data.SingIn.accessToken)
+    yield put(signInSucces(response.data.SingIn))
+  } catch (e) {
+    const errText = String(e?.response?.data?.error || e?.response?.data || '')
+    if (errText.includes('legacy sign-in disabled') && !errText.includes('sign-up disabled')) {
+      redirectToOidcStart('/home', 'login')
+      return
     }
+    // Apollo errors have no .response: reading e.response.data threw inside the catch
+    // and aborted the root saga (all sagas stopped).
+    yield put(signInFailed(e?.response?.data ?? e?.message))
+  }
 }
 
 function* signUpSaga(action) {
-    try {
-        const { user, role } = action.payload
-        const response = yield call(authAPI.signUp, user, role)
+  try {
+    const { user, role } = action.payload
+    const response = yield call(authAPI.signUp, user, role)
 
-        if (response.data?.next === 'oidc' || response.data?.ok) {
-            const status = yield call(fetchOidcStatus)
-            if (isOidcSsoEnabled() && !hasLmsPasswordFallback(status)) {
-                redirectToOidcStart('/home', 'login')
-                return
-            }
-        }
-
-        if (response.data?.accessToken) {
-            setAccessToken(response.data.accessToken)
-            yield put(signUpSuccess(response))
-        }
-    } catch (e) {
-        const language = yield select(state => state.app.language)
-        const errorData = e?.response?.data
-        const apiError = typeof errorData === 'string'
-            ? errorData
-            : (errorData?.error || '')
-        const field = typeof errorData === 'object' ? errorData?.field : undefined
-        const normalized = String(apiError).toLowerCase()
-
-        let description = formatMessageId(language, 'notification.sign_up_failed')
-        if (
-            field === 'nickname' ||
-            normalized.includes('username already exists') ||
-            normalized.includes('username already exist')
-        ) {
-            description = formatMessageId(language, 'notification.nickname_taken')
-        } else if (
-            field === 'email' ||
-            normalized.includes('email already exists') ||
-            normalized.includes('email already exist') ||
-            normalized.includes('email is already used') ||
-            normalized.includes('user already exist')
-        ) {
-            description = formatMessageId(language, 'notification.email_taken')
-        } else if (apiError) {
-            description = apiError
-        }
-
-        notification.error({
-            title: formatMessageId(language, 'notification.error_message'),
-            description,
-        })
-
-        yield put(signUpFailed(errorData))
+    if (response.data?.next === 'oidc' || response.data?.ok) {
+      const status = yield call(fetchOidcStatus)
+      if (isOidcSsoEnabled() && !hasLmsPasswordFallback(status)) {
+        redirectToOidcStart('/home', 'login')
+        return
+      }
     }
+
+    if (response.data?.accessToken) {
+      setAccessToken(response.data.accessToken)
+      yield put(signUpSuccess(response))
+    }
+  } catch (e) {
+    const language = yield select(state => state.app.language)
+    const errorData = e?.response?.data
+    const apiError = typeof errorData === 'string' ? errorData : errorData?.error || ''
+    const field = typeof errorData === 'object' ? errorData?.field : undefined
+    const normalized = String(apiError).toLowerCase()
+
+    let description = formatMessageId(language, 'notification.sign_up_failed')
+    if (
+      field === 'nickname' ||
+      normalized.includes('username already exists') ||
+      normalized.includes('username already exist')
+    ) {
+      description = formatMessageId(language, 'notification.nickname_taken')
+    } else if (
+      field === 'email' ||
+      normalized.includes('email already exists') ||
+      normalized.includes('email already exist') ||
+      normalized.includes('email is already used') ||
+      normalized.includes('user already exist')
+    ) {
+      description = formatMessageId(language, 'notification.email_taken')
+    } else if (apiError) {
+      description = apiError
+    }
+
+    notification.error({
+      title: formatMessageId(language, 'notification.error_message'),
+      description,
+    })
+
+    yield put(signUpFailed(errorData))
+  }
 }
 
 function* signOutSaga(action) {
-    try {
-        yield call(authAPI.signOut)
-        graphQLClient.resetStore()
-        yield put(signOutSuccess())
-        clearAccessToken()
-    } catch (e) {
-        yield put(signOutFailed(e.message))
-    }
+  try {
+    yield call(authAPI.signOut)
+    graphQLClient.resetStore()
+    yield put(signOutSuccess())
+    clearAccessToken()
+  } catch (e) {
+    yield put(signOutFailed(e.message))
+  }
 }
 
 function* checkAuthSaga(action) {
-    try {
-        const token = action.payload?.token
-        const response = yield call(authAPI.checkAuth, token)
-        yield put(checkAuthSuccess(response))
-    } catch (e) {
-        yield put(checkAuthFailed(e?.message))
-    }
+  try {
+    const token = action.payload?.token
+    const response = yield call(authAPI.checkAuth, token)
+    yield put(checkAuthSuccess(response))
+  } catch (e) {
+    yield put(checkAuthFailed(e?.message))
+  }
 }
 
 export function* loginWather() {
-    yield takeLatest(signInRequest, signInSaga)
-    yield takeLatest(signUpRequest, signUpSaga)
-    yield takeEvery(signOutRequest, signOutSaga)
-    yield takeLatest(checkAuthRequest, checkAuthSaga)
+  yield takeLatest(signInRequest, signInSaga)
+  yield takeLatest(signUpRequest, signUpSaga)
+  yield takeEvery(signOutRequest, signOutSaga)
+  yield takeLatest(checkAuthRequest, checkAuthSaga)
 }

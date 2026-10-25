@@ -23,11 +23,14 @@ const LmsUsernameSelect = ({ value, onChange, id, disabled }) => {
   const timerRef = useRef(null)
   const reqRef = useRef(0)
 
-  useEffect(() => () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
-  }, [])
+  useEffect(
+    () => () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+    },
+    [],
+  )
 
   const onSearch = text => {
     if (timerRef.current) {
