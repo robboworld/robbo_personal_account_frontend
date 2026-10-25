@@ -1,13 +1,12 @@
 import React from 'react'
+import { Spin } from 'antd'
 
-import { Loader } from './components'
-
-import theme from '@/theme'
-
-const LOADER_SIZE = 100
+import { LoaderWrap } from './components'
 
 export default () => {
   return (
-    <Loader type='Bars' color={theme.colors.secondary} height={LOADER_SIZE} width={LOADER_SIZE} />
+    <LoaderWrap role='status' aria-busy='true'>
+      <Spin size='large' />
+    </LoaderWrap>
   )
 }

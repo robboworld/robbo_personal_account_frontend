@@ -70,7 +70,6 @@
     "react-draggable": "^4.4.5",
     "react-infinite-scroll-component": "^6.1.0",
     "react-intl": "^6",
-    "react-loader-spinner": "^3.1.4",
     "react-phone-number-input": "^3.4.9",
     "react-redux": "^9",
     "react-router-dom": "^7",
