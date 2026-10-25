@@ -32,10 +32,7 @@ export default [
       '@stylistic/semi': ['error', 'never'],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/jsx-quotes': ['error', 'prefer-single'],
-      '@stylistic/max-len': [
-        'warn',
-        { code: 150, ignoreUrls: true, ignorePattern: 'import' },
-      ],
+      '@stylistic/max-len': ['warn', { code: 150, ignoreUrls: true, ignorePattern: 'import' }],
       '@stylistic/operator-linebreak': [
         'warn',
         'after',
@@ -59,10 +56,6 @@ export default [
         },
       ],
       '@stylistic/jsx-closing-tag-location': 'error',
-      '@stylistic/jsx-max-props-per-line': [
-        'error',
-        { maximum: 2, when: 'always' },
-      ],
       'unicode-bom': ['error', 'never'],
 
       // eslint-config-standard had these; neostandard dropped or softened them.
@@ -84,24 +77,17 @@ export default [
       'no-restricted-syntax': [
         'error',
         {
-          selector:
-            "CallExpression[callee.object.name='localStorage'][arguments.0.value='token']",
+          selector: "CallExpression[callee.object.name='localStorage'][arguments.0.value='token']",
           message:
             'The access token lives in memory: use getAccessToken / setAccessToken / clearAccessToken from @/helpers/accessTokenMemory.',
         },
       ],
-      'prefer-const': [
-        'error',
-        { destructuring: 'any', ignoreReadBeforeAssign: false },
-      ],
+      'prefer-const': ['error', { destructuring: 'any', ignoreReadBeforeAssign: false }],
 
       // Import rules from eslint-config-standard plus the project's ordering.
       'import/export': 'error',
       'import/first': 'error',
-      'import/no-absolute-path': [
-        'error',
-        { esmodule: true, commonjs: true, amd: false },
-      ],
+      'import/no-absolute-path': ['error', { esmodule: true, commonjs: true, amd: false }],
       'import/no-duplicates': 'error',
       'import/no-named-default': 'error',
       'import/no-webpack-loader-syntax': 'error',
