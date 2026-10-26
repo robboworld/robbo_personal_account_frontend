@@ -168,7 +168,9 @@ describe('signed-in pages (stubbed session)', () => {
       })
       cy.visit('/projects/p1')
       cy.contains('button', 'Сохранить').click()
-      cy.contains('storage unavailable')
+      // A server failure reads as a human message; the raw backend text stays hidden.
+      cy.contains('Ошибка на сервере. Попробуйте позже.')
+      cy.contains('storage unavailable').should('not.exist')
     })
 
     it('publish shows a spinner and the result', () => {

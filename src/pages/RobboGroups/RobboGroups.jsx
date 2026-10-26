@@ -101,7 +101,7 @@ export default ({ userRole }) => {
       {loading ? (
         <Spin />
       ) : (
-        <Flex widht='100%' direction='column' justify=' center'>
+        <Flex width='100%' direction='column' justify=' center'>
           {/* TODO refactor list from antd */}
           <Flex direction='column'>
             {robboGroups?.map((robboGroup, index) => {
