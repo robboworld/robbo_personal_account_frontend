@@ -5,5 +5,5 @@ export const formatUserDisplayName = (user = {}) => {
     return fullName
   }
   const parts = [user.lastname, user.firstname].filter(part => String(part || '').trim())
-  return parts.join(' ').trim() || '—'
+  return parts.join(' ').trim() || '–'
 }

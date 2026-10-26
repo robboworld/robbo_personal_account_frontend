@@ -116,7 +116,7 @@ const Status = styled.p`
 `
 
 function displayAuthor(author) {
-  return (author?.fullName || author?.nickname || author?.id || '—').trim()
+  return (author?.fullName || author?.nickname || author?.id || '–').trim()
 }
 
 function CommentNode({

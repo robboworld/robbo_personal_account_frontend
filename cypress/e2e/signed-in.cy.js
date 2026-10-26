@@ -66,16 +66,12 @@ describe('signed-in pages (stubbed session)', () => {
     cy.get('body').should('not.contain', 'ava1')
   })
 
-  it('linked devices are marked as in development and inert', () => {
+  it('licenses page has no unfinished sections', () => {
     signInAs()
     cy.visit('/licenses')
-    cy.contains('Привязанные устройства').parent().contains('В разработке')
-    cy.contains('Привязанные устройства')
-      .closest('section, div')
-      .parent()
-      .find('[inert]')
-      .should('exist')
-      .within(() => cy.contains('a', 'Мои сессии').should('exist'))
+    cy.contains('Мои тарифы')
+    cy.get('body').should('not.contain', 'Привязанные устройства')
+    cy.get('body').should('not.contain', 'В разработке')
   })
 
   it('buying a plan explains that purchases are paused', () => {

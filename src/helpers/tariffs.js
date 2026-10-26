@@ -17,7 +17,7 @@ export const DEFAULT_TARIFFS = Object.freeze({
   individual: {
     maxProjectSizeMb: 50,
     storageQuotaMb: 1024,
-    sessionLimit: 2,
+    sessionLimit: 10,
     seatLimit: 2,
     amount: 1990,
     durationDays: 365,
@@ -33,6 +33,22 @@ export const DEFAULT_TARIFFS = Object.freeze({
 })
 
 const SKU_TO_TARIFF = { 'rs3-premium-1y': 'individual', 'rs3-class-1y': 'class' }
+
+const TARIFF_NAME_IDS = {
+  free: 'tariff.name.free',
+  individual: 'tariff.name.individual',
+  class: 'tariff.name.class',
+}
+
+/**
+ * Localized tariff name. The backend and products.title keep the English names
+ * ("Free", "Individual", "Class") as identifiers; an unknown name is shown as is.
+ */
+export function tariffDisplayName(intl, name, sku) {
+  const key = SKU_TO_TARIFF[sku] || String(name || 'free').trim().toLowerCase()
+  const id = TARIFF_NAME_IDS[key]
+  return id ? intl.formatMessage({ id }) : name
+}
 
 const productLimits = product => ({
   maxProjectSizeMb: Number(product.cloudQuotaMb) || 0,

@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 
 import { glassSurface, surface } from '@/components/AccountShell/styles'
 import theme from '@/theme'
@@ -51,35 +50,6 @@ export const ProductTitle = styled.h3`
 export const ProductActions = styled.div`
   margin-top: auto;
   padding-top: 0.85rem;
-`
-
-export const SeatList = styled.ul`
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`
-
-export const SeatItem = styled.li`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.65rem;
-  padding: 0.65rem 0.75rem;
-  border-radius: 0.85rem;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid ${surface.line};
-`
-
-export const SeatInfo = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
 `
 
 export const UsageHeader = styled.div`
@@ -204,16 +174,20 @@ export const KeyBlockLabel = styled.span`
   color: ${surface.muted};
 `
 
+// Two equal-height panels side by side; a lone panel takes the full row.
 export const SplitGrid = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
   align-items: stretch;
 
   > * {
     height: 100%;
-    min-height: 100%;
     box-sizing: border-box;
+  }
+
+  > :only-child {
+    grid-column: 1 / -1;
   }
 
   @media (max-width: 900px) {
@@ -221,7 +195,6 @@ export const SplitGrid = styled.div`
 
     > * {
       height: auto;
-      min-height: 0;
     }
   }
 `
@@ -238,37 +211,6 @@ export const UsageStack = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-`
-
-export const EmptyDevices = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.85rem 0.95rem;
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid ${surface.line};
-`
-
-export const EmptyDevicesTitle = styled.p`
-  margin: 0;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: ${colors.secondary};
-`
-
-export const EmptyDevicesText = styled.p`
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: ${surface.muted};
-`
-
-export const EmptyDevicesActions = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-top: 0.25rem;
 `
 
 export const ProductGrid = styled.div`
@@ -325,50 +267,4 @@ export const ProductFeature = styled.li`
     color: ${colors.accentGreen};
     font-weight: 700;
   }
-`
-
-export const SessionsLink = styled(Link)`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${colors.accentGreen};
-  text-decoration: none;
-
-  &:hover {
-    color: ${colors.accentGreenHover};
-    text-decoration: underline;
-  }
-`
-
-// "In development" section: readable heading with a grey badge, greyed and inert content.
-export const SoonHeader = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.85rem;
-
-  ${PanelSectionTitle} {
-    margin: 0;
-  }
-`
-
-export const SoonBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid ${surface.line};
-  background: rgba(0, 0, 0, 0.04);
-  color: ${surface.muted};
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.4;
-  white-space: nowrap;
-`
-
-export const SoonContent = styled.div`
-  filter: grayscale(1);
-  opacity: 0.5;
-  pointer-events: none;
-  user-select: none;
 `

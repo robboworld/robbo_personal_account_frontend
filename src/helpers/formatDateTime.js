@@ -31,7 +31,7 @@ export function parseDateTime(value) {
 
 export function formatDateTime(value, locale) {
   const date = parseDateTime(value)
-  if (!date) return '—'
+  if (!date) return '–'
   // Day-first (not US MM/DD) + 24-hour clock.
   const resolved = String(locale || '')
     .toLowerCase()

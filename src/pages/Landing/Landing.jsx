@@ -90,6 +90,7 @@ import {
   devicesSessionsLine,
   formatTariffPrice,
   projectLimitLines,
+  tariffDisplayName,
   useTariffs,
 } from '@/helpers/tariffs'
 import { currentOlympiadStage } from '@/helpers/olympiad'
@@ -171,7 +172,6 @@ const FREE_REGISTER_EXTERNAL = LK_SSO_WITH_LMS_ENABLED
 const TARIFFS = [
   {
     id: 'free',
-    name: 'Free',
     featured: false,
     extra: [{ id: 'landing.tariffs.free.item4' }],
     cta: { id: 'landing.tariffs.free.cta' },
@@ -473,7 +473,9 @@ const Landing = () => {
             <TariffGrid>
               {TARIFFS.map(plan => (
                 <TariffCard key={plan.id} $featured={plan.featured}>
-                  <TariffName>{typeof plan.name === 'string' ? plan.name : t(plan.name)}</TariffName>
+                  <TariffName>
+                    {plan.name ? t(plan.name) : tariffDisplayName(intl, plan.id)}
+                  </TariffName>
                   <TariffPrice>{tariffPrice(intl, plan, tariffs[plan.id])}</TariffPrice>
                   <TariffList>
                     {tariffLines(intl, plan, tariffs[plan.id]).map(line => (

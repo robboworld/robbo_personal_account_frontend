@@ -271,7 +271,9 @@ const NotificationBell = ({ variant = 'default' }) => {
                           ? intl.formatMessage({ id: 'notifications.kind_system' })
                           : row.source === 'lms'
                             ? intl.formatMessage({ id: 'notifications.kind_lms' })
-                            : intl.formatMessage({ id: 'notifications.kind_admin' })}
+                            : row.source === 'teacher'
+                              ? intl.formatMessage({ id: 'notifications.kind_teacher' })
+                              : intl.formatMessage({ id: 'notifications.kind_admin' })}
                     </Text>
                   </Space>
                 }

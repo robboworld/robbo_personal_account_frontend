@@ -21,14 +21,16 @@ import InviteDetails, { copyText } from './InviteDetails'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
-import { TEACHER_CLASS_BOARD_ROUTE } from '@/constants'
+import { SUPER_ADMIN, TEACHER_CLASS_BOARD_ROUTE } from '@/constants'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 const { Title, Paragraph, Text } = Typography
 
 const boardPath = id => TEACHER_CLASS_BOARD_ROUTE.replace(':classId', id)
 
-const TeacherClassesPage = () => {
+const TeacherClassesPage = ({ userRole }) => {
+  // SuperAdmin gets every teacher's classes, so cards name the owner.
+  const allClasses = userRole === SUPER_ADMIN
   const intl = useIntl()
   const navigate = useNavigate()
   const [items, setItems] = useState([])
@@ -98,7 +100,7 @@ const TeacherClassesPage = () => {
       <Panel>
         <SectionHeader>
           <SectionTitle>
-            <FormattedMessage id='teacher_class.title' />
+            <FormattedMessage id={allClasses ? 'teacher_class.title_all' : 'teacher_class.title'} />
           </SectionTitle>
           <Button type='primary' icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
             <FormattedMessage id='teacher_class.create' />
@@ -157,6 +159,16 @@ const TeacherClassesPage = () => {
                 <Text type='secondary' style={{ fontSize: 12 }}>
                   {item.edxCourseId}
                 </Text>
+                {allClasses && item.ownerName && (
+                  <div>
+                    <Text type='secondary'>
+                      <FormattedMessage
+                        id='teacher_class.owner'
+                        values={{ name: item.ownerName }}
+                      />
+                    </Text>
+                  </div>
+                )}
                 <div style={{ marginTop: 12 }}>
                   <Tag
                     color='blue'

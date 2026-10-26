@@ -2,6 +2,7 @@ import {
   DEFAULT_TARIFFS,
   devicesSessionsLine,
   formatStorageMb,
+  tariffDisplayName,
   tariffsFromCatalog,
 } from '../tariffs'
 
@@ -65,5 +66,20 @@ describe('devicesSessionsLine', () => {
     expect(devicesSessionsLine(intl, DEFAULT_TARIFFS.class)).toBe(
       'tariff.devices_sessions:{"devices":30,"sessions":30}',
     )
+  })
+})
+
+describe('tariffDisplayName', () => {
+  const intl = { formatMessage: ({ id }) => id }
+
+  it('maps backend names and SKUs to localized names', () => {
+    expect(tariffDisplayName(intl, 'Free')).toBe('tariff.name.free')
+    expect(tariffDisplayName(intl, undefined)).toBe('tariff.name.free')
+    expect(tariffDisplayName(intl, ' individual ')).toBe('tariff.name.individual')
+    expect(tariffDisplayName(intl, 'Whatever', 'rs3-class-1y')).toBe('tariff.name.class')
+  })
+
+  it('shows an unknown name as is', () => {
+    expect(tariffDisplayName(intl, 'School')).toBe('School')
   })
 })

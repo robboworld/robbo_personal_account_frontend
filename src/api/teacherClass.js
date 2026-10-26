@@ -44,11 +44,6 @@ export const issueLate = (classId, assignmentId) =>
 export const listSubmissions = (classId, assignmentId) =>
   instance.get(`/api/teacher/classes/${classId}/assignments/${assignmentId}/submissions`)
 
-export const liveRoster = (classId, assignmentId) =>
-  instance.get(`/api/teacher/classes/${classId}/live`, {
-    params: assignmentId ? { assignmentId } : undefined,
-  })
-
 export const progressMatrix = classId => instance.get(`/api/teacher/classes/${classId}/progress`)
 
 export const reviewSubmission = (projectId, body) =>

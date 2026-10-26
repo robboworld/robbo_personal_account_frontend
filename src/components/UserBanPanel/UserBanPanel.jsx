@@ -29,7 +29,7 @@ const { Text, Paragraph } = Typography
 const { TextArea } = Input
 
 const formatWhen = (iso, locale) => {
-  if (!iso) return '—'
+  if (!iso) return '–'
   try {
     return new Intl.DateTimeFormat(locale, {
       dateStyle: 'medium',

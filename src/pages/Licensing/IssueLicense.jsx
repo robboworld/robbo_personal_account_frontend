@@ -117,7 +117,7 @@ const IssueLicensePage = () => {
                 </p>
                 <p>
                   <Text strong>{intl.formatMessage({ id: 'licensing.expires_at' })}: </Text>
-                  {issued.expiresAt ? formatDateTime(issued.expiresAt, intl.locale) : '—'}
+                  {issued.expiresAt ? formatDateTime(issued.expiresAt, intl.locale) : '–'}
                 </p>
               </ResultBlock>
             ) : null}
