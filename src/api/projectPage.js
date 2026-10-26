@@ -493,7 +493,8 @@ export async function uploadProjectPreview(token, projectPageId, file) {
   return res.json()
 }
 
-/** POST /projectPage/:id/upload — .sb3 file upload (multipart). */
+/** POST /projectPage/:id/upload — .sb3 file upload (multipart).
+ * On failure the error message is the backend code (e.g. PROJECT_SIZE_EXCEEDED). */
 export async function uploadProjectSb3(token, projectPageId, file) {
   const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/upload`
   const formData = new FormData()
@@ -507,7 +508,9 @@ export async function uploadProjectSb3(token, projectPageId, file) {
     { fallbackToken: token },
   )
   if (!res.ok) {
-    throw new Error(await readFetchErrorMessage(res))
+    const err = new Error(await readFetchErrorMessage(res))
+    err.status = res.status
+    throw err
   }
   return res.json()
 }

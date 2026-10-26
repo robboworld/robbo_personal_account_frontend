@@ -59,6 +59,7 @@ import {
   uploadProjectSb3,
 } from '@/api/projectPage'
 import { tryRefreshAccessToken } from '@/api/authRefresh'
+import { getEntitlements } from '@/api/licensing'
 import {
   LANDING_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
@@ -513,13 +514,22 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     }
     setUploadBusy(true)
     try {
+      // Reject oversized files before sending: the server cuts the body off mid-upload,
+      // and browsers then often report a network error instead of the size error.
+      const entitlements = await getEntitlements().catch(() => null)
+      const maxMb = Number(entitlements?.maxProjectSizeMb) || 0
+      if (maxMb > 0 && file.size > maxMb * 1024 * 1024) {
+        message.error(
+          intl.formatMessage({ id: 'project_page.upload_sb3_too_large' }, { mb: maxMb }),
+        )
+        return
+      }
       await uploadProjectSb3(token, projectPageId, file)
       message.success(intl.formatMessage({ id: 'project_page.upload_sb3_success' }))
       actions.getProjectPageById(token, projectPageId)
       setPlayerReloadKey(k => k + 1)
     } catch (e) {
-      const code = e?.response?.data?.code
-      if (code === 'INVALID_PROJECT_FILE') {
+      if (e?.message === 'INVALID_PROJECT_FILE') {
         message.error(intl.formatMessage({ id: 'project_page.invalid_project_file' }))
       } else {
         message.error(apiErrorMessage(e, intl, 'project_page.upload_sb3_error'))

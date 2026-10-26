@@ -61,7 +61,7 @@ import { listProducts } from '@/api/payments'
 import { authAPI } from '@/api/auth'
 import { MY_SESSIONS_ROUTE } from '@/constants/router'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
-import { projectLimitLines } from '@/helpers/tariffs'
+import { formatStorageMb, projectLimitLines } from '@/helpers/tariffs'
 import theme from '@/theme'
 
 const METER_COLOR = theme.colors.accentGreen
@@ -123,6 +123,11 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
   const maxProjects = Number(entitlements.maxProjects) || 0
   const projectsPercent = meterPercent(projectCount, maxProjects)
 
+  const storageMb = Number(entitlements.storageQuotaMb) || 0
+  const usedMb = (Number(entitlements.usedBytes) || 0) / (1024 * 1024)
+  const storagePercent = meterPercent(usedMb, storageMb)
+  const storageFull = storageMb > 0 && usedMb >= storageMb
+
   const seatLimit = Number(entitlements.seatLimit) || 0
   const seatsPercent = meterPercent(seatsUsed, seatLimit)
 
@@ -144,6 +149,30 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
         </TariffBadge>
       </UsageHeader>
       <UsageStack>
+        {storageMb > 0 ? (
+          <UsageMeter>
+            <UsageMeterTop>
+              <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.storage' })}</UsageMeterLabel>
+              <UsageMeterValue>
+                {intl.formatMessage(
+                  { id: 'licensing.usage_count_value' },
+                  { used: formatStorageMb(intl, usedMb), limit: formatStorageMb(intl, storageMb) },
+                )}
+              </UsageMeterValue>
+            </UsageMeterTop>
+            <Progress
+              percent={storagePercent}
+              status={meterStatus(storagePercent)}
+              strokeColor={storagePercent >= 95 ? undefined : METER_COLOR}
+            />
+            {storageFull ? (
+              <Text type='secondary' style={{ fontSize: 13 }}>
+                {intl.formatMessage({ id: 'licensing.storage_full' })}
+              </Text>
+            ) : null}
+          </UsageMeter>
+        ) : null}
+
         <UsageMeter>
           <UsageMeterTop>
             <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.projects' })}</UsageMeterLabel>
@@ -194,25 +223,28 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
           />
         </UsageMeter>
 
-        <UsageMeter>
-          <UsageMeterTop>
-            <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.devices' })}</UsageMeterLabel>
-            <UsageMeterValue>
-              {seatLimit <= 0
-                ? intl.formatMessage({ id: 'licensing.unlimited' })
-                : intl.formatMessage(
-                    { id: 'licensing.usage_count_value' },
-                    { used: seatsUsed, limit: seatLimit },
-                  )}
-            </UsageMeterValue>
-          </UsageMeterTop>
-          <Progress
-            percent={seatLimit <= 0 ? 0 : seatsPercent}
-            status={seatLimit <= 0 ? 'normal' : meterStatus(seatsPercent)}
-            showInfo={seatLimit > 0}
-            strokeColor={seatLimit > 0 && seatsPercent >= 95 ? undefined : METER_COLOR}
-          />
-        </UsageMeter>
+        {/* Seats are RS3 Desktop activations by license key: nothing to count without one. */}
+        {entitlements.hasLicense ? (
+          <UsageMeter>
+            <UsageMeterTop>
+              <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.devices' })}</UsageMeterLabel>
+              <UsageMeterValue>
+                {seatLimit <= 0
+                  ? intl.formatMessage({ id: 'licensing.unlimited' })
+                  : intl.formatMessage(
+                      { id: 'licensing.usage_count_value' },
+                      { used: seatsUsed, limit: seatLimit },
+                    )}
+              </UsageMeterValue>
+            </UsageMeterTop>
+            <Progress
+              percent={seatLimit <= 0 ? 0 : seatsPercent}
+              status={seatLimit <= 0 ? 'normal' : meterStatus(seatsPercent)}
+              showInfo={seatLimit > 0}
+              strokeColor={seatLimit > 0 && seatsPercent >= 95 ? undefined : METER_COLOR}
+            />
+          </UsageMeter>
+        ) : null}
       </UsageStack>
     </GlassPanel>
   )
@@ -492,6 +524,7 @@ const MyLicensesPage = () => {
                       <ProductFeatures>
                         {projectLimitLines(intl, {
                           maxProjectSizeMb: Number(product.cloudQuotaMb) || 10,
+                          storageQuotaMb: Number(product.storageQuotaMb) || 0,
                           maxProjects: 0,
                         }).map(line => (
                           <ProductFeature key={line}>{line}</ProductFeature>

@@ -20,6 +20,8 @@ const KNOWN_ERRORS = {
   lms_unavailable: 'errors.lms_unavailable',
   email_change_via_lms: 'errors.email_change_via_lms',
   too_many_requests: 'errors.too_many_requests',
+  project_size_exceeded: 'errors.too_large',
+  storage_quota_exceeded: 'errors.storage_quota_exceeded',
 }
 
 const STATUS_ERRORS = {
