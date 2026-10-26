@@ -19,13 +19,12 @@ const LoginContent = ({
   const actions = useActions({ signInRequest, signUpRequest }, [])
   const location = useLocation()
   const params = new URLSearchParams(location.search || '')
-  const sessionLimitReached = params.get('err') === 'session_limit_reached'
   const ssoAttempted = params.get('sso_attempted') === '1'
   const silentStarted = useRef(false)
 
   // Direct /login (e.g. after LMS login): try silent IdP SSO once.
   useEffect(() => {
-    if (!showOidcLogin || ssoAttempted || sessionLimitReached || silentStarted.current) {
+    if (!showOidcLogin || ssoAttempted || silentStarted.current) {
       return undefined
     }
     if (initialLoginError) {
@@ -34,20 +33,20 @@ const LoginContent = ({
     silentStarted.current = true
     redirectToOidcStart(resolveLoginReturnTo(location.search), 'none')
     return undefined
-  }, [showOidcLogin, ssoAttempted, sessionLimitReached, initialLoginError, location.search])
+  }, [showOidcLogin, ssoAttempted, initialLoginError, location.search])
 
   if (children) {
     return <React.Fragment>{children}</React.Fragment>
   }
 
-  const startOidc = (kickOtherSessions = false) => {
-    redirectToOidcStart(resolveLoginReturnTo(location.search), 'login', kickOtherSessions)
+  const startOidc = () => {
+    redirectToOidcStart(resolveLoginReturnTo(location.search), 'login')
   }
 
   const showPasswordForm = !showOidcLogin || hybridAuth
   // While auto-redirecting to silent SSO, keep the button visible but avoid double-click noise.
   const awaitingSilent =
-    showOidcLogin && !ssoAttempted && !sessionLimitReached && !initialLoginError
+    showOidcLogin && !ssoAttempted && !initialLoginError
 
   return (
     <React.Fragment>
@@ -57,18 +56,6 @@ const LoginContent = ({
           showIcon
           style={{ marginBottom: 16 }}
           title={initialLoginError}
-          description={
-            sessionLimitReached ? (
-              <Button
-                type='primary'
-                size='small'
-                htmlType='button'
-                className='session-limit-kick-btn'
-                onClick={() => startOidc(true)}>
-                <FormattedMessage id='sessions.kick_others' />
-              </Button>
-            ) : null
-          }
         />
       ) : null}
 
@@ -79,7 +66,7 @@ const LoginContent = ({
             size='large'
             block
             disabled={awaitingSilent}
-            onClick={() => startOidc(false)}>
+            onClick={startOidc}>
             <FormattedMessage id='auth_login.oidc_button' />
           </Button>
           {hybridAuth ? (

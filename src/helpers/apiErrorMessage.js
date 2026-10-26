@@ -15,7 +15,6 @@ const KNOWN_ERRORS = {
   session_not_found: 'errors.unauthorized',
   conflict: 'errors.conflict',
   'already in class': 'errors.already_in_class',
-  session_limit_reached: 'errors.session_limit_reached',
   password_login_disabled: 'errors.password_login_disabled',
   lms_unavailable: 'errors.lms_unavailable',
   email_change_via_lms: 'errors.email_change_via_lms',

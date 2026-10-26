@@ -29,7 +29,6 @@ const parseLoginQueryError = (search, intl) => {
   const keyByErr = {
     user_not_found: 'login.error.user_not_found',
     invalid_credentials: 'login.error.invalid_credentials',
-    session_limit_reached: 'sessions.limit_reached',
     auth_retry: 'login.error.auth_retry',
     token_invalid: 'login.error.token_invalid',
   }

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Button, Empty, Modal, Progress, Spin, Typography, message, Popconfirm } from 'antd'
+import { Button, Empty, Progress, Spin, Typography, message, Popconfirm } from 'antd'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
+import FeatureInterestPanel from './FeatureInterestPanel'
 import {
   EmptyDevices,
   EmptyDevicesActions,
@@ -14,14 +15,6 @@ import {
   LicenseLabel,
   LicenseStack,
   PanelSectionTitle,
-  ProductActions,
-  ProductCard,
-  ProductCardHeader,
-  ProductFeature,
-  ProductFeatures,
-  ProductGrid,
-  ProductPrice,
-  ProductTitle,
   SeatInfo,
   SeatItem,
   SeatList,
@@ -49,35 +42,20 @@ import {
   HeroPanel,
   HeroTitle,
   PageContent,
-  SectionHeader,
-  SectionHint,
-  SectionTitle,
   Stagger,
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
 import { listMyLicenses, revokeSeat, getEntitlements } from '@/api/licensing'
-import { listProducts } from '@/api/payments'
 import { authAPI } from '@/api/auth'
 import { MY_SESSIONS_ROUTE } from '@/constants/router'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
-import { formatStorageMb, projectLimitLines } from '@/helpers/tariffs'
+import { formatStorageMb } from '@/helpers/tariffs'
 import theme from '@/theme'
 
 const METER_COLOR = theme.colors.accentGreen
 
 const { Text } = Typography
-
-const formatPrice = (amount, currency, locale) => {
-  try {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: currency || 'RUB',
-    }).format(amount)
-  } catch (e) {
-    return `${amount} ${currency || 'RUB'}`
-  }
-}
 
 const formatExpiresAt = (iso, locale) => {
   if (!iso) return null
@@ -117,11 +95,9 @@ const isLicenseActive = lic => {
 }
 
 const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
-  // The size limit is per project; what fills up is the number of projects (Free only).
+  // The size limit is per project; the number of projects is not limited.
   const sizeMb = Number(entitlements.maxProjectSizeMb ?? entitlements.cloudQuotaMb) || 0
   const projectCount = Number(entitlements.projectCount) || 0
-  const maxProjects = Number(entitlements.maxProjects) || 0
-  const projectsPercent = meterPercent(projectCount, maxProjects)
 
   const storageMb = Number(entitlements.storageQuotaMb) || 0
   const usedMb = (Number(entitlements.usedBytes) || 0) / (1024 * 1024)
@@ -177,23 +153,12 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
           <UsageMeterTop>
             <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.projects' })}</UsageMeterLabel>
             <UsageMeterValue>
-              {maxProjects <= 0
-                ? intl.formatMessage(
-                    { id: 'licensing.projects_unlimited_value' },
-                    { count: projectCount },
-                  )
-                : intl.formatMessage(
-                    { id: 'licensing.usage_count_value' },
-                    { used: projectCount, limit: maxProjects },
-                  )}
+              {intl.formatMessage(
+                { id: 'licensing.projects_unlimited_value' },
+                { count: projectCount },
+              )}
             </UsageMeterValue>
           </UsageMeterTop>
-          <Progress
-            percent={maxProjects <= 0 ? 0 : projectsPercent}
-            status={maxProjects <= 0 ? 'normal' : meterStatus(projectsPercent)}
-            showInfo={maxProjects > 0}
-            strokeColor={maxProjects > 0 && projectsPercent >= 95 ? undefined : METER_COLOR}
-          />
           {sizeMb > 0 ? (
             <Text type='secondary' style={{ fontSize: 13 }}>
               {intl.formatMessage({ id: 'tariff.project_size' }, { mb: sizeMb })}
@@ -253,11 +218,9 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
 const MyLicensesPage = () => {
   const intl = useIntl()
   const [licenses, setLicenses] = useState([])
-  const [products, setProducts] = useState([])
   const [entitlements, setEntitlements] = useState(null)
   const [activeSessions, setActiveSessions] = useState(0)
   const [licensesLoading, setLicensesLoading] = useState(true)
-  const [productsLoading, setProductsLoading] = useState(true)
 
   const loadLicenses = useCallback(async () => {
     setLicensesLoading(true)
@@ -268,18 +231,6 @@ const MyLicensesPage = () => {
       message.error(apiErrorMessage(e, intl))
     } finally {
       setLicensesLoading(false)
-    }
-  }, [intl])
-
-  const loadProducts = useCallback(async () => {
-    setProductsLoading(true)
-    try {
-      const list = await listProducts()
-      setProducts(list)
-    } catch (e) {
-      message.error(apiErrorMessage(e, intl))
-    } finally {
-      setProductsLoading(false)
     }
   }, [intl])
 
@@ -298,20 +249,8 @@ const MyLicensesPage = () => {
 
   useEffect(() => {
     loadLicenses()
-    loadProducts()
     loadUsage()
-  }, [loadLicenses, loadProducts, loadUsage])
-
-  useEffect(() => {
-    if (window.location.hash !== '#buy') {
-      return undefined
-    }
-    const el = document.getElementById('buy')
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-    return undefined
-  }, [productsLoading])
+  }, [loadLicenses, loadUsage])
 
   const onRevoke = async (licenseId, seatId) => {
     try {
@@ -323,11 +262,6 @@ const MyLicensesPage = () => {
       message.error(apiErrorMessage(e, intl))
     }
   }
-
-  // Purchases are paused: "Buy" explains that in a dialog instead of starting checkout.
-  // To sell again, restore the checkout(productId) call (src/api/payments.js) here.
-  const [purchasePausedOpen, setPurchasePausedOpen] = useState(false)
-  const onBuy = () => setPurchasePausedOpen(true)
 
   const activeLicenses = useMemo(() => (licenses || []).filter(isLicenseActive), [licenses])
 
@@ -352,11 +286,6 @@ const MyLicensesPage = () => {
   const hasActive = activeLicenses.length > 0
   const seatLimit = Number(entitlements?.seatLimit ?? primaryLicense?.seatLimit) || 0
   const expiresLabel = formatExpiresAt(primaryLicense?.expiresAt, intl.locale)
-
-  const isCurrentProduct = product => {
-    if (!hasActive || !product?.title) return false
-    return String(product.title).trim().toLowerCase() === String(tariffName).trim().toLowerCase()
-  }
 
   return (
     <PageContent>
@@ -493,93 +422,9 @@ const MyLicensesPage = () => {
         </motion.div>
 
         <motion.div variants={staggerItem}>
-          <GlassPanel id='buy'>
-            <SectionHeader>
-              <SectionTitle>{intl.formatMessage({ id: 'payments.catalog_title' })}</SectionTitle>
-              <SectionHint>{intl.formatMessage({ id: 'payments.catalog_hint' })}</SectionHint>
-            </SectionHeader>
-            {productsLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
-                <Spin />
-              </div>
-            ) : products.length === 0 ? (
-              <Empty description={intl.formatMessage({ id: 'payments.catalog_empty' })} />
-            ) : (
-              <ProductGrid>
-                {products.map(product => {
-                  const current = isCurrentProduct(product)
-                  return (
-                    <ProductCard key={product.id} $current={current}>
-                      <ProductCardHeader>
-                        <ProductTitle style={{ margin: 0 }}>{product.title}</ProductTitle>
-                        {current ? (
-                          <TariffBadge>
-                            {intl.formatMessage({ id: 'payments.current_plan' })}
-                          </TariffBadge>
-                        ) : null}
-                      </ProductCardHeader>
-                      <ProductPrice>
-                        {formatPrice(product.amount, product.currency, intl.locale)}
-                      </ProductPrice>
-                      <ProductFeatures>
-                        {projectLimitLines(intl, {
-                          maxProjectSizeMb: Number(product.cloudQuotaMb) || 10,
-                          storageQuotaMb: Number(product.storageQuotaMb) || 0,
-                          maxProjects: 0,
-                        }).map(line => (
-                          <ProductFeature key={line}>{line}</ProductFeature>
-                        ))}
-                        <ProductFeature>
-                          {intl.formatMessage(
-                            { id: 'payments.feature_devices' },
-                            { seats: product.seatLimit },
-                          )}
-                        </ProductFeature>
-                        <ProductFeature>
-                          {(product.sessionLimit ?? 0) <= 0
-                            ? intl.formatMessage({ id: 'payments.feature_sessions_unlimited' })
-                            : intl.formatMessage(
-                                { id: 'payments.feature_sessions' },
-                                { sessions: product.sessionLimit },
-                              )}
-                        </ProductFeature>
-                        <ProductFeature>
-                          {intl.formatMessage(
-                            { id: 'payments.feature_days' },
-                            { days: product.durationDays },
-                          )}
-                        </ProductFeature>
-                      </ProductFeatures>
-                      <ProductActions>
-                        <Button
-                          type={current ? 'default' : 'primary'}
-                          disabled={current}
-                          onClick={onBuy}>
-                          {current
-                            ? intl.formatMessage({ id: 'payments.already_connected' })
-                            : intl.formatMessage({ id: 'payments.buy' })}
-                        </Button>
-                      </ProductActions>
-                    </ProductCard>
-                  )
-                })}
-              </ProductGrid>
-            )}
-          </GlassPanel>
+          <FeatureInterestPanel />
         </motion.div>
       </Stagger>
-      <Modal
-        open={purchasePausedOpen}
-        title={intl.formatMessage({ id: 'payments.paused_title' })}
-        onCancel={() => setPurchasePausedOpen(false)}
-        footer={
-          <Button type='primary' onClick={() => setPurchasePausedOpen(false)}>
-            OK
-          </Button>
-        }
-        centered>
-        {intl.formatMessage({ id: 'payments.paused' })}
-      </Modal>
     </PageContent>
   )
 }
