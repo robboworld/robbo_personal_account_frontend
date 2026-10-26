@@ -4,21 +4,19 @@ import { listCatalog } from '@/api/payments'
 
 // Limits the backend enforces (licensing.Free* constants, products table). Used until
 // /payments/products answers, and if it cannot be reached. maxProjectSizeMb is per project,
-// storageQuotaMb is the account total; paid tariffs do not cap the number of projects.
+// storageQuotaMb is the account total; no tariff caps the number of projects.
 export const DEFAULT_TARIFFS = Object.freeze({
   // seatLimit 0: seats are RS3 Desktop activations by license key, Free has no license.
   free: {
     maxProjectSizeMb: 10,
     storageQuotaMb: 100,
-    maxProjects: 10,
-    sessionLimit: 2,
+    sessionLimit: 5,
     seatLimit: 0,
     amount: 0,
   },
   individual: {
     maxProjectSizeMb: 50,
     storageQuotaMb: 1024,
-    maxProjects: 0,
     sessionLimit: 2,
     seatLimit: 2,
     amount: 1990,
@@ -27,7 +25,6 @@ export const DEFAULT_TARIFFS = Object.freeze({
   class: {
     maxProjectSizeMb: 50,
     storageQuotaMb: 5120,
-    maxProjects: 0,
     sessionLimit: 30,
     seatLimit: 30,
     amount: 35000,
@@ -40,7 +37,6 @@ const SKU_TO_TARIFF = { 'rs3-premium-1y': 'individual', 'rs3-class-1y': 'class' 
 const productLimits = product => ({
   maxProjectSizeMb: Number(product.cloudQuotaMb) || 0,
   storageQuotaMb: Number(product.storageQuotaMb) || 0,
-  maxProjects: 0,
   sessionLimit: Number(product.sessionLimit) || 0,
   seatLimit: Number(product.seatLimit) || 0,
   amount: Number(product.amount) || 0,
@@ -56,7 +52,6 @@ export function tariffsFromCatalog(catalog) {
       ...DEFAULT_TARIFFS.free,
       maxProjectSizeMb: Number(free.maxProjectSizeMb) || DEFAULT_TARIFFS.free.maxProjectSizeMb,
       storageQuotaMb: Number(free.storageQuotaMb) || DEFAULT_TARIFFS.free.storageQuotaMb,
-      maxProjects: Number(free.maxProjects) || 0,
       sessionLimit: Number(free.sessionLimit) || 0,
       seatLimit: Number(free.seatLimit) || 0,
     }
@@ -97,8 +92,8 @@ export function formatStorageMb(intl, megabytes) {
   return intl.formatMessage({ id: 'units.mb' }, { value: mbValue })
 }
 
-/** "Project up to N MB" + account total + project count line. */
-export function projectLimitLines(intl, { maxProjectSizeMb, storageQuotaMb, maxProjects }) {
+/** "Project up to N MB" + account total + "unlimited number of projects". */
+export function projectLimitLines(intl, { maxProjectSizeMb, storageQuotaMb }) {
   return [
     intl.formatMessage({ id: 'tariff.project_size' }, { mb: maxProjectSizeMb }),
     ...(storageQuotaMb > 0
@@ -109,9 +104,7 @@ export function projectLimitLines(intl, { maxProjectSizeMb, storageQuotaMb, maxP
           ),
         ]
       : []),
-    maxProjects > 0
-      ? intl.formatMessage({ id: 'tariff.projects_max' }, { count: maxProjects })
-      : intl.formatMessage({ id: 'tariff.projects_unlimited' }),
+    intl.formatMessage({ id: 'tariff.projects_unlimited' }),
   ]
 }
 

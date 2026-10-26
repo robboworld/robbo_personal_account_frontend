@@ -14,7 +14,7 @@ describe('tariffsFromCatalog', () => {
 
   it('takes Free limits and products by SKU from the API', () => {
     const tariffs = tariffsFromCatalog({
-      free: { maxProjectSizeMb: 12, maxProjects: 30, sessionLimit: 3, seatLimit: 1 },
+      free: { maxProjectSizeMb: 12, sessionLimit: 3, seatLimit: 1 },
       products: [
         {
           sku: 'rs3-class-1y',
@@ -28,12 +28,11 @@ describe('tariffsFromCatalog', () => {
         { sku: 'unknown', cloudQuotaMb: 1 },
       ],
     })
-    expect(tariffs.free).toMatchObject({ maxProjectSizeMb: 12, maxProjects: 30, sessionLimit: 3 })
+    expect(tariffs.free).toMatchObject({ maxProjectSizeMb: 12, sessionLimit: 3 })
     expect(tariffs.free.storageQuotaMb).toBe(DEFAULT_TARIFFS.free.storageQuotaMb)
     expect(tariffs.class).toMatchObject({
       seatLimit: 30,
       sessionLimit: 30,
-      maxProjects: 0,
       storageQuotaMb: 5120,
     })
     expect(tariffs.individual).toEqual(DEFAULT_TARIFFS.individual)
@@ -61,7 +60,7 @@ describe('devicesSessionsLine', () => {
 
   it('shows only sign-ins for Free, which has no device seats', () => {
     expect(devicesSessionsLine(intl, DEFAULT_TARIFFS.free)).toBe(
-      'tariff.sessions_only:{"sessions":2}',
+      'tariff.sessions_only:{"sessions":5}',
     )
     expect(devicesSessionsLine(intl, DEFAULT_TARIFFS.class)).toBe(
       'tariff.devices_sessions:{"devices":30,"sessions":30}',

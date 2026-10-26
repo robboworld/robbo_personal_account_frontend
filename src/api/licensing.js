@@ -30,3 +30,13 @@ export async function getEntitlements() {
   const { data } = await instance.get('licensing/entitlements', { withCredentials: true })
   return data
 }
+
+export async function getFeatureInterest() {
+  const { data } = await instance.get('licensing/interest', { withCredentials: true })
+  return data?.answer || null
+}
+
+export async function saveFeatureInterest(answer) {
+  const { data } = await instance.post('licensing/interest', answer, { withCredentials: true })
+  return data
+}

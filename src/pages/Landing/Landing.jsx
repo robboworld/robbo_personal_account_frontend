@@ -180,27 +180,27 @@ const TARIFFS = [
     ghost: true,
   },
   {
-    id: 'individual',
-    name: 'Individual',
+    // Paid editions are not on sale while tariffs are not approved: the card lists what is
+    // being prepared and opens the interest survey in "My licenses".
+    id: 'clubs',
+    name: { id: 'landing.tariffs.clubs.name' },
     featured: true,
-    extra: [{ id: 'landing.tariffs.auto_update' }],
-    cta: { id: 'landing.tariffs.buy' },
-    to: `${MY_LICENSES_ROUTE}#buy`,
-    ghost: false,
-  },
-  {
-    id: 'class',
-    name: 'Class',
-    featured: false,
-    extra: [{ id: 'landing.tariffs.auto_update' }, { id: 'landing.tariffs.class.item4' }],
-    cta: { id: 'landing.tariffs.buy' },
-    to: `${MY_LICENSES_ROUTE}#buy`,
+    lines: [
+      { id: 'interest.feature.parent_progress' },
+      { id: 'interest.feature.club_showcase' },
+      { id: 'interest.feature.club_scenarios' },
+      { id: 'interest.feature.work_review' },
+      { id: 'interest.feature.competitions' },
+    ],
+    price: { id: 'landing.tariffs.clubs.price' },
+    cta: { id: 'landing.tariffs.clubs.cta' },
+    to: `${MY_LICENSES_ROUTE}?from=landing#interest`,
     ghost: false,
   },
 ]
 
 // Card lines come from the limits the backend enforces, so the landing cannot promise more.
-const tariffLines = (intl, plan, limits) => [
+const limitLines = (intl, plan, limits) => [
   ...projectLimitLines(intl, limits),
   devicesSessionsLine(intl, limits),
   ...(limits.durationDays
@@ -209,8 +209,14 @@ const tariffLines = (intl, plan, limits) => [
   ...plan.extra.map(item => intl.formatMessage(item)),
 ]
 
-const tariffPrice = (intl, limits) =>
-  limits.amount > 0
+// A card with its own lines (paid editions in preparation) does not show limits.
+const tariffLines = (intl, plan, limits) =>
+  plan.lines ? plan.lines.map(item => intl.formatMessage(item)) : limitLines(intl, plan, limits)
+
+const tariffPrice = (intl, plan, limits) =>
+  plan.price
+    ? intl.formatMessage(plan.price)
+    : limits.amount > 0
     ? intl.formatMessage(
         { id: 'tariff.price_year' },
         { price: formatTariffPrice(intl, limits.amount) },
@@ -467,8 +473,8 @@ const Landing = () => {
             <TariffGrid>
               {TARIFFS.map(plan => (
                 <TariffCard key={plan.id} $featured={plan.featured}>
-                  <TariffName>{plan.name}</TariffName>
-                  <TariffPrice>{tariffPrice(intl, tariffs[plan.id])}</TariffPrice>
+                  <TariffName>{typeof plan.name === 'string' ? plan.name : t(plan.name)}</TariffName>
+                  <TariffPrice>{tariffPrice(intl, plan, tariffs[plan.id])}</TariffPrice>
                   <TariffList>
                     {tariffLines(intl, plan, tariffs[plan.id]).map(line => (
                       <li key={line}>{line}</li>
