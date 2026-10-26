@@ -104,7 +104,7 @@ export default ({ userRole }) => {
                 loading ? <Spin />
                     : (
                         <Flex
-                            widht='100%' direction='column'
+                            width='100%' direction='column'
                             justify=' center'
                         >
                             {/* TODO refactor list from antd */}
