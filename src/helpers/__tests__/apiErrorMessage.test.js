@@ -16,6 +16,18 @@ describe('apiErrorMessage', () => {
     ).toBe('errors.legacy_disabled')
   })
 
+  it('maps the project size limit from REST, fetch and GraphQL', () => {
+    expect(
+      apiErrorMessageId(
+        axiosError(409, { error: 'PROJECT_SIZE_EXCEEDED', code: 'PROJECT_SIZE_EXCEEDED' }),
+      ),
+    ).toBe('errors.too_large')
+    expect(apiErrorMessageId(new Error('PROJECT_SIZE_EXCEEDED'))).toBe('errors.too_large')
+    expect(apiErrorMessageId({ graphQLErrors: [{ message: 'PROJECT_SIZE_EXCEEDED' }] })).toBe(
+      'errors.too_large',
+    )
+  })
+
   it('never shows a technical Go error', () => {
     const goError = axiosError(500, {
       error:
