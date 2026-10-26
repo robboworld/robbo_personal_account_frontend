@@ -676,6 +676,10 @@ export const AvatarMark = styled.div`
   overflow: hidden;
   flex-shrink: 0;
 
+  &:has(> img) {
+    background: ${colors.white};
+  }
+
   img {
     width: 100%;
     height: 100%;

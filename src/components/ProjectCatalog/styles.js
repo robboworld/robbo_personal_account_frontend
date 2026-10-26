@@ -300,6 +300,10 @@ export const AuthorAvatar = styled.span`
   background: linear-gradient(145deg, ${colors.accentGreen}, ${colors.accentGreenDark});
   overflow: hidden;
 
+  &:has(> img) {
+    background: ${colors.white};
+  }
+
   img {
     width: 100%;
     height: 100%;

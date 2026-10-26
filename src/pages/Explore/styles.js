@@ -227,6 +227,10 @@ export const Avatar = styled.span`
   color: ${t.white};
   background: ${t.green};
 
+  &:has(> img) {
+    background: ${t.white};
+  }
+
   img {
     width: 100%;
     height: 100%;

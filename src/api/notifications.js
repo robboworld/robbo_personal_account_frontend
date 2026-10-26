@@ -94,3 +94,16 @@ export async function adminCreateAnnouncement(payload) {
     body: JSON.stringify(payload),
   })
 }
+
+/** Sends the teacher has left in the last 24 hours: { limit, used, remaining }; limit 0 = unlimited. */
+export async function fetchTeacherNotificationQuota() {
+  return notifyJson('/api/notifications/teacher/quota')
+}
+
+/** Teacher → students of their own classes; the server rejects anyone else. */
+export async function teacherSendNotification(payload) {
+  return notifyJson('/api/notifications/teacher/send', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}

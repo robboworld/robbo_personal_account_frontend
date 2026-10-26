@@ -155,10 +155,6 @@ const MyProjects = ({
                 <EmptyText>
                   <FormattedMessage id='my_projects.empty' />
                 </EmptyText>
-                <CreateButton type='button' disabled={creating} onClick={() => CreateProjectPage()}>
-                  <PlusOutlined />
-                  <FormattedMessage id='my_projects.create_new' />
-                </CreateButton>
               </EmptyState>
             ) : (
               <React.Fragment>
@@ -201,7 +197,7 @@ const MyProjects = ({
                                 onClick={() => openProject(projectPage.projectPageId)}>
                                 {displayProjectTitle(projectPage.title, intl)}
                               </ProjectTitleButton>
-                              {lastModified !== '—' && (
+                              {lastModified !== '–' && (
                                 <CardMeta>
                                   <FormattedMessage id='project_page.last_change' />
                                   {': '}

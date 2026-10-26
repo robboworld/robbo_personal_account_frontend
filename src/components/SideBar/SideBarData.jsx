@@ -270,6 +270,12 @@ export const SidebarDataSuperAdmin = [
     icon: <GroupOutlined />,
   },
   {
+    key: 'teacher_classes',
+    label: <FormattedMessage id='sidebar_data.teacher_classes' />,
+    pathname: TEACHER_CLASSES_ROUTE,
+    icon: <GroupOutlined />,
+  },
+  {
     key: '9',
     label: <FormattedMessage id='sidebar_data.unit_admins' />,
     pathname: UNIT_ADMINS_ROUTE,

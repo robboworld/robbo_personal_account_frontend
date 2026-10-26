@@ -238,7 +238,7 @@ const CustomizationPage = () => {
                 <PreviewRow>
                   <UserAvatar avatarId={selectedId} displayName={displayName} variant='hero' />
                   <PreviewText>
-                    <PreviewName>{displayName || '—'}</PreviewName>
+                    <PreviewName>{displayName || '–'}</PreviewName>
                     <PreviewMeta>
                       {selectedId
                         ? intl.formatMessage(

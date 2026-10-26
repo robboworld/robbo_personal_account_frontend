@@ -21,6 +21,8 @@ const KNOWN_ERRORS = {
   too_many_requests: 'errors.too_many_requests',
   project_size_exceeded: 'errors.too_large',
   storage_quota_exceeded: 'errors.storage_quota_exceeded',
+  'recipient is not a student of your classes': 'teacher_board.message_not_your_student',
+  teacher_daily_limit: 'teacher_board.message_daily_limit',
 }
 
 const STATUS_ERRORS = {

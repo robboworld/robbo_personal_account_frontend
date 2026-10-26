@@ -1,27 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Button, Empty, Progress, Spin, Typography, message, Popconfirm } from 'antd'
+import { Empty, Progress, Spin, Typography, message } from 'antd'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
 import FeatureInterestPanel from './FeatureInterestPanel'
 import {
-  EmptyDevices,
-  EmptyDevicesActions,
-  EmptyDevicesText,
-  EmptyDevicesTitle,
   KeyBlock,
   KeyBlockLabel,
   LicenseKeyRow,
   LicenseLabel,
   LicenseStack,
   PanelSectionTitle,
-  SeatInfo,
-  SeatItem,
-  SeatList,
-  SessionsLink,
-  SoonBadge,
-  SoonContent,
-  SoonHeader,
   SplitGrid,
   StatusHint,
   StatusPills,
@@ -46,11 +35,10 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
-import { listMyLicenses, revokeSeat, getEntitlements } from '@/api/licensing'
+import { listMyLicenses, getEntitlements } from '@/api/licensing'
 import { authAPI } from '@/api/auth'
-import { MY_SESSIONS_ROUTE } from '@/constants/router'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
-import { formatStorageMb } from '@/helpers/tariffs'
+import { formatStorageMb, tariffDisplayName } from '@/helpers/tariffs'
 import theme from '@/theme'
 
 const METER_COLOR = theme.colors.accentGreen
@@ -120,7 +108,7 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
         <TariffBadge>
           {intl.formatMessage(
             { id: 'licensing.usage_tariff' },
-            { tariff: entitlements.tariffName || 'Free' },
+            { tariff: tariffDisplayName(intl, entitlements.tariffName) },
           )}
         </TariffBadge>
       </UsageHeader>
@@ -252,17 +240,6 @@ const MyLicensesPage = () => {
     loadUsage()
   }, [loadLicenses, loadUsage])
 
-  const onRevoke = async (licenseId, seatId) => {
-    try {
-      await revokeSeat(licenseId, seatId)
-      message.success(intl.formatMessage({ id: 'licensing.seat_revoked' }))
-      loadLicenses()
-      loadUsage()
-    } catch (e) {
-      message.error(apiErrorMessage(e, intl))
-    }
-  }
-
   const activeLicenses = useMemo(() => (licenses || []).filter(isLicenseActive), [licenses])
 
   const primaryLicense = activeLicenses[0] || licenses[0] || null
@@ -271,16 +248,6 @@ const MyLicensesPage = () => {
     () => (licenses || []).reduce((sum, lic) => sum + ((lic.seats && lic.seats.length) || 0), 0),
     [licenses],
   )
-
-  const seatEntries = useMemo(() => {
-    const rows = []
-    ;(licenses || []).forEach(lic => {
-      ;(lic.seats || []).forEach(seat => {
-        rows.push({ licenseId: lic.id, licenseKey: lic.licenseKey, seat })
-      })
-    })
-    return rows
-  }, [licenses])
 
   const tariffName = entitlements?.tariffName || 'Free'
   const hasActive = activeLicenses.length > 0
@@ -298,116 +265,69 @@ const MyLicensesPage = () => {
         </HeroPanel>
 
         <motion.div variants={staggerItem}>
-          <GlassPanel>
-            {licensesLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
-                <Spin />
-              </div>
-            ) : (
-              <React.Fragment>
-                <StatusTitle>
-                  {hasActive
-                    ? intl.formatMessage({ id: 'licensing.status_active' })
-                    : intl.formatMessage({ id: 'licensing.status_none' })}
-                </StatusTitle>
-                <StatusPills>
-                  <TariffBadge>
-                    {intl.formatMessage({ id: 'licensing.usage_tariff' }, { tariff: tariffName })}
-                  </TariffBadge>
-                  {hasActive && seatLimit > 0 ? (
+          <SplitGrid>
+            <GlassPanel>
+              {licensesLoading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
+                  <Spin />
+                </div>
+              ) : (
+                <React.Fragment>
+                  <StatusTitle>
+                    {hasActive
+                      ? intl.formatMessage({ id: 'licensing.status_active' })
+                      : intl.formatMessage({ id: 'licensing.status_none' })}
+                  </StatusTitle>
+                  <StatusPills>
                     <TariffBadge>
                       {intl.formatMessage(
-                        { id: 'licensing.seats_pill' },
-                        { used: seatsUsed, limit: seatLimit },
+                        { id: 'licensing.usage_tariff' },
+                        { tariff: tariffDisplayName(intl, tariffName) },
                       )}
                     </TariffBadge>
-                  ) : null}
-                  {hasActive && expiresLabel ? (
-                    <TariffBadge>
-                      {intl.formatMessage({ id: 'licensing.expires_pill' }, { date: expiresLabel })}
-                    </TariffBadge>
-                  ) : null}
-                </StatusPills>
-                <StatusHint>
-                  {intl.formatMessage({ id: 'licensing.status_robbo_id_hint' })}
-                </StatusHint>
-                {licenses.length === 0 ? (
-                  <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })} />
-                ) : (
-                  <KeyBlock>
-                    <KeyBlockLabel>
-                      {intl.formatMessage({ id: 'licensing.key_manual_label' })}
-                    </KeyBlockLabel>
-                    <LicenseStack>
-                      {licenses.map(lic => (
-                        <LicenseKeyRow key={lic.id} style={{ marginBottom: 0 }}>
-                          <LicenseLabel>
-                            {intl.formatMessage({ id: 'licensing.license_key' })}
-                          </LicenseLabel>
-                          <Text code copyable>
-                            {lic.licenseKey}
-                          </Text>
-                        </LicenseKeyRow>
-                      ))}
-                    </LicenseStack>
-                  </KeyBlock>
-                )}
-              </React.Fragment>
-            )}
-          </GlassPanel>
-        </motion.div>
-
-        <motion.div variants={staggerItem}>
-          <SplitGrid>
-            <GlassPanel aria-labelledby='licensing-devices-title'>
-              <SoonHeader>
-                <PanelSectionTitle id='licensing-devices-title'>
-                  {intl.formatMessage({ id: 'licensing.devices_title' })}
-                </PanelSectionTitle>
-                <SoonBadge>{intl.formatMessage({ id: 'common.in_development' })}</SoonBadge>
-              </SoonHeader>
-              {/* Device management is not finished: shown greyed out and inert (no mouse or keyboard). */}
-              <SoonContent inert='' aria-disabled='true'>
-                {licensesLoading ? (
-                  <div style={{ display: 'flex', justifyContent: 'center', padding: '1.5rem 0' }}>
-                    <Spin />
-                  </div>
-                ) : seatEntries.length === 0 ? (
-                  <EmptyDevices>
-                    <EmptyDevicesTitle>
-                      {intl.formatMessage({ id: 'licensing.no_seats' })}
-                    </EmptyDevicesTitle>
-                    <EmptyDevicesText>
-                      {intl.formatMessage({ id: 'licensing.devices_empty_hint' })}
-                    </EmptyDevicesText>
-                    <EmptyDevicesActions>
-                      <SessionsLink to={MY_SESSIONS_ROUTE}>
-                        {intl.formatMessage({ id: 'licensing.devices_sessions_link' })}
-                      </SessionsLink>
-                    </EmptyDevicesActions>
-                  </EmptyDevices>
-                ) : (
-                  <SeatList>
-                    {seatEntries.map(({ licenseId, seat }) => (
-                      <SeatItem key={`${licenseId}-${seat.seatId}`}>
-                        <SeatInfo>
-                          <Text code>{seat.label || seat.seatId}</Text>
-                          {seat.deviceFingerprint ? (
-                            <Text type='secondary'>{seat.deviceFingerprint.slice(0, 12)}…</Text>
-                          ) : null}
-                        </SeatInfo>
-                        <Popconfirm
-                          title={intl.formatMessage({ id: 'licensing.revoke_confirm' })}
-                          onConfirm={() => onRevoke(licenseId, seat.seatId)}>
-                          <Button danger size='small'>
-                            {intl.formatMessage({ id: 'licensing.revoke_seat' })}
-                          </Button>
-                        </Popconfirm>
-                      </SeatItem>
-                    ))}
-                  </SeatList>
-                )}
-              </SoonContent>
+                    {hasActive && seatLimit > 0 ? (
+                      <TariffBadge>
+                        {intl.formatMessage(
+                          { id: 'licensing.seats_pill' },
+                          { used: seatsUsed, limit: seatLimit },
+                        )}
+                      </TariffBadge>
+                    ) : null}
+                    {hasActive && expiresLabel ? (
+                      <TariffBadge>
+                        {intl.formatMessage(
+                          { id: 'licensing.expires_pill' },
+                          { date: expiresLabel },
+                        )}
+                      </TariffBadge>
+                    ) : null}
+                  </StatusPills>
+                  <StatusHint>
+                    {intl.formatMessage({ id: 'licensing.status_robbo_id_hint' })}
+                  </StatusHint>
+                  {licenses.length === 0 ? (
+                    <Empty description={intl.formatMessage({ id: 'licensing.my_empty' })} />
+                  ) : (
+                    <KeyBlock>
+                      <KeyBlockLabel>
+                        {intl.formatMessage({ id: 'licensing.key_manual_label' })}
+                      </KeyBlockLabel>
+                      <LicenseStack>
+                        {licenses.map(lic => (
+                          <LicenseKeyRow key={lic.id} style={{ marginBottom: 0 }}>
+                            <LicenseLabel>
+                              {intl.formatMessage({ id: 'licensing.license_key' })}
+                            </LicenseLabel>
+                            <Text code copyable>
+                              {lic.licenseKey}
+                            </Text>
+                          </LicenseKeyRow>
+                        ))}
+                      </LicenseStack>
+                    </KeyBlock>
+                  )}
+                </React.Fragment>
+              )}
             </GlassPanel>
 
             {entitlements ? (

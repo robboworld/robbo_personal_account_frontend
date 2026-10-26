@@ -27,7 +27,7 @@ describe('public pages', () => {
     cy.visit('/')
     cy.get('header').contains('button', 'EN').click()
     cy.contains('h1', 'Create stories, games and animations')
-    cy.title().should('eq', 'ROBBO — create stories, games and animations')
+    cy.title().should('eq', 'ROBBO – create stories, games and animations')
 
     cy.reload()
     cy.contains('h1', 'Create stories, games and animations')

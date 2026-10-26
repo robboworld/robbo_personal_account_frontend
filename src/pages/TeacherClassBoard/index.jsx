@@ -23,6 +23,7 @@ import {
 import {
   CheckOutlined,
   CopyOutlined,
+  MailOutlined,
   MoreOutlined,
   ProjectOutlined,
   ReloadOutlined,
@@ -37,6 +38,7 @@ import { REVIEW_STATUS_COLOR, isHandedIn, reviewStatusLabel } from './reviewStat
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
+import { fetchTeacherNotificationQuota, teacherSendNotification } from '@/api/notifications'
 import { projectPageQueryGQL } from '@/graphQL/query/projectPage'
 import { PROJECT_PAGE_ROUTE, TEACHER_CLASSES_ROUTE } from '@/constants'
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
@@ -56,7 +58,6 @@ const TeacherClassBoardPage = () => {
   const [members, setMembers] = useState([])
   const [assignments, setAssignments] = useState([])
   const [activeAssignmentId, setActiveAssignmentId] = useState(undefined)
-  const [live, setLive] = useState([])
   const [submissions, setSubmissions] = useState([])
   const [progress, setProgress] = useState({ assignments: [], rows: [] })
   const [loading, setLoading] = useState(true)
@@ -66,9 +67,15 @@ const TeacherClassBoardPage = () => {
   const [renameOpen, setRenameOpen] = useState(false)
   const [reviewProject, setReviewProject] = useState(null)
   const [reviewComment, setReviewComment] = useState('')
+  // Students the message modal is open for; null when closed.
+  const [messageTo, setMessageTo] = useState(null)
+  const [sending, setSending] = useState(false)
+  // { limit, used, remaining } for the last 24 hours; null while unknown.
+  const [messageQuota, setMessageQuota] = useState(null)
   const [form] = Form.useForm()
   const [membersForm] = Form.useForm()
   const [renameForm] = Form.useForm()
+  const [messageForm] = Form.useForm()
   const required = { required: true, message: intl.formatMessage({ id: 'form.required' }) }
   const fail = (e, fallbackId = 'errors.generic') =>
     message.error(apiErrorMessage(e, intl, fallbackId))
@@ -112,17 +119,12 @@ const TeacherClassBoardPage = () => {
 
   const refreshAssignment = useCallback(async () => {
     if (!activeAssignmentId) {
-      setLive([])
       setSubmissions([])
       return
     }
     try {
-      const [liveRes, subRes] = await Promise.all([
-        api.liveRoster(classId, activeAssignmentId),
-        api.listSubmissions(classId, activeAssignmentId),
-      ])
-      setLive(liveRes.data.items || [])
-      setSubmissions(subRes.data.items || [])
+      const { data } = await api.listSubmissions(classId, activeAssignmentId)
+      setSubmissions(data.items || [])
     } catch (e) {
       fail(e, 'teacher_board.load_error')
     }
@@ -190,6 +192,43 @@ const TeacherClassBoardPage = () => {
       refreshAll()
     } catch (e) {
       fail(e)
+    }
+  }
+
+  // Without an LMS user id the server cannot address the student.
+  const messageableMembers = members.filter(m => m.userId)
+
+  const openMessage = targets => {
+    messageForm.resetFields()
+    setMessageTo(targets)
+    setMessageQuota(null)
+    fetchTeacherNotificationQuota()
+      .then(setMessageQuota)
+      .catch(() => setMessageQuota(null))
+  }
+  const quotaExhausted = messageQuota?.limit > 0 && messageQuota.remaining === 0
+
+  const onSendMessage = async values => {
+    setSending(true)
+    try {
+      const { sent, quota } = await teacherSendNotification({
+        recipientUserIds: messageTo.map(m => m.userId),
+        title: values.title.trim(),
+        body: values.body.trim(),
+      })
+      message.success(
+        quota?.limit > 0
+          ? intl.formatMessage(
+              { id: 'teacher_board.message_sent_left' },
+              { count: sent, remaining: quota.remaining, limit: quota.limit },
+            )
+          : intl.formatMessage({ id: 'teacher_board.message_sent' }, { count: sent }),
+      )
+      setMessageTo(null)
+    } catch (e) {
+      fail(e)
+    } finally {
+      setSending(false)
     }
   }
 
@@ -265,17 +304,30 @@ const TeacherClassBoardPage = () => {
       <Tag color={REVIEW_STATUS_COLOR[status] || 'default'}>{reviewStatusLabel(intl, status)}</Tag>
     ) : null
 
-  const memberName = userId => {
-    const m = members.find(x => x.userId === userId)
-    return m ? m.name || m.username : userId
+  // A raw LMS user id means nothing to the teacher: fall back to roster data, then to "Student".
+  const studentLabel = s => {
+    const m = s.userId ? members.find(x => x.userId === s.userId) : null
+    return (
+      s.name ||
+      m?.name ||
+      s.username ||
+      m?.username ||
+      intl.formatMessage({ id: 'teacher_board.student' })
+    )
   }
+
+  // Progress rows: the class roster with each student's cells from /progress (keyed by user id).
+  const progressRows = useMemo(() => {
+    const cellsByUser = new Map(progress.rows.map(r => [r.userId, r.cells || []]))
+    return members.map(m => ({ ...m, cells: (m.userId && cellsByUser.get(m.userId)) || [] }))
+  }, [members, progress.rows])
 
   const progressColumns = [
     {
       title: intl.formatMessage({ id: 'teacher_board.student' }),
       dataIndex: 'name',
       fixed: 'left',
-      render: (_, row) => row.name || row.username || row.userId,
+      render: (_, row) => studentLabel(row),
     },
     ...progress.assignments.map(a => ({
       title: a.title,
@@ -315,14 +367,22 @@ const TeacherClassBoardPage = () => {
     },
   }
 
-  const lessonCards = live.length
-    ? live
-    : members.map(m => ({
-        userId: m.userId,
-        username: m.username,
-        name: m.name,
-        email: m.email,
-      }))
+  // Lesson cards: the roster already loaded for the board plus each student's assignment project.
+  // Built here so the page asks Open edX for the class roster once, not once per endpoint.
+  const lessonCards = useMemo(() => {
+    const byOwner = new Map(submissions.map(s => [s.ownerUserId, s]))
+    return members.map(m => {
+      const p = m.userId ? byOwner.get(m.userId) : undefined
+      return {
+        ...m,
+        projectId: p?.projectId,
+        projectTitle: p?.title,
+        updatedAt: p?.updatedAt,
+        reviewStatus: p?.reviewStatus,
+        savedToday: p ? dayjs(p.updatedAt).isSame(dayjs(), 'day') : false,
+      }
+    })
+  }, [members, submissions])
 
   return (
     <PageContent>
@@ -352,6 +412,12 @@ const TeacherClassBoardPage = () => {
             ) : null}
             <Button icon={<UserAddOutlined />} onClick={() => setMembersOpen(true)}>
               <FormattedMessage id='teacher_board.students' />
+            </Button>
+            <Button
+              icon={<MailOutlined />}
+              disabled={messageableMembers.length === 0}
+              onClick={() => openMessage(messageableMembers)}>
+              <FormattedMessage id='teacher_board.message_class' />
             </Button>
             <Button
               icon={<CopyOutlined />}
@@ -415,7 +481,7 @@ const TeacherClassBoardPage = () => {
                       <Col xs={24} sm={12} md={8} lg={6} key={s.userId || s.username}>
                         <Card
                           size='small'
-                          title={s.name || s.username}
+                          title={studentLabel(s)}
                           extra={
                             s.savedToday ? (
                               <Tag color='green'>
@@ -441,7 +507,7 @@ const TeacherClassBoardPage = () => {
                                 ]
                               : []
                           }>
-                          <Text type='secondary'>{s.projectTitle || '—'}</Text>
+                          <Text type='secondary'>{s.projectTitle || '–'}</Text>
                           {s.updatedAt ? (
                             <div>
                               <Text type='secondary' style={{ fontSize: 12 }}>
@@ -481,7 +547,9 @@ const TeacherClassBoardPage = () => {
                         title={item.title}
                         description={
                           <Space wrap>
-                            <Text type='secondary'>{memberName(item.ownerUserId)}</Text>
+                            <Text type='secondary'>
+                              {studentLabel({ userId: item.ownerUserId })}
+                            </Text>
                             {statusTag(item.reviewStatus)}
                           </Space>
                         }
@@ -498,7 +566,7 @@ const TeacherClassBoardPage = () => {
                 <Table
                   rowKey={r => r.userId || r.username}
                   loading={loading}
-                  dataSource={progress.rows}
+                  dataSource={progressRows}
                   columns={progressColumns}
                   pagination={false}
                   scroll={{ x: true }}
@@ -590,6 +658,9 @@ const TeacherClassBoardPage = () => {
           renderItem={m => (
             <List.Item
               actions={[
+                <Button key='msg' type='link' disabled={!m.userId} onClick={() => openMessage([m])}>
+                  <FormattedMessage id='teacher_board.message' />
+                </Button>,
                 <Popconfirm
                   key='rm'
                   title={intl.formatMessage(
@@ -624,6 +695,57 @@ const TeacherClassBoardPage = () => {
             </Button>
           </Popconfirm>
         ) : null}
+      </Modal>
+
+      <Modal
+        open={!!messageTo}
+        title={
+          messageTo?.length === 1
+            ? intl.formatMessage(
+                { id: 'teacher_board.message_to' },
+                { name: messageTo[0].name || messageTo[0].username },
+              )
+            : intl.formatMessage(
+                { id: 'teacher_board.message_to_class' },
+                { count: messageTo?.length || 0 },
+              )
+        }
+        onCancel={() => setMessageTo(null)}
+        onOk={() => messageForm.submit()}
+        okText={<FormattedMessage id='teacher_board.message_send' />}
+        okButtonProps={{ loading: sending, disabled: quotaExhausted }}
+        cancelText={<FormattedMessage id='common.cancel' />}>
+        {messageQuota?.limit > 0 ? (
+          <Text
+            type={quotaExhausted ? 'danger' : 'secondary'}
+            style={{ display: 'block', marginBottom: 12 }}>
+            {intl.formatMessage(
+              {
+                id: quotaExhausted
+                  ? 'teacher_board.message_daily_limit'
+                  : 'teacher_board.message_quota',
+              },
+              { remaining: messageQuota.remaining, limit: messageQuota.limit },
+            )}
+          </Text>
+        ) : null}
+        <Text type='secondary' style={{ display: 'block', marginBottom: 12 }}>
+          <FormattedMessage id='teacher_board.message_name_hint' />
+        </Text>
+        <Form form={messageForm} layout='vertical' onFinish={onSendMessage}>
+          <Form.Item
+            name='title'
+            label={<FormattedMessage id='teacher_board.message_title' />}
+            rules={[required, { whitespace: true, message: required.message }]}>
+            <Input maxLength={200} showCount />
+          </Form.Item>
+          <Form.Item
+            name='body'
+            label={<FormattedMessage id='teacher_board.message_body' />}
+            rules={[required, { whitespace: true, message: required.message }]}>
+            <TextArea rows={4} maxLength={2000} showCount />
+          </Form.Item>
+        </Form>
       </Modal>
 
       <Modal

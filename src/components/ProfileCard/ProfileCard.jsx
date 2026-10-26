@@ -40,7 +40,7 @@ const profileFieldsUnchanged = (profile, formValues) =>
 
 const formatProfileDateTime = (value, locale) => {
   if (!value) {
-    return '—'
+    return '–'
   }
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) {
@@ -167,13 +167,13 @@ const ProfileCard = ({ updateHandle, profile, accessUpdate }) => {
             <Input placeholder={profile.email} size='large' readOnly disabled />
           </Form.Item>
           <Form.Item label={<FormattedMessage id='profile_card.username' />}>
-            <span className='profile-static-value'>{profile.nickname || '—'}</span>
+            <span className='profile-static-value'>{profile.nickname || '–'}</span>
           </Form.Item>
           <Form.Item
             className='profile-form-span-full'
             name='fullName'
             label={<FormattedMessage id='profile_card.full_name' />}>
-            <Input placeholder={profile.fullName || '—'} size='large' />
+            <Input placeholder={profile.fullName || '–'} size='large' />
           </Form.Item>
         </FormGrid>
       </FormSection>

@@ -66,7 +66,7 @@ const DocumentTitle = () => {
   useEffect(() => {
     const brand = intl.formatMessage({ id: 'document_title.brand' })
     const id = pageTitleId(pathname)
-    document.title = id ? `${intl.formatMessage({ id })} — ${brand}` : brand
+    document.title = id ? `${intl.formatMessage({ id })} – ${brand}` : brand
   }, [pathname, intl])
 
   return null

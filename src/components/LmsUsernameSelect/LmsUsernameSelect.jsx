@@ -6,7 +6,7 @@ import { searchLmsUsers } from '@/api/users'
 
 function formatOption(item) {
   const email = item.email ? ` (${item.email})` : ''
-  const name = item.fullName ? ` — ${item.fullName}` : ''
+  const name = item.fullName ? ` – ${item.fullName}` : ''
   return {
     value: item.username,
     label: `${item.username}${email}${name}`,
