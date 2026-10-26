@@ -18,6 +18,8 @@ import {
   EditOutlined,
 } from '@ant-design/icons'
 
+import InterestInvite from './InterestInvite'
+
 import {
   ActionCta,
   ActionDescription,
@@ -249,6 +251,8 @@ const Home = () => {
             <HeroLead>{intl.formatMessage({ id: 'home.role_line' }, { role: roleTitle })}</HeroLead>
           </HeroInner>
         </HeroPanel>
+
+        <InterestInvite />
 
         <motion.div variants={staggerItem}>
           <Panel>

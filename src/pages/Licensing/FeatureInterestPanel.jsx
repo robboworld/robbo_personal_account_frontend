@@ -8,7 +8,9 @@ import { getFeatureInterest, saveFeatureInterest } from '@/api/licensing'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import {
   INTEREST_FEATURES,
+  INTEREST_ORG_MAX,
   INTEREST_OTHER_MAX,
+  INTEREST_PAIN_MAX,
   INTEREST_ROLES,
   interestSource,
 } from '@/helpers/featureInterest'
@@ -35,6 +37,8 @@ const FeatureInterestPanel = () => {
           role: answer.role,
           feature: answer.feature,
           other: answer.other,
+          pain: answer.pain,
+          org: answer.org,
           notify: answer.notify,
         })
         setSavedAt(answer.updatedAt || null)
@@ -61,6 +65,8 @@ const FeatureInterestPanel = () => {
         role: values.role,
         feature: values.feature,
         other: values.feature === 'other' ? (values.other || '').trim() : '',
+        pain: (values.pain || '').trim(),
+        org: (values.org || '').trim(),
         notify: Boolean(values.notify),
         source: interestSource(location.search),
       })
@@ -91,7 +97,7 @@ const FeatureInterestPanel = () => {
           layout='vertical'
           requiredMark={false}
           onFinish={onFinish}
-          initialValues={{ notify: true }}
+          initialValues={{ notify: false }}
           style={{ maxWidth: 640 }}>
           <Form.Item
             name='role'
@@ -126,7 +132,17 @@ const FeatureInterestPanel = () => {
               <Input.TextArea maxLength={INTEREST_OTHER_MAX} showCount autoSize={{ minRows: 2 }} />
             </Form.Item>
           ) : null}
-          <Form.Item name='notify' valuePropName='checked'>
+          <Form.Item name='pain' label={t('interest.pain_label')}>
+            <Input.TextArea
+              maxLength={INTEREST_PAIN_MAX}
+              autoSize={{ minRows: 3 }}
+              placeholder={t('interest.pain_placeholder')}
+            />
+          </Form.Item>
+          <Form.Item name='org' label={t('interest.org_label')}>
+            <Input maxLength={INTEREST_ORG_MAX} placeholder={t('interest.org_placeholder')} />
+          </Form.Item>
+          <Form.Item name='notify' valuePropName='checked' extra={t('interest.notify_hint')}>
             <Checkbox>{t('interest.notify')}</Checkbox>
           </Form.Item>
           <Button type='primary' htmlType='submit' size='large' loading={saving}>
