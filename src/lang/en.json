@@ -1012,5 +1012,14 @@
     "interest.submit": "Send",
     "interest.update": "Change answer",
     "interest.saved": "Thank you, your answer is saved",
-    "interest.thanks": "Your answer is saved. If anything changes, send the form again."
+    "interest.thanks": "Your answer is saved. If anything changes, send the form again.",
+    "interest.pain_label": "What takes the most time or gets in the way now? (optional)",
+    "interest.pain_placeholder": "For example: reports for parents, lesson preparation, collecting students' work",
+    "interest.org_label": "Club or school and city (optional)",
+    "interest.org_placeholder": "For example: ROBBO Club, Kazan",
+    "interest.notify_hint": "The email goes to your account address. Without the tick we do not write.",
+    "interest.invite_title": "Help us choose what to build first",
+    "interest.invite_text": "We are preparing features for clubs and schools. It takes a minute.",
+    "interest.invite_answer": "Answer",
+    "interest.invite_later": "Not now"
 }
