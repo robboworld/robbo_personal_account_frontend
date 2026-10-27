@@ -124,6 +124,21 @@ export const MobileBrandLabel = styled.span`
   text-overflow: ellipsis;
 `
 
+/**
+ * Desktop: notifications float in the top right corner over the page, which does not move.
+ * 12px from the top and the right edge the button covers only the gutter and the right padding
+ * of the page cards (they start 32px down, 28px from the edge, 24px inside), never their content.
+ */
+export const FloatingTopActions = styled.div`
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+`
+
 export const MobileTopBarActions = styled.div`
   display: flex;
   align-items: center;

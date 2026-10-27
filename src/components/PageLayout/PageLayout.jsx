@@ -9,6 +9,7 @@ import RobboSiteFooter from '@/components/RobboSiteFooter/RobboSiteFooter'
 import SelectLanguage from '@/components/SelectLanguage'
 import NotificationBell from '@/components/NotificationBell/NotificationBell'
 import {
+  FloatingTopActions,
   MobileBrandLabel,
   MobileMenuBtn,
   MobileTopBar,
@@ -109,7 +110,7 @@ const PageLayout = ({ children }) => {
           </MobileTopBarBrand>
           <MobileTopBarActions>
             <SelectLanguage variant='sidebar' />
-            <NotificationBell variant='sidebar' />
+            <NotificationBell />
           </MobileTopBarActions>
         </MobileTopBar>
       )}
@@ -156,7 +157,14 @@ const PageLayout = ({ children }) => {
         )}
 
         <Layout style={innerLayoutStyle}>
-          <Content style={contentStyle}>{children}</Content>
+          <Content style={contentStyle}>
+            {!isMobile && (
+              <FloatingTopActions>
+                <NotificationBell variant='floating' />
+              </FloatingTopActions>
+            )}
+            {children}
+          </Content>
         </Layout>
       </Layout>
 

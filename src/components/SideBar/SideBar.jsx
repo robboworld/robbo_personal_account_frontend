@@ -35,7 +35,6 @@ import {
 import { broadcastAuthLogout } from '@/helpers/authEcosystemSync'
 import { LOGIN_PAGE_ROUTE } from '@/constants'
 import SelectLanguage from '@/components/SelectLanguage'
-import NotificationBell from '@/components/NotificationBell/NotificationBell'
 import {
   SidebarMenu,
   SidebarShell,
@@ -193,9 +192,9 @@ export default ({
               onClick={onToggleCollapsed}>
               {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </SidebarCollapseBtn>
+            {/* Notifications: on the right, over the page (PageLayout). */}
             <SidebarTopActions $collapsed={collapsed}>
               <SelectLanguage variant='sidebar' />
-              <NotificationBell variant='sidebar' />
             </SidebarTopActions>
           </React.Fragment>
         )}
