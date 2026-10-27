@@ -53,10 +53,13 @@ async function notifyJson(path, init = {}) {
   return res.json()
 }
 
-export async function fetchNotificationFeed(limit = 30) {
-  return notifyJson(`/api/notifications/feed?limit=${limit}`)
+/** source: 'lk' (LK notifications and announcements), 'lms' (Open edX ones) or '' (both). */
+export async function fetchNotificationFeed(limit = 30, source = '') {
+  const query = source ? `&source=${encodeURIComponent(source)}` : ''
+  return notifyJson(`/api/notifications/feed?limit=${limit}${query}`)
 }
 
+/** { count, lk, lms, lmsEnabled }: unread in all, in LK, in Open edX; is there an LMS tab. */
 export async function fetchUnreadNotificationCount() {
   return notifyJson('/api/notifications/unread-count')
 }
@@ -75,9 +78,19 @@ export async function markAnnouncementRead(id) {
   })
 }
 
-export async function markAllNotificationsRead() {
+/** An Open edX notification (feedKind "lms"): read in the LMS too, the LMS keeps them. */
+export async function markLmsNotificationRead(id) {
+  return notifyJson('/api/notifications/mark-lms-read', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  })
+}
+
+/** source: one tab of the bell ('lk' or 'lms'); '' = everything. */
+export async function markAllNotificationsRead(source = '') {
   return notifyJson('/api/notifications/mark-all-read', {
     method: 'POST',
+    body: source ? JSON.stringify({ source }) : undefined,
   })
 }
 
