@@ -5,6 +5,9 @@ export const FREE_LISTENER = 3
 export const UNIT_ADMIN = 4
 export const SUPER_ADMIN = 5
 
+// Classes are temporarily hidden from teachers and students; add the roles back to reopen.
+export const CLASSES_ROLES = [SUPER_ADMIN]
+
 export const USER_ROLE_MESSAGE_IDS = {
   0: 'user_role.student',
   1: 'user_role.teacher',
