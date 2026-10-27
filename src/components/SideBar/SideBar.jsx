@@ -33,7 +33,7 @@ import {
   useAuthRole,
 } from '@/helpers'
 import { broadcastAuthLogout } from '@/helpers/authEcosystemSync'
-import { LOGIN_PAGE_ROUTE } from '@/constants'
+import { CLASSES_ROLES, CLASSES_ROUTES, LOGIN_PAGE_ROUTE } from '@/constants'
 import SelectLanguage from '@/components/SelectLanguage'
 import {
   SidebarMenu,
@@ -97,10 +97,18 @@ export default ({
     }
   }, [Role])
 
+  const visibleRoleSideBarData = useMemo(
+    () =>
+      CLASSES_ROLES.includes(Role)
+        ? roleSideBarData
+        : roleSideBarData.filter(item => !CLASSES_ROUTES.includes(item.pathname)),
+    [Role, roleSideBarData],
+  )
+
   const legacyAdminEnabled = useLegacyAdminEnabled()
   const SideBarData = useMemo(
-    () => withSharedExploreItems(withoutLegacyAdminItems(roleSideBarData, legacyAdminEnabled)),
-    [roleSideBarData, legacyAdminEnabled],
+    () => withSharedExploreItems(withoutLegacyAdminItems(visibleRoleSideBarData, legacyAdminEnabled)),
+    [visibleRoleSideBarData, legacyAdminEnabled],
   )
 
   const flatSideBarData = useMemo(() => flattenSidebarItems(SideBarData), [SideBarData])

@@ -34,6 +34,7 @@ import {
   PAYMENT_RECEIPT_ROUTE,
   DEVICE_LINK_ROUTE,
   CUSTOMIZATION_PAGE_ROUTE,
+  CLASSES_ROLES,
   TEACHER_CLASSES_ROUTE,
   TEACHER_CLASS_BOARD_ROUTE,
   STUDENT_CLASSES_ROUTE,
@@ -117,15 +118,15 @@ const AppRoutes = () => (
       />
       <Route
         path={TEACHER_CLASSES_ROUTE}
-        element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassesPage />)}
+        element={wrapProtected(CLASSES_ROLES, <TeacherClassesPage />)}
       />
       <Route
         path={TEACHER_CLASS_BOARD_ROUTE}
-        element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassBoardPage />)}
+        element={wrapProtected(CLASSES_ROLES, <TeacherClassBoardPage />)}
       />
       <Route
         path={STUDENT_CLASSES_ROUTE}
-        element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <StudentClassesPage />)}
+        element={wrapProtected(CLASSES_ROLES, <StudentClassesPage />)}
       />
       <Route
         path={PUBLIC_PROJECTS_ROUTE}

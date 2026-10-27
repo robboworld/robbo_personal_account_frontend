@@ -34,3 +34,4 @@ export const TEACHER_CLASS_BOARD_ROUTE = '/teacher/classes/:classId'
 export const STUDENT_CLASSES_ROUTE = '/myclasses'
 export const JOIN_CLASS_ROUTE = '/join/:slug'
 export const JOIN_CLASS_CODE_ROUTE = '/join'
+export const CLASSES_ROUTES = [TEACHER_CLASSES_ROUTE, STUDENT_CLASSES_ROUTE]

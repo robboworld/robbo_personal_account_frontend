@@ -61,6 +61,8 @@ import {
   SUPER_ADMIN,
   STUDENT,
   TEACHER,
+  CLASSES_ROLES,
+  CLASSES_ROUTES,
   TEACHER_CLASSES_ROUTE,
   STUDENT_CLASSES_ROUTE,
   SCRATCH_HUB_ROUTE,
@@ -222,7 +224,9 @@ const Home = () => {
   // Legacy-database sections only open errors while that database is off.
   const quickActions = QUICK_ACTION_DEFS.filter(
     ({ roles, path }) =>
-      (!roles || roles.includes(role)) && (legacyEnabled || !LEGACY_ADMIN_ROUTES.has(path)),
+      (!roles || roles.includes(role)) &&
+      (legacyEnabled || !LEGACY_ADMIN_ROUTES.has(path)) &&
+      (CLASSES_ROLES.includes(role) || !CLASSES_ROUTES.includes(path)),
   )
 
   const handleAction = action => {
