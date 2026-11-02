@@ -283,6 +283,45 @@ export const HeroTitle = styled.h1`
   text-wrap: balance;
 `
 
+const roleBadgeAccent = {
+  teacher: {
+    color: colors.accentGreenDark,
+    background: 'rgba(0, 175, 65, 0.12)',
+    border: 'rgba(0, 175, 65, 0.32)',
+  },
+  unitAdmin: {
+    color: '#4f3f5e',
+    background: 'rgba(108, 91, 123, 0.14)',
+    border: 'rgba(108, 91, 123, 0.36)',
+  },
+  superAdmin: {
+    color: '#9c3456',
+    background: 'rgba(192, 108, 132, 0.16)',
+    border: 'rgba(192, 108, 132, 0.42)',
+  },
+}
+
+// Role pill on the home hero; only staff roles get one.
+export const RoleBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: ${({ $accent }) => roleBadgeAccent[$accent].color};
+  background: ${({ $accent }) => roleBadgeAccent[$accent].background};
+  border: 1px solid ${({ $accent }) => roleBadgeAccent[$accent].border};
+
+  .anticon {
+    font-size: 0.875rem;
+  }
+`
+
 export const HeroLead = styled.p`
   margin: 0;
   font-size: 1rem;

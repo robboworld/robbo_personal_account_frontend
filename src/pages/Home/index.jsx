@@ -16,6 +16,8 @@ import {
   GlobalOutlined,
   CustomerServiceOutlined,
   EditOutlined,
+  CrownOutlined,
+  ReadOutlined,
 } from '@ant-design/icons'
 
 import InterestInvite from './InterestInvite'
@@ -33,6 +35,7 @@ import {
   HeroTitle,
   PageContent,
   Panel,
+  RoleBadge,
   SectionHeader,
   SectionHint,
   SectionTitle,
@@ -193,6 +196,13 @@ const QUICK_ACTION_DEFS = [
   },
 ]
 
+// Staff roles get a badge on the hero; students, parents and free listeners do not.
+const ROLE_BADGES = {
+  [TEACHER]: { accent: 'teacher', Icon: ReadOutlined },
+  [UNIT_ADMIN]: { accent: 'unitAdmin', Icon: SafetyCertificateOutlined },
+  [SUPER_ADMIN]: { accent: 'superAdmin', Icon: CrownOutlined },
+}
+
 const NEXT_STEP_IDS = [
   'home.next_step_1',
   'home.next_step_2',
@@ -218,6 +228,7 @@ const Home = () => {
   const roleTitle = intl.formatMessage({
     id: USER_ROLE_MESSAGE_IDS[role] || 'user_role.fallback',
   })
+  const roleBadge = ROLE_BADGES[role]
   const profile = profileData?.GetUser?.userHttp
   const firstName = (profile?.firstname || profile?.fullName || '').trim().split(/\s+/)[0] || ''
 
@@ -247,6 +258,12 @@ const Home = () => {
       <Stagger variants={staggerContainer} initial='hidden' animate='show'>
         <HeroPanel variants={staggerItem}>
           <HeroInner>
+            {roleBadge && (
+              <RoleBadge $accent={roleBadge.accent} data-testid='home-role-badge'>
+                <roleBadge.Icon />
+                {roleTitle}
+              </RoleBadge>
+            )}
             <HeroTitle>
               {firstName
                 ? intl.formatMessage({ id: 'home.welcome_with_name' }, { firstName })
