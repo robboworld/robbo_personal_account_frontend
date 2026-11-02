@@ -1,7 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
-import { Input, Form, Spin, message, Modal, InputNumber, Space, Button, Select } from 'antd'
+import {
+  Alert,
+  Input,
+  Form,
+  Spin,
+  message,
+  Modal,
+  InputNumber,
+  Space,
+  Button,
+  Select,
+} from 'antd'
 import {
   ArrowLeftOutlined,
   CloudDownloadOutlined,
@@ -368,7 +379,11 @@ function AuthenticatedProjectView({ projectPageId, token }) {
   const loginState = useSelector(({ login }) => login)
   const currentUserId = loginState?.userId || ''
   const isOwner = Boolean(projectPage?.isOwner)
-  const canEditTags = isOwner || isSuperAdmin
+  // Homework handed in to the teacher (submitted, accepted, shown in class) is read-only for its
+  // owner until the teacher returns it; the backend refuses those writes with HOMEWORK_LOCKED.
+  const reviewLocked = isOwner && Boolean(projectPage?.reviewLocked)
+  const canEdit = isOwner && !reviewLocked
+  const canEditTags = canEdit || isSuperAdmin
 
   const loadedPageId = projectPage?.projectPageId
   const loadedLandingFeatured = projectPage?.landingFeatured
@@ -711,6 +726,14 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                 <FormattedMessage id='project_page.view_only' />
               </ViewOnlyNote>
             )}
+            {reviewLocked && (
+              <Alert
+                type='info'
+                showIcon
+                style={{ marginTop: '0.75rem' }}
+                title={<FormattedMessage id='project_page.review_locked' />}
+              />
+            )}
           </PlayerCard>
           <MetaCard>
             <SectionTitle>
@@ -724,15 +747,15 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                 form={form}
                 onFinish={handleSave}>
                 <Form.Item name='title' label={<FormattedMessage id='project_page.title' />}>
-                  <Input size='large' readOnly={!isOwner} />
+                  <Input size='large' readOnly={!canEdit} />
                 </Form.Item>
                 <Form.Item
                   name='instruction'
                   label={<FormattedMessage id='project_page.instruction' />}>
-                  <TextArea size='large' rows={4} readOnly={!isOwner} />
+                  <TextArea size='large' rows={4} readOnly={!canEdit} />
                 </Form.Item>
                 <Form.Item name='notes' label={<FormattedMessage id='project_page.description' />}>
-                  <TextArea size='large' rows={4} readOnly={!isOwner} />
+                  <TextArea size='large' rows={4} readOnly={!canEdit} />
                 </Form.Item>
                 {canEditTags ? (
                   <Form.Item
@@ -842,7 +865,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                         <FormattedMessage id='project_page.save' />
                       </PrimaryAction>
                     )}
-                    {isOwner && (
+                    {canEdit && (
                       <ActionButton
                         type={projectPage.isShared ? 'default' : 'primary'}
                         htmlType='button'
@@ -855,7 +878,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                         />
                       </ActionButton>
                     )}
-                    {isOwner && (
+                    {canEdit && (
                       <React.Fragment>
                         <input
                           ref={uploadInputRef}
@@ -873,7 +896,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                         </ActionButton>
                       </React.Fragment>
                     )}
-                    {isOwner && (
+                    {canEdit && (
                       <React.Fragment>
                         <input
                           ref={previewInputRef}
@@ -891,7 +914,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                         </ActionButton>
                       </React.Fragment>
                     )}
-                    {isOwner && (
+                    {canEdit && (
                       <ScratchAction
                         type='primary'
                         loading={openingEditor}
@@ -946,7 +969,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                         </ActionButton>
                       </React.Fragment>
                     )}
-                    {isOwner && (
+                    {canEdit && (
                       <ActionButton
                         type='default'
                         danger

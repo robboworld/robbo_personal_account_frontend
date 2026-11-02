@@ -17,6 +17,7 @@ const KNOWN_ERRORS = {
   'already in class': 'errors.already_in_class',
   assignment_closed: 'errors.assignment_closed',
   already_handed_in: 'errors.already_handed_in',
+  homework_locked: 'errors.homework_locked',
   password_login_disabled: 'errors.password_login_disabled',
   lms_unavailable: 'errors.lms_unavailable',
   email_change_via_lms: 'errors.email_change_via_lms',

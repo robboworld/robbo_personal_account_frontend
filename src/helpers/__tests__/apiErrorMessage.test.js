@@ -28,6 +28,16 @@ describe('apiErrorMessage', () => {
     )
   })
 
+  it('maps the handed-in homework lock from REST, fetch and GraphQL', () => {
+    expect(
+      apiErrorMessageId(axiosError(409, { error: 'HOMEWORK_LOCKED', code: 'HOMEWORK_LOCKED' })),
+    ).toBe('errors.homework_locked')
+    expect(apiErrorMessageId(new Error('HOMEWORK_LOCKED'))).toBe('errors.homework_locked')
+    expect(apiErrorMessageId({ graphQLErrors: [{ message: 'HOMEWORK_LOCKED' }] })).toBe(
+      'errors.homework_locked',
+    )
+  })
+
   it('maps the file cloud codes', () => {
     const cases = [
       [415, 'FILE_TYPE_NOT_ALLOWED', 'errors.file_type_not_allowed'],

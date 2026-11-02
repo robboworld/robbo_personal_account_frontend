@@ -53,11 +53,14 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
     }
   }
 
+  // Handed-in work is read-only until the teacher returns it (backend HOMEWORK_LOCKED).
   const actions = assignment.myProjectId
     ? [
-        <Button key='edit' type='link' onClick={() => openScratchEditor(assignment.myProjectId)}>
-          <FormattedMessage id='student_class.open_editor' />
-        </Button>,
+        !handedIn && (
+          <Button key='edit' type='link' onClick={() => openScratchEditor(assignment.myProjectId)}>
+            <FormattedMessage id='student_class.open_editor' />
+          </Button>
+        ),
         <Button
           key='page'
           type='link'
@@ -79,7 +82,7 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
             />
           </Button>
         </Popconfirm>,
-      ]
+      ].filter(Boolean)
     : []
 
   return (
