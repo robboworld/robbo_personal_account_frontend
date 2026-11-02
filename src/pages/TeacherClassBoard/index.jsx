@@ -1,17 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Button,
-  Card,
-  Col,
   DatePicker,
   Dropdown,
-  Empty,
   Form,
   Input,
   List,
   Modal,
   Popconfirm,
-  Row,
+  Segmented,
   Select,
   Space,
   Table,
@@ -49,12 +46,21 @@ import InviteDetails, { copyText } from '@/pages/TeacherClasses/InviteDetails'
 const { Text } = Typography
 const { TextArea } = Input
 
+// Filters of the "Work" tab; "missing" is work the student still owes, returned work included.
+const WORK_FILTERS = {
+  review: row => row.reviewStatus === 'submitted',
+  missing: row => !isHandedIn(row.reviewStatus) || row.reviewStatus === 'returned',
+  reviewed: row => ['accepted', 'shown_in_class'].includes(row.reviewStatus),
+  all: () => true,
+}
+
 const TeacherClassBoardPage = () => {
   const { classId } = useParams()
   const intl = useIntl()
   const navigate = useNavigate()
   const [klass, setKlass] = useState(null)
-  const [mode, setMode] = useState('lesson')
+  const [mode, setMode] = useState('work')
+  const [workFilter, setWorkFilter] = useState('review')
   const [members, setMembers] = useState([])
   const [assignments, setAssignments] = useState([])
   const [activeAssignmentId, setActiveAssignmentId] = useState(undefined)
@@ -142,24 +148,66 @@ const TeacherClassBoardPage = () => {
 
   const activeAssignment = assignments.find(a => a.id === activeAssignmentId)
 
-  const counts = useMemo(() => {
-    const onReview = submissions.filter(s => s.reviewStatus === 'submitted').length
-    const handedIn = submissions.filter(s => isHandedIn(s.reviewStatus)).length
-    const notHandedIn = Math.max(0, members.length - handedIn)
-    const pastDue = activeAssignment?.dueAt && dayjs(activeAssignment.dueAt).isBefore(dayjs())
-    return { onReview, notHandedIn, overdue: pastDue ? notHandedIn : 0 }
-  }, [submissions, members, activeAssignment])
+  // One row per student for the active assignment: the roster joined with the copies.
+  // Handed-in work of a student who left the class keeps a row, so it can still be reviewed.
+  const workRows = useMemo(() => {
+    const byOwner = new Map()
+    // Newest first: the latest copy wins if a student somehow has two.
+    submissions.forEach(s => byOwner.has(s.ownerUserId) || byOwner.set(s.ownerUserId, s))
+    const row = (m, p) => ({
+      ...m,
+      key: m.userId || m.username,
+      projectId: p?.projectId,
+      updatedAt: p?.updatedAt,
+      reviewStatus: p?.reviewStatus,
+      reviewComment: p?.reviewComment,
+      title: p?.title,
+      late: !!p?.late,
+    })
+    const rows = members.map(m => row(m, m.userId ? byOwner.get(m.userId) : undefined))
+    const onRoster = new Set(members.map(m => m.userId).filter(Boolean))
+    byOwner.forEach((p, owner) => {
+      if (!onRoster.has(owner) && isHandedIn(p.reviewStatus)) rows.push(row({ userId: owner }, p))
+    })
+    return rows
+  }, [members, submissions])
+
+  const workCounts = useMemo(() => {
+    const out = {}
+    Object.entries(WORK_FILTERS).forEach(([key, match]) => {
+      out[key] = workRows.filter(match).length
+    })
+    return out
+  }, [workRows])
+  const visibleWorkRows = useMemo(
+    () => workRows.filter(WORK_FILTERS[workFilter]),
+    [workRows, workFilter],
+  )
+  const pastDue = activeAssignment?.dueAt && dayjs(activeAssignment.dueAt).isBefore(dayjs())
+  const overdue = pastDue ? workCounts.missing : 0
 
   const onCreateAssignment = async values => {
     setAssigning(true)
     try {
-      await api.createAssignment(classId, {
+      const { data } = await api.createAssignment(classId, {
         title: values.title.trim(),
         instructions: values.instructions || '',
         templateProjectId: values.templateProjectId,
         dueAt: values.dueAt ? values.dueAt.toISOString() : undefined,
       })
       message.success(intl.formatMessage({ id: 'teacher_board.assigned' }))
+      // Copies that failed are retried by "Issue to latecomers"; skipped ones need an LMS account.
+      if (data?.copiesFailed > 0) {
+        message.warning(
+          intl.formatMessage({ id: 'teacher_board.copies_failed' }, { count: data.copiesFailed }),
+        )
+      }
+      if (data?.copiesSkipped > 0) {
+        message.warning(
+          intl.formatMessage({ id: 'teacher_board.copies_skipped' }, { count: data.copiesSkipped }),
+        )
+      }
+      if (data?.id) setActiveAssignmentId(data.id)
       setAssignOpen(false)
       form.resetFields()
       refreshAll()
@@ -234,7 +282,9 @@ const TeacherClassBoardPage = () => {
 
   const onRemoveMember = async member => {
     try {
-      await api.removeMember(classId, member.username)
+      // A ЛК class keys its roster by user id: the LMS login may be unknown.
+      const key = klass?.lmsLinked ? member.username : member.userId || member.username
+      await api.removeMember(classId, key)
       message.success(intl.formatMessage({ id: 'teacher_board.member_removed' }))
       refreshAll()
     } catch (e) {
@@ -248,6 +298,22 @@ const TeacherClassBoardPage = () => {
       const { data } = await api.issueLate(classId, activeAssignmentId)
       message.success(
         intl.formatMessage({ id: 'teacher_board.issued_late' }, { count: data.issued || 0 }),
+      )
+      refreshAll()
+    } catch (e) {
+      fail(e)
+    }
+  }
+
+  const onToggleClosed = async () => {
+    if (!activeAssignment) return
+    try {
+      const closing = !activeAssignment.closedAt
+      await (closing ? api.closeAssignment : api.reopenAssignment)(classId, activeAssignment.id)
+      message.success(
+        intl.formatMessage({
+          id: closing ? 'teacher_board.closed_done' : 'teacher_board.reopened_done',
+        }),
       )
       refreshAll()
     } catch (e) {
@@ -304,6 +370,12 @@ const TeacherClassBoardPage = () => {
       <Tag color={REVIEW_STATUS_COLOR[status] || 'default'}>{reviewStatusLabel(intl, status)}</Tag>
     ) : null
 
+  const lateTag = (
+    <Tag color='orange'>
+      <FormattedMessage id='teacher_board.late' />
+    </Tag>
+  )
+
   // A raw LMS user id means nothing to the teacher: fall back to roster data, then to "Student".
   const studentLabel = s => {
     const m = s.userId ? members.find(x => x.userId === s.userId) : null
@@ -322,6 +394,59 @@ const TeacherClassBoardPage = () => {
     return members.map(m => ({ ...m, cells: (m.userId && cellsByUser.get(m.userId)) || [] }))
   }, [members, progress.rows])
 
+  const openWork = row => {
+    setReviewProject({ projectId: row.projectId, title: row.title, reviewStatus: row.reviewStatus })
+    setReviewComment(row.reviewComment || '')
+  }
+
+  const workColumns = [
+    {
+      title: intl.formatMessage({ id: 'teacher_board.student' }),
+      key: 'student',
+      render: (_, row) => studentLabel(row),
+    },
+    {
+      title: intl.formatMessage({ id: 'teacher_board.status' }),
+      key: 'status',
+      render: (_, row) => (
+        <Space wrap size={4}>
+          {statusTag(row.reviewStatus || 'empty')}
+          {row.late ? lateTag : null}
+        </Space>
+      ),
+    },
+    {
+      title: intl.formatMessage({ id: 'teacher_board.last_saved' }),
+      key: 'saved',
+      render: (_, row) =>
+        row.updatedAt ? (
+          <Space wrap size={4}>
+            <Text type='secondary'>{formatDateTime(row.updatedAt, intl.locale)}</Text>
+            {dayjs(row.updatedAt).isSame(dayjs(), 'day') ? (
+              <Tag color='green'>
+                <FormattedMessage id='teacher_board.saved_today' />
+              </Tag>
+            ) : null}
+          </Space>
+        ) : (
+          '–'
+        ),
+    },
+    {
+      key: 'action',
+      align: 'right',
+      // Only work the viewer may open has a project id: a teacher never gets one for a draft.
+      render: (_, row) =>
+        row.projectId ? (
+          <Button type='link' onClick={() => openWork(row)}>
+            <FormattedMessage
+              id={isHandedIn(row.reviewStatus) ? 'teacher_board.review' : 'teacher_board.preview'}
+            />
+          </Button>
+        ) : null,
+    },
+  ]
+
   const progressColumns = [
     {
       title: intl.formatMessage({ id: 'teacher_board.student' }),
@@ -332,8 +457,15 @@ const TeacherClassBoardPage = () => {
     ...progress.assignments.map(a => ({
       title: a.title,
       key: a.id,
-      render: (_, row) =>
-        statusTag((row.cells || []).find(c => c.assignmentId === a.id)?.status || 'missing'),
+      render: (_, row) => {
+        const cell = (row.cells || []).find(c => c.assignmentId === a.id)
+        return (
+          <React.Fragment>
+            {statusTag(cell?.status || 'missing')}
+            {cell?.late ? lateTag : null}
+          </React.Fragment>
+        )
+      },
     })),
   ]
 
@@ -367,23 +499,6 @@ const TeacherClassBoardPage = () => {
     },
   }
 
-  // Lesson cards: the roster already loaded for the board plus each student's assignment project.
-  // Built here so the page asks Open edX for the class roster once, not once per endpoint.
-  const lessonCards = useMemo(() => {
-    const byOwner = new Map(submissions.map(s => [s.ownerUserId, s]))
-    return members.map(m => {
-      const p = m.userId ? byOwner.get(m.userId) : undefined
-      return {
-        ...m,
-        projectId: p?.projectId,
-        projectTitle: p?.title,
-        updatedAt: p?.updatedAt,
-        reviewStatus: p?.reviewStatus,
-        savedToday: p ? dayjs(p.updatedAt).isSame(dayjs(), 'day') : false,
-      }
-    })
-  }, [members, submissions])
-
   return (
     <PageContent $wide>
       <Panel>
@@ -399,15 +514,9 @@ const TeacherClassBoardPage = () => {
             <Text type='secondary'>{klass?.edxCourseId}</Text>
           </div>
           <Space wrap>
-            <Tag color='processing'>
-              <FormattedMessage id='teacher_board.on_review' />: {counts.onReview}
-            </Tag>
-            <Tag>
-              <FormattedMessage id='teacher_board.missing' />: {counts.notHandedIn}
-            </Tag>
-            {counts.overdue > 0 ? (
+            {overdue > 0 ? (
               <Tag color='error'>
-                <FormattedMessage id='teacher_board.overdue' />: {counts.overdue}
+                <FormattedMessage id='teacher_board.overdue' />: {overdue}
               </Tag>
             ) : null}
             <Button icon={<UserAddOutlined />} onClick={() => setMembersOpen(true)}>
@@ -463,6 +572,30 @@ const TeacherClassBoardPage = () => {
               />
             </Text>
           ) : null}
+          {activeAssignment?.closedAt ? (
+            <Tag color='default'>
+              <FormattedMessage id='teacher_board.closed' />
+            </Tag>
+          ) : null}
+          {activeAssignment ? (
+            <Popconfirm
+              title={intl.formatMessage({
+                id: activeAssignment.closedAt
+                  ? 'teacher_board.reopen_confirm'
+                  : 'teacher_board.close_confirm',
+              })}
+              okText={intl.formatMessage({
+                id: activeAssignment.closedAt ? 'teacher_board.reopen' : 'teacher_board.close',
+              })}
+              cancelText={intl.formatMessage({ id: 'common.cancel' })}
+              onConfirm={onToggleClosed}>
+              <Button size='small'>
+                <FormattedMessage
+                  id={activeAssignment.closedAt ? 'teacher_board.reopen' : 'teacher_board.close'}
+                />
+              </Button>
+            </Popconfirm>
+          ) : null}
         </Space>
 
         <Tabs
@@ -470,93 +603,37 @@ const TeacherClassBoardPage = () => {
           onChange={setMode}
           items={[
             {
-              key: 'lesson',
-              label: <FormattedMessage id='teacher_board.tab_lesson' />,
-              children:
-                !loading && members.length === 0 ? (
-                  <Empty description={<FormattedMessage id='teacher_board.no_students' />} />
-                ) : (
-                  <Row gutter={[16, 16]}>
-                    {lessonCards.map(s => (
-                      <Col xs={24} sm={12} md={8} lg={6} key={s.userId || s.username}>
-                        <Card
-                          size='small'
-                          title={studentLabel(s)}
-                          extra={
-                            s.savedToday ? (
-                              <Tag color='green'>
-                                <FormattedMessage id='teacher_board.saved_today' />
-                              </Tag>
-                            ) : null
-                          }
-                          actions={
-                            s.projectId
-                              ? [
-                                  <Button
-                                    key='open'
-                                    type='link'
-                                    onClick={() =>
-                                      setReviewProject({
-                                        projectId: s.projectId,
-                                        title: s.projectTitle,
-                                        reviewStatus: s.reviewStatus,
-                                      })
-                                    }>
-                                    <FormattedMessage id='teacher_board.preview' />
-                                  </Button>,
-                                ]
-                              : []
-                          }>
-                          <Text type='secondary'>{s.projectTitle || '–'}</Text>
-                          {s.updatedAt ? (
-                            <div>
-                              <Text type='secondary' style={{ fontSize: 12 }}>
-                                {formatDateTime(s.updatedAt, intl.locale)}
-                              </Text>
-                            </div>
-                          ) : null}
-                          {statusTag(s.reviewStatus)}
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
-                ),
-            },
-            {
-              key: 'hw',
-              label: <FormattedMessage id='teacher_board.tab_hw' />,
+              key: 'work',
+              label: <FormattedMessage id='teacher_board.tab_work' />,
               children: (
-                <List
-                  loading={loading}
-                  dataSource={submissions}
-                  locale={{ emptyText: intl.formatMessage({ id: 'teacher_board.no_submissions' }) }}
-                  renderItem={item => (
-                    <List.Item
-                      actions={[
-                        <Button
-                          key='rev'
-                          type='link'
-                          onClick={() => {
-                            setReviewProject(item)
-                            setReviewComment(item.reviewComment || '')
-                          }}>
-                          <FormattedMessage id='teacher_board.review' />
-                        </Button>,
-                      ]}>
-                      <List.Item.Meta
-                        title={item.title}
-                        description={
-                          <Space wrap>
-                            <Text type='secondary'>
-                              {studentLabel({ userId: item.ownerUserId })}
-                            </Text>
-                            {statusTag(item.reviewStatus)}
-                          </Space>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
+                <Space orientation='vertical' size='middle' style={{ width: '100%' }}>
+                  <Segmented
+                    value={workFilter}
+                    onChange={setWorkFilter}
+                    options={Object.keys(WORK_FILTERS).map(key => ({
+                      value: key,
+                      label: `${intl.formatMessage({ id: `teacher_board.filter_${key}` })} · ${
+                        workCounts[key]
+                      }`,
+                    }))}
+                  />
+                  <Table
+                    rowKey='key'
+                    loading={loading}
+                    dataSource={visibleWorkRows}
+                    columns={workColumns}
+                    pagination={false}
+                    scroll={{ x: true }}
+                    locale={{
+                      emptyText: intl.formatMessage({
+                        id:
+                          workRows.length === 0
+                            ? 'teacher_board.no_students'
+                            : 'teacher_board.filter_empty',
+                      }),
+                    }}
+                  />
+                </Space>
               ),
             },
             {

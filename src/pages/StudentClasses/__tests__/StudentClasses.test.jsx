@@ -55,4 +55,27 @@ describe('StudentClassesPage', () => {
     const accepted = screen.getAllByRole('button', { name: 'Сдать' })
     expect(accepted.every(button => button.disabled)).toBe(true)
   })
+
+  it('does not let a draft be handed in once the teacher closed the assignment', async () => {
+    api.listStudentClasses.mockResolvedValue({
+      data: { items: [{ id: 'c1', displayName: 'Audit 5A' }] },
+    })
+    api.listStudentAssignments.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: 'a1',
+            title: 'Лабиринт',
+            myProjectId: 'p1',
+            myReviewStatus: 'draft',
+            closedAt: '2026-11-01T10:00:00Z',
+          },
+        ],
+      },
+    })
+    renderPage(<StudentClassesPage />)
+
+    expect(await screen.findByText('Приём закрыт')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Сдать' }).disabled).toBe(true)
+  })
 })

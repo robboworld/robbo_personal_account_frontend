@@ -41,6 +41,12 @@ export const createAssignment = (classId, body) =>
 export const issueLate = (classId, assignmentId) =>
   instance.post(`/api/teacher/classes/${classId}/assignments/${assignmentId}/issue-late`)
 
+export const closeAssignment = (classId, assignmentId) =>
+  instance.post(`/api/teacher/classes/${classId}/assignments/${assignmentId}/close`)
+
+export const reopenAssignment = (classId, assignmentId) =>
+  instance.post(`/api/teacher/classes/${classId}/assignments/${assignmentId}/reopen`)
+
 export const listSubmissions = (classId, assignmentId) =>
   instance.get(`/api/teacher/classes/${classId}/assignments/${assignmentId}/submissions`)
 

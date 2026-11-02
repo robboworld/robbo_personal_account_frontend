@@ -37,6 +37,7 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
   const [submitting, setSubmitting] = useState(false)
   const status = assignment.myReviewStatus || (assignment.myProjectId ? 'draft' : '')
   const handedIn = isHandedIn(status) && status !== 'returned'
+  const closed = !!assignment.closedAt
   const overdue = assignment.dueAt && !handedIn && dayjs(assignment.dueAt).isBefore(dayjs())
 
   const submit = async () => {
@@ -71,8 +72,8 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
           okText={intl.formatMessage({ id: 'student_class.submit' })}
           cancelText={intl.formatMessage({ id: 'common.cancel' })}
           onConfirm={submit}
-          disabled={handedIn}>
-          <Button type='primary' size='small' loading={submitting} disabled={handedIn}>
+          disabled={handedIn || closed}>
+          <Button type='primary' size='small' loading={submitting} disabled={handedIn || closed}>
             <FormattedMessage
               id={status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'}
             />
@@ -95,6 +96,11 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
                   <FormattedMessage id='student_class.not_issued' />
                 </Tag>
               )}
+              {closed && !handedIn ? (
+                <Tag>
+                  <FormattedMessage id='student_class.closed' />
+                </Tag>
+              ) : null}
               {overdue ? (
                 <Tag color='error'>
                   <FormattedMessage id='student_class.overdue' />

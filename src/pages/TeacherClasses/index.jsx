@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  Alert,
   Button,
   Card,
+  Checkbox,
   Empty,
   Form,
   Input,
@@ -40,6 +42,8 @@ const TeacherClassesPage = ({ userRole }) => {
   const [inviteOpen, setInviteOpen] = useState(null)
   const [courses, setCourses] = useState(null)
   const [form] = Form.useForm()
+  // Most classes live only in the ЛК; the LMS link is opt-in per class.
+  const [linkLms, setLinkLms] = useState(false)
   const required = { required: true, message: intl.formatMessage({ id: 'form.required' }) }
 
   const load = useCallback(async () => {
@@ -60,12 +64,12 @@ const TeacherClassesPage = ({ userRole }) => {
 
   // Courses for the picker load with the dialog; without them the field takes a typed id.
   useEffect(() => {
-    if (!createOpen || courses !== null) return
+    if (!createOpen || !linkLms || courses !== null) return
     api
       .listTeacherCourses()
       .then(({ data }) => setCourses(data.items || []))
       .catch(() => setCourses([]))
-  }, [createOpen, courses])
+  }, [createOpen, linkLms, courses])
 
   const courseOptions = useMemo(
     () =>
@@ -80,12 +84,14 @@ const TeacherClassesPage = ({ userRole }) => {
     setCreating(true)
     try {
       const { data } = await api.createTeacherClass({
-        courseId: values.courseId.trim(),
         displayName: values.displayName.trim(),
+        linkLms: !!values.linkLms,
+        courseId: values.linkLms ? values.courseId.trim() : '',
       })
       message.success(intl.formatMessage({ id: 'teacher_class.created' }))
       setCreateOpen(false)
       form.resetFields()
+      setLinkLms(false)
       setInviteOpen(data)
       load()
     } catch (e) {
@@ -156,9 +162,14 @@ const TeacherClassesPage = ({ userRole }) => {
                 <Title level={4} style={{ marginTop: 0 }}>
                   {item.displayName}
                 </Title>
-                <Text type='secondary' style={{ fontSize: 12 }}>
-                  {item.edxCourseId}
-                </Text>
+                {item.lmsLinked ? (
+                  <Text type='secondary' style={{ fontSize: 12 }}>
+                    <Tag color='purple'>
+                      <FormattedMessage id='teacher_class.lms_tag' />
+                    </Tag>
+                    {item.edxCourseId}
+                  </Text>
+                ) : null}
                 {allClasses && item.ownerName && (
                   <div>
                     <Text type='secondary'>
@@ -194,7 +205,14 @@ const TeacherClassesPage = ({ userRole }) => {
         okText={<FormattedMessage id='teacher_class.create' />}
         cancelText={<FormattedMessage id='common.cancel' />}
         confirmLoading={creating}>
-        <Form form={form} layout='vertical' onFinish={onCreate}>
+        <Form
+          form={form}
+          layout='vertical'
+          onFinish={onCreate}
+          initialValues={{ linkLms: false }}
+          onValuesChange={changed => {
+            if ('linkLms' in changed) setLinkLms(changed.linkLms)
+          }}>
           <Form.Item
             name='displayName'
             label={<FormattedMessage id='teacher_class.name' />}
@@ -202,31 +220,62 @@ const TeacherClassesPage = ({ userRole }) => {
             <Input placeholder={intl.formatMessage({ id: 'teacher_class.name_placeholder' })} />
           </Form.Item>
           <Form.Item
-            name='courseId'
-            label={<FormattedMessage id='teacher_class.course' />}
-            rules={[required]}
-            extra={
-              courses && courses.length === 0 ? (
-                <FormattedMessage id='teacher_class.course_manual_hint' />
-              ) : null
-            }>
-            {courses === null ? (
-              <Select
-                loading
-                disabled
-                placeholder={intl.formatMessage({ id: 'teacher_class.course_loading' })}
-              />
-            ) : courses.length ? (
-              <Select
-                showSearch
-                optionFilterProp='label'
-                options={courseOptions}
-                placeholder={intl.formatMessage({ id: 'teacher_class.course_placeholder' })}
-              />
-            ) : (
-              <Input placeholder='course-v1:Robbo+Scratch+2026' />
-            )}
+            name='linkLms'
+            valuePropName='checked'
+            extra={<FormattedMessage id='teacher_class.link_lms_extra' />}>
+            <Checkbox>
+              <FormattedMessage id='teacher_class.link_lms' />
+            </Checkbox>
           </Form.Item>
+          {linkLms && (
+            <Alert
+              type='info'
+              showIcon
+              style={{ marginBottom: 16 }}
+              message={<FormattedMessage id='teacher_class.link_lms_why_title' />}
+              description={
+                <ul style={{ margin: 0, paddingLeft: 18 }}>
+                  <li>
+                    <FormattedMessage id='teacher_class.link_lms_why_course' />
+                  </li>
+                  <li>
+                    <FormattedMessage id='teacher_class.link_lms_why_cohort' />
+                  </li>
+                  <li>
+                    <FormattedMessage id='teacher_class.link_lms_why_limit' />
+                  </li>
+                </ul>
+              }
+            />
+          )}
+          {linkLms && (
+            <Form.Item
+              name='courseId'
+              label={<FormattedMessage id='teacher_class.course' />}
+              rules={[required]}
+              extra={
+                courses && courses.length === 0 ? (
+                  <FormattedMessage id='teacher_class.course_manual_hint' />
+                ) : null
+              }>
+              {courses === null ? (
+                <Select
+                  loading
+                  disabled
+                  placeholder={intl.formatMessage({ id: 'teacher_class.course_loading' })}
+                />
+              ) : courses.length ? (
+                <Select
+                  showSearch
+                  optionFilterProp='label'
+                  options={courseOptions}
+                  placeholder={intl.formatMessage({ id: 'teacher_class.course_placeholder' })}
+                />
+              ) : (
+                <Input placeholder='course-v1:Robbo+Scratch+2026' />
+              )}
+            </Form.Item>
+          )}
         </Form>
       </Modal>
 
