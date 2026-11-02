@@ -22,6 +22,10 @@ const defaultData = {
 const antdTheme = {
   token: {
     colorPrimary: defaultData.colorPrimary,
+    // Links default to colorInfo (blue) in Ant, not colorPrimary.
+    colorLink: theme.colors.accentGreen,
+    colorLinkHover: theme.colors.accentGreenHover,
+    colorLinkActive: theme.colors.accentGreenDark,
     borderRadius: defaultData.borderRadius,
   },
 }

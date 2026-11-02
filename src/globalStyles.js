@@ -41,6 +41,20 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
 
+  /* Plain <a> / router Link: green instead of browser blue. :where() keeps
+     specificity at zero so any component's own link color still wins. */
+  :where(a) {
+    color: ${theme.colors.accentGreen};
+  }
+
+  :where(a:hover) {
+    color: ${theme.colors.accentGreenHover};
+  }
+
+  :where(a:active) {
+    color: ${theme.colors.accentGreenDark};
+  }
+
   /* Mobile nav drawer: kill Ant default body padding / inset */
   .lk-mobile-nav-drawer .ant-drawer-body {
     padding: 0 !important;
