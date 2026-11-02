@@ -96,7 +96,7 @@ const TeacherClassesPage = ({ userRole }) => {
   }
 
   return (
-    <PageContent>
+    <PageContent $wide>
       <Panel>
         <SectionHeader>
           <SectionTitle>

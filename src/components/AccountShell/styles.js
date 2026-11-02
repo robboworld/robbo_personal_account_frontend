@@ -37,9 +37,10 @@ export const glassSurface = css`
   }
 `
 
+// $wide — for dense pages (class cards, the class board with its toolbar and progress table).
 export const PageContent = styled.div`
   width: 100%;
-  max-width: 1120px;
+  max-width: ${({ $wide }) => ($wide ? '1440px' : '1120px')};
   margin: 0 auto;
   padding: 1.25rem 1rem 2.5rem;
   padding-bottom: max(2.5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)));

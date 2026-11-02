@@ -214,7 +214,7 @@ const StudentClassesPage = () => {
   }
 
   return (
-    <PageContent>
+    <PageContent $wide>
       <Panel>
         <SectionHeader>
           <SectionTitle>

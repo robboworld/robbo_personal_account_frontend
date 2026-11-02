@@ -385,7 +385,7 @@ const TeacherClassBoardPage = () => {
   }, [members, submissions])
 
   return (
-    <PageContent>
+    <PageContent $wide>
       <Panel>
         <SectionHeader>
           <div style={{ minWidth: 0 }}>
