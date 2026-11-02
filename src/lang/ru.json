@@ -86,6 +86,7 @@
     "project_page.stop_all": "Стоп",
     "project_page.player_error": "Не удалось загрузить плеер проекта.",
     "project_page.invalid_project_file": "Ошибка в файле проекта",
+    "project_page.missing_assets": "В проекте не хватает картинок или звуков. Загрузите проект заново из .sb3.",
     "project_page.player_empty": "Проект пока пуст – добавьте блоки в RobboScratch или загрузите .sb3.",
     "project_page.player_not_ready": "Плеер недоступен: обновите backend ЛК или загрузите файл .sb3.",
     "project_page.player_load_timeout": "Плеер не ответил. Убедитесь, что scratch-gui запущен на порту 5001.",

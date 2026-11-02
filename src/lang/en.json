@@ -86,6 +86,7 @@
     "project_page.stop_all": "Stop",
     "project_page.player_error": "Could not load the project player.",
     "project_page.invalid_project_file": "Error in project file",
+    "project_page.missing_assets": "The project is missing images or sounds. Upload the project again from an .sb3.",
     "project_page.player_empty": "The project is empty – add blocks in RobboScratch or upload an .sb3.",
     "project_page.player_not_ready": "Player unavailable: update the LK backend or upload a .sb3 file.",
     "project_page.player_load_timeout": "Player did not respond. Ensure scratch-gui is running on port 5001.",

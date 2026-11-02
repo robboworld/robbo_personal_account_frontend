@@ -39,8 +39,13 @@ function buildPlayerSrc(playToken, locale) {
   return `${base}?${params.toString()}`
 }
 
-function mapPlayerErrorMessage(raw, intl) {
+export function mapPlayerErrorMessage(raw, intl) {
   const msg = String(raw || '')
+  // scratch-vm without a costume/sound file: "costume.asset is null" (Firefox),
+  // "Cannot read properties of null (reading 'assetId')" (Chrome).
+  if (msg.includes('assetId') || /\b(costume|sound)\.asset is null/.test(msg)) {
+    return intl.formatMessage({ id: 'project_page.missing_assets' })
+  }
   if (
     msg === 'INVALID_PROJECT_FILE' ||
     msg.includes('validationError') ||
