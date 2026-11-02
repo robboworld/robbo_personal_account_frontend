@@ -601,9 +601,10 @@ const TeacherClassBoardPage = () => {
           <Form.Item
             name='templateProjectId'
             label={<FormattedMessage id='teacher_board.field_template' />}
-            rules={[required]}
+            tooltip={intl.formatMessage({ id: 'teacher_board.template_why' })}
             extra={templates.length ? null : <FormattedMessage id='teacher_board.template_hint' />}>
             <Select
+              allowClear
               showSearch
               optionFilterProp='label'
               options={templates.map(t => ({
