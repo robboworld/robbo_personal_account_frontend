@@ -274,12 +274,10 @@ export const projectPageAPI = {
     return res.json()
   },
 
-  getProjectPlayToken(token, projectPageId) {
+  // The instance adds Bearer when a token is in memory; in oidc_bff the session cookie is enough.
+  getProjectPlayToken(projectPageId) {
     return instance.get(`projectPage/${encodeURIComponent(projectPageId)}/play-token`, {
       withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     })
   },
 }

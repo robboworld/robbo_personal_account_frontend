@@ -13,7 +13,6 @@ import { useIntl } from 'react-intl'
 import { projectPageAPI } from '@/api/projectPage'
 import config from '@/config'
 import { resolveProjectPreviewUrl } from '@/helpers/projectPreview'
-import { getAccessToken } from '@/helpers/accessTokenMemory'
 
 import './ScratchPlayerEmbed.css'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
@@ -249,8 +248,7 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed(
     }
 
     let cancelled = false
-    const token = getAccessToken()
-    if (!token || !projectPageId) {
+    if (!projectPageId) {
       setError(intl.formatMessage({ id: 'project_page.player_error' }))
       setLoading(false)
       return undefined
@@ -259,7 +257,7 @@ const ScratchPlayerEmbed = forwardRef(function ScratchPlayerEmbed(
     setError(null)
     setReady(false)
     projectPageAPI
-      .getProjectPlayToken(token, projectPageId)
+      .getProjectPlayToken(projectPageId)
       .then(res => {
         if (cancelled) return
         setPlayToken(res.data?.playToken || res.data)
