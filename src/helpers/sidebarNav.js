@@ -1,6 +1,7 @@
 import {
   CLIENTS_ROUTE,
   MY_PROJECTS_ROUTE,
+  MY_FILES_ROUTE,
   PROFILE_PAGE_ROUTE,
   CUSTOMIZATION_PAGE_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
@@ -22,6 +23,8 @@ import {
   TEACHER,
   TEACHER_CLASSES_ROUTE,
   STUDENT_CLASSES_ROUTE,
+  USERS_ROUTE,
+  ADMIN_STORAGE_ROUTE,
 } from '@/constants'
 
 const exactByRole = {
@@ -56,8 +59,11 @@ const exactByRole = {
   [SUPER_ADMIN]: {
     [PROFILE_PAGE_ROUTE]: '1',
     [CUSTOMIZATION_PAGE_ROUTE]: 'customization',
+    [MY_PROJECTS_ROUTE]: '2',
     [MY_LICENSES_ROUTE]: 'my_licenses',
     [ISSUE_LICENSE_ROUTE]: 'issue_license',
+    [USERS_ROUTE]: 'users_moderation',
+    [ADMIN_STORAGE_ROUTE]: 'admin_storage',
     [CLIENTS_ROUTE]: '5',
     [ROBBO_UNITS_ROUTE]: '6',
     [ROBBO_GROUPS_ROUTE]: '7',
@@ -95,6 +101,10 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
 
   if (pathname === MY_SESSIONS_ROUTE) {
     return 'my_sessions'
+  }
+
+  if (pathname === MY_FILES_ROUTE) {
+    return 'my_files'
   }
 
   if (pathname.startsWith(TEACHER_CLASSES_ROUTE)) {

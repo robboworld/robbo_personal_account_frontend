@@ -1,4 +1,4 @@
-import { dayLabel, groupByDay, iconKind, isExternalUrl, kindLabelId } from '../feed'
+import { dayLabel, groupByDay, iconKind, isExternalUrl, kindLabelId, severityTone } from '../feed'
 
 const intl = {
   formatMessage: ({ id }) =>
@@ -32,6 +32,16 @@ describe('notification feed helpers', () => {
     expect(iconKind({ feedKind: 'personal', source: 'teacher' })).toBe('teacher')
     expect(iconKind({ feedKind: 'announcement' })).toBe('announcement')
     expect(kindLabelId({ feedKind: 'personal', source: 'admin' })).toBe('notifications.kind_admin')
+  })
+
+  it('marks WARNING and CRITICAL rows with a warning icon and tone', () => {
+    const warning = { feedKind: 'personal', source: 'system', severity: 'WARNING' }
+    expect(severityTone(warning)).toBe('warning')
+    expect(iconKind(warning)).toBe('warning')
+    expect(severityTone({ feedKind: 'personal', severity: 'CRITICAL' })).toBe('critical')
+    expect(severityTone({ feedKind: 'personal', source: 'system', severity: 'INFO' })).toBeNull()
+    expect(iconKind({ feedKind: 'personal', source: 'system', severity: 'INFO' })).toBe('system')
+    expect(severityTone({ feedKind: 'lms', kind: 'ora_grade_assigned' })).toBeNull()
   })
 
   it('treats only absolute http(s) links as external', () => {

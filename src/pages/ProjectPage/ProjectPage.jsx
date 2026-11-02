@@ -80,6 +80,7 @@ import { hasLmsPasswordFallback } from '@/helpers/oidcSession'
 import { useActions } from '@/helpers/useActions'
 import { displayProjectTitle } from '@/helpers/intl'
 import Loader from '@/components/Loader'
+import ModerationReasonModal from '@/components/ModerationReasonModal'
 import { getProjectPageState } from '@/reducers/projectPage'
 import { getProjectPageById, clearProjectPageState } from '@/actions'
 import RobboGuestFonts from '@/theme/robboGuestFonts'
@@ -330,7 +331,6 @@ function AuthenticatedProjectView({ projectPageId, token }) {
   const [playerReloadKey, setPlayerReloadKey] = useState(0)
   const [isPlayerRunning, setIsPlayerRunning] = useState(false)
   const [moderateOpen, setModerateOpen] = useState(false)
-  const [moderateReason, setModerateReason] = useState('')
   const [moderateBusy, setModerateBusy] = useState(false)
   const [featureOpen, setFeatureOpen] = useState(false)
   const [featureOrder, setFeatureOrder] = useState(1)
@@ -580,18 +580,12 @@ function AuthenticatedProjectView({ projectPageId, token }) {
     })
   }
 
-  const confirmModerateDelete = async () => {
-    const reason = moderateReason.trim()
-    if (reason.length < 3) {
-      message.warning(intl.formatMessage({ id: 'project_page.moderate_reason_required' }))
-      return
-    }
+  const confirmModerateDelete = async reason => {
     setModerateBusy(true)
     try {
       await moderateDeleteProjectPage(projectPageId, reason)
       message.success(intl.formatMessage({ id: 'project_page.moderate_delete_ok' }))
       setModerateOpen(false)
-      setModerateReason('')
       navigate(PUBLIC_PROJECTS_ROUTE)
     } catch (e) {
       message.error(apiErrorMessage(e, intl, 'project_page.moderate_delete_error'))
@@ -947,10 +941,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                           type='default'
                           danger
                           icon={<DeleteOutlined />}
-                          onClick={() => {
-                            setModerateReason('')
-                            setModerateOpen(true)
-                          }}>
+                          onClick={() => setModerateOpen(true)}>
                           <FormattedMessage id='project_page.moderate_delete' />
                         </ActionButton>
                       </React.Fragment>
@@ -972,32 +963,21 @@ function AuthenticatedProjectView({ projectPageId, token }) {
           </MetaCard>
         </MainGrid>
       )}
-      <Modal
+      <ModerationReasonModal
         open={moderateOpen}
         title={intl.formatMessage({ id: 'project_page.moderate_delete_title' })}
         okText={intl.formatMessage({ id: 'project_page.moderate_delete_confirm' })}
-        cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
-        okButtonProps={{
-          danger: true,
-          loading: moderateBusy,
-          disabled: moderateReason.trim().length < 3,
-        }}
-        onOk={confirmModerateDelete}
-        onCancel={() => !moderateBusy && setModerateOpen(false)}
-        destroyOnHidden>
-        <p>
+        body={
           <FormattedMessage
             id='project_page.moderate_delete_body'
             values={{ title: displayProjectTitle(projectPage?.title, intl) }}
           />
-        </p>
-        <TextArea
-          rows={4}
-          value={moderateReason}
-          onChange={e => setModerateReason(e.target.value)}
-          placeholder={intl.formatMessage({ id: 'project_page.moderate_reason_placeholder' })}
-        />
-      </Modal>
+        }
+        danger
+        loading={moderateBusy}
+        onSubmit={confirmModerateDelete}
+        onCancel={() => setModerateOpen(false)}
+      />
       <Modal
         open={featureOpen}
         title={intl.formatMessage({ id: 'project_page.landing_add_title' })}

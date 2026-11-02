@@ -9,6 +9,7 @@ import {
   PUBLIC_PROJECTS_ROUTE,
   EXPLORE_ROUTE,
   MY_PROJECTS_ROUTE,
+  MY_FILES_ROUTE,
   MY_COURSES_ROUTE,
   OIDC_CALLBACK_ROUTE,
   PROFILE_PAGE_ROUTE,
@@ -20,6 +21,7 @@ import {
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
   USERS_ROUTE,
+  ADMIN_STORAGE_ROUTE,
   SUPER_ADMIN,
   STUDENT,
   UNIT_ADMIN,
@@ -34,7 +36,7 @@ import {
   PAYMENT_RECEIPT_ROUTE,
   DEVICE_LINK_ROUTE,
   CUSTOMIZATION_PAGE_ROUTE,
-  CLASSES_ROLES,
+  FILES_ROLES,
   TEACHER_CLASSES_ROUTE,
   TEACHER_CLASS_BOARD_ROUTE,
   STUDENT_CLASSES_ROUTE,
@@ -55,6 +57,7 @@ import RegisterEntry from '@/pages/RegisterEntry'
 const Landing = lazy(() => import('@/pages/Landing'))
 const Explore = lazy(() => import('@/pages/Explore'))
 const MyProjects = lazy(() => import('@/pages/MyProjects'))
+const MyFiles = lazy(() => import('@/pages/MyFiles'))
 const PublicProjects = lazy(() => import('@/pages/PublicProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const LmsRedirect = lazy(() => import('@/pages/LmsRedirect'))
@@ -66,6 +69,7 @@ const RobboUnitsPage = lazy(() => import('@/pages/RobboUnits'))
 const RobboGroups = lazy(() => import('@/pages/RobboGroups'))
 const SendNotificationPage = lazy(() => import('@/pages/SendNotification'))
 const UserModerationPage = lazy(() => import('@/pages/UserModeration'))
+const AdminStoragePage = lazy(() => import('@/pages/AdminStorage'))
 const ScratchHubPage = lazy(() => import('@/pages/ScratchHub'))
 const MyLicensesPage = lazy(() => import('@/pages/Licensing/MyLicenses'))
 const MySessionsPage = lazy(() => import('@/pages/Licensing/MySessions'))
@@ -116,17 +120,18 @@ const AppRoutes = () => (
         path={MY_PROJECTS_ROUTE}
         element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <MyProjects />)}
       />
+      <Route path={MY_FILES_ROUTE} element={wrapProtected(FILES_ROLES, <MyFiles />)} />
       <Route
         path={TEACHER_CLASSES_ROUTE}
-        element={wrapProtected(CLASSES_ROLES, <TeacherClassesPage />)}
+        element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassesPage />)}
       />
       <Route
         path={TEACHER_CLASS_BOARD_ROUTE}
-        element={wrapProtected(CLASSES_ROLES, <TeacherClassBoardPage />)}
+        element={wrapProtected([TEACHER, SUPER_ADMIN], <TeacherClassBoardPage />)}
       />
       <Route
         path={STUDENT_CLASSES_ROUTE}
-        element={wrapProtected(CLASSES_ROLES, <StudentClassesPage />)}
+        element={wrapProtected([STUDENT, TEACHER, SUPER_ADMIN], <StudentClassesPage />)}
       />
       <Route
         path={PUBLIC_PROJECTS_ROUTE}
@@ -162,6 +167,10 @@ const AppRoutes = () => (
         element={wrapProtected([SUPER_ADMIN, UNIT_ADMIN], <SendNotificationPage />)}
       />
       <Route path={USERS_ROUTE} element={wrapProtected([SUPER_ADMIN], <UserModerationPage />)} />
+      <Route
+        path={ADMIN_STORAGE_ROUTE}
+        element={wrapProtected([SUPER_ADMIN], <AdminStoragePage />)}
+      />
       <Route path={MY_LICENSES_ROUTE} element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)} />
       <Route path={MY_SESSIONS_ROUTE} element={wrapProtected(STANDARD_ROLES, <MySessionsPage />)} />
       <Route

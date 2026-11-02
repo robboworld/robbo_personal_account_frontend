@@ -29,10 +29,21 @@ import {
   UserAddOutlined,
   UserDeleteOutlined,
   UserOutlined,
+  WarningOutlined,
 } from '@ant-design/icons'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+
+import {
+  dayLabel,
+  groupByDay,
+  iconKind,
+  isExternalUrl,
+  isUnread,
+  kindLabelId,
+  severityTone,
+} from './feed'
 
 import {
   fetchNotificationFeed,
@@ -45,8 +56,6 @@ import {
 import theme from '@/theme'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
-
-import { dayLabel, groupByDay, iconKind, isExternalUrl, isUnread, kindLabelId } from './feed'
 
 // Every open tab polls: keep it cheap. Focus and visibility changes refresh at once.
 const UNREAD_POLL_MS = 30000
@@ -83,16 +92,16 @@ const ICONS = {
   teacher: MessageOutlined,
   system: InfoCircleOutlined,
   admin: MailOutlined,
+  warning: WarningOutlined,
+  critical: WarningOutlined,
 }
 
-const green = robboGuestTokens.green
-const greenDark = robboGuestTokens.greenDark
+const { green, greenDark, grey } = robboGuestTokens
 const greenTint = robboGuestTokens.greenLight
 const greenSoft = '#d3f1df'
 const headTint = '#e3f6ea'
 const text = '#1f2328'
 const muted = robboGuestTokens.bodyMuted
-const grey = robboGuestTokens.grey
 const line = '#e8eaed'
 const hover = '#f6f7f8'
 
@@ -398,6 +407,17 @@ const Kind = styled.span`
   background: ${greenTint};
   color: ${greenDark};
   font-size: 16px;
+
+  /* WARNING / CRITICAL rows stand out from the green ones: yellow and red, as antd's states. */
+  &[data-tone='warning'] {
+    background: #fff4d6;
+    color: #d48806;
+  }
+
+  &[data-tone='critical'] {
+    background: #fff1f0;
+    color: #cf1322;
+  }
 `
 
 const Entry = styled.div`
@@ -421,7 +441,7 @@ const Entry = styled.div`
     background: ${greenTint};
   }
 
-  &.is-unread ${Kind} {
+  &.is-unread ${Kind}:not([data-tone]) {
     background: #fff;
   }
 
@@ -1058,7 +1078,7 @@ const NotificationBell = ({ variant }) => {
                 }
               : undefined
           }>
-          <Kind aria-hidden='true'>
+          <Kind aria-hidden='true' data-tone={severityTone(row) || undefined}>
             <Icon />
           </Kind>
           <Content>

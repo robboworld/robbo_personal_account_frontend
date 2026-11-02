@@ -38,10 +38,8 @@ import {
 import { listMyLicenses, getEntitlements } from '@/api/licensing'
 import { authAPI } from '@/api/auth'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
-import { formatStorageMb, tariffDisplayName } from '@/helpers/tariffs'
-import theme from '@/theme'
-
-const METER_COLOR = theme.colors.accentGreen
+import { tariffDisplayName } from '@/helpers/tariffs'
+import StorageMeter, { METER_COLOR, meterPercent, meterStatus } from '@/components/StorageMeter'
 
 const { Text } = Typography
 
@@ -60,19 +58,6 @@ const formatExpiresAt = (iso, locale) => {
   }
 }
 
-const meterPercent = (used, limit) => {
-  if (!limit || limit <= 0) {
-    return 0
-  }
-  return Math.min(100, Math.round((used / limit) * 100))
-}
-
-const meterStatus = percent => {
-  if (percent >= 95) return 'exception'
-  if (percent >= 80) return 'active'
-  return 'normal'
-}
-
 const isLicenseActive = lic => {
   const status = String(lic?.status || '').toLowerCase()
   if (status && status !== 'active') return false
@@ -86,11 +71,6 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
   // The size limit is per project; the number of projects is not limited.
   const sizeMb = Number(entitlements.maxProjectSizeMb ?? entitlements.cloudQuotaMb) || 0
   const projectCount = Number(entitlements.projectCount) || 0
-
-  const storageMb = Number(entitlements.storageQuotaMb) || 0
-  const usedMb = (Number(entitlements.usedBytes) || 0) / (1024 * 1024)
-  const storagePercent = meterPercent(usedMb, storageMb)
-  const storageFull = storageMb > 0 && usedMb >= storageMb
 
   const seatLimit = Number(entitlements.seatLimit) || 0
   const seatsPercent = meterPercent(seatsUsed, seatLimit)
@@ -113,29 +93,7 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
         </TariffBadge>
       </UsageHeader>
       <UsageStack>
-        {storageMb > 0 ? (
-          <UsageMeter>
-            <UsageMeterTop>
-              <UsageMeterLabel>{intl.formatMessage({ id: 'licensing.storage' })}</UsageMeterLabel>
-              <UsageMeterValue>
-                {intl.formatMessage(
-                  { id: 'licensing.usage_count_value' },
-                  { used: formatStorageMb(intl, usedMb), limit: formatStorageMb(intl, storageMb) },
-                )}
-              </UsageMeterValue>
-            </UsageMeterTop>
-            <Progress
-              percent={storagePercent}
-              status={meterStatus(storagePercent)}
-              strokeColor={storagePercent >= 95 ? undefined : METER_COLOR}
-            />
-            {storageFull ? (
-              <Text type='secondary' style={{ fontSize: 13 }}>
-                {intl.formatMessage({ id: 'licensing.storage_full' })}
-              </Text>
-            ) : null}
-          </UsageMeter>
-        ) : null}
+        <StorageMeter entitlements={entitlements} />
 
         <UsageMeter>
           <UsageMeterTop>

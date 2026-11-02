@@ -23,6 +23,16 @@ const KNOWN_ERRORS = {
   too_many_requests: 'errors.too_many_requests',
   project_size_exceeded: 'errors.too_large',
   storage_quota_exceeded: 'errors.storage_quota_exceeded',
+  file_type_not_allowed: 'errors.file_type_not_allowed',
+  file_size_exceeded: 'errors.file_too_large',
+  file_count_exceeded: 'errors.file_count_exceeded',
+  file_content_not_allowed: 'errors.file_content_not_allowed',
+  too_many_uploads: 'errors.too_many_uploads',
+  upload_rate_limited: 'errors.upload_rate_limited',
+  storage_unavailable: 'errors.storage_unavailable',
+  file_not_found: 'errors.not_found',
+  not_found: 'errors.not_found',
+  reason_required: 'errors.reason_required',
   'recipient is not a student of your classes': 'teacher_board.message_not_your_student',
   teacher_daily_limit: 'teacher_board.message_daily_limit',
 }
@@ -33,6 +43,7 @@ const STATUS_ERRORS = {
   404: 'errors.not_found',
   409: 'errors.conflict',
   413: 'errors.too_large',
+  415: 'errors.file_type_not_allowed',
   429: 'errors.too_many_requests',
 }
 

@@ -25,6 +25,7 @@ import {
   TEACHERS_PAGE_ROUTE,
   UNIT_ADMINS_ROUTE,
   USERS_ROUTE,
+  ADMIN_STORAGE_ROUTE,
 } from '@/constants'
 
 // First match wins: specific routes before their prefixes.
@@ -44,6 +45,7 @@ const PAGE_TITLES = [
   [MY_SESSIONS_ROUTE, 'sidebar_data.my_sessions'],
   [DEVICE_LINK_ROUTE, 'sidebar_data.my_licenses'],
   [USERS_ROUTE, 'sidebar_data.users'],
+  [ADMIN_STORAGE_ROUTE, 'sidebar_data.admin_storage'],
   [SEND_NOTIFICATION_ROUTE, 'sidebar_data.send_notification'],
   [CLIENTS_ROUTE, 'sidebar_data.clients'],
   [TEACHERS_PAGE_ROUTE, 'sidebar_data.teachers'],

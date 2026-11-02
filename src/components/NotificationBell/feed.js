@@ -58,8 +58,21 @@ const LMS_ICONS = {
   added_to_course_team: 'team',
 }
 
-/** Which icon a row gets: by the Open edX type for LMS rows, by the sender for LK ones. */
+/** 'warning' | 'critical' for LK rows sent with that severity, else null (the usual green). */
+export function severityTone(row) {
+  const severity = String(row.severity || '').toUpperCase()
+  if (severity === 'WARNING') return 'warning'
+  if (severity === 'CRITICAL') return 'critical'
+  return null
+}
+
+/**
+ * Which icon a row gets: a warning sign for WARNING/CRITICAL, else by the Open edX type for
+ * LMS rows and by the sender for LK ones.
+ */
 export function iconKind(row) {
+  const tone = severityTone(row)
+  if (tone) return tone
   if (row.feedKind === 'lms') {
     if (LMS_ICONS[row.kind]) return LMS_ICONS[row.kind]
     if ((row.kind || '').startsWith('learner_')) return 'learner'

@@ -28,6 +28,34 @@ describe('apiErrorMessage', () => {
     )
   })
 
+  it('maps the file cloud codes', () => {
+    const cases = [
+      [415, 'FILE_TYPE_NOT_ALLOWED', 'errors.file_type_not_allowed'],
+      [409, 'FILE_SIZE_EXCEEDED', 'errors.file_too_large'],
+      [409, 'STORAGE_QUOTA_EXCEEDED', 'errors.storage_quota_exceeded'],
+      [409, 'FILE_COUNT_EXCEEDED', 'errors.file_count_exceeded'],
+      [415, 'FILE_CONTENT_NOT_ALLOWED', 'errors.file_content_not_allowed'],
+      [429, 'TOO_MANY_UPLOADS', 'errors.too_many_uploads'],
+      [429, 'UPLOAD_RATE_LIMITED', 'errors.upload_rate_limited'],
+      [507, 'STORAGE_UNAVAILABLE', 'errors.storage_unavailable'],
+      [404, 'FILE_NOT_FOUND', 'errors.not_found'],
+    ]
+    cases.forEach(([status, code, id]) => {
+      expect(apiErrorMessageId(axiosError(status, { error: 'some text', code }))).toBe(id)
+    })
+    // A 415 without a code (e.g. from a proxy) still names the problem.
+    expect(apiErrorMessageId(axiosError(415, ''))).toBe('errors.file_type_not_allowed')
+  })
+
+  it('maps the admin moderation codes', () => {
+    expect(
+      apiErrorMessageId(axiosError(400, { error: 'reason required', code: 'REASON_REQUIRED' })),
+    ).toBe('errors.reason_required')
+    expect(apiErrorMessageId(axiosError(404, { error: 'not found', code: 'NOT_FOUND' }))).toBe(
+      'errors.not_found',
+    )
+  })
+
   it('never shows a technical Go error', () => {
     const goError = axiosError(500, {
       error:

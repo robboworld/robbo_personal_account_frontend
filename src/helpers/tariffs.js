@@ -45,7 +45,11 @@ const TARIFF_NAME_IDS = {
  * ("Free", "Individual", "Class") as identifiers; an unknown name is shown as is.
  */
 export function tariffDisplayName(intl, name, sku) {
-  const key = SKU_TO_TARIFF[sku] || String(name || 'free').trim().toLowerCase()
+  const key =
+    SKU_TO_TARIFF[sku] ||
+    String(name || 'free')
+      .trim()
+      .toLowerCase()
   const id = TARIFF_NAME_IDS[key]
   return id ? intl.formatMessage({ id }) : name
 }
@@ -100,12 +104,28 @@ export function useTariffs() {
 /** "100 MB", "1 GB", "1.5 GB" for a size in MB (1 GB = 1024 MB, as the backend counts). */
 export function formatStorageMb(intl, megabytes) {
   const value = Number(megabytes) || 0
+  // A few kilobytes of projects would round to "0 MB" and read as nothing stored.
+  if (value > 0 && value < 1) {
+    return intl.formatMessage({ id: 'units.mb' }, { value: '<1' })
+  }
   if (value >= 1024) {
     const gb = intl.formatNumber(value / 1024, { maximumFractionDigits: 1 })
     return intl.formatMessage({ id: 'units.gb' }, { value: gb })
   }
   const mbValue = intl.formatNumber(value, { maximumFractionDigits: value < 10 ? 1 : 0 })
   return intl.formatMessage({ id: 'units.mb' }, { value: mbValue })
+}
+
+/** File size from bytes: KB below 1 MB (so a small file is not "0 MB"), then as formatStorageMb. */
+export function formatFileSize(intl, bytes) {
+  const value = Math.max(0, Number(bytes) || 0)
+  if (value < 1024 * 1024) {
+    const kb = intl.formatNumber(Math.max(value / 1024, value > 0 ? 0.1 : 0), {
+      maximumFractionDigits: value < 10 * 1024 ? 1 : 0,
+    })
+    return intl.formatMessage({ id: 'units.kb' }, { value: kb })
+  }
+  return formatStorageMb(intl, value / (1024 * 1024))
 }
 
 /** "Project up to N MB" + account total + "unlimited number of projects". */

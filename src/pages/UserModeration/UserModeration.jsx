@@ -13,9 +13,9 @@ import {
   message,
 } from 'antd'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { SearchOutlined, UserOutlined } from '@ant-design/icons'
+import { FolderOpenOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
 
 import { searchLmsUsers } from '@/api/users'
 import {
@@ -26,6 +26,7 @@ import {
   USER_ROLE_MESSAGE_IDS,
 } from '@/constants'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+import { AdminUserContentDrawer } from '@/components/AdminUserContent'
 import {
   GlassPanel,
   HeroInner,
@@ -47,9 +48,16 @@ const roleFromHit = hit => {
   return STUDENT
 }
 
+// ?user=<id> opens the content drawer, so a link can point straight at it.
+const CONTENT_PARAM = 'user'
+
 const UserModerationPage = () => {
   const intl = useIntl()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const contentUserId = searchParams.get(CONTENT_PARAM) || ''
+  // Name for the drawer title; a bare deep link shows the id instead.
+  const [contentUser, setContentUser] = useState(null)
   const [query, setQuery] = useState('')
   const [includeInactive, setIncludeInactive] = useState(true)
   const [items, setItems] = useState([])
@@ -121,6 +129,30 @@ const UserModerationPage = () => {
     runSearch(query, checked)
   }
 
+  const openContent = hit => {
+    setContentUser({ username: hit.username, fullName: hit.fullName })
+    setSearchParams(
+      prev => {
+        const next = new URLSearchParams(prev)
+        next.set(CONTENT_PARAM, String(hit.id))
+        return next
+      },
+      { replace: true },
+    )
+  }
+
+  const closeContent = () => {
+    setContentUser(null)
+    setSearchParams(
+      prev => {
+        const next = new URLSearchParams(prev)
+        next.delete(CONTENT_PARAM)
+        return next
+      },
+      { replace: true },
+    )
+  }
+
   const openProfile = hit => {
     navigate(PROFILE_PAGE_ROUTE, {
       state: {
@@ -182,6 +214,12 @@ const UserModerationPage = () => {
                       <List.Item
                         actions={[
                           <Button
+                            key='content'
+                            icon={<FolderOpenOutlined />}
+                            onClick={() => openContent(hit)}>
+                            <FormattedMessage id='user_content.open' />
+                          </Button>,
+                          <Button
                             key='open'
                             type='primary'
                             icon={<UserOutlined />}
@@ -237,6 +275,8 @@ const UserModerationPage = () => {
           </GlassPanel>
         </Stagger>
       </motion.div>
+
+      <AdminUserContentDrawer userId={contentUserId} user={contentUser} onClose={closeContent} />
     </PageContent>
   )
 }

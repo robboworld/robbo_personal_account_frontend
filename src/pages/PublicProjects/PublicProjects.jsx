@@ -48,6 +48,7 @@ import {
   SkeletonGrid,
 } from '@/components/ProjectCatalog/styles'
 import UserAvatar from '@/components/UserAvatar/UserAvatar'
+import ModerationReasonModal from '@/components/ModerationReasonModal'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import {
   HeroInner,
@@ -69,7 +70,7 @@ const PAGE_SIZE_OPTIONS = [6, 12, 24]
 const DEFAULT_PAGE_SIZE = 12
 const MAX_FILTER_TAGS = 5
 const MAX_TAG_LEN = 25
-const { TextArea, Search } = Input
+const { Search } = Input
 
 const parsePage = value => {
   const n = Number.parseInt(String(value || ''), 10)
@@ -132,7 +133,6 @@ export default function PublicProjects() {
   const [totalRows, setTotalRows] = useState(0)
 
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [deleteReason, setDeleteReason] = useState('')
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [featureTarget, setFeatureTarget] = useState(null)
   const [featureOrder, setFeatureOrder] = useState(1)
@@ -288,7 +288,6 @@ export default function PublicProjects() {
 
   const openDeleteModal = project => {
     setDeleteTarget(project)
-    setDeleteReason('')
   }
 
   const closeDeleteModal = () => {
@@ -296,15 +295,9 @@ export default function PublicProjects() {
       return
     }
     setDeleteTarget(null)
-    setDeleteReason('')
   }
 
-  const confirmDelete = async () => {
-    const reason = deleteReason.trim()
-    if (reason.length < 3) {
-      message.warning(intl.formatMessage({ id: 'project_page.moderate_reason_required' }))
-      return
-    }
+  const confirmDelete = async reason => {
     if (!deleteTarget?.projectPageId) {
       return
     }
@@ -322,7 +315,6 @@ export default function PublicProjects() {
       }
       message.success(intl.formatMessage({ id: 'project_page.moderate_delete_ok' }))
       setDeleteTarget(null)
-      setDeleteReason('')
     } catch (e) {
       message.error(apiErrorMessage(e, intl, 'project_page.moderate_delete_error'))
     } finally {
@@ -710,32 +702,21 @@ export default function PublicProjects() {
         </motion.div>
       </Stagger>
 
-      <Modal
+      <ModerationReasonModal
         open={Boolean(deleteTarget)}
         title={intl.formatMessage({ id: 'project_page.moderate_delete_title' })}
         okText={intl.formatMessage({ id: 'project_page.moderate_delete_confirm' })}
-        cancelText={intl.formatMessage({ id: 'project_page.moderate_cancel' })}
-        okButtonProps={{
-          danger: true,
-          loading: deleteBusy,
-          disabled: deleteReason.trim().length < 3,
-        }}
-        onOk={confirmDelete}
-        onCancel={closeDeleteModal}
-        destroyOnHidden>
-        <p>
+        body={
           <FormattedMessage
             id='project_page.moderate_delete_body'
             values={{ title: displayProjectTitle(deleteTarget?.title, intl) }}
           />
-        </p>
-        <TextArea
-          rows={4}
-          value={deleteReason}
-          onChange={e => setDeleteReason(e.target.value)}
-          placeholder={intl.formatMessage({ id: 'project_page.moderate_reason_placeholder' })}
-        />
-      </Modal>
+        }
+        danger
+        loading={deleteBusy}
+        onSubmit={confirmDelete}
+        onCancel={closeDeleteModal}
+      />
 
       <Modal
         open={Boolean(featureTarget)}

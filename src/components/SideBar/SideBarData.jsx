@@ -18,6 +18,8 @@ import {
   DesktopOutlined,
   StopOutlined,
   BgColorsOutlined,
+  FolderOutlined,
+  DatabaseOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -29,9 +31,11 @@ import {
   PROFILE_PAGE_ROUTE,
   CUSTOMIZATION_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
+  MY_FILES_ROUTE,
   ROBBO_GROUPS_ROUTE,
   SEND_NOTIFICATION_ROUTE,
   USERS_ROUTE,
+  ADMIN_STORAGE_ROUTE,
   PUBLIC_PROJECTS_ROUTE,
   SCRATCH_HUB_ROUTE,
   MY_LICENSES_ROUTE,
@@ -47,6 +51,14 @@ export const CustomizationNavItem = {
   label: <FormattedMessage id='sidebar_data.customization' />,
   pathname: CUSTOMIZATION_PAGE_ROUTE,
   icon: <BgColorsOutlined />,
+}
+
+/** My files — next to projects; SideBar hides it for roles outside FILES_ROLES. */
+export const MyFilesNavItem = {
+  key: 'my_files',
+  label: <FormattedMessage id='sidebar_data.my_files' />,
+  pathname: MY_FILES_ROUTE,
+  icon: <FolderOutlined />,
 }
 
 /** Explore — in the main nav block with home / profile / projects. */
@@ -82,7 +94,8 @@ const isPrimaryItem = item =>
   item.key === 'home' ||
   item.pathname === PROFILE_PAGE_ROUTE ||
   item.pathname === CUSTOMIZATION_PAGE_ROUTE ||
-  item.pathname === MY_PROJECTS_ROUTE
+  item.pathname === MY_PROJECTS_ROUTE ||
+  item.pathname === MY_FILES_ROUTE
 
 const makeDivider = key => ({
   type: 'divider',
@@ -105,7 +118,7 @@ const appendSection = (items, section, dividerKey) => {
 }
 
 /**
- * Order: primary (Home / Profile / Customization / Projects / Explore) →
+ * Order: primary (Home / Profile / Customization / Projects / Files / Explore) →
  * tools → tariffs → rest, separated by dividers.
  */
 export const buildSidebarItems = roleItems => {
@@ -164,6 +177,7 @@ export const SidebarDataStudent = [
     pathname: MY_PROJECTS_ROUTE,
     icon: <ProjectOutlined />,
   },
+  MyFilesNavItem,
   {
     key: 'my_classes',
     label: <FormattedMessage id='sidebar_data.my_classes' />,
@@ -198,6 +212,7 @@ export const SidebarDataParent = [
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
+  MyFilesNavItem,
   {
     key: 'my_licenses',
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
@@ -227,6 +242,13 @@ export const SidebarDataSuperAdmin = [
     icon: <UserOutlined />,
   },
   {
+    key: '2',
+    label: <FormattedMessage id='sidebar_data.my_projects' />,
+    pathname: MY_PROJECTS_ROUTE,
+    icon: <ProjectOutlined />,
+  },
+  MyFilesNavItem,
+  {
     key: 'my_licenses',
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
     pathname: MY_LICENSES_ROUTE,
@@ -250,6 +272,12 @@ export const SidebarDataSuperAdmin = [
     label: <FormattedMessage id='sidebar_data.users' />,
     pathname: USERS_ROUTE,
     icon: <StopOutlined />,
+  },
+  {
+    key: 'admin_storage',
+    label: <FormattedMessage id='sidebar_data.admin_storage' />,
+    pathname: ADMIN_STORAGE_ROUTE,
+    icon: <DatabaseOutlined />,
   },
   {
     key: '5',
@@ -320,6 +348,7 @@ export const SidebarDataTeacher = [
     pathname: MY_PROJECTS_ROUTE,
     icon: <ProjectOutlined />,
   },
+  MyFilesNavItem,
   {
     key: 'my_licenses',
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
@@ -348,6 +377,7 @@ export const SidebarDataFreeListener = [
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
+  MyFilesNavItem,
   {
     key: 'my_licenses',
     label: <FormattedMessage id='sidebar_data.my_licenses' />,
@@ -376,6 +406,7 @@ export const SidebarDataUnitAdmin = [
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
+  MyFilesNavItem,
   {
     key: 'my_licenses',
     label: <FormattedMessage id='sidebar_data.my_licenses' />,

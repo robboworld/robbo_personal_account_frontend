@@ -52,7 +52,14 @@ describe('formatStorageMb', () => {
     expect(formatStorageMb(intl, 1024)).toBe('1 GB')
     expect(formatStorageMb(intl, 5120)).toBe('5 GB')
     expect(formatStorageMb(intl, 1536)).toBe('1.5 GB')
-    expect(formatStorageMb(intl, 0.25)).toBe('0.3 MB')
+  })
+
+  it('shows <1 MB instead of rounding a small non-zero size to 0', () => {
+    expect(formatStorageMb(intl, 0.0004)).toBe('<1 MB')
+    expect(formatStorageMb(intl, 0.25)).toBe('<1 MB')
+    expect(formatStorageMb(intl, 0)).toBe('0 MB')
+    expect(formatStorageMb(intl, 1)).toBe('1 MB')
+    expect(formatStorageMb(intl, 1.5)).toBe('1.5 MB')
   })
 })
 
