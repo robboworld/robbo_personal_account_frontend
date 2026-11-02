@@ -15,9 +15,21 @@ export async function copyText(text, intl) {
   }
 }
 
+/**
+ * Join link on the domain the page is open on, so it follows a domain change; the backend's
+ * joinUrl (built from frontend.publicUrl) is only a fallback.
+ */
+export function joinLink(klass) {
+  if (klass.inviteSlug && typeof window !== 'undefined' && window.location?.origin) {
+    return `${window.location.origin}/join/${encodeURIComponent(klass.inviteSlug)}`
+  }
+  return klass.joinUrl || ''
+}
+
 /** Invite code and link of a class. */
 const InviteDetails = ({ klass }) => {
   const intl = useIntl()
+  const link = joinLink(klass)
   return (
     <React.Fragment>
       <div>
@@ -31,15 +43,15 @@ const InviteDetails = ({ klass }) => {
           <FormattedMessage id='teacher_class.copy_code' />
         </Button>
       </div>
-      {klass.joinUrl ? (
+      {link ? (
         <div>
           <Text type='secondary'>
             <FormattedMessage id='teacher_class.link' />
           </Text>
           <Paragraph
-            copyable={{ text: klass.joinUrl }}
+            copyable={{ text: link }}
             style={{ marginBottom: 8, wordBreak: 'break-all' }}>
-            {klass.joinUrl}
+            {link}
           </Paragraph>
         </div>
       ) : null}
