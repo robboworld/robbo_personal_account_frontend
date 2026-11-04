@@ -17,7 +17,14 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { AssignmentTags, TeacherComment, assignmentState } from './AssignmentStatus'
 
 import * as api from '@/api/teacherClass'
-import { acceptForKinds, kindOfFileName, kindsLabel, listFiles, uploadFile } from '@/api/userFiles'
+import {
+  acceptForKinds,
+  downloadFile,
+  kindOfFileName,
+  kindsLabel,
+  listFiles,
+  uploadFile,
+} from '@/api/userFiles'
 import { getEntitlements } from '@/api/licensing'
 import AssignmentFiles, { FileDownloadButton } from '@/components/AssignmentFiles'
 import { FileNameCell } from '@/components/FileIcon'
@@ -207,6 +214,7 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
               </Text>
               <AssignmentFiles
                 files={files}
+                download={f => downloadFile(f.id, f.name)}
                 onRemove={editable ? remove : undefined}
                 removing={removing}
                 emptyText={intl.formatMessage({ id: 'class_files.no_files' })}

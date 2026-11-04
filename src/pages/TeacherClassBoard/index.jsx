@@ -105,7 +105,8 @@ const TeacherClassBoardPage = () => {
     const { data } = await api.listAssignments(classId)
     const items = data.items || []
     setAssignments(items)
-    setActiveAssignmentId(current => current || items[0]?.id)
+    // Oldest first: the board opens on the newest, the one the class is working on.
+    setActiveAssignmentId(current => current || items[items.length - 1]?.id)
   }, [classId])
 
   const refreshBoard = useCallback(async () => {

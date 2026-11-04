@@ -52,7 +52,12 @@ export const FileDownloadButton = ({ file, download, children, type = 'text' }) 
 const AssignmentFiles = ({ files, download, onRemove, removing, emptyText }) => {
   const intl = useIntl()
   if (!files?.length) {
-    return emptyText ? <Text type='secondary'>{emptyText}</Text> : null
+    // Block: the list sits under an inline heading, and an empty row must not run into it.
+    return emptyText ? (
+      <Text type='secondary' style={{ display: 'block' }}>
+        {emptyText}
+      </Text>
+    ) : null
   }
   return (
     <List
@@ -61,6 +66,9 @@ const AssignmentFiles = ({ files, download, onRemove, removing, emptyText }) => 
       rowKey='id'
       renderItem={file => (
         <List.Item
+          // On the student page this list sits inside a vertical List, whose rules reach it.
+          style={{ alignItems: 'center' }}
+          styles={{ actions: { marginTop: 0 } }}
           actions={[
             download ? <FileDownloadButton key='dl' file={file} download={download} /> : null,
             onRemove ? (

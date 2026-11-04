@@ -95,6 +95,23 @@ describe('TeacherClassBoardPage work tab', () => {
     fireEvent.click(screen.getByText('Все · 5'))
     expect(await screen.findByText('Аня')).toBeTruthy()
   }, 30000)
+
+  it('opens on the newest assignment', async () => {
+    api.listAssignments.mockResolvedValue({
+      data: {
+        items: [
+          { id: 'a1', title: 'Лабиринт' },
+          { id: 'a2', title: 'Танец' },
+        ],
+      },
+    })
+    api.listSubmissions.mockClear()
+    renderPage(<TeacherClassBoardPage />)
+
+    const openedIds = () => api.listSubmissions.mock.calls.map(([, assignmentId]) => assignmentId)
+    await waitFor(() => expect(openedIds()).toContain('a2'), { timeout: 15000 })
+    expect(openedIds()).not.toContain('a1')
+  }, 30000)
 })
 
 describe('TeacherClassBoardPage file assignment', () => {
