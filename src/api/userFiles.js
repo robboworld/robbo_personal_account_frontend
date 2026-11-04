@@ -36,6 +36,60 @@ export const ALLOWED_FILE_EXTENSIONS = Object.freeze([
 
 export const ALLOWED_FILE_ACCEPT = ALLOWED_FILE_EXTENSIONS.join(',')
 
+/** user_files.kind → the extensions that give it (the backend keeps WebP as PNG). */
+export const EXTENSIONS_BY_KIND = Object.freeze({
+  png: ['.png', '.webp'],
+  jpeg: ['.jpg', '.jpeg'],
+  gif: ['.gif'],
+  pdf: ['.pdf'],
+  docx: ['.docx'],
+  xlsx: ['.xlsx'],
+  pptx: ['.pptx'],
+  odt: ['.odt'],
+  txt: ['.txt'],
+  sb: ['.sb'],
+  sb2: ['.sb2'],
+  sb3: ['.sb3'],
+  mp3: ['.mp3'],
+  wav: ['.wav'],
+  ogg: ['.ogg'],
+  zip: ['.zip'],
+  ino: ['.ino'],
+  stl: ['.stl'],
+  fcstd: ['.fcstd'],
+  skp: ['.skp'],
+})
+
+/** File kinds by the program they come from, for a file assignment's "accepted types". */
+export const FILE_KIND_GROUPS = Object.freeze([
+  { key: 'arduino', kinds: ['ino'] },
+  { key: 'freecad', kinds: ['fcstd'] },
+  { key: 'sketchup', kinds: ['skp'] },
+  { key: 'model3d', kinds: ['stl'] },
+  { key: 'scratch', kinds: ['sb3', 'sb2', 'sb'] },
+  { key: 'documents', kinds: ['pdf', 'docx', 'xlsx', 'pptx', 'odt', 'txt'] },
+  { key: 'images', kinds: ['png', 'jpeg', 'gif'] },
+  { key: 'audio', kinds: ['mp3', 'wav', 'ogg'] },
+  { key: 'archive', kinds: ['zip'] },
+])
+
+/** ".fcstd, .stl" for the kinds a file assignment accepts. */
+export const kindsLabel = kinds => kinds.flatMap(k => EXTENSIONS_BY_KIND[k] || [k]).join(', ')
+
+/** Upload `accept` for the given kinds; every allowed extension when none are given. */
+export const acceptForKinds = kinds =>
+  (kinds?.length ? kinds.flatMap(k => EXTENSIONS_BY_KIND[k] || []) : ALLOWED_FILE_EXTENSIONS).join(
+    ',',
+  )
+
+/** The kind a file name gives, or '' when "Мои файлы" does not take it. */
+export function kindOfFileName(name) {
+  const dot = String(name || '').lastIndexOf('.')
+  if (dot < 0) return ''
+  const ext = String(name).slice(dot).toLowerCase()
+  return Object.keys(EXTENSIONS_BY_KIND).find(k => EXTENSIONS_BY_KIND[k].includes(ext)) || ''
+}
+
 export function isAllowedFileName(name) {
   const dot = String(name || '').lastIndexOf('.')
   if (dot < 0) return false

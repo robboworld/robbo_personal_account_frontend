@@ -1,5 +1,9 @@
 import instance from './instance'
 
+import { fetchWithAuthRetry, saveResponseBlob } from '@/api/projectPage'
+import { apiBase } from '@/api/authRefresh'
+import { fetchErrorWithBody } from '@/api/userFiles'
+
 export const previewJoin = codeOrSlug =>
   instance.get('/api/join/preview', {
     params: { code: codeOrSlug },
@@ -63,3 +67,35 @@ export const listStudentAssignments = classId =>
 export const submitProject = projectId => instance.post(`/api/student/projects/${projectId}/submit`)
 
 export const listTeacherCourses = () => instance.get('/api/teacher/courses')
+
+// File assignments: the student attaches files from "Мои файлы" and hands them in.
+export const attachAssignmentFile = (assignmentId, fileId) =>
+  instance.post(`/api/student/assignments/${assignmentId}/files`, { fileId })
+
+export const detachAssignmentFile = (assignmentId, fileId) =>
+  instance.delete(`/api/student/assignments/${assignmentId}/files/${encodeURIComponent(fileId)}`)
+
+export const submitAssignmentFiles = assignmentId =>
+  instance.post(`/api/student/assignments/${assignmentId}/submit`)
+
+export const reviewFileSubmission = (submissionId, body) =>
+  instance.post(`/api/teacher/file-submissions/${submissionId}/review`, body)
+
+async function download(path, fallbackName) {
+  const res = await fetchWithAuthRetry(`${apiBase()}${path}`, { method: 'GET' })
+  if (!res.ok) {
+    throw await fetchErrorWithBody(res)
+  }
+  await saveResponseBlob(res, fallbackName || 'file')
+}
+
+/** The teacher's starter file of a file assignment (class members and the teacher). */
+export const downloadStarterFile = (assignmentId, fallbackName) =>
+  download(`/api/student/assignments/${assignmentId}/starter`, fallbackName)
+
+/** A file of handed-in work, for the teacher. */
+export const downloadSubmissionFile = (submissionId, fileId, fallbackName) =>
+  download(
+    `/api/teacher/file-submissions/${submissionId}/files/${encodeURIComponent(fileId)}/download`,
+    fallbackName,
+  )

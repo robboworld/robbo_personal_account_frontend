@@ -22,6 +22,7 @@ import {
   CopyOutlined,
   MailOutlined,
   MoreOutlined,
+  PaperClipOutlined,
   ProjectOutlined,
   ReloadOutlined,
   UserAddOutlined,
@@ -32,6 +33,7 @@ import { useQuery } from '@apollo/client/react'
 import dayjs from 'dayjs'
 
 import { REVIEW_STATUS_COLOR, isHandedIn, reviewStatusLabel } from './reviewStatus'
+import FileAssignmentFields from './FileAssignmentFields'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
@@ -39,6 +41,9 @@ import { fetchTeacherNotificationQuota, teacherSendNotification } from '@/api/no
 import { projectPageQueryGQL } from '@/graphQL/query/projectPage'
 import { PROJECT_PAGE_ROUTE, TEACHER_CLASSES_ROUTE } from '@/constants'
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
+import AssignmentFiles, { FileDownloadButton } from '@/components/AssignmentFiles'
+import { getEntitlements } from '@/api/licensing'
+import { kindsLabel } from '@/api/userFiles'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import { formatDateTime } from '@/helpers/formatDateTime'
 import InviteDetails, { copyText } from '@/pages/TeacherClasses/InviteDetails'
@@ -82,6 +87,9 @@ const TeacherClassBoardPage = () => {
   const [membersForm] = Form.useForm()
   const [renameForm] = Form.useForm()
   const [messageForm] = Form.useForm()
+  const assignKind = Form.useWatch('kind', form) || 'scratch'
+  // File assignments need "Мои файлы" with the antivirus on (entitlements.fileAssignmentsEnabled).
+  const [fileAssignments, setFileAssignments] = useState(false)
   const required = { required: true, message: intl.formatMessage({ id: 'form.required' }) }
   const fail = (e, fallbackId = 'errors.generic') =>
     message.error(apiErrorMessage(e, intl, fallbackId))
@@ -141,6 +149,11 @@ const TeacherClassBoardPage = () => {
     refreshBoard()
   }, [refreshBoard])
   useEffect(() => {
+    getEntitlements()
+      .then(ent => setFileAssignments(!!ent?.fileAssignmentsEnabled))
+      .catch(() => setFileAssignments(false))
+  }, [])
+  useEffect(() => {
     refreshAssignment()
   }, [refreshAssignment])
 
@@ -158,6 +171,8 @@ const TeacherClassBoardPage = () => {
       ...m,
       key: m.userId || m.username,
       projectId: p?.projectId,
+      submissionId: p?.submissionId,
+      files: p?.files,
       updatedAt: p?.updatedAt,
       reviewStatus: p?.reviewStatus,
       reviewComment: p?.reviewComment,
@@ -189,11 +204,19 @@ const TeacherClassBoardPage = () => {
   const onCreateAssignment = async values => {
     setAssigning(true)
     try {
+      const fileKind = values.kind === 'file'
       const { data } = await api.createAssignment(classId, {
         title: values.title.trim(),
         instructions: values.instructions || '',
-        templateProjectId: values.templateProjectId,
+        templateProjectId: fileKind ? undefined : values.templateProjectId,
         dueAt: values.dueAt ? values.dueAt.toISOString() : undefined,
+        ...(fileKind
+          ? {
+              kind: 'file',
+              allowedKinds: values.allowedKinds || [],
+              templateFileId: values.templateFileId,
+            }
+          : {}),
       })
       message.success(intl.formatMessage({ id: 'teacher_board.assigned' }))
       // Copies that failed are retried by "Issue to latecomers"; skipped ones need an LMS account.
@@ -355,7 +378,10 @@ const TeacherClassBoardPage = () => {
   const doReview = async status => {
     if (!reviewProject) return
     try {
-      await api.reviewSubmission(reviewProject.projectId, { status, comment: reviewComment })
+      const body = { status, comment: reviewComment }
+      await (reviewProject.submissionId
+        ? api.reviewFileSubmission(reviewProject.submissionId, body)
+        : api.reviewSubmission(reviewProject.projectId, body))
       message.success(intl.formatMessage({ id: 'teacher_board.review_saved' }))
       setReviewProject(null)
       setReviewComment('')
@@ -395,7 +421,13 @@ const TeacherClassBoardPage = () => {
   }, [members, progress.rows])
 
   const openWork = row => {
-    setReviewProject({ projectId: row.projectId, title: row.title, reviewStatus: row.reviewStatus })
+    setReviewProject({
+      projectId: row.projectId,
+      submissionId: row.submissionId,
+      files: row.files || [],
+      title: row.submissionId ? `${row.title} · ${studentLabel(row)}` : row.title,
+      reviewStatus: row.reviewStatus,
+    })
     setReviewComment(row.reviewComment || '')
   }
 
@@ -412,6 +444,15 @@ const TeacherClassBoardPage = () => {
         <Space wrap size={4}>
           {statusTag(row.reviewStatus || 'empty')}
           {row.late ? lateTag : null}
+          {row.files?.length ? (
+            <Text type='secondary'>
+              <PaperClipOutlined />{' '}
+              <FormattedMessage
+                id='teacher_board.files_count'
+                values={{ count: row.files.length }}
+              />
+            </Text>
+          ) : null}
         </Space>
       ),
     },
@@ -435,9 +476,9 @@ const TeacherClassBoardPage = () => {
     {
       key: 'action',
       align: 'right',
-      // Only work the viewer may open has a project id: a teacher never gets one for a draft.
+      // Only work the viewer may open has an id: a teacher never gets one for a draft.
       render: (_, row) =>
-        row.projectId ? (
+        row.projectId || (row.submissionId && row.files) ? (
           <Button type='link' onClick={() => openWork(row)}>
             <FormattedMessage
               id={isHandedIn(row.reviewStatus) ? 'teacher_board.review' : 'teacher_board.preview'}
@@ -455,7 +496,15 @@ const TeacherClassBoardPage = () => {
       render: (_, row) => studentLabel(row),
     },
     ...progress.assignments.map(a => ({
-      title: a.title,
+      title:
+        a.kind === 'file' ? (
+          <Space size={4}>
+            <PaperClipOutlined aria-label={intl.formatMessage({ id: 'teacher_board.kind_file' })} />
+            {a.title}
+          </Space>
+        ) : (
+          a.title
+        ),
       key: a.id,
       render: (_, row) => {
         const cell = (row.cells || []).find(c => c.assignmentId === a.id)
@@ -577,6 +626,28 @@ const TeacherClassBoardPage = () => {
               <FormattedMessage id='teacher_board.closed' />
             </Tag>
           ) : null}
+          {activeAssignment?.kind === 'file' ? (
+            <Text type='secondary'>
+              <PaperClipOutlined />{' '}
+              <FormattedMessage
+                id='class_files.accepts'
+                values={{
+                  types: activeAssignment.allowedKinds?.length
+                    ? kindsLabel(activeAssignment.allowedKinds)
+                    : intl.formatMessage({ id: 'class_files.any_types' }),
+                  max: activeAssignment.maxFiles,
+                }}
+              />
+            </Text>
+          ) : null}
+          {activeAssignment?.templateFile ? (
+            <FileDownloadButton
+              type='link'
+              file={activeAssignment.templateFile}
+              download={f => api.downloadStarterFile(activeAssignment.id, f.name)}>
+              <FormattedMessage id='class_files.starter' />
+            </FileDownloadButton>
+          ) : null}
           {activeAssignment ? (
             <Popconfirm
               title={intl.formatMessage({
@@ -663,7 +734,27 @@ const TeacherClassBoardPage = () => {
         okText={<FormattedMessage id='teacher_board.assign_submit' />}
         cancelText={<FormattedMessage id='common.cancel' />}
         confirmLoading={assigning}>
-        <Form form={form} layout='vertical' onFinish={onCreateAssignment}>
+        <Form
+          form={form}
+          layout='vertical'
+          onFinish={onCreateAssignment}
+          initialValues={{ kind: 'scratch' }}>
+          {fileAssignments ? (
+            <Form.Item
+              name='kind'
+              label={<FormattedMessage id='teacher_board.kind' />}
+              tooltip={intl.formatMessage({ id: 'teacher_board.kind_why' })}>
+              <Segmented
+                options={[
+                  {
+                    value: 'scratch',
+                    label: intl.formatMessage({ id: 'teacher_board.kind_scratch' }),
+                  },
+                  { value: 'file', label: intl.formatMessage({ id: 'teacher_board.kind_file' }) },
+                ]}
+              />
+            </Form.Item>
+          ) : null}
           <Form.Item
             name='title'
             label={<FormattedMessage id='teacher_board.field_title' />}
@@ -675,22 +766,28 @@ const TeacherClassBoardPage = () => {
             label={<FormattedMessage id='teacher_board.field_instructions' />}>
             <TextArea rows={3} />
           </Form.Item>
-          <Form.Item
-            name='templateProjectId'
-            label={<FormattedMessage id='teacher_board.field_template' />}
-            tooltip={intl.formatMessage({ id: 'teacher_board.template_why' })}
-            extra={templates.length ? null : <FormattedMessage id='teacher_board.template_hint' />}>
-            <Select
-              allowClear
-              showSearch
-              optionFilterProp='label'
-              options={templates.map(t => ({
-                value: t.projectPageId,
-                label: t.title || intl.formatMessage({ id: 'project_card.untitled' }),
-              }))}
-              placeholder={intl.formatMessage({ id: 'teacher_board.template_placeholder' })}
-            />
-          </Form.Item>
+          {assignKind === 'file' ? (
+            <FileAssignmentFields open={assignOpen} />
+          ) : (
+            <Form.Item
+              name='templateProjectId'
+              label={<FormattedMessage id='teacher_board.field_template' />}
+              tooltip={intl.formatMessage({ id: 'teacher_board.template_why' })}
+              extra={
+                templates.length ? null : <FormattedMessage id='teacher_board.template_hint' />
+              }>
+              <Select
+                allowClear
+                showSearch
+                optionFilterProp='label'
+                options={templates.map(t => ({
+                  value: t.projectPageId,
+                  label: t.title || intl.formatMessage({ id: 'project_card.untitled' }),
+                }))}
+                placeholder={intl.formatMessage({ id: 'teacher_board.template_placeholder' })}
+              />
+            </Form.Item>
+          )}
           <Form.Item name='dueAt' label={<FormattedMessage id='teacher_board.field_due' />}>
             <DatePicker
               showTime={{ format: 'HH:mm' }}
@@ -759,7 +856,8 @@ const TeacherClassBoardPage = () => {
             </List.Item>
           )}
         />
-        {activeAssignment ? (
+        {/* File work starts with the student's first file: there is nothing to issue. */}
+        {activeAssignment && activeAssignment.kind !== 'file' ? (
           <Popconfirm
             title={intl.formatMessage(
               { id: 'teacher_board.issue_late_confirm' },
@@ -861,6 +959,18 @@ const TeacherClassBoardPage = () => {
             </Button>
           </Space>
         }>
+        {reviewProject?.submissionId ? (
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>
+              <FormattedMessage id='teacher_board.files_title' />
+            </Text>
+            <AssignmentFiles
+              files={reviewProject.files}
+              download={f => api.downloadSubmissionFile(reviewProject.submissionId, f.id, f.name)}
+              emptyText={intl.formatMessage({ id: 'class_files.no_files' })}
+            />
+          </div>
+        ) : null}
         {reviewProject?.projectId ? (
           <div style={{ marginBottom: 16 }}>
             <ScratchPlayerEmbed projectPageId={reviewProject.projectId} />

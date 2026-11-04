@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import {
-  Alert,
   Button,
   Card,
   Empty,
@@ -9,25 +8,20 @@ import {
   Popconfirm,
   Space,
   Spin,
-  Tag,
   Typography,
   message,
 } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
-import dayjs from 'dayjs'
+
+import { AssignmentTags, TeacherComment, assignmentState } from './AssignmentStatus'
+import FileAssignmentItem from './FileAssignmentItem'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
 import { JOIN_CLASS_CODE_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
-import { formatDateTime } from '@/helpers/formatDateTime'
 import { openScratchEditor } from '@/utils/scratchEditor'
-import {
-  REVIEW_STATUS_COLOR,
-  isHandedIn,
-  reviewStatusLabel,
-} from '@/pages/TeacherClassBoard/reviewStatus'
 
 const { Paragraph, Text } = Typography
 
@@ -36,9 +30,7 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
   const navigate = useNavigate()
   const [submitting, setSubmitting] = useState(false)
   const status = assignment.myReviewStatus || (assignment.myProjectId ? 'draft' : '')
-  const handedIn = isHandedIn(status) && status !== 'returned'
-  const closed = !!assignment.closedAt
-  const overdue = assignment.dueAt && !handedIn && dayjs(assignment.dueAt).isBefore(dayjs())
+  const { handedIn, closed } = assignmentState(assignment, status)
 
   const submit = async () => {
     setSubmitting(true)
@@ -91,47 +83,14 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
         title={assignment.title}
         description={
           <Space orientation='vertical' size={4} style={{ width: '100%' }}>
-            <Space wrap size={6}>
-              {status ? (
-                <Tag color={REVIEW_STATUS_COLOR[status]}>{reviewStatusLabel(intl, status)}</Tag>
-              ) : (
-                <Tag>
-                  <FormattedMessage id='student_class.not_issued' />
-                </Tag>
-              )}
-              {closed && !handedIn ? (
-                <Tag>
-                  <FormattedMessage id='student_class.closed' />
-                </Tag>
-              ) : null}
-              {overdue ? (
-                <Tag color='error'>
-                  <FormattedMessage id='student_class.overdue' />
-                </Tag>
-              ) : null}
-              {assignment.dueAt ? (
-                <Text type='secondary'>
-                  <FormattedMessage
-                    id='teacher_board.due'
-                    values={{ when: formatDateTime(assignment.dueAt, intl.locale) }}
-                  />
-                </Text>
-              ) : null}
-            </Space>
+            <AssignmentTags assignment={assignment} status={status} />
             {assignment.instructions ? <Text>{assignment.instructions}</Text> : null}
             {!assignment.myProjectId ? (
               <Text type='secondary'>
                 <FormattedMessage id='student_class.not_issued_hint' />
               </Text>
             ) : null}
-            {assignment.myReviewComment ? (
-              <Alert
-                type={status === 'returned' ? 'warning' : 'info'}
-                showIcon
-                title={intl.formatMessage({ id: 'student_class.teacher_comment' })}
-                description={assignment.myReviewComment}
-              />
-            ) : null}
+            <TeacherComment comment={assignment.myReviewComment} status={status} />
           </Space>
         }
       />
@@ -176,7 +135,13 @@ const ClassCard = ({ klass }) => {
           }
           dataSource={assignments}
           locale={{ emptyText: intl.formatMessage({ id: 'student_class.no_assignments' }) }}
-          renderItem={a => <AssignmentItem key={a.id} assignment={a} onSubmitted={load} />}
+          renderItem={a =>
+            a.kind === 'file' ? (
+              <FileAssignmentItem key={a.id} assignment={a} onChanged={load} />
+            ) : (
+              <AssignmentItem key={a.id} assignment={a} onSubmitted={load} />
+            )
+          }
         />
       )}
     </Card>

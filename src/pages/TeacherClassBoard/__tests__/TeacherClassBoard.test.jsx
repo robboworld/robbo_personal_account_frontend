@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import TeacherClassBoardPage from '@/pages/TeacherClassBoard'
 import * as api from '@/api/teacherClass'
@@ -11,6 +11,12 @@ jest.mock('@/api/teacherClass', () => ({
   progressMatrix: jest.fn(),
   listAssignments: jest.fn(),
   listSubmissions: jest.fn(),
+  reviewFileSubmission: jest.fn(),
+  downloadSubmissionFile: jest.fn(),
+  downloadStarterFile: jest.fn(),
+}))
+jest.mock('@/api/licensing', () => ({
+  getEntitlements: jest.fn(() => Promise.resolve({ fileAssignmentsEnabled: true })),
 }))
 jest.mock('@/api/notifications', () => ({
   fetchTeacherNotificationQuota: jest.fn(),
@@ -88,5 +94,78 @@ describe('TeacherClassBoardPage work tab', () => {
 
     fireEvent.click(screen.getByText('Все · 5'))
     expect(await screen.findByText('Аня')).toBeTruthy()
+  }, 30000)
+})
+
+describe('TeacherClassBoardPage file assignment', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    api.getTeacherClass.mockResolvedValue({ data: { id: 'c1', displayName: '5A' } })
+    api.listMembers.mockResolvedValue({
+      data: {
+        items: [
+          { userId: '1', name: 'Аня' },
+          { userId: '2', name: 'Боря' },
+        ],
+      },
+    })
+    api.progressMatrix.mockResolvedValue({ data: { assignments: [], rows: [] } })
+    api.listAssignments.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: 'a1',
+            title: 'Кронштейн',
+            kind: 'file',
+            allowedKinds: ['fcstd', 'stl'],
+            maxFiles: 10,
+            templateFile: { id: 'tpl', name: 'base.FCStd', sizeBytes: 100 },
+          },
+        ],
+      },
+    })
+    api.listSubmissions.mockResolvedValue({
+      data: {
+        items: [
+          // A draft comes without its files.
+          { ownerUserId: '1', submissionId: 's1', reviewStatus: 'draft', title: 'Кронштейн' },
+          {
+            ownerUserId: '2',
+            submissionId: 's2',
+            reviewStatus: 'submitted',
+            title: 'Кронштейн',
+            files: [
+              { id: 'f1', name: 'part.FCStd', sizeBytes: 2048 },
+              { id: 'f2', name: 'part.stl', sizeBytes: 1024, hasScripts: false },
+            ],
+          },
+        ],
+      },
+    })
+    api.reviewFileSubmission.mockResolvedValue({})
+    api.downloadSubmissionFile.mockResolvedValue()
+  })
+
+  it('reviews handed-in files and downloads them', async () => {
+    renderPage(<TeacherClassBoardPage />)
+
+    expect(await screen.findByText('Боря', {}, { timeout: 15000 })).toBeTruthy()
+    expect(screen.getByText('Принимаются: .fcstd, .stl. Не больше 10 файлов.')).toBeTruthy()
+    expect(screen.getByText('Стартовый файл')).toBeTruthy()
+    expect(within(rowOf('Боря')).getByText('2 файла')).toBeTruthy()
+
+    // Role queries crawl in a DOM this large: buttons are found by their text or label.
+    fireEvent.click(within(rowOf('Боря')).getByText('Проверить'))
+    expect(await screen.findByText('part.stl')).toBeTruthy()
+    fireEvent.click(screen.getAllByLabelText('Скачать')[1])
+    expect(api.downloadSubmissionFile).toHaveBeenCalledWith('s2', 'f2', 'part.stl')
+
+    fireEvent.click(screen.getByText('Вернуть на доработку'))
+    await waitFor(() =>
+      expect(api.reviewFileSubmission).toHaveBeenCalledWith('s2', {
+        status: 'returned',
+        comment: '',
+      }),
+    )
   }, 30000)
 })

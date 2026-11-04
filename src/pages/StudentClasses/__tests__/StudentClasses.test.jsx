@@ -1,5 +1,5 @@
 import React from 'react'
-import { screen } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 
 import StudentClassesPage from '@/pages/StudentClasses'
 import * as api from '@/api/teacherClass'
@@ -10,8 +10,25 @@ jest.mock('@/api/teacherClass', () => ({
   listStudentAssignments: jest.fn(),
   joinClass: jest.fn(),
   submitProject: jest.fn(),
+  submitAssignmentFiles: jest.fn(),
+  detachAssignmentFile: jest.fn(),
+  attachAssignmentFile: jest.fn(),
+  downloadStarterFile: jest.fn(),
 }))
 jest.mock('@/utils/scratchEditor', () => ({ openScratchEditor: jest.fn() }))
+
+// antd Popconfirm measures itself; jsdom has no ResizeObserver.
+beforeAll(() => {
+  global.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+})
+
+afterAll(() => {
+  delete global.ResizeObserver
+})
 
 describe('StudentClassesPage', () => {
   beforeEach(() => jest.clearAllMocks())
@@ -78,4 +95,78 @@ describe('StudentClassesPage', () => {
     expect(await screen.findByText('Приём закрыт')).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Сдать' }).disabled).toBe(true)
   })
+
+  it('hands in the files of a file assignment', async () => {
+    api.listStudentClasses.mockResolvedValue({
+      data: { items: [{ id: 'c1', displayName: 'Audit 5A' }] },
+    })
+    api.listStudentAssignments.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: 'a1',
+            title: 'Кронштейн',
+            kind: 'file',
+            allowedKinds: ['fcstd', 'stl'],
+            maxFiles: 10,
+            templateFile: { id: 'tpl', name: 'base.FCStd', sizeBytes: 100 },
+            mySubmissionId: 's1',
+            myReviewStatus: 'draft',
+            myFiles: [{ id: 'f1', name: 'part.stl', sizeBytes: 1024 }],
+          },
+          { id: 'a2', title: 'Скетч', kind: 'file', allowedKinds: ['ino'], maxFiles: 10 },
+        ],
+      },
+    })
+    api.submitAssignmentFiles.mockResolvedValue({})
+    api.detachAssignmentFile.mockResolvedValue({})
+    renderPage(<StudentClassesPage />)
+
+    expect(await screen.findByText('part.stl')).toBeTruthy()
+    expect(screen.getByText('Принимаются: .fcstd, .stl. Не больше 10 файлов.')).toBeTruthy()
+    expect(screen.getByText('Стартовый файл')).toBeTruthy()
+    // Nothing attached yet: nothing to hand in.
+    expect(screen.getByText('Файлов пока нет')).toBeTruthy()
+    const [withFiles, empty] = screen.getAllByText('Сдать').map(el => el.closest('button'))
+    expect(withFiles.disabled).toBe(false)
+    expect(empty.disabled).toBe(true)
+
+    fireEvent.click(screen.getByLabelText('Убрать «part.stl» из работы'))
+    await waitFor(() => expect(api.detachAssignmentFile).toHaveBeenCalledWith('a1', 'f1'))
+
+    // The confirm popup has its own "Сдать".
+    fireEvent.click(withFiles)
+    await waitFor(() => expect(document.querySelector('.ant-popconfirm')).toBeTruthy())
+    fireEvent.click(document.querySelector('.ant-popconfirm .ant-btn-primary'))
+    await waitFor(() => expect(api.submitAssignmentFiles).toHaveBeenCalledWith('a1'))
+  }, 30000)
+
+  it('shows handed-in files read-only', async () => {
+    api.listStudentClasses.mockResolvedValue({
+      data: { items: [{ id: 'c1', displayName: 'Audit 5A' }] },
+    })
+    api.listStudentAssignments.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: 'a1',
+            title: 'Кронштейн',
+            kind: 'file',
+            allowedKinds: [],
+            maxFiles: 10,
+            mySubmissionId: 's1',
+            myReviewStatus: 'submitted',
+            myFiles: [{ id: 'f1', name: 'part.stl', sizeBytes: 1024 }],
+          },
+        ],
+      },
+    })
+    renderPage(<StudentClassesPage />)
+
+    expect(await screen.findByText('part.stl')).toBeTruthy()
+    expect(screen.getByText('На проверке')).toBeTruthy()
+    expect(screen.queryByLabelText('Убрать «part.stl» из работы')).toBeNull()
+    expect(screen.queryByText('Выбрать из «Моих файлов»')).toBeNull()
+    expect(screen.getByText('Сдать').closest('button').disabled).toBe(true)
+  }, 30000)
 })

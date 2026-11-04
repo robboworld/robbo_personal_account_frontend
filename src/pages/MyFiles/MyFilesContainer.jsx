@@ -3,12 +3,11 @@ import { message } from 'antd'
 import { useIntl } from 'react-intl'
 
 import MyFiles from './MyFiles'
-import { precheckUpload } from './fileChecks'
+import { precheckUpload, uploadProblemMessage } from './fileChecks'
 
 import { deleteFile, downloadFile, listFiles, uploadFile } from '@/api/userFiles'
 import { getEntitlements } from '@/api/licensing'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
-import { formatFileSize, formatStorageMb } from '@/helpers/tariffs'
 
 const MyFilesContainer = () => {
   const intl = useIntl()
@@ -53,26 +52,7 @@ const MyFilesContainer = () => {
     file => {
       const problem = precheckUpload(file, entitlements)
       if (!problem) return true
-      if (problem.reason === 'type') {
-        message.error(intl.formatMessage({ id: 'my_files.type_not_allowed' }))
-      } else if (problem.reason === 'size') {
-        message.error(
-          intl.formatMessage(
-            { id: 'my_files.too_large' },
-            { name: file.name, size: formatStorageMb(intl, problem.limitMb) },
-          ),
-        )
-      } else {
-        message.error(
-          intl.formatMessage(
-            { id: 'my_files.no_space' },
-            {
-              free: formatFileSize(intl, problem.freeBytes),
-              size: formatFileSize(intl, file.size),
-            },
-          ),
-        )
-      }
+      message.error(uploadProblemMessage(intl, file, problem))
       return false
     },
     [entitlements, intl],

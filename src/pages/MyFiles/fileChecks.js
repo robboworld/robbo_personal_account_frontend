@@ -1,4 +1,5 @@
 import { isAllowedFileName } from '@/api/userFiles'
+import { formatFileSize, formatStorageMb } from '@/helpers/tariffs'
 
 const MB = 1024 * 1024
 
@@ -30,4 +31,21 @@ export const precheckUpload = (file, entitlements) => {
     return { reason: 'quota', freeBytes: free }
   }
   return null
+}
+
+/** The message for a precheckUpload problem. */
+export const uploadProblemMessage = (intl, file, problem) => {
+  if (problem.reason === 'type') {
+    return intl.formatMessage({ id: 'my_files.type_not_allowed' })
+  }
+  if (problem.reason === 'size') {
+    return intl.formatMessage(
+      { id: 'my_files.too_large' },
+      { name: file.name, size: formatStorageMb(intl, problem.limitMb) },
+    )
+  }
+  return intl.formatMessage(
+    { id: 'my_files.no_space' },
+    { free: formatFileSize(intl, problem.freeBytes), size: formatFileSize(intl, file.size) },
+  )
 }
