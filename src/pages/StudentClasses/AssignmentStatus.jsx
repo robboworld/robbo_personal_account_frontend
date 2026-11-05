@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 
 import { formatDateTime } from '@/helpers/formatDateTime'
 import {
+  CLOSED_TAG_PROPS,
   REVIEW_STATUS_COLOR,
   isHandedIn,
   reviewStatusLabel,
@@ -36,7 +37,7 @@ export const AssignmentTags = ({ assignment, status }) => {
         </Tag>
       )}
       {closed && !handedIn ? (
-        <Tag>
+        <Tag {...CLOSED_TAG_PROPS}>
           <FormattedMessage id='student_class.closed' />
         </Tag>
       ) : null}

@@ -32,7 +32,12 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client/react'
 import dayjs from 'dayjs'
 
-import { REVIEW_STATUS_COLOR, isHandedIn, reviewStatusLabel } from './reviewStatus'
+import {
+  CLOSED_TAG_PROPS,
+  REVIEW_STATUS_COLOR,
+  isHandedIn,
+  reviewStatusLabel,
+} from './reviewStatus'
 import FileAssignmentFields from './FileAssignmentFields'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
@@ -623,7 +628,7 @@ const TeacherClassBoardPage = () => {
             </Text>
           ) : null}
           {activeAssignment?.closedAt ? (
-            <Tag color='default'>
+            <Tag {...CLOSED_TAG_PROPS}>
               <FormattedMessage id='teacher_board.closed' />
             </Tag>
           ) : null}

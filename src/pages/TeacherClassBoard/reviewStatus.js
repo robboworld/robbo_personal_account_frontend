@@ -9,6 +9,9 @@ export const REVIEW_STATUS_COLOR = {
   empty: 'default',
 }
 
+/** "Приём закрыт" stops the student's work, so it stands out from the pale status tags. */
+export const CLOSED_TAG_PROPS = { color: 'purple', variant: 'solid' }
+
 export const reviewStatusLabel = (intl, status) => {
   const key = REVIEW_STATUS_COLOR[status] ? status : 'missing'
   return intl.formatMessage({ id: `review_status.${key}` })
