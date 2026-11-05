@@ -20,7 +20,7 @@ import FileAssignmentItem from './FileAssignmentItem'
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
 import { JOIN_CLASS_CODE_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
-import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+import { apiErrorMessage, classCodeErrorMessage } from '@/helpers/apiErrorMessage'
 import { openScratchEditor } from '@/utils/scratchEditor'
 
 const { Paragraph, Text } = Typography
@@ -211,7 +211,7 @@ const StudentClassesPage = () => {
       setCode('')
       load()
     } catch (e) {
-      message.error(apiErrorMessage(e, intl, 'student_class.join_error'))
+      message.error(classCodeErrorMessage(e, intl, 'student_class.join_error'))
     } finally {
       setJoining(false)
     }

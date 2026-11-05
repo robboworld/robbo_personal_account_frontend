@@ -468,6 +468,7 @@
     "join_class.continue": "Continue",
     "join_class.home": "Home",
     "join_class.not_found": "Invite not found",
+    "join_class.wrong_code": "There is no class with this code. Check the code or ask your teacher for it.",
     "join_class.try_another": "Try another code",
     "join_class.eyebrow": "Join class",
     "join_class.teacher": "Teacher",

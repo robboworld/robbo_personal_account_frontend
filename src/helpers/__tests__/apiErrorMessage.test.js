@@ -1,4 +1,4 @@
-import { apiErrorMessage, apiErrorMessageId } from '../apiErrorMessage'
+import { apiErrorMessage, apiErrorMessageId, classCodeErrorMessage } from '../apiErrorMessage'
 
 const intl = { formatMessage: ({ id }) => `#${id}` }
 const axiosError = (status, data) => ({ response: { status, data } })
@@ -14,6 +14,17 @@ describe('apiErrorMessage', () => {
         graphQLErrors: [{ message: 'legacy postgres is disabled (legacyPostgres.enabled=false)' }],
       }),
     ).toBe('errors.legacy_disabled')
+  })
+
+  it('reads a missing invite as a wrong class code, other failures as usual', () => {
+    const fallback = 'join_class.not_found'
+    expect(classCodeErrorMessage(axiosError(404, { error: 'not found' }), intl, fallback)).toBe(
+      '#join_class.wrong_code',
+    )
+    expect(classCodeErrorMessage(axiosError(500, {}), intl, fallback)).toBe('#errors.server')
+    expect(
+      classCodeErrorMessage(axiosError(409, { error: 'already in class' }), intl, fallback),
+    ).toBe('#errors.already_in_class')
   })
 
   it('maps the project size limit from REST, fetch and GraphQL', () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Input, Result, Space, Typography, message, Spin } from 'antd'
+import { Alert, Button, Card, Input, Result, Space, Typography, message, Spin } from 'antd'
 import { useNavigate, useParams, useSearchParams, Link } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 
@@ -13,7 +13,7 @@ import {
 } from '@/helpers/oidcSession'
 import { parseJwt } from '@/helpers'
 import { getAccessToken } from '@/helpers/accessTokenMemory'
-import { apiErrorMessage } from '@/helpers/apiErrorMessage'
+import { apiErrorMessage, classCodeErrorMessage } from '@/helpers/apiErrorMessage'
 
 const { Title, Paragraph, Text } = Typography
 
@@ -69,7 +69,8 @@ const JoinClassPage = () => {
         if (!cancelled) setPreview(data)
       } catch (e) {
         if (!cancelled) {
-          setError(apiErrorMessage(e, intl, 'join_class.not_found'))
+          const errorText = slug ? apiErrorMessage : classCodeErrorMessage
+          setError(errorText(e, intl, 'join_class.not_found'))
           setPreview(null)
         }
       } finally {
@@ -119,6 +120,7 @@ const JoinClassPage = () => {
           <Space.Compact style={{ width: '100%' }}>
             <Input
               size='large'
+              status={error ? 'error' : undefined}
               value={manualCode}
               onChange={e => setManualCode(e.target.value.toUpperCase())}
               onPressEnter={() =>
@@ -135,6 +137,7 @@ const JoinClassPage = () => {
               <FormattedMessage id='join_class.continue' />
             </Button>
           </Space.Compact>
+          {error && <Alert type='error' showIcon title={error} style={{ marginTop: 12 }} />}
           <Paragraph style={{ marginTop: 16 }}>
             <Link to={HOME_PAGE_ROUTE}>
               <FormattedMessage id='join_class.home' />

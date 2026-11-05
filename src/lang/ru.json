@@ -469,6 +469,7 @@
     "join_class.continue": "Продолжить",
     "join_class.home": "На главную",
     "join_class.not_found": "Приглашение не найдено",
+    "join_class.wrong_code": "Класса с таким кодом нет. Проверьте код или спросите его у учителя.",
     "join_class.try_another": "Попробовать другой код",
     "join_class.eyebrow": "Вступление в класс",
     "join_class.teacher": "Преподаватель",

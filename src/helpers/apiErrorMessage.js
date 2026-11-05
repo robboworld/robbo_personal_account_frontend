@@ -101,6 +101,14 @@ export function apiErrorMessage(error, intl, fallbackId = 'errors.generic') {
   return intl.formatMessage({ id: id === 'errors.generic' ? fallbackId : id })
 }
 
+/** Join by code: a missing invite means a mistyped code, not a deleted object. */
+export function classCodeErrorMessage(error, intl, fallbackId) {
+  if (apiErrorMessageId(error) === 'errors.not_found') {
+    return intl.formatMessage({ id: 'join_class.wrong_code' })
+  }
+  return apiErrorMessage(error, intl, fallbackId)
+}
+
 /** Same text outside React (sagas), where only the UI language is known. */
 export function sagaErrorMessage(error, language) {
   return apiErrorMessage(error, { formatMessage: ({ id }) => formatMessageId(language, id) })

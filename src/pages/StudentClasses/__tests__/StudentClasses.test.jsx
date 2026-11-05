@@ -34,6 +34,21 @@ afterAll(() => {
 describe('StudentClassesPage', () => {
   beforeEach(() => jest.clearAllMocks())
 
+  it('tells about a wrong class code', async () => {
+    api.listStudentClasses.mockResolvedValue({ data: { items: [] } })
+    api.joinClass.mockRejectedValue({ response: { status: 404, data: { error: 'not found' } } })
+    renderPage(<StudentClassesPage />)
+
+    fireEvent.change(await screen.findByLabelText('Код класса'), { target: { value: 'nope-00' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Вступить' }))
+
+    expect(
+      await screen.findByText('Класса с таким кодом нет. Проверьте код или спросите его у учителя.'),
+    ).toBeTruthy()
+    expect(api.joinClass).toHaveBeenCalledWith({ code: 'NOPE-00' })
+    expect(screen.getByLabelText('Код класса').value).toBe('NOPE-00')
+  })
+
   it('shows one empty state without classes', async () => {
     api.listStudentClasses.mockResolvedValue({ data: { items: [] } })
     renderPage(<StudentClassesPage />)
