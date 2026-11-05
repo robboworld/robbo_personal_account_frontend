@@ -79,7 +79,7 @@ const MyFiles = ({
         align: 'right',
         render: (_, file) => (
           <Space size={4}>
-            {/* Python scripts inside: ask first; other files download on click. */}
+            {/* Code inside: ask first; other files download on click. */}
             <Popconfirm
               disabled={!file.hasScripts}
               title={intl.formatMessage({ id: 'my_files.scripts_download_confirm' })}

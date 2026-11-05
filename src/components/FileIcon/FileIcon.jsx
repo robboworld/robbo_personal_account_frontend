@@ -2,6 +2,7 @@ import React from 'react'
 import { Tooltip, theme } from 'antd'
 import { useIntl } from 'react-intl'
 import {
+  AndroidOutlined,
   AudioOutlined,
   BlockOutlined,
   CodeOutlined,
@@ -33,6 +34,11 @@ const ICON_BY_EXTENSION = {
   sb3: CodeOutlined,
   sb2: CodeOutlined,
   sb: CodeOutlined,
+  sjr: CodeOutlined,
+  py: CodeOutlined,
+  aia: CodeOutlined,
+  apk: AndroidOutlined,
+  blend: BlockOutlined,
   ino: CodeOutlined,
   stl: BlockOutlined,
   fcstd: BlockOutlined,

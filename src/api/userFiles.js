@@ -30,10 +30,15 @@ export const ALLOWED_FILE_EXTENSIONS = Object.freeze([
   '.zip',
   '.sb',
   '.sb2',
+  '.sjr',
   '.ino',
   '.stl',
   '.fcstd',
   '.skp',
+  '.py',
+  '.blend',
+  '.aia',
+  '.apk',
 ])
 
 export const ALLOWED_FILE_ACCEPT = ALLOWED_FILE_EXTENSIONS.join(',')
@@ -52,6 +57,7 @@ export const EXTENSIONS_BY_KIND = Object.freeze({
   sb: ['.sb'],
   sb2: ['.sb2'],
   sb3: ['.sb3'],
+  sjr: ['.sjr'],
   mp3: ['.mp3'],
   wav: ['.wav'],
   ogg: ['.ogg'],
@@ -60,6 +66,10 @@ export const EXTENSIONS_BY_KIND = Object.freeze({
   stl: ['.stl'],
   fcstd: ['.fcstd'],
   skp: ['.skp'],
+  py: ['.py'],
+  blend: ['.blend'],
+  aia: ['.aia'],
+  apk: ['.apk'],
 })
 
 /** File kinds by the program they come from, for a file assignment's "accepted types". */
@@ -68,7 +78,10 @@ export const FILE_KIND_GROUPS = Object.freeze([
   { key: 'freecad', kinds: ['fcstd'] },
   { key: 'sketchup', kinds: ['skp'] },
   { key: 'model3d', kinds: ['stl'] },
-  { key: 'scratch', kinds: ['sb3', 'sb2', 'sb'] },
+  { key: 'scratch', kinds: ['sb3', 'sb2', 'sb', 'sjr'] },
+  { key: 'python', kinds: ['py'] },
+  { key: 'blender', kinds: ['blend'] },
+  { key: 'appinventor', kinds: ['aia', 'apk'] },
   { key: 'documents', kinds: ['pdf', 'docx', 'xlsx', 'pptx', 'odt', 'txt'] },
   { key: 'images', kinds: ['png', 'jpeg', 'gif'] },
   { key: 'audio', kinds: ['mp3', 'wav', 'ogg'] },

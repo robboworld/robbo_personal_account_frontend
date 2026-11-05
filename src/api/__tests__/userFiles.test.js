@@ -122,16 +122,21 @@ describe('api/userFiles', () => {
     for (const name of [
       'old.sb',
       'game.sb2',
+      'pets.sjr',
       'blink.ino',
       'part.STL',
       'robot.FCStd',
       'house.skp',
+      'script.py',
+      'robot.blend',
+      'project.aia',
+      'app.APK',
     ]) {
       expect(isAllowedFileName(name)).toBe(true)
     }
     expect(isAllowedFileName('page.html')).toBe(false)
     expect(isAllowedFileName('image.svg')).toBe(false)
     expect(isAllowedFileName('noext')).toBe(false)
-    expect(ALLOWED_FILE_ACCEPT.split(',')).toHaveLength(22)
+    expect(ALLOWED_FILE_ACCEPT.split(',')).toHaveLength(27)
   })
 })

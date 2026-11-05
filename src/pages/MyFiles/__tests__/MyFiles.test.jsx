@@ -172,17 +172,17 @@ describe('MyFilesPage', () => {
 
     fireEvent.click(await screen.findByLabelText('Скачать'))
     await waitFor(() => expect(api.downloadFile).toHaveBeenCalledWith('f1', 'a.txt'))
-    expect(screen.queryByLabelText('Есть Python-скрипты')).toBeNull()
+    expect(screen.queryByLabelText('Может запускать код')).toBeNull()
   })
 
-  it('marks a file with Python scripts and asks before the download', async () => {
+  it('marks a file with code and asks before the download', async () => {
     api.listFiles.mockResolvedValue([
       { id: 'f2', name: 'robot.zip', sizeBytes: 1, createdAt: '', hasScripts: true },
     ])
     api.downloadFile.mockResolvedValue()
     renderPage(<MyFilesPage />)
 
-    expect(await screen.findByLabelText('Есть Python-скрипты')).toBeTruthy()
+    expect(await screen.findByLabelText('Может запускать код')).toBeTruthy()
     fireEvent.click(screen.getByLabelText('Скачать'))
     expect(api.downloadFile).not.toHaveBeenCalled()
     const popup = await waitFor(() => {
@@ -190,8 +190,8 @@ describe('MyFilesPage', () => {
       expect(el).toBeTruthy()
       return el
     })
-    expect(within(popup).getByText('Скачать файл со скриптами?')).toBeTruthy()
-    expect(within(popup).getByText(/Запускайте их, если доверяете источнику/)).toBeTruthy()
+    expect(within(popup).getByText('Скачать файл с кодом?')).toBeTruthy()
+    expect(within(popup).getByText(/только если доверяете источнику/)).toBeTruthy()
     fireEvent.click(within(popup).getByText('Скачать'))
     await waitFor(() => expect(api.downloadFile).toHaveBeenCalledWith('f2', 'robot.zip'))
   })
