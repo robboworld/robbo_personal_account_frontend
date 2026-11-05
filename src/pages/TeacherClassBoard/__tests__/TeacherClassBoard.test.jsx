@@ -3,6 +3,8 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import TeacherClassBoardPage from '@/pages/TeacherClassBoard'
 import * as api from '@/api/teacherClass'
+import { restoreStudentVersion } from '@/api/projectPage'
+import { openScratchEditorInNewTab } from '@/utils/scratchEditor'
 import { renderPage } from '@/testUtils'
 
 jest.mock('@/api/teacherClass', () => ({
@@ -15,6 +17,8 @@ jest.mock('@/api/teacherClass', () => ({
   downloadSubmissionFile: jest.fn(),
   downloadStarterFile: jest.fn(),
 }))
+jest.mock('@/api/projectPage', () => ({ restoreStudentVersion: jest.fn() }))
+jest.mock('@/utils/scratchEditor', () => ({ openScratchEditorInNewTab: jest.fn() }))
 jest.mock('@/api/licensing', () => ({
   getEntitlements: jest.fn(() => Promise.resolve({ fileAssignmentsEnabled: true })),
 }))
@@ -115,6 +119,87 @@ describe('TeacherClassBoardPage work tab', () => {
     fireEvent.click(await screen.findByText('Проверено · 1', {}, { timeout: 15000 }))
     expect(within(rowOf('Вика')).getByText('Проверка: Замена')).toBeTruthy()
   }, 30000)
+
+  it('opens the blocks of work on review and tells who changed them', async () => {
+    api.listSubmissions.mockResolvedValue({
+      data: {
+        items: [
+          {
+            ownerUserId: '2',
+            projectId: 'p2',
+            reviewStatus: 'submitted',
+            title: 'Лабиринт',
+            canEdit: true,
+            canRestore: true,
+            editedByName: 'Замена',
+            editedAt: '2026-11-03T10:00:00Z',
+          },
+        ],
+      },
+    })
+    renderPage(<TeacherClassBoardPage />)
+
+    await screen.findByText('Боря', {}, { timeout: 15000 })
+    expect(within(rowOf('Боря')).getByText('Изменено: Замена')).toBeTruthy()
+    fireEvent.click(within(rowOf('Боря')).getByRole('button', { name: 'Проверить' }))
+
+    fireEvent.click(await screen.findByRole('button', { name: /Открыть блоки в Scratch/ }))
+    expect(openScratchEditorInNewTab).toHaveBeenCalledWith('p2')
+    expect(screen.getByText(/и ученик получит уведомление/)).toBeTruthy()
+
+    // Coming back from the editor's tab brings in what was saved there.
+    api.listSubmissions.mockClear()
+    fireEvent(window, new Event('focus'))
+    await waitFor(() => expect(api.listSubmissions).toHaveBeenCalled())
+
+    restoreStudentVersion.mockResolvedValue({ ok: true })
+    fireEvent.click(screen.getByRole('button', { name: /Вернуть работу ученика/ }))
+    const confirm = await screen.findByRole('tooltip')
+    fireEvent.click(within(confirm).getByRole('button', { name: 'Вернуть работу ученика' }))
+    await waitFor(() => expect(restoreStudentVersion).toHaveBeenCalledWith('p2'))
+  }, 90000)
+
+  it('shows who is editing a work right now', async () => {
+    api.listSubmissions.mockResolvedValue({
+      data: {
+        items: [
+          {
+            ownerUserId: '2',
+            projectId: 'p2',
+            reviewStatus: 'submitted',
+            editors: [{ role: 'teacher', name: 'Замена' }],
+          },
+          {
+            ownerUserId: '3',
+            projectId: 'p3',
+            reviewStatus: 'returned',
+            editors: [{ role: 'student', name: 'Вика' }],
+          },
+        ],
+      },
+    })
+    renderPage(<TeacherClassBoardPage />)
+
+    fireEvent.click(await screen.findByText('Все · 4', {}, { timeout: 15000 }))
+    expect(within(rowOf('Боря')).getByText('Сейчас редактирует учитель: Замена')).toBeTruthy()
+    expect(within(rowOf('Вика')).getByText('Сейчас дорабатывает ученик')).toBeTruthy()
+  }, 90000)
+
+  it('lets the teacher only look at work that is back with the student', async () => {
+    api.listSubmissions.mockResolvedValue({
+      data: {
+        items: [{ ownerUserId: '3', projectId: 'p3', reviewStatus: 'returned', title: 'Лабиринт' }],
+      },
+    })
+    renderPage(<TeacherClassBoardPage />)
+
+    fireEvent.click(await screen.findByText('Все · 4', {}, { timeout: 15000 }))
+    fireEvent.click(within(rowOf('Вика')).getByRole('button', { name: 'Проверить' }))
+
+    expect(await screen.findByRole('button', { name: /Открыть блоки в Scratch/ })).toBeTruthy()
+    expect(screen.getByText(/сохранить изменения нельзя/)).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /Вернуть работу ученика/ })).toBeNull()
+  }, 90000)
 
   it('keeps the class settings from a co-teacher', async () => {
     api.getTeacherClass.mockResolvedValue({

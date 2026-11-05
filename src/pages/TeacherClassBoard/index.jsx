@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Button,
   DatePicker,
@@ -19,12 +19,14 @@ import {
 } from 'antd'
 import {
   CheckOutlined,
+  CodeOutlined,
   CopyOutlined,
   MailOutlined,
   MoreOutlined,
   PaperClipOutlined,
   ProjectOutlined,
   ReloadOutlined,
+  UndoOutlined,
   UserAddOutlined,
 } from '@ant-design/icons'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -50,13 +52,21 @@ import { PROJECT_PAGE_ROUTE, TEACHER_CLASSES_ROUTE } from '@/constants'
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
 import AssignmentFiles, { FileDownloadButton } from '@/components/AssignmentFiles'
 import { getEntitlements } from '@/api/licensing'
+import { restoreStudentVersion } from '@/api/projectPage'
 import { kindsLabel } from '@/api/userFiles'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import { formatDateTime } from '@/helpers/formatDateTime'
-import { SubmissionNote } from '@/pages/StudentClasses/AssignmentStatus'
+import { useVisibleInterval } from '@/helpers/useVisibleInterval'
+import {
+  EditingNote,
+  SubmissionNote,
+  TeacherEditNote,
+  editorLabel,
+} from '@/pages/StudentClasses/AssignmentStatus'
+import { openScratchEditorInNewTab } from '@/utils/scratchEditor'
 import InviteDetails, { copyText } from '@/pages/TeacherClasses/InviteDetails'
 
-const { Text } = Typography
+const { Paragraph, Text } = Typography
 const { TextArea } = Input
 
 // Filters of the "Work" tab; "missing" is work the student still owes, returned work included.
@@ -168,6 +178,15 @@ const TeacherClassBoardPage = () => {
     refreshAssignment()
   }, [refreshAssignment])
 
+  // Who is editing a work is live; a failed refresh keeps what is on the screen.
+  useVisibleInterval(() => {
+    if (!activeAssignmentId) return
+    api
+      .listSubmissions(classId, activeAssignmentId)
+      .then(({ data }) => setSubmissions(data.items || []))
+      .catch(() => {})
+  }, 30000)
+
   const refreshAll = () => {
     setHistoryReload(n => n + 1)
     return Promise.all([refreshBoard(), refreshAssignment()])
@@ -195,6 +214,11 @@ const TeacherClassBoardPage = () => {
       submissionNote: p?.submissionNote,
       reviewedByName: p?.reviewedByName,
       reviewedAt: p?.reviewedAt,
+      editedByName: p?.editedByName,
+      editedAt: p?.editedAt,
+      canEdit: !!p?.canEdit,
+      canRestore: !!p?.canRestore,
+      editors: p?.editors,
       title: p?.title,
       late: !!p?.late,
     })
@@ -403,8 +427,38 @@ const TeacherClassBoardPage = () => {
         ? api.reviewFileSubmission(reviewProject.submissionId, body)
         : api.reviewSubmission(reviewProject.projectId, body))
       message.success(intl.formatMessage({ id: 'teacher_board.review_saved' }))
-      setReviewProject(null)
+      closeReview()
       setReviewComment('')
+      refreshAll()
+    } catch (e) {
+      fail(e)
+    }
+  }
+
+  // The editor is in its own tab: what was saved there shows up when the teacher comes back.
+  const editorOpened = useRef(false)
+  useEffect(() => {
+    const onFocus = () => {
+      if (editorOpened.current) refreshAll()
+    }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  })
+
+  const openInScratch = () => {
+    editorOpened.current = true
+    openScratchEditorInNewTab(reviewProject.projectId)
+  }
+
+  const closeReview = () => {
+    editorOpened.current = false
+    setReviewProject(null)
+  }
+
+  const restoreWork = async () => {
+    try {
+      await restoreStudentVersion(reviewProject.projectId)
+      message.success(intl.formatMessage({ id: 'teacher_board.restore_ok' }))
       refreshAll()
     } catch (e) {
       fail(e)
@@ -440,6 +494,11 @@ const TeacherClassBoardPage = () => {
     return members.map(m => ({ ...m, cells: (m.userId && cellsByUser.get(m.userId)) || [] }))
   }, [members, progress.rows])
 
+  // The modal holds the row it was opened with; this one follows the board.
+  const reviewRow = workRows.find(
+    row => row.projectId && row.projectId === reviewProject?.projectId,
+  )
+
   const openWork = row => {
     setReviewProject({
       projectId: row.projectId,
@@ -465,6 +524,11 @@ const TeacherClassBoardPage = () => {
         <Space wrap size={4}>
           {statusTag(row.reviewStatus || 'empty')}
           {row.late ? lateTag : null}
+          {(row.editors || []).map(editor => (
+            <Tag key={`${editor.role}:${editor.name}`} color='processing'>
+              {editorLabel(intl, editor)}
+            </Tag>
+          ))}
           {row.files?.length ? (
             <Text type='secondary'>
               <PaperClipOutlined />{' '}
@@ -479,6 +543,14 @@ const TeacherClassBoardPage = () => {
               <FormattedMessage
                 id='teacher_board.reviewed_by'
                 values={{ name: row.reviewedByName }}
+              />
+            </Text>
+          ) : null}
+          {row.editedAt ? (
+            <Text type='secondary' title={formatDateTime(row.editedAt, intl.locale)}>
+              <FormattedMessage
+                id='teacher_board.edited_by'
+                values={{ name: row.editedByName || '–' }}
               />
             </Text>
           ) : null}
@@ -1018,7 +1090,7 @@ const TeacherClassBoardPage = () => {
       <Modal
         open={!!reviewProject}
         title={reviewProject?.title || intl.formatMessage({ id: 'teacher_board.review' })}
-        onCancel={() => setReviewProject(null)}
+        onCancel={closeReview}
         width={900}
         footer={
           <Space wrap>
@@ -1055,13 +1127,44 @@ const TeacherClassBoardPage = () => {
         ) : null}
         {reviewProject?.projectId ? (
           <div style={{ marginBottom: 16 }}>
-            <ScratchPlayerEmbed projectPageId={reviewProject.projectId} />
-            <Button
-              type='link'
-              href={PROJECT_PAGE_ROUTE.replace(':projectPageId', reviewProject.projectId)}
-              target='_blank'>
-              <FormattedMessage id='teacher_board.open_project' />
-            </Button>
+            <ScratchPlayerEmbed
+              projectPageId={reviewProject.projectId}
+              reloadKey={reviewRow?.editedAt || 0}
+            />
+            <Space wrap size={8} style={{ marginTop: 8 }}>
+              <Button icon={<CodeOutlined />} onClick={openInScratch}>
+                <FormattedMessage id='teacher_board.open_in_scratch' />
+              </Button>
+              {reviewRow?.canRestore ? (
+                <Popconfirm
+                  title={intl.formatMessage({ id: 'teacher_board.restore_confirm' })}
+                  description={intl.formatMessage({ id: 'teacher_board.restore_hint' })}
+                  okText={intl.formatMessage({ id: 'teacher_board.restore_work' })}
+                  cancelText={intl.formatMessage({ id: 'common.cancel' })}
+                  onConfirm={restoreWork}>
+                  <Button icon={<UndoOutlined />}>
+                    <FormattedMessage id='teacher_board.restore_work' />
+                  </Button>
+                </Popconfirm>
+              ) : null}
+              <Button
+                type='link'
+                href={PROJECT_PAGE_ROUTE.replace(':projectPageId', reviewProject.projectId)}
+                target='_blank'>
+                <FormattedMessage id='teacher_board.open_project' />
+              </Button>
+            </Space>
+            <Paragraph type='secondary' style={{ margin: '8px 0 0' }}>
+              <FormattedMessage
+                id={reviewRow?.canEdit ? 'teacher_board.edit_hint' : 'teacher_board.view_only_hint'}
+              />
+            </Paragraph>
+            <EditingNote editors={reviewRow?.editors} style={{ marginTop: 8 }} />
+            <TeacherEditNote
+              at={reviewRow?.editedAt}
+              name={reviewRow?.editedByName}
+              style={{ marginTop: 8 }}
+            />
           </div>
         ) : null}
         <TextArea

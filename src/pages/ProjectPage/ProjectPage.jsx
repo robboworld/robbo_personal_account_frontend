@@ -100,6 +100,7 @@ import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { ProjectTag, ProjectTagList } from '@/components/ProjectCatalog/styles'
 import { getAccessToken } from '@/helpers/accessTokenMemory'
+import { EditingNote, TeacherEditNote } from '@/pages/StudentClasses/AssignmentStatus'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
 // A project created in the LK has no .sb3 until it is saved once in the editor.
@@ -386,6 +387,8 @@ function AuthenticatedProjectView({ projectPageId, token }) {
   // owner until the teacher returns it; the backend refuses those writes with HOMEWORK_LOCKED.
   const reviewLocked = isOwner && Boolean(projectPage?.reviewLocked)
   const canEdit = isOwner && !reviewLocked
+  // A teacher of the class changes the blocks of work on review, and nothing else on this page.
+  const teacherCanEdit = Boolean(projectPage?.teacherCanEdit)
   const canEditTags = canEdit || isSuperAdmin
 
   const loadedPageId = projectPage?.projectPageId
@@ -728,7 +731,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                 currentUserId={String(currentUserId || '')}
               />
             )}
-            {!isOwner && (
+            {!isOwner && !teacherCanEdit && (
               <ViewOnlyNote>
                 <FormattedMessage id='project_page.view_only' />
               </ViewOnlyNote>
@@ -741,6 +744,12 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                 title={<FormattedMessage id='project_page.review_locked' />}
               />
             )}
+            <EditingNote editors={projectPage?.editors} style={{ marginTop: '0.75rem' }} />
+            <TeacherEditNote
+              at={projectPage?.teacherEditedAt}
+              name={projectPage?.teacherEditedByName}
+              style={{ marginTop: '0.75rem' }}
+            />
           </PlayerCard>
           <MetaCard>
             <SectionTitle>
@@ -929,7 +938,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                         </ActionButton>
                       </React.Fragment>
                     )}
-                    {canEdit && (
+                    {(canEdit || teacherCanEdit) && (
                       <ScratchAction
                         type='primary'
                         loading={openingEditor}

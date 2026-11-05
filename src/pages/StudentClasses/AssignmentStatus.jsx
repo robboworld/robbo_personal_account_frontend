@@ -73,6 +73,47 @@ export const SubmissionNote = ({ note, titleId }) => {
   )
 }
 
+const editorLabelId = editor => {
+  if (editor.role === 'student') return 'work_editing.student'
+  return editor.name ? 'work_editing.teacher' : 'work_editing.teacher_anon'
+}
+
+/** What a person editing the work is shown as; the name may be unknown to the LMS. */
+export const editorLabel = (intl, editor) =>
+  intl.formatMessage({ id: editorLabelId(editor) }, { name: editor.name })
+
+/** Who has the work open in the editor right now. */
+export const EditingNote = ({ editors, style }) => {
+  const intl = useIntl()
+  if (!editors?.length) return null
+  return (
+    <Alert
+      type='warning'
+      showIcon
+      style={style}
+      title={editors.map(editor => editorLabel(intl, editor)).join('; ')}
+    />
+  )
+}
+
+/** A teacher changed the blocks of this work and when; the name may be unknown to the LMS. */
+export const TeacherEditNote = ({ at, name, style }) => {
+  const intl = useIntl()
+  if (!at) return null
+  const when = formatDateTime(at, intl.locale)
+  return (
+    <Alert
+      type='info'
+      showIcon
+      style={style}
+      title={intl.formatMessage(
+        { id: name ? 'teacher_edit.note' : 'teacher_edit.note_anon' },
+        { name, when },
+      )}
+    />
+  )
+}
+
 /** The teacher's comment; a warning when the work came back for rework. */
 export const TeacherComment = ({ comment, status }) => {
   const intl = useIntl()

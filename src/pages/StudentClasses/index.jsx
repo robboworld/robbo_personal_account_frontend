@@ -4,7 +4,13 @@ import { LogoutOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { AssignmentTags, TeacherComment, assignmentState } from './AssignmentStatus'
+import {
+  AssignmentTags,
+  EditingNote,
+  TeacherComment,
+  TeacherEditNote,
+  assignmentState,
+} from './AssignmentStatus'
 import EditableSubmissionNote from './EditableSubmissionNote'
 import FileAssignmentItem from './FileAssignmentItem'
 import SubmissionNoteModal from './SubmissionNoteModal'
@@ -12,6 +18,7 @@ import { AssignmentList, ClassCardFrame, ClassName, ClassTeacher, LeaveButton } 
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
+import { useVisibleInterval } from '@/helpers/useVisibleInterval'
 import { JOIN_CLASS_CODE_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
 import { apiErrorMessage, classCodeErrorMessage } from '@/helpers/apiErrorMessage'
 import { openScratchEditor } from '@/utils/scratchEditor'
@@ -89,6 +96,8 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
               onSaved={onSubmitted}
             />
             <TeacherComment comment={assignment.myReviewComment} status={status} />
+            <EditingNote editors={assignment.myEditors} />
+            <TeacherEditNote at={assignment.myEditedAt} name={assignment.myEditedByName} />
           </Space>
         }
       />
@@ -124,6 +133,14 @@ const ClassCard = ({ klass, onLeft }) => {
   useEffect(() => {
     load()
   }, [load])
+
+  // The mark of a teacher editing the work is live; a failed refresh keeps what is on the screen.
+  useVisibleInterval(() => {
+    api
+      .listStudentAssignments(klass.id)
+      .then(({ data }) => setAssignments(data.items || []))
+      .catch(() => {})
+  }, 30000)
 
   const leave = async () => {
     setLeaving(true)

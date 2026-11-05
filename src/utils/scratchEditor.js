@@ -62,6 +62,17 @@ export function getScratchEditorLabel() {
 }
 
 /**
+ * Open the editor next to the LK: the teacher comes back to the work they are reviewing.
+ * @param {string} projectPageId
+ */
+export function openScratchEditorInNewTab(projectPageId) {
+  if (!projectPageId) {
+    return
+  }
+  window.open(getScratchEditorUrl(projectPageId), '_blank', 'noopener')
+}
+
+/**
  * Open the standalone RobboScratch web editor in the current tab for the given cloud project.
  * @param {string} projectPageId
  */

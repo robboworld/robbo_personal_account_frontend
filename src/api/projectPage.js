@@ -516,3 +516,18 @@ export async function uploadProjectSb3(token, projectPageId, file, signal) {
   }
   return res.json()
 }
+
+/** POST /projectPage/:id/restore-student-version — undoes a teacher's edit of handed-in work. */
+export async function restoreStudentVersion(projectPageId) {
+  const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/restore-student-version`
+  const res = await fetchWithAuthRetry(url, {
+    method: 'POST',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) {
+    const err = new Error(await readFetchErrorMessage(res))
+    err.status = res.status
+    throw err
+  }
+  return res.json()
+}

@@ -35,6 +35,30 @@ afterAll(() => {
 describe('StudentClassesPage', () => {
   beforeEach(() => jest.clearAllMocks())
 
+  it('tells the student that a teacher changed the work', async () => {
+    api.listStudentClasses.mockResolvedValue({ data: { items: [{ id: 'c1', displayName: '5А' }] } })
+    api.listStudentAssignments.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: 'a1',
+            title: 'Лабиринт',
+            kind: 'scratch',
+            myProjectId: 'p1',
+            myReviewStatus: 'returned',
+            myEditedAt: '2026-11-03T10:00:00Z',
+            myEditedByName: 'Иванова',
+            myEditors: [{ role: 'teacher', name: 'Иванова' }],
+          },
+        ],
+      },
+    })
+    renderPage(<StudentClassesPage />)
+
+    expect(await screen.findByText(/Блоки в работе изменил учитель: Иванова/)).toBeTruthy()
+    expect(screen.getByText('Сейчас редактирует учитель: Иванова')).toBeTruthy()
+  })
+
   it('tells about a wrong class code', async () => {
     api.listStudentClasses.mockResolvedValue({ data: { items: [] } })
     api.joinClass.mockRejectedValue({ response: { status: 404, data: { error: 'not found' } } })
