@@ -9,6 +9,7 @@ jest.mock('@/api/teacherClass', () => ({
   listStudentClasses: jest.fn(),
   listStudentAssignments: jest.fn(),
   joinClass: jest.fn(),
+  leaveClass: jest.fn(),
   submitProject: jest.fn(),
   submitAssignmentFiles: jest.fn(),
   detachAssignmentFile: jest.fn(),
@@ -139,6 +140,40 @@ describe('StudentClassesPage', () => {
     await waitFor(() => expect(document.querySelector('.ant-popconfirm')).toBeTruthy())
     fireEvent.click(document.querySelector('.ant-popconfirm .ant-btn-primary'))
     await waitFor(() => expect(api.submitAssignmentFiles).toHaveBeenCalledWith('a1'))
+  }, 30000)
+
+  it('leaves a class after confirmation and drops it from the list', async () => {
+    api.listStudentClasses
+      .mockResolvedValueOnce({ data: { items: [{ id: 'c1', displayName: 'Audit 5A' }] } })
+      .mockResolvedValueOnce({ data: { items: [] } })
+    api.listStudentAssignments.mockResolvedValue({ data: { items: [] } })
+    api.leaveClass.mockResolvedValue({})
+    renderPage(<StudentClassesPage />)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Покинуть класс' }))
+    expect(await screen.findByText('Покинуть класс «Audit 5A»?')).toBeTruthy()
+    expect(api.leaveClass).not.toHaveBeenCalled()
+
+    fireEvent.click(document.querySelector('.ant-popconfirm .ant-btn-primary'))
+    await waitFor(() => expect(api.leaveClass).toHaveBeenCalledWith('c1'))
+    expect(await screen.findByText('Вы пока не состоите ни в одном классе')).toBeTruthy()
+  }, 30000)
+
+  it('keeps the class when leaving fails', async () => {
+    api.listStudentClasses.mockResolvedValue({
+      data: { items: [{ id: 'c1', displayName: 'Audit 5A' }] },
+    })
+    api.listStudentAssignments.mockResolvedValue({ data: { items: [] } })
+    api.leaveClass.mockRejectedValue(new Error('network'))
+    renderPage(<StudentClassesPage />)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Покинуть класс' }))
+    await waitFor(() => expect(document.querySelector('.ant-popconfirm')).toBeTruthy())
+    fireEvent.click(document.querySelector('.ant-popconfirm .ant-btn-primary'))
+
+    expect(await screen.findByText('Не удалось покинуть класс')).toBeTruthy()
+    expect(api.listStudentClasses).toHaveBeenCalledTimes(1)
+    expect(screen.getByText('Audit 5A')).toBeTruthy()
   }, 30000)
 
   it('shows handed-in files read-only', async () => {

@@ -98,9 +98,10 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
   )
 }
 
-const ClassCard = ({ klass }) => {
+const ClassCard = ({ klass, onLeft }) => {
   const intl = useIntl()
   const [assignments, setAssignments] = useState(null)
+  const [leaving, setLeaving] = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -116,8 +117,37 @@ const ClassCard = ({ klass }) => {
     load()
   }, [load])
 
+  const leave = async () => {
+    setLeaving(true)
+    try {
+      await api.leaveClass(klass.id)
+      message.success(intl.formatMessage({ id: 'student_class.leave_success' }))
+      onLeft()
+    } catch (e) {
+      message.error(apiErrorMessage(e, intl, 'student_class.leave_error'))
+      setLeaving(false)
+    }
+  }
+
   return (
-    <Card title={klass.displayName}>
+    <Card
+      title={klass.displayName}
+      extra={
+        <Popconfirm
+          title={intl.formatMessage(
+            { id: 'student_class.leave_confirm' },
+            { name: klass.displayName },
+          )}
+          description={intl.formatMessage({ id: 'student_class.leave_confirm_hint' })}
+          okText={intl.formatMessage({ id: 'student_class.leave' })}
+          okButtonProps={{ danger: true }}
+          cancelText={intl.formatMessage({ id: 'common.cancel' })}
+          onConfirm={leave}>
+          <Button danger size='small' loading={leaving}>
+            <FormattedMessage id='student_class.leave' />
+          </Button>
+        </Popconfirm>
+      }>
       {klass.ownerName ? (
         <Paragraph type='secondary' style={{ marginBottom: 8 }}>
           <FormattedMessage id='student_class.teacher_label' values={{ name: klass.ownerName }} />
@@ -219,7 +249,7 @@ const StudentClassesPage = () => {
         ) : (
           <Space orientation='vertical' size='large' style={{ width: '100%' }}>
             {items.map(item => (
-              <ClassCard key={item.id} klass={item} />
+              <ClassCard key={item.id} klass={item} onLeft={load} />
             ))}
           </Space>
         )}

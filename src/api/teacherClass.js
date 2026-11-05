@@ -61,6 +61,8 @@ export const reviewSubmission = (projectId, body) =>
 
 export const listStudentClasses = () => instance.get('/api/student/classes')
 
+export const leaveClass = classId => instance.post(`/api/student/classes/${classId}/leave`)
+
 export const listStudentAssignments = classId =>
   instance.get(`/api/student/classes/${classId}/assignments`)
 
