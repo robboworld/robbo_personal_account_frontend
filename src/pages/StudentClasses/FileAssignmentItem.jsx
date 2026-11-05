@@ -190,7 +190,6 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
       disabled={!editable || !files.length}>
       <Button
         type='primary'
-        size='small'
         loading={submitting}
         disabled={!editable || !files.length || uploads.length > 0}>
         <FormattedMessage

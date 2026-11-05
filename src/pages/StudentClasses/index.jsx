@@ -1,21 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import {
-  Button,
-  Card,
-  Empty,
-  Input,
-  List,
-  Popconfirm,
-  Space,
-  Spin,
-  Typography,
-  message,
-} from 'antd'
+import { Button, Empty, Input, List, Popconfirm, Space, Spin, Tag, Typography, message } from 'antd'
+import { LogoutOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { AssignmentTags, TeacherComment, assignmentState } from './AssignmentStatus'
 import FileAssignmentItem from './FileAssignmentItem'
+import { AssignmentList, ClassCardFrame, ClassName, ClassTeacher, LeaveButton } from './styles'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
@@ -23,7 +14,7 @@ import { JOIN_CLASS_CODE_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
 import { apiErrorMessage, classCodeErrorMessage } from '@/helpers/apiErrorMessage'
 import { openScratchEditor } from '@/utils/scratchEditor'
 
-const { Paragraph, Text } = Typography
+const { Text } = Typography
 
 const AssignmentItem = ({ assignment, onSubmitted }) => {
   const intl = useIntl()
@@ -68,7 +59,7 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
           cancelText={intl.formatMessage({ id: 'common.cancel' })}
           onConfirm={submit}
           disabled={handedIn || closed}>
-          <Button type='primary' size='small' loading={submitting} disabled={handedIn || closed}>
+          <Button type='primary' loading={submitting} disabled={handedIn || closed}>
             <FormattedMessage
               id={status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'}
             />
@@ -130,8 +121,20 @@ const ClassCard = ({ klass, onLeft }) => {
   }
 
   return (
-    <Card
-      title={klass.displayName}
+    <ClassCardFrame
+      title={
+        <React.Fragment>
+          <ClassName>{klass.displayName}</ClassName>
+          {klass.ownerName ? (
+            <ClassTeacher>
+              <FormattedMessage
+                id='student_class.teacher_label'
+                values={{ name: klass.ownerName }}
+              />
+            </ClassTeacher>
+          ) : null}
+        </React.Fragment>
+      }
       extra={
         <Popconfirm
           title={intl.formatMessage(
@@ -143,25 +146,27 @@ const ClassCard = ({ klass, onLeft }) => {
           okButtonProps={{ danger: true }}
           cancelText={intl.formatMessage({ id: 'common.cancel' })}
           onConfirm={leave}>
-          <Button danger size='small' loading={leaving}>
+          <LeaveButton
+            type='text'
+            size='small'
+            icon={<LogoutOutlined aria-hidden />}
+            loading={leaving}>
             <FormattedMessage id='student_class.leave' />
-          </Button>
+          </LeaveButton>
         </Popconfirm>
       }>
-      {klass.ownerName ? (
-        <Paragraph type='secondary' style={{ marginBottom: 8 }}>
-          <FormattedMessage id='student_class.teacher_label' values={{ name: klass.ownerName }} />
-        </Paragraph>
-      ) : null}
       {assignments === null ? (
         <Spin />
       ) : (
-        <List
+        <AssignmentList
           itemLayout='vertical'
           header={
-            <Text strong>
-              <FormattedMessage id='student_class.assignments' />
-            </Text>
+            <Space size={8}>
+              <Text strong>
+                <FormattedMessage id='student_class.assignments' />
+              </Text>
+              {assignments.length ? <Tag>{assignments.length}</Tag> : null}
+            </Space>
           }
           dataSource={assignments}
           locale={{ emptyText: intl.formatMessage({ id: 'student_class.no_assignments' }) }}
@@ -174,7 +179,7 @@ const ClassCard = ({ klass, onLeft }) => {
           }
         />
       )}
-    </Card>
+    </ClassCardFrame>
   )
 }
 
@@ -247,7 +252,7 @@ const StudentClassesPage = () => {
         ) : items.length === 0 ? (
           <Empty description={<FormattedMessage id='student_class.empty' />} />
         ) : (
-          <Space orientation='vertical' size='large' style={{ width: '100%' }}>
+          <Space orientation='vertical' size={32} style={{ width: '100%' }}>
             {items.map(item => (
               <ClassCard key={item.id} klass={item} onLeft={load} />
             ))}
