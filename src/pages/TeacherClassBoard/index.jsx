@@ -39,6 +39,7 @@ import {
   reviewStatusLabel,
 } from './reviewStatus'
 import FileAssignmentFields from './FileAssignmentFields'
+import CoTeachersModal from './CoTeachersModal'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
@@ -82,6 +83,7 @@ const TeacherClassBoardPage = () => {
   const [assigning, setAssigning] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
   const [renameOpen, setRenameOpen] = useState(false)
+  const [coTeachersOpen, setCoTeachersOpen] = useState(false)
   const [reviewProject, setReviewProject] = useState(null)
   const [reviewComment, setReviewComment] = useState('')
   // Students the message modal is open for; null when closed.
@@ -167,6 +169,8 @@ const TeacherClassBoardPage = () => {
   const refreshAll = () => Promise.all([refreshBoard(), refreshAssignment()])
 
   const activeAssignment = assignments.find(a => a.id === activeAssignmentId)
+  // Rename, archive, a new code and appointments stay with the owner.
+  const isCoTeacher = !!klass?.coTeacherUntil
 
   // One row per student for the active assignment: the roster joined with the copies.
   // Handed-in work of a student who left the class keeps a row, so it can still be reviewed.
@@ -184,6 +188,8 @@ const TeacherClassBoardPage = () => {
       reviewStatus: p?.reviewStatus,
       reviewComment: p?.reviewComment,
       submissionNote: p?.submissionNote,
+      reviewedByName: p?.reviewedByName,
+      reviewedAt: p?.reviewedAt,
       title: p?.title,
       late: !!p?.late,
     })
@@ -462,6 +468,14 @@ const TeacherClassBoardPage = () => {
               />
             </Text>
           ) : null}
+          {row.reviewedByName ? (
+            <Text type='secondary' title={formatDateTime(row.reviewedAt, intl.locale)}>
+              <FormattedMessage
+                id='teacher_board.reviewed_by'
+                values={{ name: row.reviewedByName }}
+              />
+            </Text>
+          ) : null}
         </Space>
       ),
     },
@@ -529,13 +543,24 @@ const TeacherClassBoardPage = () => {
 
   const classMenu = {
     items: [
-      { key: 'rename', label: intl.formatMessage({ id: 'teacher_board.rename' }) },
-      { key: 'rotate', label: intl.formatMessage({ id: 'teacher_board.rotate_invite' }) },
-      { type: 'divider' },
-      { key: 'archive', danger: true, label: intl.formatMessage({ id: 'teacher_board.archive' }) },
+      { key: 'co_teachers', label: intl.formatMessage({ id: 'co_teachers.title' }) },
+      ...(isCoTeacher
+        ? []
+        : [
+            { key: 'rename', label: intl.formatMessage({ id: 'teacher_board.rename' }) },
+            { key: 'rotate', label: intl.formatMessage({ id: 'teacher_board.rotate_invite' }) },
+            { type: 'divider' },
+            {
+              key: 'archive',
+              danger: true,
+              label: intl.formatMessage({ id: 'teacher_board.archive' }),
+            },
+          ]),
     ],
     onClick: ({ key }) => {
-      if (key === 'rename') {
+      if (key === 'co_teachers') {
+        setCoTeachersOpen(true)
+      } else if (key === 'rename') {
         renameForm.setFieldsValue({ displayName: klass?.displayName || '' })
         setRenameOpen(true)
       } else if (key === 'rotate') {
@@ -570,6 +595,21 @@ const TeacherClassBoardPage = () => {
             </Button>
             <SectionTitle>{klass?.displayName || '…'}</SectionTitle>
             <Text type='secondary'>{klass?.edxCourseId}</Text>
+            {isCoTeacher ? (
+              <div>
+                <Tag color='gold'>
+                  <FormattedMessage
+                    id='co_teachers.until_tag'
+                    values={{ date: intl.formatDate(klass.coTeacherUntil) }}
+                  />
+                </Tag>
+                {klass.ownerName ? (
+                  <Text type='secondary'>
+                    <FormattedMessage id='teacher_class.owner' values={{ name: klass.ownerName }} />
+                  </Text>
+                ) : null}
+              </div>
+            ) : null}
           </div>
           <Space wrap>
             {overdue > 0 ? (
@@ -949,6 +989,14 @@ const TeacherClassBoardPage = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      <CoTeachersModal
+        open={coTeachersOpen}
+        classId={classId}
+        isCoTeacher={isCoTeacher}
+        onClose={() => setCoTeachersOpen(false)}
+        onLeft={() => navigate(TEACHER_CLASSES_ROUTE)}
+      />
 
       <Modal
         open={!!reviewProject}

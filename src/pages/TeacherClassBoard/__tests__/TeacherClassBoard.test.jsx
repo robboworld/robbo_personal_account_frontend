@@ -96,6 +96,48 @@ describe('TeacherClassBoardPage work tab', () => {
     expect(await screen.findByText('Аня')).toBeTruthy()
   }, 30000)
 
+  it('names who reviewed the work', async () => {
+    api.listSubmissions.mockResolvedValue({
+      data: {
+        items: [
+          {
+            ownerUserId: '3',
+            projectId: 'p3',
+            reviewStatus: 'accepted',
+            reviewedByName: 'Замена',
+            reviewedAt: '2026-11-03T10:00:00Z',
+          },
+        ],
+      },
+    })
+    renderPage(<TeacherClassBoardPage />)
+
+    fireEvent.click(await screen.findByText('Проверено · 1', {}, { timeout: 15000 }))
+    expect(within(rowOf('Вика')).getByText('Проверка: Замена')).toBeTruthy()
+  }, 30000)
+
+  it('keeps the class settings from a co-teacher', async () => {
+    api.getTeacherClass.mockResolvedValue({
+      data: {
+        id: 'c1',
+        displayName: '5A',
+        inviteCode: 'ABC123',
+        ownerName: 'Владелец',
+        coTeacherUntil: '2026-11-18T20:59:59Z',
+      },
+    })
+    renderPage(<TeacherClassBoardPage />)
+
+    expect(await screen.findByText(/^Со-преподаватель до /, {}, { timeout: 15000 })).toBeTruthy()
+    // A co-teacher invites students, so the code stays.
+    expect(screen.getByText('ABC123')).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Действия с классом' }))
+    expect(await screen.findByText('Со-преподаватели')).toBeTruthy()
+    expect(screen.queryByText('Переименовать')).toBeNull()
+    expect(screen.queryByText('Архивировать класс')).toBeNull()
+  }, 30000)
+
   it('opens on the newest assignment', async () => {
     api.listAssignments.mockResolvedValue({
       data: {

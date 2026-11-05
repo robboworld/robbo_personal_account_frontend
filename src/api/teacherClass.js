@@ -36,6 +36,18 @@ export const addMembers = (classId, body) =>
 export const removeMember = (classId, username) =>
   instance.delete(`/api/teacher/classes/${classId}/members/${encodeURIComponent(username)}`)
 
+export const listCoTeachers = classId => instance.get(`/api/teacher/classes/${classId}/co-teachers`)
+
+export const addCoTeacher = (classId, body) =>
+  instance.post(`/api/teacher/classes/${classId}/co-teachers`, body)
+
+export const extendCoTeacher = (classId, teacherId, expiresAt) =>
+  instance.patch(`/api/teacher/classes/${classId}/co-teachers/${teacherId}`, { expiresAt })
+
+/** teacherId "me": the co-teacher steps down themselves. */
+export const removeCoTeacher = (classId, teacherId) =>
+  instance.delete(`/api/teacher/classes/${classId}/co-teachers/${teacherId}`)
+
 export const listAssignments = classId =>
   instance.get(`/api/teacher/classes/${classId}/assignments`)
 

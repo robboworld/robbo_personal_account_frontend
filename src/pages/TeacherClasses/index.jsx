@@ -170,7 +170,17 @@ const TeacherClassesPage = ({ userRole }) => {
                     {item.edxCourseId}
                   </Text>
                 ) : null}
-                {allClasses && item.ownerName && (
+                {item.coTeacherUntil ? (
+                  <div>
+                    <Tag color='gold'>
+                      <FormattedMessage
+                        id='co_teachers.until_tag'
+                        values={{ date: intl.formatDate(item.coTeacherUntil) }}
+                      />
+                    </Tag>
+                  </div>
+                ) : null}
+                {(allClasses || item.coTeacherUntil) && item.ownerName && (
                   <div>
                     <Text type='secondary'>
                       <FormattedMessage
