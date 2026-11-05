@@ -21,6 +21,7 @@ import {
   flattenSidebarItems,
 } from './SideBarData.jsx'
 import { mapSidebarMenuItems } from './sidebarMenu'
+import SidebarUserInfo from './SidebarUser'
 
 import { checkAuthRequest, signOutSuccess } from '@/actions/auth'
 import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
@@ -228,6 +229,7 @@ export default ({
         items={menuItems}
       />
       <SidebarFooter $collapsed={menuCollapsed}>
+        <SidebarUserInfo role={Role} collapsed={menuCollapsed} skip={!sessionChecked} />
         <SidebarLogoutBtn type='button' $collapsed={menuCollapsed} onClick={() => handleLogout()}>
           <LogoutOutlined />
           <span>

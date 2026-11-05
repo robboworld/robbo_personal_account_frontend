@@ -284,6 +284,16 @@ export const HeroTitle = styled.h1`
 `
 
 const roleBadgeAccent = {
+  student: {
+    color: '#a85a06',
+    background: 'rgba(240, 140, 30, 0.14)',
+    border: 'rgba(240, 140, 30, 0.38)',
+  },
+  parent: {
+    color: '#2a5f86',
+    background: 'rgba(52, 120, 170, 0.12)',
+    border: 'rgba(52, 120, 170, 0.34)',
+  },
   teacher: {
     color: colors.accentGreenDark,
     background: 'rgba(0, 175, 65, 0.12)',
@@ -1134,6 +1144,58 @@ export const SidebarFooter = styled.div`
     css`
       padding: 0.65rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
     `}
+`
+
+// Signed-in user above logout: name, then the role icon (none for a free listener).
+export const SidebarUser = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: ${({ $collapsed }) => ($collapsed ? 'center' : 'flex-start')};
+  gap: 0.55rem;
+  min-width: 0;
+  padding: ${({ $collapsed }) => ($collapsed ? '0.15rem 0' : '0.15rem 0.35rem')};
+  transition:
+    gap var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+    padding var(--sidebar-collapse-duration) var(--sidebar-collapse-ease);
+`
+
+export const SidebarUserName = styled.span`
+  flex: 1;
+  min-width: 0;
+  max-width: ${({ $collapsed }) => ($collapsed ? '0' : '100%')};
+  overflow: hidden;
+  opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: ${colors.secondary};
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition:
+    max-width var(--sidebar-collapse-duration) var(--sidebar-collapse-ease),
+    opacity 180ms ease;
+
+  ${({ $collapsed }) =>
+    $collapsed &&
+    css`
+      flex: 0 0 0;
+    `}
+`
+
+export const SidebarRoleIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  color: ${({ $accent }) => roleBadgeAccent[$accent].color};
+  background: ${({ $accent }) => roleBadgeAccent[$accent].background};
+  border: 1px solid ${({ $accent }) => roleBadgeAccent[$accent].border};
+
+  .anticon {
+    font-size: 0.875rem;
+  }
 `
 
 export const SidebarUtils = styled.div`

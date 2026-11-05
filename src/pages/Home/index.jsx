@@ -16,8 +16,6 @@ import {
   GlobalOutlined,
   CustomerServiceOutlined,
   EditOutlined,
-  CrownOutlined,
-  ReadOutlined,
 } from '@ant-design/icons'
 
 import InterestInvite from './InterestInvite'
@@ -70,6 +68,7 @@ import {
   STUDENT_CLASSES_ROUTE,
   SCRATCH_HUB_ROUTE,
 } from '@/constants'
+import { ROLE_ICONS } from '@/constants/roleIcons'
 import { getScratchEditorLabel } from '@/utils/scratchEditor'
 
 const ACTION_ICONS = {
@@ -197,11 +196,7 @@ const QUICK_ACTION_DEFS = [
 ]
 
 // Staff roles get a badge on the hero; students, parents and free listeners do not.
-const ROLE_BADGES = {
-  [TEACHER]: { accent: 'teacher', Icon: ReadOutlined },
-  [UNIT_ADMIN]: { accent: 'unitAdmin', Icon: SafetyCertificateOutlined },
-  [SUPER_ADMIN]: { accent: 'superAdmin', Icon: CrownOutlined },
-}
+const BADGE_ROLES = [TEACHER, UNIT_ADMIN, SUPER_ADMIN]
 
 const NEXT_STEP_IDS = [
   'home.next_step_1',
@@ -228,7 +223,7 @@ const Home = () => {
   const roleTitle = intl.formatMessage({
     id: USER_ROLE_MESSAGE_IDS[role] || 'user_role.fallback',
   })
-  const roleBadge = ROLE_BADGES[role]
+  const roleBadge = BADGE_ROLES.includes(role) ? ROLE_ICONS[role] : null
   const profile = profileData?.GetUser?.userHttp
   const firstName = (profile?.firstname || profile?.fullName || '').trim().split(/\s+/)[0] || ''
 
