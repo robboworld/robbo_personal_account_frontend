@@ -1,4 +1,6 @@
 import React from 'react'
+import axios from 'axios'
+import { message } from 'antd'
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import MyFilesPage from '@/pages/MyFiles'
@@ -60,6 +62,32 @@ describe('MyFilesPage', () => {
     expect(container.querySelector('input[type=file]').getAttribute('accept')).toBe(
       api.ALLOWED_FILE_ACCEPT,
     )
+  })
+
+  it('cancels an upload in progress without calling it a failure', async () => {
+    api.listFiles.mockResolvedValue([])
+    const info = jest.spyOn(message, 'info').mockImplementation(() => {})
+    const error = jest.spyOn(message, 'error').mockImplementation(() => {})
+    api.uploadFile.mockImplementation(
+      (file, onProgress, signal) =>
+        new Promise((_resolve, reject) => {
+          onProgress(40)
+          signal.addEventListener('abort', () => reject(new axios.CanceledError()))
+        }),
+    )
+    const { container } = renderPage(<MyFilesPage />)
+    await waitFor(() => expect(getEntitlements).toHaveBeenCalled())
+
+    fireEvent.change(container.querySelector('input[type=file]'), {
+      target: { files: [new File(['x'], 'a.pdf')] },
+    })
+    fireEvent.click(await screen.findByRole('button', { name: 'Отменить загрузку «a.pdf»' }))
+
+    await waitFor(() => expect(info).toHaveBeenCalledWith('Загрузка «a.pdf» отменена.'))
+    expect(error).not.toHaveBeenCalled()
+    await waitFor(() => expect(screen.queryByText('Загружаем «a.pdf»')).toBeNull())
+    info.mockRestore()
+    error.mockRestore()
   })
 
   it('deletes after confirmation', async () => {

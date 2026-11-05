@@ -494,9 +494,9 @@ export async function uploadProjectPreview(token, projectPageId, file) {
   return res.json()
 }
 
-/** POST /projectPage/:id/upload — .sb3 file upload (multipart).
+/** POST /projectPage/:id/upload — .sb3 file upload (multipart); signal cancels it.
  * On failure the error message is the backend code (e.g. PROJECT_SIZE_EXCEEDED). */
-export async function uploadProjectSb3(token, projectPageId, file) {
+export async function uploadProjectSb3(token, projectPageId, file, signal) {
   const url = `${backendBase()}projectPage/${encodeURIComponent(projectPageId)}/upload`
   const formData = new FormData()
   formData.append('file', file)
@@ -505,6 +505,7 @@ export async function uploadProjectSb3(token, projectPageId, file) {
     {
       method: 'POST',
       body: formData,
+      signal,
     },
     { fallbackToken: token },
   )

@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import MyFiles from './MyFiles'
 import { precheckUpload, uploadProblemMessage } from './fileChecks'
 
-import { deleteFile, downloadFile, listFiles, uploadFile } from '@/api/userFiles'
+import { deleteFile, downloadFile, isUploadCanceled, listFiles, uploadFile } from '@/api/userFiles'
 import { getEntitlements } from '@/api/licensing'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
@@ -60,9 +60,12 @@ const MyFilesContainer = () => {
 
   const startUpload = useCallback(
     async file => {
-      setUpload({ name: file.name, percent: 0 })
+      const controller = new AbortController()
+      const show = percent =>
+        setUpload({ name: file.name, percent, cancel: () => controller.abort() })
+      show(0)
       try {
-        const created = await uploadFile(file, percent => setUpload({ name: file.name, percent }))
+        const created = await uploadFile(file, show, controller.signal)
         if (created) {
           setFiles(prev => [created, ...prev.filter(f => f.id !== created.id)])
         } else {
@@ -76,7 +79,11 @@ const MyFilesContainer = () => {
           })
         }
       } catch (e) {
-        message.error(apiErrorMessage(e, intl))
+        if (isUploadCanceled(e)) {
+          message.info(intl.formatMessage({ id: 'my_files.upload_canceled' }, { name: file.name }))
+        } else {
+          message.error(apiErrorMessage(e, intl))
+        }
       } finally {
         setUpload(null)
         loadUsage()

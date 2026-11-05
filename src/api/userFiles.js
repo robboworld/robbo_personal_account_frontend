@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 import instance from './instance'
 
 import { fetchWithAuthRetry, saveResponseBlob } from '@/api/projectPage'
@@ -103,16 +105,17 @@ export async function listFiles() {
 }
 
 /**
- * POST /api/files, multipart field `file`. onProgress gets 0..100.
+ * POST /api/files, multipart field `file`. onProgress gets 0..100; signal cancels the upload.
  * Content-Type is set explicitly: the instance default is JSON, and axios would turn
  * FormData into a JSON body; the browser adapter then replaces it with the boundary.
  */
-export async function uploadFile(file, onProgress) {
+export async function uploadFile(file, onProgress, signal) {
   const formData = new FormData()
   formData.append('file', file)
   const { data } = await instance.post('/api/files', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
     timeout: UPLOAD_TIMEOUT_MS,
+    signal,
     onUploadProgress: event => {
       if (!onProgress) return
       const total = event.total || file?.size || 0
@@ -123,6 +126,9 @@ export async function uploadFile(file, onProgress) {
   })
   return data?.file || null
 }
+
+/** True for the rejection of an upload stopped through its signal: axios here, fetch for .sb3. */
+export const isUploadCanceled = error => axios.isCancel(error) || error?.name === 'AbortError'
 
 /** A failed fetch Response as an axios-like error, so apiErrorMessage maps the backend code. */
 export async function fetchErrorWithBody(res) {

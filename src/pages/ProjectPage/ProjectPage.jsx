@@ -16,6 +16,7 @@ import {
 import {
   ArrowLeftOutlined,
   CloudDownloadOutlined,
+  CloseOutlined,
   CloudUploadOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
@@ -71,6 +72,7 @@ import {
 } from '@/api/projectPage'
 import { tryRefreshAccessToken } from '@/api/authRefresh'
 import { getEntitlements } from '@/api/licensing'
+import { isUploadCanceled } from '@/api/userFiles'
 import {
   LANDING_PAGE_ROUTE,
   MY_PROJECTS_ROUTE,
@@ -349,6 +351,7 @@ function AuthenticatedProjectView({ projectPageId, token }) {
   const [landingFeatured, setLandingFeaturedLocal] = useState(false)
   const [landingSortOrder, setLandingSortOrderLocal] = useState(0)
   const uploadInputRef = useRef(null)
+  const uploadAbort = useRef(null)
   const previewInputRef = useRef(null)
   const playerRef = useRef(null)
   const navigate = useNavigate()
@@ -527,6 +530,8 @@ function AuthenticatedProjectView({ projectPageId, token }) {
       message.error(intl.formatMessage({ id: 'project_page.upload_sb3_invalid' }))
       return
     }
+    const controller = new AbortController()
+    uploadAbort.current = controller
     setUploadBusy(true)
     try {
       // Reject oversized files before sending: the server cuts the body off mid-upload,
@@ -539,12 +544,14 @@ function AuthenticatedProjectView({ projectPageId, token }) {
         )
         return
       }
-      await uploadProjectSb3(token, projectPageId, file)
+      await uploadProjectSb3(token, projectPageId, file, controller.signal)
       message.success(intl.formatMessage({ id: 'project_page.upload_sb3_success' }))
       actions.getProjectPageById(token, projectPageId)
       setPlayerReloadKey(k => k + 1)
     } catch (e) {
-      if (e?.message === 'INVALID_PROJECT_FILE') {
+      if (isUploadCanceled(e)) {
+        message.info(intl.formatMessage({ id: 'my_files.upload_canceled' }, { name: file.name }))
+      } else if (e?.message === 'INVALID_PROJECT_FILE') {
         message.error(intl.formatMessage({ id: 'project_page.invalid_project_file' }))
       } else {
         message.error(apiErrorMessage(e, intl, 'project_page.upload_sb3_error'))
@@ -894,6 +901,14 @@ function AuthenticatedProjectView({ projectPageId, token }) {
                           onClick={() => uploadInputRef.current?.click()}>
                           <FormattedMessage id='project_page.upload_sb3' />
                         </ActionButton>
+                        {uploadBusy ? (
+                          <ActionButton
+                            type='default'
+                            icon={<CloseOutlined />}
+                            onClick={() => uploadAbort.current?.abort()}>
+                            <FormattedMessage id='common.cancel' />
+                          </ActionButton>
+                        ) : null}
                       </React.Fragment>
                     )}
                     {canEdit && (

@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 import instance from '@/api/instance'
 import { fetchWithAuthRetry, saveResponseBlob } from '@/api/projectPage'
 import {
@@ -5,6 +7,7 @@ import {
   deleteFile,
   downloadFile,
   isAllowedFileName,
+  isUploadCanceled,
   listFiles,
   uploadFile,
 } from '@/api/userFiles'
@@ -62,6 +65,17 @@ describe('api/userFiles', () => {
     expect(progress.mock.calls).toEqual([[25], [100]])
   })
 
+  it('hands the signal to axios and tells a cancel from a failure', async () => {
+    instance.post.mockResolvedValueOnce({ data: { file: fileRow } })
+    const { signal } = new AbortController()
+    await uploadFile(new File(['x'], 'a.pdf'), null, signal)
+    expect(instance.post.mock.calls[0][2].signal).toBe(signal)
+
+    expect(isUploadCanceled(new axios.CanceledError())).toBe(true)
+    expect(isUploadCanceled(new DOMException('Aborted', 'AbortError'))).toBe(true)
+    expect(isUploadCanceled(new Error('Network Error'))).toBe(false)
+  })
+
   it('downloads through fetch and saves with the file name as fallback', async () => {
     const res = fetchResponse(200, '')
     fetchWithAuthRetry.mockResolvedValueOnce(res)
@@ -92,7 +106,14 @@ describe('api/userFiles', () => {
   it('accepts only the allow-listed extensions', () => {
     expect(isAllowedFileName('Photo.JPG')).toBe(true)
     expect(isAllowedFileName('game.sb3')).toBe(true)
-    for (const name of ['old.sb', 'game.sb2', 'blink.ino', 'part.STL', 'robot.FCStd', 'house.skp']) {
+    for (const name of [
+      'old.sb',
+      'game.sb2',
+      'blink.ino',
+      'part.STL',
+      'robot.FCStd',
+      'house.skp',
+    ]) {
       expect(isAllowedFileName(name)).toBe(true)
     }
     expect(isAllowedFileName('page.html')).toBe(false)

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { DeleteOutlined, DownloadOutlined, InboxOutlined } from '@ant-design/icons'
-import { Button, Empty, Popconfirm, Progress, Space, Table, Typography, Upload } from 'antd'
+import { Button, Empty, Popconfirm, Space, Table, Upload } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
@@ -9,6 +9,7 @@ import { UploadArea } from './styles'
 
 import { ALLOWED_FILE_ACCEPT } from '@/api/userFiles'
 import StorageMeter from '@/components/StorageMeter'
+import UploadProgress from '@/components/UploadProgress'
 import { FileNameCell } from '@/components/FileIcon'
 import { CatalogCount } from '@/components/ProjectCatalog/styles'
 import {
@@ -26,8 +27,6 @@ import {
 } from '@/components/AccountShell'
 import { formatDateTime } from '@/helpers/formatDateTime'
 import { DEFAULT_TARIFFS, formatFileSize, formatStorageMb } from '@/helpers/tariffs'
-
-const { Text } = Typography
 
 const MyFiles = ({
   files,
@@ -173,12 +172,11 @@ const MyFiles = ({
                     </p>
                   </Upload.Dragger>
                   {upload ? (
-                    <div>
-                      <Text type='secondary'>
-                        <FormattedMessage id='my_files.uploading' values={{ name: upload.name }} />
-                      </Text>
-                      <Progress percent={upload.percent} status='active' />
-                    </div>
+                    <UploadProgress
+                      name={upload.name}
+                      percent={upload.percent}
+                      onCancel={upload.cancel}
+                    />
                   ) : null}
                 </UploadArea>
               </GlassPanel>

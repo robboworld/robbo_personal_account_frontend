@@ -1,16 +1,5 @@
 import React, { useRef, useState } from 'react'
-import {
-  Button,
-  List,
-  Modal,
-  Popconfirm,
-  Progress,
-  Select,
-  Space,
-  Typography,
-  Upload,
-  message,
-} from 'antd'
+import { Button, List, Modal, Popconfirm, Select, Space, Typography, Upload, message } from 'antd'
 import { FolderOpenOutlined, InboxOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 
@@ -20,6 +9,7 @@ import * as api from '@/api/teacherClass'
 import {
   acceptForKinds,
   downloadFile,
+  isUploadCanceled,
   kindOfFileName,
   kindsLabel,
   listFiles,
@@ -28,6 +18,7 @@ import {
 import { getEntitlements } from '@/api/licensing'
 import AssignmentFiles, { FileDownloadButton } from '@/components/AssignmentFiles'
 import { FileNameCell } from '@/components/FileIcon'
+import UploadProgress from '@/components/UploadProgress'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import { precheckUpload, uploadProblemMessage } from '@/pages/MyFiles/fileChecks'
 
@@ -45,14 +36,14 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
   const files = assignment.myFiles || []
   const kinds = assignment.allowedKinds || []
   const maxFiles = assignment.maxFiles || 10
-  const [uploading, setUploading] = useState(null)
+  const [uploads, setUploads] = useState([]) // the file being sent, then the queue
   const [removing, setRemoving] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [picker, setPicker] = useState(null) // library files while the picker is open
   const [picked, setPicked] = useState([])
   // The backend takes two uploads per account at a time: several dropped files go one by one.
   const queue = useRef(Promise.resolve())
-  const pending = useRef(0)
+  const pending = useRef(new Set())
 
   const fail = e => message.error(apiErrorMessage(e, intl))
   const typesText = kinds.length
@@ -71,7 +62,7 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
       )
       return Upload.LIST_IGNORE
     }
-    if (files.length + pending.current >= maxFiles) {
+    if (files.length + pending.current.size >= maxFiles) {
       message.error(intl.formatMessage({ id: 'class_files.too_many' }, { max: maxFiles }))
       return Upload.LIST_IGNORE
     }
@@ -86,7 +77,7 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
       message.error(uploadProblemMessage(intl, file, problem))
       return Upload.LIST_IGNORE
     }
-    pending.current += 1
+    pending.current.add(file.uid)
     return true
   }
 
@@ -99,16 +90,32 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
   }
 
   const upload = file => {
+    const { uid, name } = file
+    const controller = new AbortController()
+    const patch = fields =>
+      setUploads(all => all.map(u => (u.uid === uid ? { ...u, ...fields } : u)))
+    const forget = () => {
+      pending.current.delete(uid)
+      setUploads(all => all.filter(u => u.uid !== uid))
+    }
+    const cancel = () => {
+      controller.abort()
+      forget()
+      message.info(intl.formatMessage({ id: 'my_files.upload_canceled' }, { name }))
+    }
+    setUploads(all => [...all, { uid, name, percent: null, cancel }])
     queue.current = queue.current.then(async () => {
-      setUploading({ name: file.name, percent: 0 })
+      if (controller.signal.aborted) return
+      patch({ percent: 0 })
       try {
-        const row = await uploadFile(file, percent => setUploading({ name: file.name, percent }))
+        const row = await uploadFile(file, percent => patch({ percent }), controller.signal)
+        // On the server now: cancelling would not take the file back.
+        patch({ cancel: null })
         if (row) await attach(row)
       } catch (e) {
-        fail(e)
+        if (!isUploadCanceled(e)) fail(e)
       } finally {
-        pending.current -= 1
-        setUploading(null)
+        forget()
         onChanged()
       }
     })
@@ -185,7 +192,7 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
         type='primary'
         size='small'
         loading={submitting}
-        disabled={!editable || !files.length || !!uploading}>
+        disabled={!editable || !files.length || uploads.length > 0}>
         <FormattedMessage
           id={status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'}
         />
@@ -239,14 +246,15 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
                     <FormattedMessage id='class_files.upload_hint' />
                   </p>
                 </Upload.Dragger>
-                {uploading ? (
-                  <div>
-                    <Text type='secondary'>
-                      <FormattedMessage id='my_files.uploading' values={{ name: uploading.name }} />
-                    </Text>
-                    <Progress percent={uploading.percent} size='small' />
-                  </div>
-                ) : null}
+                {uploads.map(u => (
+                  <UploadProgress
+                    key={u.uid}
+                    name={u.name}
+                    percent={u.percent}
+                    size='small'
+                    onCancel={u.cancel}
+                  />
+                ))}
                 <Button
                   icon={<FolderOpenOutlined />}
                   onClick={openPicker}
