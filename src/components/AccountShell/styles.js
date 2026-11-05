@@ -285,9 +285,9 @@ export const HeroTitle = styled.h1`
 
 const roleBadgeAccent = {
   student: {
-    color: '#a85a06',
-    background: 'rgba(240, 140, 30, 0.14)',
-    border: 'rgba(240, 140, 30, 0.38)',
+    color: colors.accentGreenDark,
+    background: 'rgba(0, 175, 65, 0.12)',
+    border: 'rgba(0, 175, 65, 0.32)',
   },
   parent: {
     color: '#2a5f86',
