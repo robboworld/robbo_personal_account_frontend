@@ -216,7 +216,7 @@ describe('StudentClassesPage', () => {
     expect(await screen.findByText('part.stl')).toBeTruthy()
     expect(screen.getByText('На проверке')).toBeTruthy()
     expect(screen.queryByLabelText('Убрать «part.stl» из работы')).toBeNull()
-    expect(screen.queryByText('Выбрать из «Моих файлов»')).toBeNull()
+    expect(screen.queryByText('Выбрать из раздела «Мои файлы»')).toBeNull()
     expect(screen.getByText('Сдать').closest('button').disabled).toBe(true)
   }, 30000)
 })

@@ -103,7 +103,7 @@ describe('AdminStorage', () => {
   it('explains a missing volume when "My files" is off', async () => {
     getStorageOverview.mockResolvedValue(overview(null))
     renderPage(<AdminStorage />)
-    expect(await screen.findByText('«Мои файлы» выключены, том не подключён.')).toBeTruthy()
+    expect(await screen.findByText('Раздел «Мои файлы» выключен, том не подключён.')).toBeTruthy()
   })
 
   it('shows an error with a retry', async () => {
