@@ -53,6 +53,12 @@ describe('mapPlayerErrorMessage', () => {
     expect(mapPlayerErrorMessage(raw, intl)).toBe('project_page.missing_assets')
   })
 
+  it('maps the Scratch 1 converter failure to invalid_project_file', () => {
+    expect(mapPlayerErrorMessage('AssertionError: Non-ascii character in FixedAsciiString', intl)).toBe(
+      'project_page.invalid_project_file',
+    )
+  })
+
   it('keeps other player messages as they are', () => {
     expect(mapPlayerErrorMessage('INVALID_PROJECT_FILE', intl)).toBe('project_page.invalid_project_file')
     expect(mapPlayerErrorMessage('boom', intl)).toBe('boom')

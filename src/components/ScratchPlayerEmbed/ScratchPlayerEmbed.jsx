@@ -49,7 +49,9 @@ export function mapPlayerErrorMessage(raw, intl) {
     msg === 'INVALID_PROJECT_FILE' ||
     msg.includes('validationError') ||
     msg.includes('Could not parse as a valid SB2 or SB3') ||
-    msg.includes('playUrl did not return a .sb3')
+    msg.includes('playUrl did not return a .sb3') ||
+    // scratch-vm retries anything it cannot parse as Scratch 1, and that converter fails like this.
+    msg.includes('FixedAsciiString')
   ) {
     return intl.formatMessage({ id: 'project_page.invalid_project_file' })
   }
