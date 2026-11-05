@@ -1167,6 +1167,7 @@
     "errors.file_kind_not_allowed": "This assignment does not accept files of this type.",
     "errors.too_many_submission_files": "Your work already has the most files allowed. Remove one first.",
     "errors.no_submission_files": "Add at least one file to hand the work in.",
+    "errors.work_not_edited": "The project has no changes of yours yet. Change it in the editor, save it and hand it in again.",
     "sidebar_data.admin_storage": "Storage",
     "errors.reason_required": "Enter a reason (at least 3 characters)",
     "user_content.open": "Content",

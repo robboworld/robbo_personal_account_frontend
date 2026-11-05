@@ -1167,6 +1167,7 @@
     "errors.file_kind_not_allowed": "В этом задании файлы такого типа не принимаются.",
     "errors.too_many_submission_files": "В работе уже максимум файлов. Уберите лишний.",
     "errors.no_submission_files": "Добавьте хотя бы один файл, чтобы сдать работу.",
+    "errors.work_not_edited": "В проекте пока нет ваших изменений. Измените его в редакторе, сохраните и сдайте снова.",
     "sidebar_data.admin_storage": "Хранилище",
     "errors.reason_required": "Укажите причину (не меньше 3 символов)",
     "user_content.open": "Контент",

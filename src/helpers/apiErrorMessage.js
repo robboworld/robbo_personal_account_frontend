@@ -39,6 +39,7 @@ const KNOWN_ERRORS = {
   file_kind_not_allowed: 'errors.file_kind_not_allowed',
   too_many_submission_files: 'errors.too_many_submission_files',
   no_submission_files: 'errors.no_submission_files',
+  work_not_edited: 'errors.work_not_edited',
   not_found: 'errors.not_found',
   reason_required: 'errors.reason_required',
   'recipient is not a student of your classes': 'teacher_board.message_not_your_student',

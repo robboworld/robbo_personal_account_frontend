@@ -6,6 +6,9 @@ const axiosError = (status, data) => ({ response: { status, data } })
 describe('apiErrorMessage', () => {
   it('maps known backend codes', () => {
     expect(apiErrorMessageId(axiosError(403, { error: 'no access' }))).toBe('errors.no_access')
+    expect(apiErrorMessageId(axiosError(409, { error: 'work_not_edited' }))).toBe(
+      'errors.work_not_edited',
+    )
     expect(apiErrorMessageId(axiosError(401, { error: 'input: token not found' }))).toBe(
       'errors.unauthorized',
     )
