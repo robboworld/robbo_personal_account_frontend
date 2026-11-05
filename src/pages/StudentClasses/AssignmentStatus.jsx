@@ -11,7 +11,7 @@ import {
   reviewStatusLabel,
 } from '@/pages/TeacherClassBoard/reviewStatus'
 
-const { Text } = Typography
+const { Paragraph, Text } = Typography
 
 /** Where the student's work on an assignment stands: handed in, closed, overdue. */
 export const assignmentState = (assignment, status) => {
@@ -55,6 +55,21 @@ export const AssignmentTags = ({ assignment, status }) => {
         </Text>
       ) : null}
     </Space>
+  )
+}
+
+/** The student's text from the last hand-in, line breaks included. Plain text, never markup. */
+export const SubmissionNote = ({ note, titleId }) => {
+  if (!note) return null
+  return (
+    <div>
+      <Text strong>
+        <FormattedMessage id={titleId} />
+      </Text>
+      <Paragraph style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginBottom: 0 }}>
+        {note}
+      </Paragraph>
+    </div>
   )
 }
 

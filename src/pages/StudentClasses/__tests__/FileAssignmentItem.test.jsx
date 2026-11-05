@@ -3,7 +3,7 @@ import axios from 'axios'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 
 import FileAssignmentItem from '@/pages/StudentClasses/FileAssignmentItem'
-import { attachAssignmentFile } from '@/api/teacherClass'
+import { attachAssignmentFile, updateFileNote } from '@/api/teacherClass'
 import { getEntitlements } from '@/api/licensing'
 import { downloadFile, uploadFile } from '@/api/userFiles'
 import { renderPage } from '@/testUtils'
@@ -12,6 +12,7 @@ jest.mock('@/api/teacherClass', () => ({
   attachAssignmentFile: jest.fn(),
   detachAssignmentFile: jest.fn(),
   submitAssignmentFiles: jest.fn(),
+  updateFileNote: jest.fn(),
   downloadStarterFile: jest.fn(),
 }))
 jest.mock('@/api/licensing', () => ({ getEntitlements: jest.fn() }))
@@ -126,6 +127,29 @@ describe('FileAssignmentItem', () => {
     )
     fireEvent.click(screen.getByRole('button', { name: 'Скачать' }))
     await waitFor(() => expect(downloadFile).toHaveBeenCalledWith('f1', 'part.stl'))
+  })
+
+  it('adds a note to files on review, and refreshes when the teacher got there first', async () => {
+    updateFileNote.mockRejectedValue({
+      response: { status: 409, data: { error: 'work_not_on_review' } },
+    })
+    const onChanged = jest.fn()
+    renderPage(
+      <FileAssignmentItem
+        assignment={assignment({ myReviewStatus: 'submitted' })}
+        onChanged={onChanged}
+      />,
+    )
+    fireEvent.click(screen.getByText('Добавить комментарий').closest('button'))
+    fireEvent.change(await screen.findByLabelText('Комментарий для учителя (необязательно)'), {
+      target: { value: 'Крепление в part.stl' },
+    })
+    fireEvent.click(document.querySelector('.ant-modal .ant-btn-primary'))
+    await waitFor(() => expect(updateFileNote).toHaveBeenCalledWith('a1', 'Крепление в part.stl'))
+    expect(
+      await screen.findByText('Учитель уже проверил работу, поэтому комментарий изменить нельзя.'),
+    ).toBeTruthy()
+    expect(onChanged).toHaveBeenCalled()
   })
 
   it.each([

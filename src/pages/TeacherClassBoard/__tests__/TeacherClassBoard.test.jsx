@@ -151,6 +151,7 @@ describe('TeacherClassBoardPage file assignment', () => {
             submissionId: 's2',
             reviewStatus: 'submitted',
             title: 'Кронштейн',
+            submissionNote: 'Крепление в part.stl',
             files: [
               { id: 'f1', name: 'part.FCStd', sizeBytes: 2048 },
               { id: 'f2', name: 'part.stl', sizeBytes: 1024, hasScripts: false },
@@ -174,6 +175,8 @@ describe('TeacherClassBoardPage file assignment', () => {
     // Role queries crawl in a DOM this large: buttons are found by their text or label.
     fireEvent.click(within(rowOf('Боря')).getByText('Проверить'))
     expect(await screen.findByText('part.stl')).toBeTruthy()
+    expect(screen.getByText('Комментарий ученика')).toBeTruthy()
+    expect(screen.getByText('Крепление в part.stl')).toBeTruthy()
     fireEvent.click(screen.getAllByLabelText('Скачать')[1])
     expect(api.downloadSubmissionFile).toHaveBeenCalledWith('s2', 'f2', 'part.stl')
 

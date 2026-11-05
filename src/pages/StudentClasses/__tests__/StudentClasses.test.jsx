@@ -11,6 +11,7 @@ jest.mock('@/api/teacherClass', () => ({
   joinClass: jest.fn(),
   leaveClass: jest.fn(),
   submitProject: jest.fn(),
+  updateProjectNote: jest.fn(),
   submitAssignmentFiles: jest.fn(),
   detachAssignmentFile: jest.fn(),
   attachAssignmentFile: jest.fn(),
@@ -150,11 +151,100 @@ describe('StudentClassesPage', () => {
     fireEvent.click(screen.getByLabelText('Убрать «part.stl» из работы'))
     await waitFor(() => expect(api.detachAssignmentFile).toHaveBeenCalledWith('a1', 'f1'))
 
-    // The confirm popup has its own "Сдать".
+    // The hand-in window has its own "Сдать"; the text for the teacher is optional.
     fireEvent.click(withFiles)
-    await waitFor(() => expect(document.querySelector('.ant-popconfirm')).toBeTruthy())
-    fireEvent.click(document.querySelector('.ant-popconfirm .ant-btn-primary'))
-    await waitFor(() => expect(api.submitAssignmentFiles).toHaveBeenCalledWith('a1'))
+    fireEvent.change(await screen.findByLabelText('Комментарий для учителя (необязательно)'), {
+      target: { value: 'Крепление в part.stl' },
+    })
+    fireEvent.click(document.querySelector('.ant-modal .ant-btn-primary'))
+    await waitFor(() =>
+      expect(api.submitAssignmentFiles).toHaveBeenCalledWith('a1', 'Крепление в part.stl'),
+    )
+  }, 30000)
+
+  it('hands in a Scratch copy with a note and starts returned work from the last one', async () => {
+    api.listStudentClasses.mockResolvedValue({
+      data: { items: [{ id: 'c1', displayName: 'Класс' }] },
+    })
+    api.listStudentAssignments.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: 'a1',
+            title: 'Кот',
+            myProjectId: 'p1',
+            myReviewStatus: 'returned',
+            mySubmissionNote: 'Кот ходит\nпо сцене',
+          },
+        ],
+      },
+    })
+    api.submitProject.mockResolvedValue({})
+    renderPage(<StudentClassesPage />)
+
+    expect(await screen.findByText('Ваш комментарий к работе')).toBeTruthy()
+    fireEvent.click(screen.getByText('Сдать снова').closest('button'))
+    const note = await screen.findByLabelText('Комментарий для учителя (необязательно)')
+    expect(note.value).toBe('Кот ходит\nпо сцене')
+
+    // Cancelling keeps the text.
+    fireEvent.change(note, { target: { value: 'Исправил' } })
+    fireEvent.click(document.querySelector('.ant-modal-footer .ant-btn:not(.ant-btn-primary)'))
+    fireEvent.click(screen.getAllByText('Сдать снова')[0].closest('button'))
+    expect(note.value).toBe('Исправил')
+
+    fireEvent.click(document.querySelector('.ant-modal .ant-btn-primary'))
+    await waitFor(() => expect(api.submitProject).toHaveBeenCalledWith('p1', 'Исправил'))
+  }, 30000)
+
+  it('edits the note of work on review, and only of work on review', async () => {
+    api.listStudentClasses.mockResolvedValue({
+      data: { items: [{ id: 'c1', displayName: 'Класс' }] },
+    })
+    api.listStudentAssignments.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: 'a1',
+            title: 'Кот',
+            myProjectId: 'p1',
+            myReviewStatus: 'submitted',
+            mySubmissionNote: 'Было',
+          },
+          {
+            id: 'a2',
+            title: 'Пёс',
+            myProjectId: 'p2',
+            myReviewStatus: 'accepted',
+            mySubmissionNote: 'Сделано',
+          },
+          {
+            id: 'a3',
+            title: 'Рыба',
+            myProjectId: 'p3',
+            myReviewStatus: 'submitted',
+            closedAt: '2026-11-01T10:00:00Z',
+            mySubmissionNote: 'Закрыто',
+          },
+        ],
+      },
+    })
+    api.updateProjectNote.mockResolvedValue({})
+    renderPage(<StudentClassesPage />)
+
+    expect(await screen.findByText('Было')).toBeTruthy()
+    expect(screen.getByText('Сделано')).toBeTruthy()
+    expect(screen.getByText('Закрыто')).toBeTruthy()
+    expect(screen.getAllByText('Изменить комментарий')).toHaveLength(1)
+
+    fireEvent.click(screen.getByText('Изменить комментарий').closest('button'))
+    const note = await screen.findByLabelText('Комментарий для учителя (необязательно)')
+    expect(note.value).toBe('Было')
+    fireEvent.change(note, { target: { value: 'Стало' } })
+    fireEvent.click(document.querySelector('.ant-modal .ant-btn-primary'))
+    await waitFor(() => expect(api.updateProjectNote).toHaveBeenCalledWith('p1', 'Стало'))
+    expect(api.submitProject).not.toHaveBeenCalled()
+    await waitFor(() => expect(api.listStudentAssignments).toHaveBeenCalledTimes(2))
   }, 30000)
 
   it('leaves a class after confirmation and drops it from the list', async () => {

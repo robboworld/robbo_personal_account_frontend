@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { AssignmentTags, TeacherComment, assignmentState } from './AssignmentStatus'
+import EditableSubmissionNote from './EditableSubmissionNote'
 import FileAssignmentItem from './FileAssignmentItem'
+import SubmissionNoteModal from './SubmissionNoteModal'
 import { AssignmentList, ClassCardFrame, ClassName, ClassTeacher, LeaveButton } from './styles'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
@@ -19,15 +21,17 @@ const { Text } = Typography
 const AssignmentItem = ({ assignment, onSubmitted }) => {
   const intl = useIntl()
   const navigate = useNavigate()
+  const [confirming, setConfirming] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const status = assignment.myReviewStatus || (assignment.myProjectId ? 'draft' : '')
   const { handedIn, closed } = assignmentState(assignment, status)
 
-  const submit = async () => {
+  const submit = async note => {
     setSubmitting(true)
     try {
-      await api.submitProject(assignment.myProjectId)
+      await api.submitProject(assignment.myProjectId, note)
       message.success(intl.formatMessage({ id: 'student_class.submitted' }))
+      setConfirming(false)
       onSubmitted()
     } catch (e) {
       message.error(apiErrorMessage(e, intl, 'student_class.submit_error'))
@@ -35,6 +39,8 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
       setSubmitting(false)
     }
   }
+
+  const submitId = status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'
 
   // Handed-in work is read-only until the teacher returns it (backend HOMEWORK_LOCKED).
   const actions = assignment.myProjectId
@@ -52,19 +58,14 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
           }>
           <FormattedMessage id='student_class.open_page' />
         </Button>,
-        <Popconfirm
+        <Button
           key='submit'
-          title={intl.formatMessage({ id: 'student_class.submit_confirm' })}
-          okText={intl.formatMessage({ id: 'student_class.submit' })}
-          cancelText={intl.formatMessage({ id: 'common.cancel' })}
-          onConfirm={submit}
-          disabled={handedIn || closed}>
-          <Button type='primary' loading={submitting} disabled={handedIn || closed}>
-            <FormattedMessage
-              id={status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'}
-            />
-          </Button>
-        </Popconfirm>,
+          type='primary'
+          loading={submitting}
+          disabled={handedIn || closed}
+          onClick={() => setConfirming(true)}>
+          <FormattedMessage id={submitId} />
+        </Button>,
       ].filter(Boolean)
     : []
 
@@ -81,9 +82,25 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
                 <FormattedMessage id='student_class.not_issued_hint' />
               </Text>
             ) : null}
+            <EditableSubmissionNote
+              note={assignment.mySubmissionNote}
+              editable={status === 'submitted' && !closed}
+              save={note => api.updateProjectNote(assignment.myProjectId, note)}
+              onSaved={onSubmitted}
+            />
             <TeacherComment comment={assignment.myReviewComment} status={status} />
           </Space>
         }
+      />
+      <SubmissionNoteModal
+        open={confirming}
+        titleId='student_class.submit_title'
+        confirmId='student_class.submit_confirm'
+        okId={submitId}
+        note={assignment.mySubmissionNote}
+        loading={submitting}
+        onCancel={() => setConfirming(false)}
+        onSubmit={submit}
       />
     </List.Item>
   )

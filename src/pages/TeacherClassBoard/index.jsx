@@ -51,6 +51,7 @@ import { getEntitlements } from '@/api/licensing'
 import { kindsLabel } from '@/api/userFiles'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import { formatDateTime } from '@/helpers/formatDateTime'
+import { SubmissionNote } from '@/pages/StudentClasses/AssignmentStatus'
 import InviteDetails, { copyText } from '@/pages/TeacherClasses/InviteDetails'
 
 const { Text } = Typography
@@ -182,6 +183,7 @@ const TeacherClassBoardPage = () => {
       updatedAt: p?.updatedAt,
       reviewStatus: p?.reviewStatus,
       reviewComment: p?.reviewComment,
+      submissionNote: p?.submissionNote,
       title: p?.title,
       late: !!p?.late,
     })
@@ -433,6 +435,7 @@ const TeacherClassBoardPage = () => {
       files: row.files || [],
       title: row.submissionId ? `${row.title} · ${studentLabel(row)}` : row.title,
       reviewStatus: row.reviewStatus,
+      submissionNote: row.submissionNote,
     })
     setReviewComment(row.reviewComment || '')
   }
@@ -965,6 +968,14 @@ const TeacherClassBoardPage = () => {
             </Button>
           </Space>
         }>
+        {reviewProject?.submissionNote ? (
+          <div style={{ marginBottom: 16 }}>
+            <SubmissionNote
+              note={reviewProject.submissionNote}
+              titleId='teacher_board.student_note'
+            />
+          </div>
+        ) : null}
         {reviewProject?.submissionId ? (
           <div style={{ marginBottom: 16 }}>
             <Text strong>

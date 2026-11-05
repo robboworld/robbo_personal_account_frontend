@@ -66,7 +66,10 @@ export const leaveClass = classId => instance.post(`/api/student/classes/${class
 export const listStudentAssignments = classId =>
   instance.get(`/api/student/classes/${classId}/assignments`)
 
-export const submitProject = projectId => instance.post(`/api/student/projects/${projectId}/submit`)
+export const submitProject = (projectId, note) =>
+  instance.post(`/api/student/projects/${projectId}/submit`, { note })
+export const updateProjectNote = (projectId, note) =>
+  instance.put(`/api/student/projects/${projectId}/note`, { note })
 
 export const listTeacherCourses = () => instance.get('/api/teacher/courses')
 
@@ -77,8 +80,10 @@ export const attachAssignmentFile = (assignmentId, fileId) =>
 export const detachAssignmentFile = (assignmentId, fileId) =>
   instance.delete(`/api/student/assignments/${assignmentId}/files/${encodeURIComponent(fileId)}`)
 
-export const submitAssignmentFiles = assignmentId =>
-  instance.post(`/api/student/assignments/${assignmentId}/submit`)
+export const submitAssignmentFiles = (assignmentId, note) =>
+  instance.post(`/api/student/assignments/${assignmentId}/submit`, { note })
+export const updateFileNote = (assignmentId, note) =>
+  instance.put(`/api/student/assignments/${assignmentId}/note`, { note })
 
 export const reviewFileSubmission = (submissionId, body) =>
   instance.post(`/api/teacher/file-submissions/${submissionId}/review`, body)

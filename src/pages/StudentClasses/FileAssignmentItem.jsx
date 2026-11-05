@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react'
-import { Button, List, Modal, Popconfirm, Select, Space, Typography, Upload, message } from 'antd'
+import { Button, List, Modal, Select, Space, Typography, Upload, message } from 'antd'
 import { FolderOpenOutlined, InboxOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { AssignmentTags, TeacherComment, assignmentState } from './AssignmentStatus'
+import EditableSubmissionNote from './EditableSubmissionNote'
+import SubmissionNoteModal from './SubmissionNoteModal'
 
 import * as api from '@/api/teacherClass'
 import {
@@ -38,6 +40,7 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
   const maxFiles = assignment.maxFiles || 10
   const [uploads, setUploads] = useState([]) // the file being sent, then the queue
   const [removing, setRemoving] = useState(null)
+  const [confirming, setConfirming] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [picker, setPicker] = useState(null) // library files while the picker is open
   const [picked, setPicked] = useState([])
@@ -158,11 +161,12 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
     }
   }
 
-  const submit = async () => {
+  const submit = async note => {
     setSubmitting(true)
     try {
-      await api.submitAssignmentFiles(assignment.id)
+      await api.submitAssignmentFiles(assignment.id, note)
       message.success(intl.formatMessage({ id: 'student_class.submitted' }))
+      setConfirming(false)
       onChanged()
     } catch (e) {
       message.error(apiErrorMessage(e, intl, 'student_class.submit_error'))
@@ -170,6 +174,8 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
       setSubmitting(false)
     }
   }
+
+  const submitId = status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'
 
   const actions = [
     assignment.templateFile ? (
@@ -181,22 +187,14 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
         <FormattedMessage id='class_files.starter' />
       </FileDownloadButton>
     ) : null,
-    <Popconfirm
+    <Button
       key='submit'
-      title={intl.formatMessage({ id: 'class_files.submit_confirm' })}
-      okText={intl.formatMessage({ id: 'student_class.submit' })}
-      cancelText={intl.formatMessage({ id: 'common.cancel' })}
-      onConfirm={submit}
-      disabled={!editable || !files.length}>
-      <Button
-        type='primary'
-        loading={submitting}
-        disabled={!editable || !files.length || uploads.length > 0}>
-        <FormattedMessage
-          id={status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'}
-        />
-      </Button>
-    </Popconfirm>,
+      type='primary'
+      loading={submitting}
+      disabled={!editable || !files.length || uploads.length > 0}
+      onClick={() => setConfirming(true)}>
+      <FormattedMessage id={submitId} />
+    </Button>,
   ].filter(Boolean)
 
   return (
@@ -213,6 +211,12 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
                 values={{ types: typesText, max: maxFiles }}
               />
             </Text>
+            <EditableSubmissionNote
+              note={assignment.mySubmissionNote}
+              editable={status === 'submitted' && !closed}
+              save={note => api.updateFileNote(assignment.id, note)}
+              onSaved={onChanged}
+            />
             <TeacherComment comment={assignment.myReviewComment} status={status} />
             <div>
               <Text strong>
@@ -264,6 +268,16 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
             ) : null}
           </Space>
         }
+      />
+      <SubmissionNoteModal
+        open={confirming}
+        titleId='student_class.submit_title'
+        confirmId='class_files.submit_confirm'
+        okId={submitId}
+        note={assignment.mySubmissionNote}
+        loading={submitting}
+        onCancel={() => setConfirming(false)}
+        onSubmit={submit}
       />
       <Modal
         open={!!picker}
