@@ -26,12 +26,12 @@ const SidebarUserInfo = ({ role, collapsed = false, skip = false }) => {
   const roleTitle = intl.formatMessage({ id: USER_ROLE_MESSAGE_IDS[role] || 'user_role.fallback' })
 
   return (
-    <Tooltip
-      title={collapsed ? `${name} · ${roleTitle}` : roleIcon ? roleTitle : null}
-      placement={collapsed ? 'right' : 'top'}>
-      <SidebarUser $collapsed={collapsed} data-testid='sidebar-user'>
-        <SidebarUserName $collapsed={collapsed}>{name}</SidebarUserName>
-        {roleIcon && (
+    <SidebarUser $collapsed={collapsed} data-testid='sidebar-user'>
+      <SidebarUserName $collapsed={collapsed}>{name}</SidebarUserName>
+      {roleIcon && (
+        <Tooltip
+          title={collapsed ? `${name} · ${roleTitle}` : roleTitle}
+          placement={collapsed ? 'right' : 'top'}>
           <SidebarRoleIcon
             $accent={roleIcon.accent}
             role='img'
@@ -39,9 +39,9 @@ const SidebarUserInfo = ({ role, collapsed = false, skip = false }) => {
             data-testid='sidebar-role-icon'>
             <roleIcon.Icon />
           </SidebarRoleIcon>
-        )}
-      </SidebarUser>
-    </Tooltip>
+        </Tooltip>
+      )}
+    </SidebarUser>
   )
 }
 
