@@ -98,6 +98,13 @@ export function isAllowedFileName(name) {
   return ALLOWED_FILE_EXTENSIONS.includes(String(name).slice(dot).toLowerCase())
 }
 
+/** "report.v2.pdf" → { stem: 'report.v2', ext: '.pdf' }; the backend keeps ext on rename. */
+export function splitFileName(name) {
+  const value = String(name || '')
+  const dot = value.lastIndexOf('.')
+  return dot > 0 ? { stem: value.slice(0, dot), ext: value.slice(dot) } : { stem: value, ext: '' }
+}
+
 /** GET /api/files → [{ id, name, kind, mime, sizeBytes, createdAt }] */
 export async function listFiles() {
   const { data } = await instance.get('/api/files')
@@ -157,6 +164,12 @@ export async function downloadFile(id, fallbackName) {
     throw await fetchErrorWithBody(res)
   }
   await saveResponseBlob(res, fallbackName || 'file')
+}
+
+/** PATCH /api/files/:id { name } → the file; name is whole, with the same extension. */
+export async function renameFile(id, name) {
+  const { data } = await instance.patch(`/api/files/${encodeURIComponent(id)}`, { name })
+  return data?.file || null
 }
 
 /** DELETE /api/files/:id → 204 */

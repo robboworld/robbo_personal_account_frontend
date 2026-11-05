@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react'
-import { DeleteOutlined, DownloadOutlined, InboxOutlined } from '@ant-design/icons'
+import { DeleteOutlined, DownloadOutlined, EditOutlined, InboxOutlined } from '@ant-design/icons'
 import { Button, Empty, Popconfirm, Space, Table, Upload } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
+import RenameFileModal from './RenameFileModal'
 import { maxFileSizeMb } from './fileChecks'
 import { UploadArea } from './styles'
 
@@ -38,6 +39,10 @@ const MyFiles = ({
   beforeUpload,
   onUpload,
   onDownload,
+  renaming,
+  onRenameOpen,
+  onRenameCancel,
+  onRename,
   onDelete,
 }) => {
   const intl = useIntl()
@@ -70,7 +75,7 @@ const MyFiles = ({
       },
       {
         key: 'actions',
-        width: 96,
+        width: 136,
         align: 'right',
         render: (_, file) => (
           <Space size={4}>
@@ -92,6 +97,14 @@ const MyFiles = ({
                 onClick={file.hasScripts ? undefined : () => onDownload(file)}
               />
             </Popconfirm>
+            <Button
+              type='text'
+              icon={<EditOutlined />}
+              aria-label={intl.formatMessage({ id: 'my_files.rename' })}
+              title={intl.formatMessage({ id: 'my_files.rename' })}
+              disabled={!!busyId}
+              onClick={() => onRenameOpen(file)}
+            />
             <Popconfirm
               title={intl.formatMessage({ id: 'my_files.delete_confirm' }, { name: file.name })}
               okText={intl.formatMessage({ id: 'modal_window.delete_confirm_ok' })}
@@ -111,7 +124,7 @@ const MyFiles = ({
         ),
       },
     ],
-    [busyId, intl, onDelete, onDownload],
+    [busyId, intl, onDelete, onDownload, onRenameOpen],
   )
 
   return (
@@ -215,6 +228,14 @@ const MyFiles = ({
           </React.Fragment>
         )}
       </Stagger>
+      {renaming ? (
+        <RenameFileModal
+          file={renaming}
+          saving={busyId === renaming.id}
+          onCancel={onRenameCancel}
+          onSubmit={onRename}
+        />
+      ) : null}
     </PageContent>
   )
 }

@@ -14,13 +14,24 @@ jest.mock('@/api/userFiles', () => ({
   uploadFile: jest.fn(),
   downloadFile: jest.fn(),
   deleteFile: jest.fn(),
+  renameFile: jest.fn(),
 }))
 jest.mock('@/api/licensing', () => ({ getEntitlements: jest.fn() }))
 
 const MB = 1024 * 1024
 
+// antd popups are slow in jsdom, more so once the dialog's styles are on the page.
+jest.setTimeout(30000)
+
+// antd forms batch field updates through MessageChannel, which jsdom lacks.
+class TimeoutMessageChannel {
+  port1 = {}
+  port2 = { postMessage: () => setTimeout(() => this.port1.onmessage?.()) }
+}
+
 describe('MyFilesPage', () => {
   beforeAll(() => {
+    global.MessageChannel = TimeoutMessageChannel
     // jsdom has neither: the Popconfirm popup needs ResizeObserver, and the size/date
     // columns are responsive, so every breakpoint has to match for them to render.
     global.ResizeObserver = class {
@@ -36,6 +47,10 @@ describe('MyFilesPage', () => {
       addListener: () => {},
       removeListener: () => {},
     })
+  })
+
+  afterAll(() => {
+    delete global.MessageChannel
   })
 
   beforeEach(() => {
@@ -101,6 +116,55 @@ describe('MyFilesPage', () => {
     await waitFor(() => expect(screen.queryByText('a.txt')).toBeNull())
   })
 
+  it('renames a file and keeps its extension', async () => {
+    api.listFiles.mockResolvedValue([{ id: 'f1', name: 'a.b.txt', sizeBytes: 1, createdAt: '' }])
+    api.renameFile.mockResolvedValue({ id: 'f1', name: 'Домашка.txt', sizeBytes: 1, createdAt: '' })
+    renderPage(<MyFilesPage />)
+
+    fireEvent.click(await screen.findByLabelText('Переименовать'))
+    const input = await screen.findByLabelText('Новое имя')
+    expect(input.value).toBe('a.b')
+    fireEvent.change(input, { target: { value: ' Домашка ' } })
+    fireEvent.click(screen.getByText('Сохранить'))
+
+    await waitFor(() => expect(api.renameFile).toHaveBeenCalledWith('f1', 'Домашка.txt'))
+    expect(await screen.findByText('Домашка.txt')).toBeTruthy()
+    await waitFor(() => expect(screen.queryByLabelText('Новое имя')).toBeNull())
+  })
+
+  it('refuses a path as the new name and skips an unchanged one', async () => {
+    api.listFiles.mockResolvedValue([{ id: 'f1', name: 'a.txt', sizeBytes: 1, createdAt: '' }])
+    renderPage(<MyFilesPage />)
+
+    fireEvent.click(await screen.findByLabelText('Переименовать'))
+    const input = await screen.findByLabelText('Новое имя')
+    fireEvent.change(input, { target: { value: 'x/y' } })
+    fireEvent.click(screen.getByText('Сохранить'))
+    expect(await screen.findByText('Введите имя без символов / и \\.')).toBeTruthy()
+    expect(api.renameFile).not.toHaveBeenCalled()
+
+    fireEvent.change(input, { target: { value: 'a' } })
+    fireEvent.click(screen.getByText('Сохранить'))
+    await waitFor(() => expect(screen.queryByLabelText('Новое имя')).toBeNull())
+    expect(api.renameFile).not.toHaveBeenCalled()
+  })
+
+  it('keeps the dialog open with the error when the rename fails', async () => {
+    api.listFiles.mockResolvedValue([{ id: 'f1', name: 'a.txt', sizeBytes: 1, createdAt: '' }])
+    api.renameFile.mockRejectedValue({ response: { status: 500, data: {} } })
+    const error = jest.spyOn(message, 'error').mockImplementation(() => {})
+    renderPage(<MyFilesPage />)
+
+    fireEvent.click(await screen.findByLabelText('Переименовать'))
+    fireEvent.change(await screen.findByLabelText('Новое имя'), { target: { value: 'b' } })
+    fireEvent.click(screen.getByText('Сохранить'))
+
+    await waitFor(() => expect(error).toHaveBeenCalled())
+    expect(screen.getByLabelText('Новое имя')).toBeTruthy()
+    expect(screen.getByText('a.txt')).toBeTruthy()
+    error.mockRestore()
+  })
+
   it('downloads a plain file at once', async () => {
     api.listFiles.mockResolvedValue([{ id: 'f1', name: 'a.txt', sizeBytes: 1, createdAt: '' }])
     api.downloadFile.mockResolvedValue()
@@ -128,7 +192,7 @@ describe('MyFilesPage', () => {
     })
     expect(within(popup).getByText('Скачать файл со скриптами?')).toBeTruthy()
     expect(within(popup).getByText(/Запускайте их, если доверяете источнику/)).toBeTruthy()
-    fireEvent.click(within(popup).getByRole('button', { name: 'Скачать' }))
+    fireEvent.click(within(popup).getByText('Скачать'))
     await waitFor(() => expect(api.downloadFile).toHaveBeenCalledWith('f2', 'robot.zip'))
   })
 

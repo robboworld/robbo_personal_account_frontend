@@ -5,7 +5,14 @@ import { useIntl } from 'react-intl'
 import MyFiles from './MyFiles'
 import { precheckUpload, uploadProblemMessage } from './fileChecks'
 
-import { deleteFile, downloadFile, isUploadCanceled, listFiles, uploadFile } from '@/api/userFiles'
+import {
+  deleteFile,
+  downloadFile,
+  isUploadCanceled,
+  listFiles,
+  renameFile,
+  uploadFile,
+} from '@/api/userFiles'
 import { getEntitlements } from '@/api/licensing'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 
@@ -18,6 +25,7 @@ const MyFilesContainer = () => {
   const [entitlements, setEntitlements] = useState(null)
   const [upload, setUpload] = useState(null)
   const [busyId, setBusyId] = useState(null)
+  const [renaming, setRenaming] = useState(null)
 
   const loadUsage = useCallback(async () => {
     try {
@@ -106,6 +114,31 @@ const MyFilesContainer = () => {
     [intl],
   )
 
+  const onRename = useCallback(
+    async (file, name) => {
+      if (name === file.name) {
+        setRenaming(null)
+        return
+      }
+      setBusyId(file.id)
+      try {
+        const updated = await renameFile(file.id, name)
+        setFiles(prev => prev.map(f => (f.id === file.id ? { ...f, ...updated } : f)))
+        setRenaming(null)
+        message.success(intl.formatMessage({ id: 'my_files.renamed' }))
+      } catch (e) {
+        message.error(apiErrorMessage(e, intl))
+        if (e?.response?.status === 404) {
+          setRenaming(null)
+          loadFiles()
+        }
+      } finally {
+        setBusyId(null)
+      }
+    },
+    [intl, loadFiles],
+  )
+
   const onDelete = useCallback(
     async file => {
       setBusyId(file.id)
@@ -137,6 +170,10 @@ const MyFilesContainer = () => {
       beforeUpload={beforeUpload}
       onUpload={startUpload}
       onDownload={onDownload}
+      renaming={renaming}
+      onRenameOpen={setRenaming}
+      onRenameCancel={() => setRenaming(null)}
+      onRename={onRename}
       onDelete={onDelete}
     />
   )

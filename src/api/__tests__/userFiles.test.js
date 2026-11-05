@@ -9,13 +9,15 @@ import {
   isAllowedFileName,
   isUploadCanceled,
   listFiles,
+  renameFile,
+  splitFileName,
   uploadFile,
 } from '@/api/userFiles'
 import { apiErrorMessageId } from '@/helpers/apiErrorMessage'
 
 jest.mock('@/api/instance', () => ({
   __esModule: true,
-  default: { get: jest.fn(), post: jest.fn(), delete: jest.fn() },
+  default: { get: jest.fn(), post: jest.fn(), patch: jest.fn(), delete: jest.fn() },
 }))
 
 jest.mock('@/api/projectPage', () => ({
@@ -95,6 +97,17 @@ describe('api/userFiles', () => {
     })
     expect(apiErrorMessageId(error)).toBe('errors.not_found')
     expect(saveResponseBlob).not.toHaveBeenCalled()
+  })
+
+  it('renames by id and returns the file', async () => {
+    instance.patch.mockResolvedValueOnce({ data: { file: fileRow } })
+    await expect(renameFile('f1', 'b.pdf')).resolves.toEqual(fileRow)
+    expect(instance.patch).toHaveBeenCalledWith('/api/files/f1', { name: 'b.pdf' })
+  })
+
+  it('splits a name at the last dot', () => {
+    expect(splitFileName('report.v2.pdf')).toEqual({ stem: 'report.v2', ext: '.pdf' })
+    expect(splitFileName('noext')).toEqual({ stem: 'noext', ext: '' })
   })
 
   it('deletes by id', async () => {
