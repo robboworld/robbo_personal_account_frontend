@@ -450,7 +450,7 @@
     "home.action.teacher_classes.title": "Classes",
     "home.action.teacher_classes.description": "Manage classes and student invites.",
     "student_class.title": "My classes",
-    "student_class.join_link": "Join with link",
+    "student_class.join_by_code": "Join with code",
     "student_class.code_placeholder": "Class code",
     "student_class.join_button": "Join",
     "student_class.empty": "You are not in any class yet",

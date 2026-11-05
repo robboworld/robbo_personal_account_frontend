@@ -451,7 +451,7 @@
     "home.action.teacher_classes.title": "Классы",
     "home.action.teacher_classes.description": "Управление классами и приглашениями для учеников.",
     "student_class.title": "Мои классы",
-    "student_class.join_link": "Вступить по ссылке",
+    "student_class.join_by_code": "Вступить по коду",
     "student_class.code_placeholder": "Код класса",
     "student_class.join_button": "Вступить",
     "student_class.empty": "Вы пока не состоите ни в одном классе",

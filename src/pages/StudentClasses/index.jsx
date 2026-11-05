@@ -195,7 +195,7 @@ const StudentClassesPage = () => {
             <FormattedMessage id='student_class.title' />
           </SectionTitle>
           <Button onClick={() => navigate(JOIN_CLASS_CODE_ROUTE)}>
-            <FormattedMessage id='student_class.join_link' />
+            <FormattedMessage id='student_class.join_by_code' />
           </Button>
         </SectionHeader>
         <Space.Compact style={{ width: '100%', maxWidth: 420, marginBottom: 24 }}>
