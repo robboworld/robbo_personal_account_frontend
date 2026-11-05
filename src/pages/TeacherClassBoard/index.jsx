@@ -125,8 +125,11 @@ const TeacherClassBoardPage = () => {
     const { data } = await api.listAssignments(classId)
     const items = data.items || []
     setAssignments(items)
-    // Oldest first: the board opens on the newest, the one the class is working on.
-    setActiveAssignmentId(current => current || items[items.length - 1]?.id)
+    // Oldest first: the board opens on the newest, the one the class is working on. The same
+    // when the open one is gone: deleted here or by another teacher of the class.
+    setActiveAssignmentId(current =>
+      items.some(a => a.id === current) ? current : items[items.length - 1]?.id,
+    )
   }, [classId])
 
   const refreshBoard = useCallback(async () => {
@@ -383,6 +386,18 @@ const TeacherClassBoardPage = () => {
         }),
       )
       refreshAll()
+    } catch (e) {
+      fail(e)
+    }
+  }
+
+  const onDeleteAssignment = async () => {
+    if (!activeAssignment) return
+    try {
+      await api.deleteAssignment(classId, activeAssignment.id)
+      message.success(intl.formatMessage({ id: 'teacher_board.assignment_deleted' }))
+      setHistoryReload(n => n + 1)
+      await refreshBoard()
     } catch (e) {
       fail(e)
     }
@@ -791,6 +806,23 @@ const TeacherClassBoardPage = () => {
                 <FormattedMessage
                   id={activeAssignment.closedAt ? 'teacher_board.reopen' : 'teacher_board.close'}
                 />
+              </Button>
+            </Popconfirm>
+          ) : null}
+          {activeAssignment ? (
+            <Popconfirm
+              title={intl.formatMessage(
+                { id: 'teacher_board.delete_assignment_confirm' },
+                { title: activeAssignment.title },
+              )}
+              description={intl.formatMessage({ id: 'teacher_board.delete_assignment_hint' })}
+              styles={{ root: { maxWidth: 360 } }}
+              okText={intl.formatMessage({ id: 'teacher_board.remove' })}
+              okButtonProps={{ danger: true }}
+              cancelText={intl.formatMessage({ id: 'common.cancel' })}
+              onConfirm={onDeleteAssignment}>
+              <Button size='small' danger>
+                <FormattedMessage id='teacher_board.delete_assignment' />
               </Button>
             </Popconfirm>
           ) : null}

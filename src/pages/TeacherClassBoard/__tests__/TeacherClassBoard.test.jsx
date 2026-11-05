@@ -13,6 +13,7 @@ jest.mock('@/api/teacherClass', () => ({
   progressMatrix: jest.fn(),
   listAssignments: jest.fn(),
   listSubmissions: jest.fn(),
+  deleteAssignment: jest.fn(),
   reviewFileSubmission: jest.fn(),
   downloadSubmissionFile: jest.fn(),
   downloadStarterFile: jest.fn(),
@@ -73,6 +74,28 @@ describe('TeacherClassBoardPage work tab', () => {
       },
     })
   })
+
+  it('deletes the open assignment and moves on to the newest one left', async () => {
+    api.listAssignments.mockResolvedValueOnce({
+      data: {
+        items: [
+          { id: 'a0', title: 'Кот' },
+          { id: 'a1', title: 'Лабиринт' },
+        ],
+      },
+    })
+    api.deleteAssignment.mockResolvedValue({})
+    renderPage(<TeacherClassBoardPage />)
+
+    expect(await screen.findByText('Боря', {}, { timeout: 15000 })).toBeTruthy()
+    fireEvent.click(screen.getByText('Удалить задание'))
+    expect(await screen.findByText('Удалить задание «Лабиринт»?')).toBeTruthy()
+    api.listAssignments.mockResolvedValue({ data: { items: [{ id: 'a0', title: 'Кот' }] } })
+    fireEvent.click(document.querySelector('.ant-popconfirm-buttons .ant-btn-dangerous'))
+
+    await waitFor(() => expect(api.deleteAssignment.mock.calls.at(-1)?.[1]).toBe('a1'))
+    await waitFor(() => expect(api.listSubmissions.mock.calls.at(-1)?.[1]).toBe('a0'))
+  }, 30000)
 
   it('opens on the review queue and filters the roster by status', async () => {
     renderPage(<TeacherClassBoardPage />)

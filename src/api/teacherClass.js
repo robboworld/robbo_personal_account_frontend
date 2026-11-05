@@ -67,6 +67,9 @@ export const closeAssignment = (classId, assignmentId) =>
 export const reopenAssignment = (classId, assignmentId) =>
   instance.post(`/api/teacher/classes/${classId}/assignments/${assignmentId}/reopen`)
 
+export const deleteAssignment = (classId, assignmentId) =>
+  instance.delete(`/api/teacher/classes/${classId}/assignments/${assignmentId}`)
+
 export const listSubmissions = (classId, assignmentId) =>
   instance.get(`/api/teacher/classes/${classId}/assignments/${assignmentId}/submissions`)
 
