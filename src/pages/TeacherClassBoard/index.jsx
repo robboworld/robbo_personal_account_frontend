@@ -39,6 +39,7 @@ import {
   reviewStatusLabel,
 } from './reviewStatus'
 import FileAssignmentFields from './FileAssignmentFields'
+import ClassHistory from './ClassHistory'
 import CoTeachersModal from './CoTeachersModal'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
@@ -72,6 +73,7 @@ const TeacherClassBoardPage = () => {
   const navigate = useNavigate()
   const [klass, setKlass] = useState(null)
   const [mode, setMode] = useState('work')
+  const [historyReload, setHistoryReload] = useState(0)
   const [workFilter, setWorkFilter] = useState('review')
   const [members, setMembers] = useState([])
   const [assignments, setAssignments] = useState([])
@@ -166,7 +168,10 @@ const TeacherClassBoardPage = () => {
     refreshAssignment()
   }, [refreshAssignment])
 
-  const refreshAll = () => Promise.all([refreshBoard(), refreshAssignment()])
+  const refreshAll = () => {
+    setHistoryReload(n => n + 1)
+    return Promise.all([refreshBoard(), refreshAssignment()])
+  }
 
   const activeAssignment = assignments.find(a => a.id === activeAssignmentId)
   // Rename, archive, a new code and appointments stay with the owner.
@@ -300,6 +305,7 @@ const TeacherClassBoardPage = () => {
         recipientUserIds: messageTo.map(m => m.userId),
         title: values.title.trim(),
         body: values.body.trim(),
+        classId,
       })
       message.success(
         quota?.limit > 0
@@ -768,6 +774,17 @@ const TeacherClassBoardPage = () => {
                   pagination={false}
                   scroll={{ x: true }}
                   locale={{ emptyText: intl.formatMessage({ id: 'teacher_board.no_students' }) }}
+                />
+              ),
+            },
+            {
+              key: 'history',
+              label: <FormattedMessage id='teacher_board.tab_history' />,
+              children: (
+                <ClassHistory
+                  classId={classId}
+                  active={mode === 'history'}
+                  reloadKey={historyReload}
                 />
               ),
             },

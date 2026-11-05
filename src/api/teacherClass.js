@@ -48,6 +48,10 @@ export const extendCoTeacher = (classId, teacherId, expiresAt) =>
 export const removeCoTeacher = (classId, teacherId) =>
   instance.delete(`/api/teacher/classes/${classId}/co-teachers/${teacherId}`)
 
+/** params: category, cursor (nextCursor of the previous page). */
+export const listClassHistory = (classId, params) =>
+  instance.get(`/api/teacher/classes/${classId}/history`, { params })
+
 export const listAssignments = classId =>
   instance.get(`/api/teacher/classes/${classId}/assignments`)
 
