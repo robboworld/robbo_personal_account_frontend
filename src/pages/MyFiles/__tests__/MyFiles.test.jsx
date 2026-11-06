@@ -20,9 +20,6 @@ jest.mock('@/api/licensing', () => ({ getEntitlements: jest.fn() }))
 
 const MB = 1024 * 1024
 
-// antd popups are slow in jsdom, more so once the dialog's styles are on the page.
-jest.setTimeout(30000)
-
 // antd forms batch field updates through MessageChannel, which jsdom lacks.
 class TimeoutMessageChannel {
   port1 = {}

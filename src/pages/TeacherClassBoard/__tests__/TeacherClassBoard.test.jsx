@@ -45,7 +45,6 @@ afterAll(() => {
 
 const rowOf = name => screen.getByText(name).closest('tr')
 
-// The board mounts many antd widgets: slow in jsdom, hence the longer timeouts.
 describe('TeacherClassBoardPage work tab', () => {
   beforeEach(() => {
     api.getTeacherClass.mockResolvedValue({ data: { id: 'c1', displayName: '5A' } })
@@ -87,7 +86,7 @@ describe('TeacherClassBoardPage work tab', () => {
     api.deleteAssignment.mockResolvedValue({})
     renderPage(<TeacherClassBoardPage />)
 
-    expect(await screen.findByText('Боря', {}, { timeout: 15000 })).toBeTruthy()
+    expect(await screen.findByText('Боря')).toBeTruthy()
     fireEvent.click(screen.getByText('Удалить задание'))
     expect(await screen.findByText('Удалить задание «Лабиринт»?')).toBeTruthy()
     api.listAssignments.mockResolvedValue({ data: { items: [{ id: 'a0', title: 'Кот' }] } })
@@ -95,12 +94,12 @@ describe('TeacherClassBoardPage work tab', () => {
 
     await waitFor(() => expect(api.deleteAssignment.mock.calls.at(-1)?.[1]).toBe('a1'))
     await waitFor(() => expect(api.listSubmissions.mock.calls.at(-1)?.[1]).toBe('a0'))
-  }, 30000)
+  })
 
   it('opens on the review queue and filters the roster by status', async () => {
     renderPage(<TeacherClassBoardPage />)
 
-    expect(await screen.findByText('Боря', {}, { timeout: 15000 })).toBeTruthy()
+    expect(await screen.findByText('Боря')).toBeTruthy()
     expect(screen.queryByText('Аня')).toBeNull()
     expect(screen.queryByText('Вика')).toBeNull()
     expect(within(rowOf('Боря')).getByText('С опозданием')).toBeTruthy()
@@ -121,7 +120,7 @@ describe('TeacherClassBoardPage work tab', () => {
 
     fireEvent.click(screen.getByText('Все · 5'))
     expect(await screen.findByText('Аня')).toBeTruthy()
-  }, 30000)
+  })
 
   it('names who reviewed the work', async () => {
     api.listSubmissions.mockResolvedValue({
@@ -139,9 +138,9 @@ describe('TeacherClassBoardPage work tab', () => {
     })
     renderPage(<TeacherClassBoardPage />)
 
-    fireEvent.click(await screen.findByText('Проверено · 1', {}, { timeout: 15000 }))
+    fireEvent.click(await screen.findByText('Проверено · 1'))
     expect(within(rowOf('Вика')).getByText('Проверка: Замена')).toBeTruthy()
-  }, 30000)
+  })
 
   it('opens the blocks of work on review and tells who changed them', async () => {
     api.listSubmissions.mockResolvedValue({
@@ -162,7 +161,7 @@ describe('TeacherClassBoardPage work tab', () => {
     })
     renderPage(<TeacherClassBoardPage />)
 
-    await screen.findByText('Боря', {}, { timeout: 15000 })
+    await screen.findByText('Боря')
     expect(within(rowOf('Боря')).getByText('Изменено: Замена')).toBeTruthy()
     fireEvent.click(within(rowOf('Боря')).getByRole('button', { name: 'Проверить' }))
 
@@ -180,7 +179,7 @@ describe('TeacherClassBoardPage work tab', () => {
     const confirm = await screen.findByRole('tooltip')
     fireEvent.click(within(confirm).getByRole('button', { name: 'Вернуть работу ученика' }))
     await waitFor(() => expect(restoreStudentVersion).toHaveBeenCalledWith('p2'))
-  }, 90000)
+  })
 
   it('shows who is editing a work right now', async () => {
     api.listSubmissions.mockResolvedValue({
@@ -203,10 +202,10 @@ describe('TeacherClassBoardPage work tab', () => {
     })
     renderPage(<TeacherClassBoardPage />)
 
-    fireEvent.click(await screen.findByText('Все · 4', {}, { timeout: 15000 }))
+    fireEvent.click(await screen.findByText('Все · 4'))
     expect(within(rowOf('Боря')).getByText('Сейчас редактирует учитель: Замена')).toBeTruthy()
     expect(within(rowOf('Вика')).getByText('Сейчас дорабатывает ученик')).toBeTruthy()
-  }, 90000)
+  })
 
   it('lets the teacher only look at work that is back with the student', async () => {
     api.listSubmissions.mockResolvedValue({
@@ -216,13 +215,13 @@ describe('TeacherClassBoardPage work tab', () => {
     })
     renderPage(<TeacherClassBoardPage />)
 
-    fireEvent.click(await screen.findByText('Все · 4', {}, { timeout: 15000 }))
+    fireEvent.click(await screen.findByText('Все · 4'))
     fireEvent.click(within(rowOf('Вика')).getByRole('button', { name: 'Проверить' }))
 
     expect(await screen.findByRole('button', { name: /Открыть блоки в Scratch/ })).toBeTruthy()
     expect(screen.getByText(/сохранить изменения нельзя/)).toBeTruthy()
     expect(screen.queryByRole('button', { name: /Вернуть работу ученика/ })).toBeNull()
-  }, 90000)
+  })
 
   it('keeps the class settings from a co-teacher', async () => {
     api.getTeacherClass.mockResolvedValue({
@@ -236,7 +235,7 @@ describe('TeacherClassBoardPage work tab', () => {
     })
     renderPage(<TeacherClassBoardPage />)
 
-    expect(await screen.findByText(/^Со-преподаватель до /, {}, { timeout: 15000 })).toBeTruthy()
+    expect(await screen.findByText(/^Со-преподаватель до /)).toBeTruthy()
     // A co-teacher invites students, so the code stays.
     expect(screen.getByText('ABC123')).toBeTruthy()
 
@@ -244,7 +243,7 @@ describe('TeacherClassBoardPage work tab', () => {
     expect(await screen.findByText('Со-преподаватели')).toBeTruthy()
     expect(screen.queryByText('Переименовать')).toBeNull()
     expect(screen.queryByText('Архивировать класс')).toBeNull()
-  }, 30000)
+  })
 
   it('opens on the newest assignment', async () => {
     api.listAssignments.mockResolvedValue({
@@ -259,9 +258,9 @@ describe('TeacherClassBoardPage work tab', () => {
     renderPage(<TeacherClassBoardPage />)
 
     const openedIds = () => api.listSubmissions.mock.calls.map(([, assignmentId]) => assignmentId)
-    await waitFor(() => expect(openedIds()).toContain('a2'), { timeout: 15000 })
+    await waitFor(() => expect(openedIds()).toContain('a2'))
     expect(openedIds()).not.toContain('a1')
-  }, 30000)
+  })
 })
 
 describe('TeacherClassBoardPage file assignment', () => {
@@ -317,7 +316,7 @@ describe('TeacherClassBoardPage file assignment', () => {
   it('reviews handed-in files and downloads them', async () => {
     renderPage(<TeacherClassBoardPage />)
 
-    expect(await screen.findByText('Боря', {}, { timeout: 15000 })).toBeTruthy()
+    expect(await screen.findByText('Боря')).toBeTruthy()
     expect(screen.getByText('Принимаются: .fcstd, .stl. Не больше 10 файлов.')).toBeTruthy()
     expect(screen.getByText('Стартовый файл')).toBeTruthy()
     expect(within(rowOf('Боря')).getByText('2 файла')).toBeTruthy()
@@ -337,5 +336,5 @@ describe('TeacherClassBoardPage file assignment', () => {
         comment: '',
       }),
     )
-  }, 30000)
+  })
 })

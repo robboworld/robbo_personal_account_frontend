@@ -13,8 +13,7 @@ jest.mock('@/api/teacherClass', () => ({
   removeCoTeacher: jest.fn(),
 }))
 
-// antd pickers and popups measure themselves; jsdom has neither of these. They are also slow
-// there, hence the longer timeouts.
+// antd pickers and popups measure themselves; jsdom has neither of these.
 beforeAll(() => {
   global.ResizeObserver = class {
     observe() {}
@@ -55,7 +54,7 @@ describe('CoTeachersModal', () => {
 
   it('lets the owner appoint and remove', async () => {
     show()
-    expect(await screen.findByText('Замена', {}, { timeout: 15000 })).toBeTruthy()
+    expect(await screen.findByText('Замена')).toBeTruthy()
     expect(screen.getByLabelText('Email учителя')).toBeTruthy()
 
     fireEvent.click(screen.getByRole('button', { name: 'Снять' }))
@@ -64,12 +63,12 @@ describe('CoTeachersModal', () => {
 
     await waitFor(() => expect(api.removeCoTeacher).toHaveBeenCalledWith('c1', '20'))
     await waitFor(() => expect(api.listCoTeachers).toHaveBeenCalledTimes(2))
-  }, 30000)
+  })
 
   it('gives a co-teacher the list and the way out, not the appointments', async () => {
     const onLeft = jest.fn()
     show({ isCoTeacher: true, onLeft })
-    expect(await screen.findByText('Замена', {}, { timeout: 15000 })).toBeTruthy()
+    expect(await screen.findByText('Замена')).toBeTruthy()
     expect(screen.queryByLabelText('Email учителя')).toBeNull()
     // The hint speaks to the owner ("with you").
     expect(screen.queryByText(/вместе с вами/)).toBeNull()
@@ -81,7 +80,7 @@ describe('CoTeachersModal', () => {
 
     await waitFor(() => expect(api.removeCoTeacher).toHaveBeenCalledWith('c1', 'me'))
     await waitFor(() => expect(onLeft).toHaveBeenCalled())
-  }, 30000)
+  })
 
   it('does not load while closed', () => {
     show({ open: false })

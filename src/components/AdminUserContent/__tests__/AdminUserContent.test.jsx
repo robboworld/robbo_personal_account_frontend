@@ -55,7 +55,7 @@ describe('AdminUserContent', () => {
     expect(screen.getByText('30 МБ / 100 МБ')).toBeTruthy()
     expect(api.getUserAudit).toHaveBeenCalledWith('42', 50)
 
-    // Row actions are icon buttons named by title; getByRole is too slow on antd tables.
+    // Row actions are icon buttons named by title.
     fireEvent.click(screen.getAllByTitle('Удалить')[0])
     const reason = await screen.findByPlaceholderText('Укажите причину удаления')
     fireEvent.change(reason, { target: { value: 'нарушение правил' } })

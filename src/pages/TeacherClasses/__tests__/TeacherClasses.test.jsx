@@ -28,7 +28,6 @@ afterAll(() => {
   delete global.MessageChannel
 })
 
-// The antd modal takes seconds to mount in jsdom, hence the longer timeouts below.
 describe('TeacherClassesPage', () => {
   it('shows a single empty state with a create button', async () => {
     api.listTeacherClasses.mockResolvedValue({ data: { items: [] } })
@@ -74,7 +73,7 @@ describe('TeacherClassesPage', () => {
       }),
     )
     expect(api.listTeacherCourses).not.toHaveBeenCalled()
-  }, 20000)
+  })
 
   it('asks for a course and explains the link once it is checked', async () => {
     api.listTeacherClasses.mockResolvedValue({ data: { items: [] } })
@@ -84,5 +83,5 @@ describe('TeacherClassesPage', () => {
     fireEvent.click(screen.getByRole('checkbox', { name: /Привязать к курсу в LMS/ }))
     expect(await screen.findByText('Зачем привязывать класс к LMS')).toBeTruthy()
     expect(await screen.findByPlaceholderText('course-v1:Robbo+Scratch+2026')).toBeTruthy()
-  }, 20000)
+  })
 })
