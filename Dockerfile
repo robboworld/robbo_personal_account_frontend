@@ -21,10 +21,17 @@ FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production PORT=3030
 
+# Only what server.js requires, the rest is in the bundle. yarn.lock still pins the whole tree:
+# --frozen-lockfile fails if the range below is not in it.
 COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile --ignore-scripts --network-timeout 100000 \
+RUN node -e "const fs = require('fs'), p = require('./package.json'); \
+      fs.writeFileSync('package.json', JSON.stringify({ private: true, \
+        dependencies: { express: p.dependencies.express }, resolutions: p.resolutions }))" \
+    && yarn install --production --frozen-lockfile --ignore-scripts --network-timeout 100000 \
     && yarn cache clean
 COPY server.js ./
+# A package missing from the list above fails here, not on the server after the release.
+RUN node -e "require('./server.js'); process.exit()"
 COPY public ./public
 COPY static ./static
 COPY --from=build /app/dist ./dist
