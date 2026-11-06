@@ -1,17 +1,26 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   ArrowRightOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
   PlusOutlined,
   ProjectOutlined,
+  UploadOutlined,
 } from '@ant-design/icons'
 import { Modal, Pagination } from 'antd'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
-import { CreateButton, DeleteButton, HeroRow, PaginationWrap } from './styles'
+import ImportProjectModal from './ImportProjectModal'
+import {
+  CreateButton,
+  DeleteButton,
+  HeroActions,
+  HeroRow,
+  ImportButton,
+  PaginationWrap,
+} from './styles'
 
 import { formatDateTime } from '@/helpers/formatDateTime'
 import { displayProjectTitle } from '@/helpers/intl'
@@ -59,12 +68,14 @@ const MyProjects = ({
   DeleteProjectPage,
   CreateProjectPage,
   creating,
+  onImported,
   pageSize,
   currentPage,
   onChangePage,
 }) => {
   const navigate = useNavigate()
   const intl = useIntl()
+  const [importOpen, setImportOpen] = useState(false)
 
   const loading = GetProjectPages?.loading
   const projectData = GetProjectPages?.GetAllProjectPagesByAccessToken
@@ -118,10 +129,16 @@ const MyProjects = ({
                 />
               </HeroLead>
             </HeroInner>
-            <CreateButton type='button' disabled={creating} onClick={() => CreateProjectPage()}>
-              <PlusOutlined />
-              <FormattedMessage id='my_projects.create_new' />
-            </CreateButton>
+            <HeroActions>
+              <ImportButton type='button' onClick={() => setImportOpen(true)}>
+                <UploadOutlined />
+                <FormattedMessage id='my_projects.import' />
+              </ImportButton>
+              <CreateButton type='button' disabled={creating} onClick={() => CreateProjectPage()}>
+                <PlusOutlined />
+                <FormattedMessage id='my_projects.create_new' />
+              </CreateButton>
+            </HeroActions>
           </HeroRow>
         </HeroPanel>
 
@@ -242,6 +259,15 @@ const MyProjects = ({
           </Panel>
         </motion.div>
       </Stagger>
+
+      <ImportProjectModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onImported={created => {
+          setImportOpen(false)
+          onImported(created)
+        }}
+      />
     </PageContent>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { notification } from 'antd'
 import { useMutation, useQuery } from '@apollo/client/react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 
 import MyProjects from './MyProjects'
@@ -13,6 +13,7 @@ const PAGE_SIZE = '5'
 
 const MyProjectsContainer = () => {
   const intl = useIntl()
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const currentPage = searchParams.get('page') || '1'
   const variables = { page: currentPage, pageSize: PAGE_SIZE }
@@ -64,6 +65,12 @@ const MyProjectsContainer = () => {
       DeleteProjectPage={deleteProjectPage}
       CreateProjectPage={createProjectPage}
       creating={createState.loading}
+      onImported={created => {
+        notification.success({
+          description: intl.formatMessage({ id: 'my_projects.import_success' }),
+        })
+        navigate(`/projects/${created.projectPageId}`, { state: { selectedNavBarKey: '2' } })
+      }}
       pageSize={PAGE_SIZE}
       currentPage={currentPage}
       onChangePage={page => setSearchParams({ page })}

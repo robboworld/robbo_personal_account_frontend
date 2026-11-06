@@ -1,4 +1,4 @@
-import { uploadProjectSb3 } from '@/api/projectPage'
+import { importProjectSb3, uploadProjectSb3 } from '@/api/projectPage'
 
 describe('api/projectPage .sb3 uploads', () => {
   const file = new File(['x'], 'game.sb3')
@@ -8,7 +8,7 @@ describe('api/projectPage .sb3 uploads', () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({ ok: true }),
+      json: async () => ({ projectPage: { id: 'p1' } }),
     })
   })
 
@@ -16,9 +16,10 @@ describe('api/projectPage .sb3 uploads', () => {
     delete global.fetch
   })
 
-  it('hands the signal to fetch', async () => {
+  it('hands the signal to fetch on upload and on import', async () => {
     await uploadProjectSb3('token', 'p1', file, signal)
+    await importProjectSb3(file, 'Игра', signal)
 
-    expect(fetch.mock.calls.map(([, init]) => init.signal)).toEqual([signal])
+    expect(fetch.mock.calls.map(([, init]) => init.signal)).toEqual([signal, signal])
   })
 })

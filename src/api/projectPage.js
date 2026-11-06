@@ -531,3 +531,26 @@ export async function restoreStudentVersion(projectPageId) {
   }
   return res.json()
 }
+
+/** POST /projectPage/import — new project from an .sb3 file (multipart: file, title).
+ * signal cancels it. Returns the created projectPage; on failure the error message is the
+ * backend code. */
+export async function importProjectSb3(file, title, signal) {
+  const url = `${backendBase()}projectPage/import`
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('title', title || '')
+  const res = await fetchWithAuthRetry(url, {
+    method: 'POST',
+    headers: { 'Accept-Language': readStoredLanguage() },
+    body: formData,
+    signal,
+  })
+  if (!res.ok) {
+    const err = new Error(await readFetchErrorMessage(res))
+    err.status = res.status
+    throw err
+  }
+  const data = await res.json()
+  return data.projectPage
+}

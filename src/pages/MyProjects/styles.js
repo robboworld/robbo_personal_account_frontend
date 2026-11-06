@@ -62,6 +62,25 @@ export const CreateButton = styled.button`
   }
 `
 
+export const HeroActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex-shrink: 0;
+`
+
+export const ImportButton = styled(CreateButton)`
+  color: ${colors.accentGreen};
+  background: ${colors.white};
+  box-shadow: inset 0 0 0 1.5px ${colors.accentGreen};
+
+  &:hover {
+    color: #009a47;
+    background: rgba(0, 175, 65, 0.06);
+    box-shadow: inset 0 0 0 1.5px #009a47;
+  }
+`
+
 export const DeleteButton = styled.button`
   position: absolute;
   top: 0.65rem;
