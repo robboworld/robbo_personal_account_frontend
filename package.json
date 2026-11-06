@@ -16,7 +16,7 @@
     "test": "jest",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "e2e": "yarn build && PORT=3030 start-server-and-test start http://localhost:3030 cypress:run",
+    "e2e": "LK_SSO_WITH_LMS_ENABLED=true yarn build && PORT=3030 start-server-and-test start http://localhost:3030 cypress:run",
     "landing:restore": "sh scripts/restore-landing.sh",
     "landing:restore:legacy": "sh scripts/restore-landing-legacy.sh",
     "docker:rebuild": "docker compose build web && docker compose up -d --force-recreate web",

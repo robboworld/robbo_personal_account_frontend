@@ -47,7 +47,8 @@ jobs:
           key: cypress-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
       - name: Install
         run: yarn install --frozen-lockfile
-      # Builds, serves dist on :3030 and runs Cypress; the backend is stubbed per spec.
+      # Builds with SSO on (specs stub the BFF session; there is no .env here), serves dist on
+      # :3030 and runs Cypress; the backend is stubbed per spec.
       - name: E2E
         run: yarn e2e
       - name: Screenshots of failures
