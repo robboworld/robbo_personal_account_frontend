@@ -179,6 +179,16 @@ export async function downloadFile(id, fallbackName) {
   await saveResponseBlob(res, fallbackName || 'file')
 }
 
+/** GET /api/files/:id/download as a Blob, for a picture's preview in a file picker. */
+export async function fetchFileBlob(id, signal) {
+  const url = `${apiBase()}/api/files/${encodeURIComponent(id)}/download`
+  const res = await fetchWithAuthRetry(url, { method: 'GET', signal })
+  if (!res.ok) {
+    throw await fetchErrorWithBody(res)
+  }
+  return res.blob()
+}
+
 /** PATCH /api/files/:id { name } → the file; name is whole, with the same extension. */
 export async function renameFile(id, name) {
   const { data } = await instance.patch(`/api/files/${encodeURIComponent(id)}`, { name })

@@ -51,6 +51,7 @@ import { projectPageQueryGQL } from '@/graphQL/query/projectPage'
 import { PROJECT_PAGE_ROUTE, TEACHER_CLASSES_ROUTE } from '@/constants'
 import ScratchPlayerEmbed from '@/components/ScratchPlayerEmbed'
 import AssignmentFiles, { FileDownloadButton } from '@/components/AssignmentFiles'
+import LessonGalleryButton from '@/components/LessonGallery'
 import { getEntitlements } from '@/api/licensing'
 import { restoreStudentVersion } from '@/api/projectPage'
 import { kindsLabel } from '@/api/userFiles'
@@ -789,6 +790,9 @@ const TeacherClassBoardPage = () => {
               download={f => api.downloadStarterFile(activeAssignment.id, f.name)}>
               <FormattedMessage id='class_files.starter' />
             </FileDownloadButton>
+          ) : null}
+          {activeAssignment ? (
+            <LessonGalleryButton assignment={activeAssignment} onChanged={loadAssignments} />
           ) : null}
           {activeAssignment ? (
             <Popconfirm

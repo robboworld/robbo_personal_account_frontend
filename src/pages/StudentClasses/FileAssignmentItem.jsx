@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Button, List, Modal, Select, Space, Typography, Upload, message } from 'antd'
+import { Button, List, Space, Typography, Upload, message } from 'antd'
 import { FolderOpenOutlined, InboxOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 
@@ -19,7 +19,8 @@ import {
 } from '@/api/userFiles'
 import { getEntitlements } from '@/api/licensing'
 import AssignmentFiles, { FileDownloadButton } from '@/components/AssignmentFiles'
-import { FileNameCell } from '@/components/FileIcon'
+import FilePickerModal from '@/components/FilePickerModal'
+import LessonGalleryButton from '@/components/LessonGallery'
 import UploadProgress from '@/components/UploadProgress'
 import { apiErrorMessage } from '@/helpers/apiErrorMessage'
 import { precheckUpload, uploadProblemMessage } from '@/pages/MyFiles/fileChecks'
@@ -36,14 +37,15 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
   const { handedIn, closed } = assignmentState(assignment, status)
   const editable = !closed && !handedIn
   const files = assignment.myFiles || []
+  const attachedIds = new Set(files.map(f => f.id))
   const kinds = assignment.allowedKinds || []
   const maxFiles = assignment.maxFiles || 10
   const [uploads, setUploads] = useState([]) // the file being sent, then the queue
   const [removing, setRemoving] = useState(null)
   const [confirming, setConfirming] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [picker, setPicker] = useState(null) // library files while the picker is open
-  const [picked, setPicked] = useState([])
+  const [picker, setPicker] = useState(false)
+  const [library, setLibrary] = useState(null) // fitting "Мои файлы" while the picker is open
   // The backend takes two uploads per account at a time: several dropped files go one by one.
   const queue = useRef(Promise.resolve())
   const pending = useRef(new Set())
@@ -125,19 +127,19 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
   }
 
   const openPicker = async () => {
-    setPicked([])
+    setLibrary(null)
+    setPicker(true)
     try {
       const all = await listFiles()
-      const attached = new Set(files.map(f => f.id))
-      setPicker(all.filter(f => !attached.has(f.id) && kindAllowed(f.kind)))
+      setLibrary(all.filter(f => kindAllowed(f.kind)))
     } catch (e) {
+      setPicker(false)
       fail(e)
     }
   }
 
-  const attachPicked = async () => {
-    const chosen = (picker || []).filter(f => picked.includes(f.id))
-    setPicker(null)
+  const attachPicked = async chosen => {
+    setPicker(false)
     for (const row of chosen) {
       try {
         await attach(row)
@@ -178,6 +180,9 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
   const submitId = status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'
 
   const actions = [
+    assignment.galleryEnabled ? (
+      <LessonGalleryButton key='gallery' assignment={assignment} onChanged={onChanged} />
+    ) : null,
     assignment.templateFile ? (
       <FileDownloadButton
         key='starter'
@@ -279,35 +284,19 @@ const FileAssignmentItem = ({ assignment, onChanged }) => {
         onCancel={() => setConfirming(false)}
         onSubmit={submit}
       />
-      <Modal
-        open={!!picker}
+      <FilePickerModal
+        open={picker}
         title={<FormattedMessage id='class_files.pick' />}
-        onCancel={() => setPicker(null)}
-        onOk={attachPicked}
         okText={<FormattedMessage id='class_files.attach' />}
-        okButtonProps={{ disabled: !picked.length }}
-        cancelText={<FormattedMessage id='common.cancel' />}>
-        {picker?.length ? (
-          <Select
-            mode='multiple'
-            style={{ width: '100%' }}
-            value={picked}
-            onChange={ids => setPicked(ids.slice(0, Math.max(0, maxFiles - files.length)))}
-            optionFilterProp='name'
-            placeholder={intl.formatMessage({ id: 'class_files.pick_placeholder' })}
-            aria-label={intl.formatMessage({ id: 'class_files.pick_placeholder' })}
-            options={picker.map(f => ({
-              value: f.id,
-              name: f.name,
-              label: <FileNameCell name={f.name} hasScripts={f.hasScripts} />,
-            }))}
-          />
-        ) : (
-          <Text type='secondary'>
-            <FormattedMessage id='class_files.pick_empty' />
-          </Text>
-        )}
-      </Modal>
+        files={library}
+        unavailable={f =>
+          attachedIds.has(f.id) ? intl.formatMessage({ id: 'file_picker.attached' }) : null
+        }
+        max={Math.max(0, maxFiles - files.length)}
+        emptyText={<FormattedMessage id='class_files.pick_empty' />}
+        onCancel={() => setPicker(false)}
+        onPick={attachPicked}
+      />
     </List.Item>
   )
 }

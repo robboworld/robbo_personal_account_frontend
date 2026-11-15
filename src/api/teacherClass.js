@@ -125,3 +125,45 @@ export const downloadSubmissionFile = (submissionId, fileId, fallbackName) =>
     `/api/teacher/file-submissions/${submissionId}/files/${encodeURIComponent(fileId)}/download`,
     fallbackName,
   )
+
+// The lesson gallery of an assignment: the class's members and teachers share files there.
+// Every call answers with the whole gallery (items, closed, canManage, canUpload).
+export const getGallery = assignmentId =>
+  instance.get(`/api/student/assignments/${assignmentId}/gallery`)
+
+export const addGalleryFile = (assignmentId, fileId) =>
+  instance.post(`/api/student/assignments/${assignmentId}/gallery`, { fileId })
+
+export const removeGalleryItem = (assignmentId, itemId) =>
+  instance.delete(`/api/student/assignments/${assignmentId}/gallery/${encodeURIComponent(itemId)}`)
+
+/** body: { caption } and/or { pinned }; the class's teachers only. */
+export const updateGalleryItem = (assignmentId, itemId, body) =>
+  instance.patch(
+    `/api/teacher/assignments/${assignmentId}/gallery/${encodeURIComponent(itemId)}`,
+    body,
+  )
+
+export const reorderGallery = (assignmentId, itemIds) =>
+  instance.put(`/api/teacher/assignments/${assignmentId}/gallery/order`, { itemIds })
+
+export const setGalleryClosed = (assignmentId, closed) =>
+  instance.post(`/api/teacher/assignments/${assignmentId}/gallery/${closed ? 'close' : 'reopen'}`)
+
+const galleryFilePath = (assignmentId, itemId) =>
+  `/api/student/assignments/${assignmentId}/gallery/${encodeURIComponent(itemId)}/download`
+
+export const downloadGalleryFile = (assignmentId, itemId, fallbackName) =>
+  download(galleryFilePath(assignmentId, itemId), fallbackName)
+
+/** A gallery picture as a Blob for a preview; the caller revokes its object URL. */
+export async function fetchGalleryBlob(assignmentId, itemId, signal) {
+  const res = await fetchWithAuthRetry(`${apiBase()}${galleryFilePath(assignmentId, itemId)}`, {
+    method: 'GET',
+    signal,
+  })
+  if (!res.ok) {
+    throw await fetchErrorWithBody(res)
+  }
+  return res.blob()
+}

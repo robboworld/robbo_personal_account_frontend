@@ -39,6 +39,8 @@ const KNOWN_ERRORS = {
   file_assignments_disabled: 'errors.file_assignments_disabled',
   file_kind_not_allowed: 'errors.file_kind_not_allowed',
   too_many_submission_files: 'errors.too_many_submission_files',
+  gallery_closed: 'errors.gallery_closed',
+  too_many_gallery_files: 'errors.too_many_gallery_files',
   no_submission_files: 'errors.no_submission_files',
   work_not_on_review: 'errors.work_not_on_review',
   work_not_edited: 'errors.work_not_edited',

@@ -8,7 +8,16 @@ import { formatDateTime } from '@/helpers/formatDateTime'
 
 const { Paragraph, Text } = Typography
 
-const CATEGORIES = ['all', 'members', 'work', 'assignments', 'teachers', 'messages', 'class']
+const CATEGORIES = [
+  'all',
+  'members',
+  'work',
+  'assignments',
+  'gallery',
+  'teachers',
+  'messages',
+  'class',
+]
 
 const ROLE_TAGS = { owner: 'blue', co_teacher: 'cyan', admin: 'purple', student: 'default' }
 
@@ -18,6 +27,8 @@ const messageId = (event, intl) => {
   if (event.action === 'work_reviewed') id = `class_history.work_review_${event.detail}`
   if (event.action === 'work_submitted' && event.detail === 'late') id += '_late'
   if (event.action === 'message_sent' && !event.targetId) id += '_many'
+  // Without a target the uploader took their own file out.
+  if (event.action === 'gallery_file_removed' && !event.targetId) id += '_own'
   return intl.messages[id] ? id : 'class_history.unknown_action'
 }
 
@@ -111,7 +122,7 @@ const ClassHistory = ({ classId, active, reloadKey }) => {
       <Paragraph type='secondary' style={{ marginBottom: 0 }}>
         <FormattedMessage id='class_history.hint' />
       </Paragraph>
-      {/* Seven filters do not fit a phone. */}
+      {/* Eight filters do not fit a phone. */}
       <div style={{ overflowX: 'auto' }}>
         <Segmented
           value={category}

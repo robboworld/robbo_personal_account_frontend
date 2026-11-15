@@ -17,6 +17,7 @@ import SubmissionNoteModal from './SubmissionNoteModal'
 import { AssignmentList, ClassCardFrame, ClassName, ClassTeacher, LeaveButton } from './styles'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
+import LessonGalleryButton from '@/components/LessonGallery'
 import * as api from '@/api/teacherClass'
 import { useVisibleInterval } from '@/helpers/useVisibleInterval'
 import { JOIN_CLASS_CODE_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
@@ -50,8 +51,12 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
   const submitId = status === 'returned' ? 'student_class.resubmit' : 'student_class.submit'
 
   // Handed-in work is read-only until the teacher returns it (backend HOMEWORK_LOCKED).
+  const gallery = assignment.galleryEnabled ? (
+    <LessonGalleryButton key='gallery' assignment={assignment} onChanged={onSubmitted} />
+  ) : null
   const actions = assignment.myProjectId
     ? [
+        gallery,
         !handedIn && (
           <Button key='edit' type='link' onClick={() => openScratchEditor(assignment.myProjectId)}>
             <FormattedMessage id='student_class.open_editor' />
@@ -74,7 +79,7 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
           <FormattedMessage id={submitId} />
         </Button>,
       ].filter(Boolean)
-    : []
+    : [gallery].filter(Boolean)
 
   return (
     <List.Item actions={actions}>

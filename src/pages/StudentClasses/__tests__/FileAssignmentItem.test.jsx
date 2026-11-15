@@ -5,7 +5,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import FileAssignmentItem from '@/pages/StudentClasses/FileAssignmentItem'
 import { attachAssignmentFile, updateFileNote } from '@/api/teacherClass'
 import { getEntitlements } from '@/api/licensing'
-import { downloadFile, uploadFile } from '@/api/userFiles'
+import { downloadFile, listFiles, uploadFile } from '@/api/userFiles'
 import { renderPage } from '@/testUtils'
 
 jest.mock('@/api/teacherClass', () => ({
@@ -21,6 +21,7 @@ jest.mock('@/api/userFiles', () => ({
   downloadFile: jest.fn(),
   listFiles: jest.fn(),
   uploadFile: jest.fn(),
+  fetchFileBlob: jest.fn(() => new Promise(() => {})),
 }))
 
 const assignment = over => ({
@@ -149,6 +150,45 @@ describe('FileAssignmentItem', () => {
     expect(
       await screen.findByText('Учитель уже проверил работу, поэтому комментарий изменить нельзя.'),
     ).toBeTruthy()
+    expect(onChanged).toHaveBeenCalled()
+  })
+
+  it('picks from "Мои файлы" as tiles: fitting types only, the attached one greyed out', async () => {
+    attachAssignmentFile.mockResolvedValue({})
+    listFiles.mockResolvedValue([
+      {
+        id: 'f1',
+        name: 'part.stl',
+        kind: 'stl',
+        sizeBytes: 100,
+        createdAt: '2026-11-10T10:00:00Z',
+      },
+      {
+        id: 'f2',
+        name: 'bracket.stl',
+        kind: 'stl',
+        sizeBytes: 200,
+        createdAt: '2026-11-11T10:00:00Z',
+      },
+      {
+        id: 'f3',
+        name: 'photo.png',
+        kind: 'png',
+        sizeBytes: 300,
+        createdAt: '2026-11-11T10:00:00Z',
+      },
+    ])
+    const onChanged = jest.fn()
+    renderPage(<FileAssignmentItem assignment={assignment()} onChanged={onChanged} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /Выбрать из раздела «Мои файлы»/ }))
+    expect(await screen.findByText('Уже прикреплён')).toBeTruthy()
+    expect(screen.queryByRole('checkbox', { name: 'photo.png' })).toBeNull()
+    expect(screen.getByText(/можно ещё 2/)).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'bracket.stl' }))
+    fireEvent.click(screen.getByRole('button', { name: /Добавить \(1\)/ }))
+    await waitFor(() => expect(attachAssignmentFile).toHaveBeenCalledWith('a1', 'f2'))
     expect(onChanged).toHaveBeenCalled()
   })
 
