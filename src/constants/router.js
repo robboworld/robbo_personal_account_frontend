@@ -36,4 +36,10 @@ export const TEACHER_CLASS_BOARD_ROUTE = '/teacher/classes/:classId'
 export const STUDENT_CLASSES_ROUTE = '/myclasses'
 export const JOIN_CLASS_ROUTE = '/join/:slug'
 export const JOIN_CLASS_CODE_ROUTE = '/join'
+// Class sign-in for young students: the class page and a printed QR card.
+export const CLASS_LOGIN_ROUTE = '/c/:slug'
+export const CLASS_LOGIN_CARD_ROUTE = '/c/card'
+// The short address for wiped school laptops: /k and the lesson code from the projector.
+export const CLASS_LOGIN_CODE_ROUTE = '/k'
+export const CLASS_LOGIN_CODE_LINK_ROUTE = '/k/:code'
 export const CLASSES_ROUTES = [TEACHER_CLASSES_ROUTE, STUDENT_CLASSES_ROUTE]

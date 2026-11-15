@@ -80,6 +80,7 @@ import RobboGuestFonts from '@/theme/robboGuestFonts'
 import robboGuestTokens from '@/theme/robboGuestTokens'
 import { getScratchEditorUrl } from '@/utils/scratchEditor'
 import {
+  CLASS_LOGIN_CODE_ROUTE,
   EXPLORE_ROUTE,
   MY_LICENSES_ROUTE,
   REGISTER_PAGE_ROUTE,
@@ -355,6 +356,14 @@ const Landing = () => {
                 </IntroBtnPrimary>
                 <IntroBtnGhost as={Link} to={EXPLORE_ROUTE}>
                   <FormattedMessage id='landing.intro.explore' />
+                </IntroBtnGhost>
+                {/* School laptops with a wiped browser: the address and one click to the lesson
+                    code page (ADR_CLASS_KID_LOGIN.md, "Короткий адрес и код урока"). */}
+                <IntroBtnGhost
+                  as={Link}
+                  to={CLASS_LOGIN_CODE_ROUTE}
+                  data-testid='landing-class-login'>
+                  <FormattedMessage id='landing.intro.class_login' />
                 </IntroBtnGhost>
               </IntroActions>
             </IntroCopy>

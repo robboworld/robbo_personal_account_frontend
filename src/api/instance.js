@@ -5,6 +5,7 @@ import { buildOidcStartUrl, redirectToOidcLogout, isOidcSsoEnabled } from '@/hel
 import { buildInactiveLoginURL } from '@/helpers/inactiveLogin'
 import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
 import { refreshAccessToken } from '@/api/authRefresh'
+import { getKidSession } from '@/helpers/kidSession'
 
 // Pages that work without a session: a 401 there is not a reason to leave.
 const PUBLIC_PATHS = [
@@ -12,6 +13,8 @@ const PUBLIC_PATHS = [
   /^\/explore/,
   /^\/projects\/(?!public)/,
   /^\/join/,
+  /^\/c\//,
+  /^\/k(\/|$)/,
   /^\/login/,
   /^\/register/,
   /^\/auth\//,
@@ -26,6 +29,12 @@ export function redirectToSignInAfterExpiry() {
     return
   }
   sessionRedirectStarted = true
+  // A child of the class sign-in signs in again on their class page.
+  const classPage = getKidSession()?.classPage
+  if (classPage) {
+    window.location.assign(classPage)
+    return
+  }
   const back = `${pathname}${search || ''}`
   if (isOidcSsoEnabled()) {
     window.location.assign(buildOidcStartUrl(back, 'login'))

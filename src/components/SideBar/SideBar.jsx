@@ -34,6 +34,9 @@ import {
   useAuthRole,
 } from '@/helpers'
 import { broadcastAuthLogout } from '@/helpers/authEcosystemSync'
+import { getKidSession } from '@/helpers/kidSession'
+import { redirectToOidcLogout } from '@/helpers/oidcSession'
+import { useCurrentUser } from '@/helpers/useAuthRole'
 import {
   CLASSES_ROLES,
   CLASSES_ROUTES,
@@ -70,6 +73,7 @@ export default ({
   const navigate = useNavigate()
   const intl = useIntl()
   const Role = useAuthRole()
+  const currentUserId = useCurrentUser().id
   const isDrawer = variant === 'drawer'
   const menuCollapsed = isDrawer ? false : collapsed
 
@@ -142,6 +146,13 @@ export default ({
     if (isOidcSsoEnabled()) {
       clearLocalSession()
       broadcastAuthLogout()
+      // A child of the class sign-in has no LMS session: straight back to the class page,
+      // where the next child signs in on this computer.
+      const kidPage = getKidSession(currentUserId)?.classPage
+      if (kidPage) {
+        redirectToOidcLogout(kidPage, { skipIdp: true })
+        return
+      }
       redirectToOidcLogoutLK()
       return
     }

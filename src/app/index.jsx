@@ -42,6 +42,10 @@ import {
   STUDENT_CLASSES_ROUTE,
   JOIN_CLASS_ROUTE,
   JOIN_CLASS_CODE_ROUTE,
+  CLASS_LOGIN_ROUTE,
+  CLASS_LOGIN_CARD_ROUTE,
+  CLASS_LOGIN_CODE_ROUTE,
+  CLASS_LOGIN_CODE_LINK_ROUTE,
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
@@ -62,6 +66,9 @@ const PublicProjects = lazy(() => import('@/pages/PublicProjects'))
 const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const LmsRedirect = lazy(() => import('@/pages/LmsRedirect'))
 const OidcCallback = lazy(() => import('@/pages/OidcCallback'))
+const ClassLoginPage = lazy(() => import('@/pages/ClassLogin'))
+const ClassCardLoginPage = lazy(() => import('@/pages/ClassLogin/CardLogin'))
+const ClassCodeEntryPage = lazy(() => import('@/pages/ClassLogin/CodeEntry'))
 const TeachersPage = lazy(() => import('@/pages/Teachers'))
 const ClientsPageContainer = lazy(() => import('@/containers/ClientsContainer'))
 const UnitAdminsPage = lazy(() => import('@/pages/UnitAdmins'))
@@ -113,6 +120,10 @@ const AppRoutes = () => (
     <Route path={PROJECT_PAGE_ROUTE} element={<ProjectPage />} />
     <Route path={JOIN_CLASS_ROUTE} element={<JoinClassPage />} />
     <Route path={JOIN_CLASS_CODE_ROUTE} element={<JoinClassPage />} />
+    <Route path={CLASS_LOGIN_CARD_ROUTE} element={<ClassCardLoginPage />} />
+    <Route path={CLASS_LOGIN_ROUTE} element={<ClassLoginPage />} />
+    <Route path={CLASS_LOGIN_CODE_ROUTE} element={<ClassCodeEntryPage />} />
+    <Route path={CLASS_LOGIN_CODE_LINK_ROUTE} element={<ClassCodeEntryPage />} />
 
     <Route element={<AuthenticatedShell />}>
       <Route path={HOME_PAGE_ROUTE} element={wrapProtected(STANDARD_ROLES, <HomePage />)} />

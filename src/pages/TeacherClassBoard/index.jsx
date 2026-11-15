@@ -43,6 +43,7 @@ import {
 import FileAssignmentFields from './FileAssignmentFields'
 import ClassHistory from './ClassHistory'
 import CoTeachersModal from './CoTeachersModal'
+import KidLoginPanel from './KidLoginPanel'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
 import * as api from '@/api/teacherClass'
@@ -885,6 +886,22 @@ const TeacherClassBoardPage = () => {
                 />
               ),
             },
+            // Class sign-in for young students: ЛК classes only (ADR_CLASS_KID_LOGIN.md).
+            ...(klass && !klass.lmsLinked
+              ? [
+                  {
+                    key: 'kids',
+                    label: <FormattedMessage id='teacher_board.tab_kids' />,
+                    children: (
+                      <KidLoginPanel
+                        classId={classId}
+                        className={klass.displayName}
+                        active={mode === 'kids'}
+                      />
+                    ),
+                  },
+                ]
+              : []),
             {
               key: 'history',
               label: <FormattedMessage id='teacher_board.tab_history' />,

@@ -14,6 +14,7 @@ const CATEGORIES = [
   'work',
   'assignments',
   'gallery',
+  'kids',
   'teachers',
   'messages',
   'class',
@@ -29,6 +30,7 @@ const messageId = (event, intl) => {
   if (event.action === 'message_sent' && !event.targetId) id += '_many'
   // Without a target the uploader took their own file out.
   if (event.action === 'gallery_file_removed' && !event.targetId) id += '_own'
+  if (event.action === 'kid_login' && event.detail === 'card') id += '_card'
   return intl.messages[id] ? id : 'class_history.unknown_action'
 }
 

@@ -18,10 +18,17 @@ import {
 import Loader from '@/components/Loader'
 
 import { clearAccessToken, getAccessToken } from '@/helpers/accessTokenMemory'
+import { clearKidSession, getKidSession } from '@/helpers/kidSession'
 import { tryRefreshAccessToken } from '@/api/authRefresh'
 
-/** Silent SSO via IdP session (e.g. already logged into Tutor LMS). */
+/** Silent SSO via IdP session (e.g. already logged into Tutor LMS). A child of the class
+ * sign-in has no LMS account to use: they go back to their class page. */
 const redirectToSilentOidc = (pathname, search) => {
+  const classPage = getKidSession()?.classPage
+  if (classPage) {
+    window.location.replace(classPage)
+    return
+  }
   const returnTo = `${pathname}${search || ''}`
   window.location.replace(buildOidcStartUrl(returnTo, 'none'))
 }
@@ -58,7 +65,7 @@ export const OidcSessionProvider = ({ children }) => {
   const handleRemoteLogout = useCallback(() => {
     clearLocalAuthArtifacts()
     setSession({ authenticated: false })
-    navigate(LK_LOGOUT_RETURN_TO, { replace: true })
+    navigate(getKidSession()?.classPage || LK_LOGOUT_RETURN_TO, { replace: true })
   }, [navigate])
 
   useEffect(() => {
@@ -92,6 +99,11 @@ export const OidcSessionProvider = ({ children }) => {
           return
         }
         if (status.authenticated) {
+          // Someone else signed in here after a child: the class page is not theirs.
+          const kid = getKidSession()
+          if (kid && kid.userId !== String(status.edx_user_id || '')) {
+            clearKidSession()
+          }
           setSession(status)
           setLoading(false)
           return
