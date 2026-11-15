@@ -40,3 +40,12 @@ export async function saveFeatureInterest(answer) {
   const { data } = await instance.post('licensing/interest', answer, { withCredentials: true })
   return data
 }
+
+/** SuperAdmin: all paid-edition survey answers, newest first ({ answers, total }). */
+export async function listFeatureInterestAnswers({ limit = 50, offset = 0 } = {}) {
+  const { data } = await instance.get('licensing/interest/answers', {
+    params: { limit, offset },
+    withCredentials: true,
+  })
+  return { answers: data?.answers || [], total: data?.total || 0 }
+}

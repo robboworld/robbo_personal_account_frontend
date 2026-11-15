@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 
 import FeatureInterestPanel from './FeatureInterestPanel'
+import FeatureInterestAnswersPanel from './FeatureInterestAnswersPanel'
 import {
   KeyBlock,
   KeyBlockLabel,
@@ -23,6 +24,9 @@ import {
   UsageMeterValue,
   UsageStack,
 } from './styles'
+
+import { useAuthRole } from '@/helpers'
+import { SUPER_ADMIN } from '@/constants'
 
 import {
   GlassPanel,
@@ -163,6 +167,7 @@ const UsageColumn = ({ entitlements, seatsUsed, activeSessions, intl }) => {
 
 const MyLicensesPage = () => {
   const intl = useIntl()
+  const isSuperAdmin = Number(useAuthRole()) === SUPER_ADMIN
   const [licenses, setLicenses] = useState([])
   const [entitlements, setEntitlements] = useState(null)
   const [activeSessions, setActiveSessions] = useState(0)
@@ -302,6 +307,12 @@ const MyLicensesPage = () => {
         <motion.div variants={staggerItem}>
           <FeatureInterestPanel />
         </motion.div>
+
+        {isSuperAdmin ? (
+          <motion.div variants={staggerItem}>
+            <FeatureInterestAnswersPanel />
+          </motion.div>
+        ) : null}
       </Stagger>
     </PageContent>
   )
