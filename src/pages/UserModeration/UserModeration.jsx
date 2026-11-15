@@ -1,23 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Empty,
-  Input,
-  List,
-  Space,
-  Spin,
-  Tag,
-  Typography,
-  message,
-} from 'antd'
+import { Button, Checkbox, Empty, Input, List, Space, Spin, Tag, Typography, message } from 'antd'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FolderOpenOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
 
-import { searchLmsUsers } from '@/api/users'
+import { listLmsUsers, searchLmsUsers } from '@/api/users'
 import {
   PROFILE_PAGE_ROUTE,
   STUDENT,
@@ -51,6 +39,10 @@ const roleFromHit = hit => {
 // ?user=<id> opens the content drawer, so a link can point straight at it.
 const CONTENT_PARAM = 'user'
 
+// Without a query the page lists everyone newest first, PAGE_SIZE at a time.
+const PAGE_SIZE = 50
+const SEARCH_LIMIT = 30
+
 const UserModerationPage = () => {
   const intl = useIntl()
   const navigate = useNavigate()
@@ -61,24 +53,27 @@ const UserModerationPage = () => {
   const [query, setQuery] = useState('')
   const [includeInactive, setIncludeInactive] = useState(true)
   const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
   const timerRef = useRef(null)
   const reqRef = useRef(0)
 
+  // An empty query lists the newest users; otherwise search.
   const runSearch = useCallback(
     async (text, inactive) => {
       const q = String(text || '').trim()
-      if (!q) {
-        setItems([])
-        setLoading(false)
-        return
-      }
       setLoading(true)
+      setLoadingMore(false)
+      setHasMore(false)
       const reqId = ++reqRef.current
       try {
-        const results = await searchLmsUsers(q, 30, { includeInactive: inactive })
+        const results = q
+          ? await searchLmsUsers(q, SEARCH_LIMIT, { includeInactive: inactive })
+          : await listLmsUsers({ limit: PAGE_SIZE, includeInactive: inactive })
         if (reqId === reqRef.current) {
           setItems(results)
+          setHasMore(!q && results.length === PAGE_SIZE)
         }
       } catch (e) {
         if (reqId === reqRef.current) {
@@ -94,6 +89,36 @@ const UserModerationPage = () => {
     [intl],
   )
 
+  const loadMore = async () => {
+    const last = items[items.length - 1]
+    if (!last) {
+      return
+    }
+    setLoadingMore(true)
+    const reqId = ++reqRef.current
+    try {
+      const results = await listLmsUsers({ limit: PAGE_SIZE, beforeId: last.id, includeInactive })
+      if (reqId === reqRef.current) {
+        setItems(prev => [...prev, ...results])
+        setHasMore(results.length === PAGE_SIZE)
+      }
+    } catch (e) {
+      if (reqId === reqRef.current) {
+        message.error(apiErrorMessage(e, intl))
+      }
+    } finally {
+      if (reqId === reqRef.current) {
+        setLoadingMore(false)
+      }
+    }
+  }
+
+  // Users show up as soon as the page opens. Mount-only: runSearch changes only with the locale.
+  useEffect(() => {
+    runSearch('', includeInactive)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(
     () => () => {
       if (timerRef.current) {
@@ -103,16 +128,20 @@ const UserModerationPage = () => {
     [],
   )
 
-  // Re-query when returning to the tab so ban badges stay in sync with LMS/ES.
+  // Re-query when returning to the tab so ban badges stay in sync with LMS/ES. Not once more pages
+  // of the list are loaded: that would throw them away along with the scroll position.
   useEffect(() => {
     const onVisible = () => {
-      if (document.visibilityState === 'visible' && query.trim()) {
+      if (document.visibilityState !== 'visible') {
+        return
+      }
+      if (query.trim() || items.length <= PAGE_SIZE) {
         runSearch(query, includeInactive)
       }
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => document.removeEventListener('visibilitychange', onVisible)
-  }, [query, includeInactive, runSearch])
+  }, [query, includeInactive, items.length, runSearch])
 
   const onQueryChange = value => {
     setQuery(value)
@@ -199,7 +228,13 @@ const UserModerationPage = () => {
                 </div>
               ) : null}
 
-              {!loading && query.trim() && items.length === 0 ? (
+              {!query.trim() ? (
+                <Text type='secondary'>
+                  <FormattedMessage id='users_moderation.hint' />
+                </Text>
+              ) : null}
+
+              {!loading && items.length === 0 ? (
                 <Empty description={intl.formatMessage({ id: 'users_moderation.empty' })} />
               ) : null}
 
@@ -264,12 +299,12 @@ const UserModerationPage = () => {
                 />
               ) : null}
 
-              {!query.trim() ? (
-                <Alert
-                  type='info'
-                  showIcon
-                  title={intl.formatMessage({ id: 'users_moderation.hint' })}
-                />
+              {!loading && hasMore ? (
+                <div style={{ textAlign: 'center' }}>
+                  <Button loading={loadingMore} onClick={loadMore}>
+                    <FormattedMessage id='users_moderation.load_more' />
+                  </Button>
+                </div>
               ) : null}
             </Space>
           </GlassPanel>

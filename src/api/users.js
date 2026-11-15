@@ -24,6 +24,27 @@ export async function searchLmsUsers(q, limit = 20, opts = {}) {
 }
 
 /**
+ * All LMS users newest first, one page at a time (SuperAdmin; the users page before a query).
+ * The next page passes the id of the last user already shown as beforeId.
+ * @param {{ limit?: number, beforeId?: string, includeInactive?: boolean }} [opts]
+ * @returns {Promise<Array<{id:string,username:string,email:string,fullName:string,isActive:boolean,role:number}>>}
+ */
+export async function listLmsUsers({ limit = 50, beforeId, includeInactive = false } = {}) {
+  const params = { limit }
+  if (beforeId) {
+    params.beforeId = beforeId
+  }
+  if (includeInactive) {
+    params.includeInactive = true
+  }
+  const { data } = await instance.get('api/users/search', {
+    params,
+    withCredentials: true,
+  })
+  return data?.items || []
+}
+
+/**
  * @param {string} lmsUserId
  * @returns {Promise<{isBanned:boolean, activeBan:object|null}>}
  */
