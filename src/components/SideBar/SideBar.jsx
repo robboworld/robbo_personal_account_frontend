@@ -19,6 +19,7 @@ import {
   SidebarDataFreeListener,
   buildSidebarItems,
   flattenSidebarItems,
+  lockForKidAccount,
 } from './SideBarData.jsx'
 import { mapSidebarMenuItems } from './sidebarMenu'
 import SidebarUserInfo from './SidebarUser'
@@ -35,15 +36,18 @@ import {
 } from '@/helpers'
 import { broadcastAuthLogout } from '@/helpers/authEcosystemSync'
 import { getKidSession } from '@/helpers/kidSession'
+import { KID_HIDDEN_NAV_KEYS, KID_LOCKED_NAV_KEYS, useIsKidAccount } from '@/helpers/kidAccount'
 import { redirectToOidcLogout } from '@/helpers/oidcSession'
 import { useCurrentUser } from '@/helpers/useAuthRole'
 import {
   CLASSES_ROLES,
   CLASSES_ROUTES,
   FILES_ROLES,
+  FULL_ACCOUNT_ROUTE,
   LOGIN_PAGE_ROUTE,
   MY_FILES_ROUTE,
 } from '@/constants'
+import { FullAccountSidebarCta } from '@/components/FullAccount'
 import SelectLanguage from '@/components/SelectLanguage'
 import {
   SidebarMenu,
@@ -74,6 +78,7 @@ export default ({
   const intl = useIntl()
   const Role = useAuthRole()
   const currentUserId = useCurrentUser().id
+  const isKid = useIsKidAccount()
   const isDrawer = variant === 'drawer'
   const menuCollapsed = isDrawer ? false : collapsed
 
@@ -119,11 +124,18 @@ export default ({
   )
 
   const legacyAdminEnabled = useLegacyAdminEnabled()
-  const SideBarData = useMemo(
-    () =>
-      withSharedExploreItems(withoutLegacyAdminItems(visibleRoleSideBarData, legacyAdminEnabled)),
-    [visibleRoleSideBarData, legacyAdminEnabled],
-  )
+  const SideBarData = useMemo(() => {
+    const items = withSharedExploreItems(
+      withoutLegacyAdminItems(visibleRoleSideBarData, legacyAdminEnabled),
+    )
+    return isKid
+      ? lockForKidAccount(items, {
+          lockedKeys: KID_LOCKED_NAV_KEYS,
+          hiddenKeys: KID_HIDDEN_NAV_KEYS,
+          fullAccountPath: FULL_ACCOUNT_ROUTE,
+        })
+      : items
+  }, [visibleRoleSideBarData, legacyAdminEnabled, isKid])
 
   const flatSideBarData = useMemo(() => flattenSidebarItems(SideBarData), [SideBarData])
 
@@ -240,6 +252,17 @@ export default ({
         items={menuItems}
       />
       <SidebarFooter $collapsed={menuCollapsed}>
+        {isKid && (
+          <FullAccountSidebarCta
+            collapsed={menuCollapsed}
+            onClick={() => {
+              navigate(FULL_ACCOUNT_ROUTE)
+              if (onNavigate) {
+                onNavigate()
+              }
+            }}
+          />
+        )}
         <SidebarUserInfo role={Role} collapsed={menuCollapsed} skip={!sessionChecked} />
         <SidebarLogoutBtn type='button' $collapsed={menuCollapsed} onClick={() => handleLogout()}>
           <LogoutOutlined />

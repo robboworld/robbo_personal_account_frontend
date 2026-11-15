@@ -46,12 +46,14 @@ import {
   CLASS_LOGIN_CARD_ROUTE,
   CLASS_LOGIN_CODE_ROUTE,
   CLASS_LOGIN_CODE_LINK_ROUTE,
+  FULL_ACCOUNT_ROUTE,
 } from '@/constants'
 import Loader from '@/components/Loader'
 import AuthenticatedShell from '@/components/AuthenticatedLayout/AuthenticatedLayout'
 import LegacySection from '@/components/LegacySection'
 import ProdBuildWarning from '@/components/ProdBuildWarning'
 import { ProtectedRoute, PublicAuthGate } from '@/helpers'
+import { useIsKidAccount } from '@/helpers/kidAccount'
 
 import HomePage from '@/pages/Home'
 import ProfilePage from '@/pages/Profile'
@@ -88,6 +90,7 @@ const TeacherClassesPage = lazy(() => import('@/pages/TeacherClasses'))
 const TeacherClassBoardPage = lazy(() => import('@/pages/TeacherClassBoard'))
 const StudentClassesPage = lazy(() => import('@/pages/StudentClasses'))
 const JoinClassPage = lazy(() => import('@/pages/JoinClass'))
+const FullAccountPage = lazy(() => import('@/pages/FullAccount'))
 
 const STANDARD_ROLES = [STUDENT, TEACHER, PARENT, FREE_LISTENER, UNIT_ADMIN, SUPER_ADMIN]
 
@@ -98,6 +101,14 @@ const wrapProtected = (allowedRoles, element) => (
 // Backed by the legacy Postgres: unavailable (with an explanation) while it is off.
 const wrapLegacy = (allowedRoles, element) =>
   wrapProtected(allowedRoles, <LegacySection>{element}</LegacySection>)
+
+// A teacher-made kid account has no courses or tariffs (architecture/ADR_CLASS_KID_LOGIN.md):
+// a link or an old bookmark there shows what a full account adds instead.
+const KidLocked = ({ children }) =>
+  useIsKidAccount() ? <Navigate to={FULL_ACCOUNT_ROUTE} replace /> : children
+
+const wrapFullAccountOnly = (allowedRoles, element) =>
+  wrapProtected(allowedRoles, <KidLocked>{element}</KidLocked>)
 
 // Legacy /scratch links (editor used to live there): keep the query, e.g. ?projectPageId=.
 const LegacyScratchRedirect = () => {
@@ -149,7 +160,11 @@ const AppRoutes = () => (
         element={wrapProtected(STANDARD_ROLES, <PublicProjects />)}
       />
       <Route path={SCRATCH_HUB_ROUTE} element={wrapProtected(STANDARD_ROLES, <ScratchHubPage />)} />
-      <Route path={MY_COURSES_ROUTE} element={wrapProtected(STANDARD_ROLES, <LmsRedirect />)} />
+      <Route
+        path={MY_COURSES_ROUTE}
+        element={wrapFullAccountOnly(STANDARD_ROLES, <LmsRedirect />)}
+      />
+      <Route path={FULL_ACCOUNT_ROUTE} element={wrapProtected([STUDENT], <FullAccountPage />)} />
       <Route path={CLIENTS_ROUTE} element={wrapLegacy([SUPER_ADMIN], <ClientsPageContainer />)} />
       <Route
         path={TEACHERS_PAGE_ROUTE}
@@ -182,11 +197,14 @@ const AppRoutes = () => (
         path={ADMIN_STORAGE_ROUTE}
         element={wrapProtected([SUPER_ADMIN], <AdminStoragePage />)}
       />
-      <Route path={MY_LICENSES_ROUTE} element={wrapProtected(STANDARD_ROLES, <MyLicensesPage />)} />
+      <Route
+        path={MY_LICENSES_ROUTE}
+        element={wrapFullAccountOnly(STANDARD_ROLES, <MyLicensesPage />)}
+      />
       <Route path={MY_SESSIONS_ROUTE} element={wrapProtected(STANDARD_ROLES, <MySessionsPage />)} />
       <Route
         path={LICENSES_CATALOG_ROUTE}
-        element={wrapProtected(
+        element={wrapFullAccountOnly(
           STANDARD_ROLES,
           <Navigate to={`${MY_LICENSES_ROUTE}#buy`} replace />,
         )}

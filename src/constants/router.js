@@ -42,4 +42,6 @@ export const CLASS_LOGIN_CARD_ROUTE = '/c/card'
 // The short address for wiped school laptops: /k and the lesson code from the projector.
 export const CLASS_LOGIN_CODE_ROUTE = '/k'
 export const CLASS_LOGIN_CODE_LINK_ROUTE = '/k/:code'
+// What a full account adds, for a child of the class sign-in and their parents.
+export const FULL_ACCOUNT_ROUTE = '/full-account'
 export const CLASSES_ROUTES = [TEACHER_CLASSES_ROUTE, STUDENT_CLASSES_ROUTE]

@@ -16,6 +16,7 @@ import {
   GlobalOutlined,
   CustomerServiceOutlined,
   EditOutlined,
+  LockOutlined,
 } from '@ant-design/icons'
 
 import InterestInvite from './InterestInvite'
@@ -45,7 +46,9 @@ import {
   staggerContainer,
   staggerItem,
 } from '@/components/AccountShell'
+import { FullAccountBanner, KidBadge } from '@/components/FullAccount'
 import { openLms, getSelectedNavBarKeyFromPath, useAuthRole } from '@/helpers'
+import { KID_LOCKED_NAV_KEYS, useIsKidAccount } from '@/helpers/kidAccount'
 import { LEGACY_ADMIN_ROUTES, useLegacyAdminEnabled } from '@/helpers/legacyAdminSection'
 import { profileGQL } from '@/graphQL/query/profile'
 import {
@@ -67,6 +70,7 @@ import {
   TEACHER_CLASSES_ROUTE,
   STUDENT_CLASSES_ROUTE,
   SCRATCH_HUB_ROUTE,
+  FULL_ACCOUNT_ROUTE,
 } from '@/constants'
 import { ROLE_ICONS } from '@/constants/roleIcons'
 import { getScratchEditorLabel } from '@/utils/scratchEditor'
@@ -205,11 +209,36 @@ const NEXT_STEP_IDS = [
   'home.next_step_4',
 ]
 
+// A kid account has no contacts to check and no LMS: its own steps, the last one to a full account.
+const KID_NEXT_STEP_IDS = [
+  'full_account.next_step_1',
+  'full_account.next_step_2',
+  'full_account.next_step_3',
+  'full_account.next_step_4',
+]
+
+// A kid account's tiles: impersonal wording, and a profile the teacher fills in, not the child.
+const KID_ACTION_TEXT = {
+  profile: { descriptionId: 'full_account.action.profile' },
+  projects: { descriptionId: 'full_account.action.projects' },
+  studentClasses: { descriptionId: 'full_account.action.student_classes' },
+  publicProjects: {
+    titleId: 'full_account.action.public_projects_title',
+    descriptionId: 'full_account.action.public_projects',
+  },
+  create: {
+    titleId: 'full_account.action.create_title',
+    descriptionId: 'full_account.action.create',
+  },
+}
+
 const Home = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const intl = useIntl()
   const role = useAuthRole()
+  // A teacher-made kid account: courses are shown locked, with who opens them.
+  const isKid = useIsKidAccount()
   const legacyEnabled = useLegacyAdminEnabled()
   const editorLabel = getScratchEditorLabel()
   const { data: profileData } = useQuery(profileGQL.GET_USER, { fetchPolicy: 'cache-first' })
@@ -233,9 +262,21 @@ const Home = () => {
       (!roles || roles.includes(role)) &&
       (legacyEnabled || !LEGACY_ADMIN_ROUTES.has(path)) &&
       (CLASSES_ROLES.includes(role) || !CLASSES_ROUTES.includes(path)),
-  )
+  ).map(action => {
+    if (!isKid) {
+      return action
+    }
+    if (KID_LOCKED_NAV_KEYS.has(action.key)) {
+      return { ...action, locked: true, external: undefined, path: FULL_ACCOUNT_ROUTE }
+    }
+    return { ...action, ...KID_ACTION_TEXT[action.key] }
+  })
 
   const handleAction = action => {
+    if (action.locked) {
+      navigate(FULL_ACCOUNT_ROUTE)
+      return
+    }
     if (action.external === 'lms') {
       openLms()
       return
@@ -259,16 +300,27 @@ const Home = () => {
                 {roleTitle}
               </RoleBadge>
             )}
+            {isKid && (
+              <KidBadge data-testid='home-kid-badge'>
+                <LockOutlined />
+                <FormattedMessage id='full_account.badge' />
+              </KidBadge>
+            )}
             <HeroTitle>
               {firstName
                 ? intl.formatMessage({ id: 'home.welcome_with_name' }, { firstName })
                 : intl.formatMessage({ id: 'home.welcome' })}
             </HeroTitle>
-            <HeroLead>{intl.formatMessage({ id: 'home.role_line' }, { role: roleTitle })}</HeroLead>
+            <HeroLead>
+              {isKid
+                ? intl.formatMessage({ id: 'full_account.home_lead' })
+                : intl.formatMessage({ id: 'home.role_line' }, { role: roleTitle })}
+            </HeroLead>
           </HeroInner>
         </HeroPanel>
 
-        <InterestInvite />
+        {/* The paid-edition survey is for the account holder: a kid account is shown the parents' way in. */}
+        {isKid ? <FullAccountBanner /> : <InterestInvite />}
 
         <motion.div variants={staggerItem}>
           <Panel>
@@ -277,7 +329,9 @@ const Home = () => {
                 <FormattedMessage id='home.quick_actions' />
               </SectionTitle>
               <SectionHint>
-                <FormattedMessage id='home.quick_actions_hint' />
+                <FormattedMessage
+                  id={isKid ? 'full_account.quick_actions_hint' : 'home.quick_actions_hint'}
+                />
               </SectionHint>
             </SectionHeader>
 
@@ -292,21 +346,29 @@ const Home = () => {
                       $wide={action.wide}
                       $gridSpan={action.gridSpan}
                       whileTap={{ scale: 0.99 }}
+                      data-locked={action.locked ? 'true' : undefined}
+                      style={action.locked ? { opacity: 0.72 } : undefined}
                       onClick={() => handleAction(action)}>
-                      <ActionIcon $accent={action.accent}>
-                        <Icon />
+                      <ActionIcon $accent={action.locked ? 'rose' : action.accent}>
+                        {action.locked ? <LockOutlined /> : <Icon />}
                       </ActionIcon>
                       <ActionTitle>
                         <FormattedMessage id={action.titleId} />
                       </ActionTitle>
                       <ActionDescription>
-                        <FormattedMessage
-                          id={action.descriptionId}
-                          values={{ editor: editorLabel }}
-                        />
+                        {action.locked ? (
+                          <FormattedMessage id='full_account.locked' />
+                        ) : (
+                          <FormattedMessage
+                            id={action.descriptionId}
+                            values={{ editor: editorLabel }}
+                          />
+                        )}
                       </ActionDescription>
                       <ActionCta>
-                        <FormattedMessage id='home.go_to' />
+                        <FormattedMessage
+                          id={action.locked ? 'full_account.banner_cta' : 'home.go_to'}
+                        />
                         <ArrowRightOutlined style={{ fontSize: 12 }} />
                       </ActionCta>
                     </ActionTile>
@@ -330,7 +392,7 @@ const Home = () => {
               </SectionHint>
             </SectionHeader>
             <StepsList>
-              {NEXT_STEP_IDS.map((stepId, index) => (
+              {(isKid ? KID_NEXT_STEP_IDS : NEXT_STEP_IDS).map((stepId, index) => (
                 <StepItem key={stepId}>
                   <StepIndex>{index + 1}</StepIndex>
                   <StepText>

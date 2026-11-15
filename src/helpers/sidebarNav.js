@@ -25,6 +25,7 @@ import {
   STUDENT_CLASSES_ROUTE,
   USERS_ROUTE,
   ADMIN_STORAGE_ROUTE,
+  FULL_ACCOUNT_ROUTE,
 } from '@/constants'
 
 const exactByRole = {
@@ -101,6 +102,11 @@ export function getSelectedNavBarKeyFromPath(role, pathname) {
 
   if (pathname === MY_SESSIONS_ROUTE) {
     return 'my_sessions'
+  }
+
+  // A kid account's way to a full one: its own page, no menu item lit (not "Profile").
+  if (pathname === FULL_ACCOUNT_ROUTE) {
+    return 'full_account'
   }
 
   if (pathname === MY_FILES_ROUTE) {

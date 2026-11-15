@@ -154,6 +154,24 @@ export const buildSidebarItems = roleItems => {
   return items
 }
 
+/**
+ * Kid account (architecture/ADR_CLASS_KID_LOGIN.md): the full-account sections stay in the
+ * menu, locked, and lead to the page that says how to get them; the rest are dropped.
+ */
+export const lockForKidAccount = (items, { lockedKeys, hiddenKeys, fullAccountPath }) =>
+  (items || [])
+    .filter(item => !hiddenKeys.has(item.key))
+    .filter(
+      (item, index, list) =>
+        // A divider left with nothing after it (or doubled) goes too.
+        item.type !== 'divider' || (index < list.length - 1 && list[index + 1].type !== 'divider'),
+    )
+    .map(item =>
+      lockedKeys.has(item.key)
+        ? { ...item, pathname: fullAccountPath, external: undefined, locked: true }
+        : item,
+    )
+
 /** Flat list of clickable nav entries (skips dividers). */
 export const flattenSidebarItems = items =>
   (items || []).filter(item => item && item.type !== 'divider')

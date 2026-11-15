@@ -38,7 +38,7 @@ const profileFieldsUnchanged = (profile, formValues) =>
   normalizeSelectValue(formValues.gender) === normalizeSelectValue(profile.gender) &&
   normalizeSelectValue(formValues.language) === normalizeSelectValue(profile.language)
 
-const formatProfileDateTime = (value, locale) => {
+export const formatProfileDateTime = (value, locale) => {
   if (!value) {
     return '–'
   }

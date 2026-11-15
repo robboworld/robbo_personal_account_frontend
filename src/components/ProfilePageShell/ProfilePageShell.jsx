@@ -27,6 +27,7 @@ const ProfilePageBody = ({
   accessUpdate,
   peekUserId,
   peekUserRole,
+  notice,
   children,
 }) => {
   const intl = useIntl()
@@ -60,6 +61,8 @@ const ProfilePageBody = ({
         </ProfileHeroCopy>
       </ProfileHero>
 
+      {notice ? <div style={{ marginBottom: 16 }}>{notice}</div> : null}
+
       {error && (
         <motion.div variants={staggerItem} style={{ marginBottom: 16 }}>
           <Alert type='error' showIcon title={apiErrorMessage(error, intl, 'profile.load_error')} />
@@ -88,6 +91,7 @@ const ProfilePageShell = ({
   peekUserId,
   peekUserRole,
   embedded = false,
+  notice,
   children,
 }) => {
   const body = (
@@ -98,7 +102,8 @@ const ProfilePageShell = ({
         error={error}
         accessUpdate={accessUpdate}
         peekUserId={peekUserId}
-        peekUserRole={peekUserRole}>
+        peekUserRole={peekUserRole}
+        notice={notice}>
         {children}
       </ProfilePageBody>
     </motion.div>
@@ -124,6 +129,8 @@ ProfilePageShell.propTypes = {
   peekUserId: PropTypes.string,
   peekUserRole: PropTypes.number,
   embedded: PropTypes.bool,
+  /** Shown between the hero and the form, e.g. what a kid account opens with a full one. */
+  notice: PropTypes.node,
   children: PropTypes.node,
 }
 

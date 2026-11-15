@@ -17,8 +17,10 @@ import SubmissionNoteModal from './SubmissionNoteModal'
 import { AssignmentList, ClassCardFrame, ClassName, ClassTeacher, LeaveButton } from './styles'
 
 import { PageContent, Panel, SectionHeader, SectionTitle } from '@/components/AccountShell'
+import { FullAccountLockedLine } from '@/components/FullAccount'
 import LessonGalleryButton from '@/components/LessonGallery'
 import * as api from '@/api/teacherClass'
+import { useIsKidAccount } from '@/helpers/kidAccount'
 import { useVisibleInterval } from '@/helpers/useVisibleInterval'
 import { JOIN_CLASS_CODE_ROUTE, PROJECT_PAGE_ROUTE } from '@/constants'
 import { apiErrorMessage, classCodeErrorMessage } from '@/helpers/apiErrorMessage'
@@ -120,7 +122,7 @@ const AssignmentItem = ({ assignment, onSubmitted }) => {
   )
 }
 
-const ClassCard = ({ klass, onLeft }) => {
+const ClassCard = ({ klass, onLeft, canLeave = true }) => {
   const intl = useIntl()
   const [assignments, setAssignments] = useState(null)
   const [leaving, setLeaving] = useState(false)
@@ -175,24 +177,26 @@ const ClassCard = ({ klass, onLeft }) => {
         </React.Fragment>
       }
       extra={
-        <Popconfirm
-          title={intl.formatMessage(
-            { id: 'student_class.leave_confirm' },
-            { name: klass.displayName },
-          )}
-          description={intl.formatMessage({ id: 'student_class.leave_confirm_hint' })}
-          okText={intl.formatMessage({ id: 'student_class.leave' })}
-          okButtonProps={{ danger: true }}
-          cancelText={intl.formatMessage({ id: 'common.cancel' })}
-          onConfirm={leave}>
-          <LeaveButton
-            type='text'
-            size='small'
-            icon={<LogoutOutlined aria-hidden />}
-            loading={leaving}>
-            <FormattedMessage id='student_class.leave' />
-          </LeaveButton>
-        </Popconfirm>
+        canLeave ? (
+          <Popconfirm
+            title={intl.formatMessage(
+              { id: 'student_class.leave_confirm' },
+              { name: klass.displayName },
+            )}
+            description={intl.formatMessage({ id: 'student_class.leave_confirm_hint' })}
+            okText={intl.formatMessage({ id: 'student_class.leave' })}
+            okButtonProps={{ danger: true }}
+            cancelText={intl.formatMessage({ id: 'common.cancel' })}
+            onConfirm={leave}>
+            <LeaveButton
+              type='text'
+              size='small'
+              icon={<LogoutOutlined aria-hidden />}
+              loading={leaving}>
+              <FormattedMessage id='student_class.leave' />
+            </LeaveButton>
+          </Popconfirm>
+        ) : null
       }>
       {assignments === null ? (
         <Spin />
@@ -229,6 +233,9 @@ const StudentClassesPage = () => {
   const [loading, setLoading] = useState(true)
   const [code, setCode] = useState('')
   const [joining, setJoining] = useState(false)
+  // A teacher-made kid account lives in its one class: it joins no other (the server answers
+  // kid_account), and leaving would close the class sign-in until the teacher returns it.
+  const isKid = useIsKidAccount()
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -268,22 +275,28 @@ const StudentClassesPage = () => {
           <SectionTitle>
             <FormattedMessage id='student_class.title' />
           </SectionTitle>
-          <Button onClick={() => navigate(JOIN_CLASS_CODE_ROUTE)}>
-            <FormattedMessage id='student_class.join_by_code' />
-          </Button>
+          {!isKid && (
+            <Button onClick={() => navigate(JOIN_CLASS_CODE_ROUTE)}>
+              <FormattedMessage id='student_class.join_by_code' />
+            </Button>
+          )}
         </SectionHeader>
-        <Space.Compact style={{ width: '100%', maxWidth: 420, marginBottom: 24 }}>
-          <Input
-            placeholder={intl.formatMessage({ id: 'student_class.code_placeholder' })}
-            aria-label={intl.formatMessage({ id: 'student_class.code_placeholder' })}
-            value={code}
-            onChange={e => setCode(e.target.value.toUpperCase())}
-            onPressEnter={join}
-          />
-          <Button type='primary' onClick={join} loading={joining} disabled={!code.trim()}>
-            <FormattedMessage id='student_class.join_button' />
-          </Button>
-        </Space.Compact>
+        {isKid ? (
+          <FullAccountLockedLine messageId='full_account.join_locked' />
+        ) : (
+          <Space.Compact style={{ width: '100%', maxWidth: 420, marginBottom: 24 }}>
+            <Input
+              placeholder={intl.formatMessage({ id: 'student_class.code_placeholder' })}
+              aria-label={intl.formatMessage({ id: 'student_class.code_placeholder' })}
+              value={code}
+              onChange={e => setCode(e.target.value.toUpperCase())}
+              onPressEnter={join}
+            />
+            <Button type='primary' onClick={join} loading={joining} disabled={!code.trim()}>
+              <FormattedMessage id='student_class.join_button' />
+            </Button>
+          </Space.Compact>
+        )}
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
             <Spin />
@@ -293,7 +306,7 @@ const StudentClassesPage = () => {
         ) : (
           <Space orientation='vertical' size={32} style={{ width: '100%' }}>
             {items.map(item => (
-              <ClassCard key={item.id} klass={item} onLeft={load} />
+              <ClassCard key={item.id} klass={item} onLeft={load} canLeave={!isKid} />
             ))}
           </Space>
         )}
